@@ -15,8 +15,8 @@ repository; [BUILDING.md](BUILDING.md) explains how to build it yourself.
 ## What you need
 
 - A PS Vita or PS TV on custom firmware (HENkaku / Enso).
-- `libshacccg.suprx` at `ur0:data/libshacccg.suprx` (the shader compiler most Vita
-  homebrew already asks for). Without it the game still runs, but shaders that are not
+- `libshacccg.suprx` at `ur0:data/libshacccg.suprx` (the shader compiler that many
+  Vita homebrew ports also need). Without it the game still runs, but shaders that are not
   included in the package draw through a slower fallback.
 - Your own copy of **Star Fox Adventures for GameCube, USA, Rev 1** (game id `GSAE01`,
   disc version 1), dumped to a full `.iso` (about 1.4 GB).
@@ -28,8 +28,8 @@ repository; [BUILDING.md](BUILDING.md) explains how to build it yourself.
 - Already have a Dolphin image? `.rvz` / `.gcz` / `.ciso`: in Dolphin, right-click the game
   -> Convert File -> ISO. NKit images must be restored to a full ISO.
 
-The port checks the image when it starts. A different game, a different revision, or a
-modified or truncated image is refused with a message on screen.
+When it starts, the port checks the image and shows a message on screen if it's missing,
+unreadable, a different game, or a different version of this one.
 
 ## Install
 
@@ -44,9 +44,9 @@ modified or truncated image is refused with a message on screen.
   30; ThornTail Hollow, the busiest area, can dip below it. To run uncapped, delete
   `ux0:data/stairfax/frame_cap.txt`.
 - The Vita runs at its highest clock speeds (CPU 444 MHz, GPU 222 MHz) while the game is
-  open, as most homebrew ports do.
+  open.
 - The first time an area needs a shader that is not in the package, it compiles in the
-  background: the game keeps running instead of freezing, and the shader is saved to the
+  background: the game keeps running while it does, and the shader is saved to the
   memory card for next time.
 
 ## Known issues
@@ -65,60 +65,28 @@ Open an issue and attach `ux0:data/stairfax_game.txt` (the game's log) from the 
 
 ---
 
-## How the graphics work
+## How it works
 
-The GameCube's GPU ("GX", the Flipper chip) and the Vita's (a PowerVR SGX543MP4+, driven
-through Sony's GXM API) have almost nothing in common, and this port does not emulate the
-GameCube. The decompiled game runs natively on the Vita's ARM CPU and still calls the GX
-API; the port answers those calls with a backend that talks to GXM directly, with no
-OpenGL layer in between. (Early builds went through vitaGL; the native backend replaced it.)
+The game isn't emulated. The decompiled code is compiled for the Vita's ARM CPU and runs
+natively. It still talks to the GameCube's graphics API (GX), so the port includes a
+backend that turns those GX calls into GXM, the Vita's own graphics API.
 
-**The colour combiner becomes shaders.** GX colours a pixel with TEV, a configurable
-pipeline of up to 16 stages that mixes textures, vertex colours and constants. GXM has no
-such hardware, so every distinct TEV setup the game uses is turned into a generated Cg
-shader, compiled on the Vita by the system shader compiler (`libshacccg`) and cached on the
-memory card. The release ships 274 pre-compiled programs. A setup the cache has never seen
-compiles on a low-priority background thread while a slower CPU path draws in its place
-(a GPU-skinned character is skipped until its shader is ready), so a new shader no longer
-stops the game: before that change, one play session logged 45
-compiles of 1.5 to 8.2 seconds each, every one of them a freeze.
+- **Shaders.** The GameCube colours pixels with a configurable fixed-function unit called
+  TEV. The backend writes a shader for each TEV setup the game uses, compiles it on the Vita
+  and saves it to the memory card. The release includes 274 already-compiled shaders.
+- **Two threads.** The game's main loop runs on one CPU core and a separate render thread on
+  another core sends the drawing work to the GPU, so the two overlap.
+- **Models.** GameCube models are stored as display lists. Each one is converted to Vita
+  vertex buffers the first time it's drawn and reused until the game changes it.
+- **Animation.** Some animated characters are skinned on the GPU to save CPU time.
+- **Game data.** Data the game needs from its own executable is read from your disc image
+  at startup, so none of it is in the download. The build checks for it and stops if it
+  finds any.
 
-**Two threads, two cores.** The game thread runs the game and records its GX calls into a
-ring buffer; a render thread on another CPU core replays them into GXM, so game logic and
-GPU submission overlap instead of taking turns. A lint on every build checks that the code each
-thread runs touches no mutable state the other owns, and the build refuses to package if it
-finds any.
-
-**Display lists are converted once.** GameCube models are drawn from display lists, a
-big-endian command format the GPU reads directly. The backend turns each list into Vita
-vertex and index buffers the first time it is drawn, and rebuilds it only when the game
-writes to or frees that memory.
-
-**Characters skin on the GPU.** Models whose vertices blend between bones (the ThornTail
-Hollow creatures, for example) are skinned in a vertex shader instead of on the CPU, and the
-game's glow sprites are drawn in batches instead of one call each.
-
-**GameCube tricks, rebuilt.** GX makes some effects, shadows among them, by copying its
-framebuffer into a texture; those become render-to-texture passes. Torch flares and
-glowing lights hide behind walls by reading back the depth buffer; the backend keeps a
-small ring of finished frames' depth buffers so those reads always see a complete frame.
-
-**Even frame pacing.** The display thread waits for the screen's vertical blank so frames
-come out at an even 30. The counter it reads wraps around every 18.2 minutes; the first
-release candidate froze exactly there, and the fix is covered by a host test that runs the
-old and new logic through ten wraps.
-
-**No game data in the binary.** The decompilation's data tables (constants, string pools)
-are filled from your disc image at boot. A build gate checks that none of those tables'
-retail contents ended up in the finished binary, and refuses to package it otherwise.
-
-The backend lives in [`vita/src`](vita/src) (`rhi_gxm_*.c` for GXM, `gx_thread.c` and
-`gx_rt_*.c` for the render thread); the GX translation it builds on is in
+The backend is in [`vita/src`](vita/src) and the GX translation layer is in
 [`engine/src/port/src/hal`](engine/src/port/src/hal).
 
 ## Credits
-
-This port exists because of other people's work.
 
 - **Star Fox Adventures decompilation**: [zcanann/SFA-Decomp](https://github.com/zcanann/SFA-Decomp),
   by Zachary Canann and Jack Price-Burns, with Goal3-14, Rena Kunisaki, Deses and other
