@@ -1,0 +1,245 @@
+00098E60 CORE-data WARNING: Stack overflow/underflow!!!
+00098E90 CORE-data Camera Error: Illegal mode!
+00098EB0 CORE-data Camera Error: Illegal player no!
+00098EE4 CORE-data Camera out of range: %d, (%.1f,%.1f,%.1f) (%.1f,%.1f)
+00098FB0 CORE-data curvesMove: There must be at least four control points
+00098FE8 CORE-data curvesMove: There must be a multiple of four control points for bezier or hermite curves
+00099044 CORE-data curvesSetupMoveNetworkCurve: There must be at least four control points
+00099090 CORE-data curvesSetupMoveNetworkCurve: There must be a multiple of four control points for bezier or hermite curves
+00099110 CORE-data VOXMAP: Size overflow on load->Ignoring defined voxmap
+00099148 CORE-data VOXMAP: attempt to load invalid object voxmap '%d'
+0009917C CORE-data VOXMAP: attempt to load invalid object voxmap '%d'
+000991B0 CORE-data VOXMAP: Size overflow on object voxmap load->Ignoring defined voxmap
+00099240 CORE-data route: routepoints overflow
+00099288 CORE-data VOXMAPS: route nodes list overflow
+000992D0 CORE-data BITSTREAM: failed read
+000992E8 CORE-data BIT STREAM: write overflow
+00099304 CORE-data BIT STREAM: append overflow
+00099330 CORE-data DLLS: warning DLL entrypoint mismatch, dll %d (%d/%d).
+00099368 CORE-data DLLS: Maximum DLL's loaded, %d.
+0009938C CORE-data DLLS: Load failed, DLL %d currently executing.
+000993BC CORE-data DLLS: Maximum DLL's loaded, %d.
+000993E0 CORE-data DLLS: free fail, DLL not loaded.
+00099404 CORE-data DLLS: free fail, DLL not loaded.
+00099428 CORE-data warning: using default DLL entry point.
+00099E40 CORE-data Error: Model no. %d out of range on load. !!
+00099E88 CORE-data Error: Model table overflow!!
+00099EE4 CORE-data DANGER: createModelInstance: Actual size exceeded totalsize!!!
+00099F44 CORE-data MOD Error: Tryed to deallocate non-existent model!!
+00099F7C CORE-data makeModelAnimation() size mismatch!! (%d,%d)
+00099FAC CORE-data Warning: Model animation buffer overflow!! size=%d
+00099FE0 CORE-data modLoadAnimActual: anim overflow %d/%d
+0009A008 CORE-data Anim Error: Tryed to deallocate non-existent anim!!
+0009A040 CORE-data **Top matrix out of range: (%.1f,%.1f,%.1f) (%.1f,%.1f)
+0009A0AC CORE-data blend_frames: %x
+0009A154 CORE-data Warning: Unknown object type '%d/%d romdefno %d', using DummyObject (128)
+0009A1A0 CORE-data ObjSetupObject(3) Memory fail!!
+0009A1C4 CORE-data ObjSetupObject(2) Memory fail!!
+0009A24C CORE-data objFreeObject: delete list size overrun
+0009A2D0 CORE-data objFreeObjdef: Error!! (%d)
+0009A380 CORE-data warning: objAddEffectBox max effect boxes
+0009A3AC CORE-data objFreeEffectBox: Not found
+0009A4B0 CORE-data OBJHITS: hitmodel overflow
+0009A570 CORE-data OBJHITS: Temporary array overflow in 'hitVolumes'
+0009A5A4 CORE-data HIT VOLUMES: an object has too many hit spheres
+0009A700 CORE-data objAddObjectType: obj romdefno %d, type %d
+0009A72C CORE-data objAddObjectType: Reached MAXTYPES!!
+0009A754 CORE-data objFreeObjectType: obj romdefno %d, type %d
+0009A79C CORE-data objGetNearestType: type %d, from obj romdefno %d, maxdist %f, object found %x
+0009A7EC CORE-data objGetNearestType: type %d, from obj romdefno %d, maxdist %f, object found %x
+0009A850 CORE-data objmsg (%x): overflow in object %d defno=%d FROM: defno %d
+0009A890 CORE-data WARNING EXPR: This Object has no Head
+0009A8B8 CORE-data WARNING EXPR: Obj Has No Joint %i
+0009A8DC CORE-data WARNING: Expr Contrl Flag does not exist
+0009AA3C CORE-data net_route: No support for this type of node %d x=%f y=%f z=%f
+0009AAB0 CORE-data WARNING: rzip buffer overflow (%d)
+0009AAD4 CORE-data rzipUncompress:overflow i:%08x o:%08x %d
+0009AB00 CORE-data rzipUncompress(%08x,%08x,...) overflow %d/%d
+0009AD8C CORE-data running task: %08x %08x
+0009ADBC CORE-data Surrounding traces:
+0009ADD4 CORE-data Previous:
+0009AE28 CORE-data scheduler: Looks like the SP has crashed %s
+0009AE54 CORE-data scheduler: Looks like the DP has crashed %s
+0009AE94 CORE-data TRACE: %s:%d gfx=%x
+0009AEB0 CORE-data TRACE: %s:%d gfx=%x
+0009AEE0 CORE-data TRACE: %s:%5d gfx=%x
+0009AEFC CORE-data TRACE: %s:%5d gfx=%x
+0009AF18 CORE-data CODE: Version %s %s %s
+0009AF70 CORE-data Error: Texture no %d out of range on load -> max=%d.!!
+0009AFC4 CORE-data TEX Error: TexTab overflow %d,%d!!
+0009AFE8 CORE-data texFreeTexture: NULL tex!!
+0009B004 CORE-data TEX Error: Tryed to deallocate non-existent texture!!
+0009B160 CORE-data depthSortObjects: MAX_VISIBLE_OBJECTS exceeded
+0009B1E0 CORE-data ERROR: visible index greater than no vis blocks
+0009B218 CORE-data trackFreeMap: Error no map!!
+0009B288 CORE-data Blocksize error(1): %d should be %d
+0009B2B0 CORE-data COLOUR TABLE: Attempt to free invalid entry
+0009B2E0 CORE-data trackLoadBlockEnd: track block overrun
+0009B308 CORE-data TEXSCROLL: table is full
+0009B348 CORE-data TRACK ERROR: Global texanim overflow
+0009B3A8 CORE-data OBJECT error: obj %d, has no romdef
+0009B3D0 CORE-data WARNING: trackSetLoaded bit overflow
+0009B3F8 CORE-data WARNING: trackGetLoaded bit overflow
+0009B50C CORE-data romdefMove_Set: Mapno overflow!!
+0009B5D0 CORE-data shadows: group overflow error
+0009B718 CORE-data TrackGetHeight()-Overflow!!!
+0009B738 CORE-data trackIntersect: FUNC OVERFLOW %d
+0009B790 CORE-data trackIntersect: FUNC OVERFLOW %d
+0009B870 CORE-data maketex: buffer out of range
+0009B890 CORE-data maketex: buffer out of range
+0009B991 CORE-data Assertion failed: '%s' in file %s, line %d
+0009B9C1 CORE-data Assertion failed: '%s' in file %s, line %d
+0009BC70 CORE-data debug:enabled
+0009BC80 CORE-data debug:disabled
+0009BF9F CORE-data mmAlloc(%d,%8x)
+0009C024 CORE-data Fault in object: (%s) (%d)
+0009C270 CORE-data diRcpTrace: Buffer not allocated!
+0009C320 CORE-data COMM: warning, already started (%s)
+0009C348 CORE-data COMM: warning, not started (%s)
+0009C36C CORE-data COMM: warning, comms not started
+0009C390 CORE-data COMM: warning, comms not started
+0009C430 CORE-data ***Bad soundState: %08x type %d data %x
+0009C4C8 CORE-data WARNING: Attempt to stop NULL sound aborted
+0009C4F8 CORE-data WARNING: Attempt to modify NULL sound aborted
+0009C570 CORE-data amAudio: WARNING no free oscstates.
+0009C598 CORE-data amAudio: unsupported vibrato/tremolo type,%d
+000A39BF CORE-data drmon: Thread %d created
+000A39DC CORE-data rmon: Thread %d destroyed
+038466B4 DLLS.bin endObjSequence: too many obj frees
+038466D8 DLLS.bin preemptSequenceTime() Overflow!!
+03848BF4 DLLS.bin Warning: calcPosition: Stack overflow!!
+03848C20 DLLS.bin racePostion: Error! (romdefno: %d) %d %i
+0384C2E0 DLLS.bin AUDIO: Maximum sequence handles reached.
+0384C374 DLLS.bin amSeqPlayEx: Warning, player value '%d' out of range.
+0384C3AC DLLS.bin amSeqPlayEx: Warning, sequence value '%d' out of range.
+0384C3E8 DLLS.bin amSeqStop: Warning, player value '%d' out of range.
+0384C420 DLLS.bin amSeqGetNo: Warning, player value '%d' out of range.
+0384C458 DLLS.bin amSeqGetVolume: Warning, player value '%d' out of range.
+0384C494 DLLS.bin amSeqSetVolume: Warning, player value '%d' out of range.
+0384C500 DLLS.bin AUDIO: MIDI sequence buffer failed.
+0384C53C DLLS.bin start c:%04x f:%04x d:%04x mask:%04x
+0384C590 DLLS.bin AMSEQ: player out of range
+0384C5F0 DLLS.bin c:%04x f:%04x d:%04x mask:%04x
+0384C638 DLLS.bin already c:%04x f:%04x d:%04x mask:%04x
+0384C678 DLLS.bin amSeq: focus object deleted %08x,%d
+0384C6A0 DLLS.bin amSeq: seq object deleted
+0384C718 DLLS.bin amAudio: WARNING invalid osc rate, using default.
+0384C74C DLLS.bin amAudio: WARNING invalid osc delay, using default.
+0384C780 DLLS.bin amAudio: WARNING invalid osc rise time, using default.
+0384C7B8 DLLS.bin amAudio: WARNING no free oscstates.
+0384C7E0 DLLS.bin amAudio: unsupported vibrato/tremolo type, %d
+0384F070 DLLS.bin AMSFX: Error sound effects bank missing!
+0384F0B0 DLLS.bin amSfxSetVol: Warning,sound handle '%d' out of range.
+0384F0E8 DLLS.bin amSfxSetVol: Warning,invalid handle '%d'.
+0384F114 DLLS.bin amSfxSetPitch: Warning,sound handle '%d' out of range.
+0384F14C DLLS.bin amSfxSetPitch: Warning,invalid handle '%d'.
+0384F17C DLLS.bin amSfxStop: Warning,sound handle '%d' out of range.
+0384F1B0 DLLS.bin amSfxIsPlaying: Warning,sound handle '%d' out of range.
+0384F1EC DLLS.bin amSfxGetDefault: Warning,sound effect value '%d' out of range.
+0384F22C DLLS.bin amSndPlayEx: Warning,sound '%d' out of range.
+0384F25C DLLS.bin amSndPlayEx: Warning,sound handle '%d' out of range.
+0384F2E4 DLLS.bin AMSFX: Software bug in object (controlfunc %d)
+0384F348 DLLS.bin AMSFX: Software bug in object (controlfunc %d)
+0384F3C0 DLLS.bin amSfxSetPitch: Warning,sound handle '%d' out of range.
+0384F3F8 DLLS.bin amSfxSetPitch: Warning,invalid handle '%d'.
+0384F450 DLLS.bin AMSFX: Maximum sfx handles allocated,%d (from %s:%d)
+0384F488 DLLS.bin AMSFX: allocSfxHandle handle out of range, %d
+0384F4B8 DLLS.bin AMSFX: freeSfxHandle invalid handle, %d
+0384F4E4 DLLS.bin AMSFX: freeSfxHandle not used, %d
+0384F508 DLLS.bin AMSFX: Warning min/max range identical
+03886CC0 DLLS.bin SCREEN: No out of range!!
+038896C8 DLLS.bin subtitles error: sentence has a delay less than %d ms
+03894AA4 DLLS.bin addCurveDef: max curves reached %d/%d
+03894AEC DLLS.bin link:(%d) %d
+03894AFC DLLS.bin Found: %d
+0389A9B0 DLLS.bin gplayLoadGame error: savegame and backup failed to load.
+0389A9EC DLLS.bin gplayLoadOptions error: saveoptions failed to load.
+0389AA80 DLLS.bin gameplay.c: gplayGetCurrentPlayerLactions: playerno overflow
+0389AAC0 DLLS.bin gameplay.c: gplayGetCurrentPlayerEnvactions: playerno overflow
+0389AB00 DLLS.bin gplayAddTime: MAX_TIMESAVES reached
+0389BFF4 DLLS.bin Savegame size in pages: %d %d
+0389C014 DLLS.bin flashLoadGame: dest=%x slotno=%d size=%d
+0389C05C DLLS.bin Flash checksum passed:
+0389C075 DLLS.bin loaded: XOR %x %x
+0389C099 DLLS.bin calculated: XOR %x %x
+0389C0BC DLLS.bin Flash checksum failed:
+0389C0D5 DLLS.bin loaded: XOR %x %x
+0389C0F9 DLLS.bin calculated: XOR %x %x
+0389C11C DLLS.bin Error in loading game number:%d
+0389C140 DLLS.bin flashSaveGame: slotno %d
+0389C1B8 DLLS.bin Flash saved worked: %d
+0389C1D0 DLLS.bin Checksum: XOR %x %x,
+038C4074 DLLS.bin WARNING: Max CreatePoint is Exceeded
+038C409C DLLS.bin WARNING: Error Could not find createpoitn node
+038DA67C DLLS.bin PICMENU: maxitems exceeded
+038DA6F4 DLLS.bin PICMENU: tex overflow
+038E53E8 DLLS.bin ERROR: Attention cam given NULL data
+038E9A68 DLLS.bin PATHCAM error: need at least two control points
+03937BEC DLLS.bin WARNING: Screen Overlay already used
+03937C14 DLLS.bin WARNING: Screen Overlay already Killed
+039428D4 DLLS.bin hits: %d %d %d %d %d %d %d %d
+039428F5 DLLS.bin Energy: %d, Skill %d
+03947BEC DLLS.bin routeFindNode error: couldn't find route between %d %d, return val %d
+03951F14 DLLS.bin BADDIE:SnowWorm Unknown message [%d]
+03955078 DLLS.bin BADDIE:GuardClaw Unknown message [%d]
+039596CC DLLS.bin BADDIE:Chuka Unknown message [%d]
+0395C720 DLLS.bin BADDIE:SnowWorm Unknown message [%d]
+03966AA0 DLLS.bin BADDIE:Caictua Unknown message [%d]
+03996A38 DLLS.bin PUSHPULL OBJECT: hitpoint overflow
+03997F78 DLLS.bin OBJ_InvHit: warning INVHIT_TYPE_FULL, t0 deleted
+03997FAC DLLS.bin OBJ_InvHit: warning INVHIT_TYPE_FULL, t0 deleted
+0399EC40 DLLS.bin MAGICPLANT: modelno error
+039B0E44 DLLS.bin Fruit info: nextY %f, acc %f, water acc %f, startHeight %f, yStart %f, obj->fy %f
+039B893C DLLS.bin triggers: unknown trigger object %d.
+039B8964 DLLS.bin TRIGGER: warning Script overflow
+039B8E9C DLLS.bin TRIGGER: warning DLL not loaded
+039C2F88 DLLS.bin TFRAME ANIMATOR: no speed give
+039C41A4 DLLS.bin TEXSCROLL: no scroll table
+039C41C0 DLLS.bin TEXSCROLL: cannot find texture '%d' %f %f %f %d
+039C4910 DLLS.bin TEXSCROLL: no scroll table
+039C492C DLLS.bin TEXSCROLL: cannot find texture '%d'
+039CEB54 DLLS.bin WARNING 3D Tex WALL: exceeded maximumm no of vertices
+039CEC34 DLLS.bin ERROR: Wrong block has been obtained
+039CF054 DLLS.bin TFRAME ANIMATOR: no speed give
+039F49EC DLLS.bin WARNING 3D Tex WALL: exceeded maximumm no of vertices
+039FD9F4 DLLS.bin WARNING: Rope Could Not Find Partner
+03A31FCC DLLS.bin MUSHROOM: trapped!!!!
+03A31FE4 DLLS.bin MUSHROOM ERROR: no node found
+03A37BF0 DLLS.bin THORNTAIL: cannot find a node
+03A37C10 DLLS.bin THORNTAIL: help cannot find a node
+03A37C34 DLLS.bin THORNTAIL: cannot find a node
+03A382B0 DLLS.bin LILY ERROR: no node found
+03A54AE8 DLLS.bin DIM2pathgenerator: Cannot find start node
+03AA854C DLLS.bin WARNING: Bullet Buffer Full
+03AAB3CC DLLS.bin WARNING: BoneDust Buffer Full
+03AAFE88 DLLS.bin BADDIE:SnowWorm Unknown message [%d]
+03AAFEEC DLLS.bin WARNING AVOIDANCE FAILED: Obj Intersection
+03ABAE84 DLLS.bin TREX: state stack overflow
+03ABEEB8 DLLS.bin health:%d
+03ADED54 DLLS.bin WARNING EXPR: This Object has no Head
+03AF6010 DLLS.bin TREX: state stack overflow
+03AF6040 DLLS.bin SHOP KEEPER: Cannot find valid attach node
+03AF882C DLLS.bin ERROR: end of curve reached
+03AFAD48 DLLS.bin SUNBLOCK: invalid grid position
+03AFAD6C DLLS.bin SUNBLOCK: invalid grid position
+03AFAD90 DLLS.bin SUN GRID PUZZLE: Error cannot find given id
+03AFADC0 DLLS.bin SUN GRID PUZZLE: Error cannot find given id
+03AFADF0 DLLS.bin MOONBLOCK: invalid grid position
+03AFAE14 DLLS.bin MOONBLOCK: invalid grid position
+03AFAE38 DLLS.bin MOON GRID PUZZLE: Error cannot find given id
+03AFAE68 DLLS.bin MOON GRID PUZZLE: Error cannot find given id
+03B046C4 DLLS.bin Error: BWalphaanim.c : MAX_SPEEDS exceeded!
+03B1F244 trailer SFX_BigSlabHit1+mathRnd(0,2)
+03B26314 trailer TREX: state stack overflow
+03B26384 trailer SHOP KEEPER: Cannot find valid attach node
+03B28EF8 trailer ERROR: end of curve reached
+03B2B43C trailer SUNBLOCK: invalid grid position
+03B2B460 trailer SUNBLOCK: invalid grid position
+03B2B484 trailer SUN GRID PUZZLE: Error cannot find given id
+03B2B4B4 trailer SUN GRID PUZZLE: Error cannot find given id
+03B2B4E4 trailer MOONBLOCK: invalid grid position
+03B2B508 trailer MOONBLOCK: invalid grid position
+03B2B52C trailer MOON GRID PUZZLE: Error cannot find given id
+03B2B55C trailer MOON GRID PUZZLE: Error cannot find given id
+03B35768 trailer Error: BWalphaanim.c : MAX_SPEEDS exceeded!
+03B3CF14 trailer DDDDDPDD(((D

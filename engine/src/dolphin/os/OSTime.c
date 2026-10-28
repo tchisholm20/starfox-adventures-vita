@@ -1,0 +1,36 @@
+
+#include "dolphin/os/__os.h"
+
+asm OSTime OSGetTime(void) {
+    nofralloc
+
+    mftbu r3
+    mftb r4
+
+    // Check for possible carry from TBL to TBU
+    mftbu r5
+    cmpw r3, r5
+    bne OSGetTime
+
+    blr
+}
+
+asm OSTick OSGetTick(void){
+    nofralloc
+
+    mftb r3
+    blr
+}
+
+OSTime __OSGetSystemTime() {
+    BOOL enabled;
+    OSTime* timeAdjustAddr;
+    OSTime result;
+
+    timeAdjustAddr = __OSSystemTime;
+    enabled = OSDisableInterrupts();
+
+    result = OSGetTime() + *timeAdjustAddr;
+    OSRestoreInterrupts(enabled);
+    return result;
+}

@@ -1,0 +1,422 @@
+import copy
+import struct
+import unittest
+
+from tricky_backend_ir import (
+    capture_snapshot, decode, describe, emitted_instructions, immediate_commoning, instruction_history,
+    operand, validate_alignment, validate_snapshot,
+)
+
+
+def reg(number, flags=2, register_class=4):
+    return struct.pack("<BBHII", 0, register_class, flags, number, 0)
+
+
+def immediate(value):
+    return struct.pack("<BBi6x", 2, 0, value)
+
+
+def fixture():
+    """Two blocks: li r7,0; fallthrough branch; mr r4,r7; blr."""
+    def instruction(address, owner, previous, following, opcode, args, line):
+        raw = b"".join(args)
+        return {"address": address, "words": [following, previous, owner, 0, 0, 0, 0, line,
+                                               opcode | (len(args) << 16)] + list(struct.unpack("<" + "I" * (len(raw) // 4), raw))}
+
+    load = instruction(0x1000, 0x100, 0, 0x1100, 0x89, [reg(7), immediate(0)], 42)
+    branch = instruction(0x1100, 0x100, 0x1000, 0, 0, [struct.pack("<BBI6x", 4, 0, 0x300)], 42)
+    move = instruction(0x1200, 0x200, 0, 0x1300, 0x8B, [reg(4), reg(7, 1)], 0xFFFFFFFF)
+    ret = instruction(0x1300, 0x200, 0x1200, 0, 0x11, [], 43)
+    return {
+        "name": "test", "stage": "FINAL CODE", "head": 0x100,
+        "blocks": [
+            {"address": 0x100, "words": [0x200, 0, 0, 0, 0, 0x1000, 0x1100, 1, 0, 0, 0x40002], "instructions": [load, branch]},
+            {"address": 0x200, "words": [0, 0x100, 0x300, 0, 0, 0x1200, 0x1300, 2, 0, 0, 0x40002], "instructions": [move, ret]},
+        ],
+        "labels": {"768": [0, 0x200, 0x10001]},
+    }
+
+
+class BackendIRTests(unittest.TestCase):
+    def test_packed_negative_immediate(self):
+        self.assertEqual(operand(struct.unpack("<3I", immediate(-48)))["value"], -48)
+
+    def test_register_flags_and_class(self):
+        value = operand(struct.unpack("<3I", reg(74, 5, 3)))
+        self.assertEqual((value["number"], value["flags"], value["register_class"]), (74, 5, 3))
+
+    def test_register_number_is_a_signed_short(self):
+        words = list(struct.unpack("<3I", reg(74)))
+        words[1] |= 0xABCD0000
+        self.assertEqual(operand(words)["number"], 74)
+        words[1] = 0xABCDFFFF
+        self.assertEqual(operand(words)["number"], -1)
+
+    def test_immediate_commoning_range_is_inclusive(self):
+        instruction = decode(fixture()["blocks"][0]["instructions"][0])
+        for number, eligible in [(42, False), (43, True), (202, True), (203, False)]:
+            instruction["operands"][0]["number"] = number
+            with self.subTest(number=number):
+                self.assertEqual(immediate_commoning(instruction, {"first_register": 43, "last_register": 202}), eligible)
+        self.assertIsNone(immediate_commoning(None, {}))
+        with self.assertRaisesRegex(ValueError, "inverted"):
+            immediate_commoning(instruction, {"first_register": 44, "last_register": 43})
+
+    def test_shifted_immediate_gate_and_invalid_destination(self):
+        instruction = decode(fixture()["blocks"][0]["instructions"][0])
+        instruction["opcode"] = 0x8A
+        self.assertTrue(immediate_commoning(instruction, {"first_register": 7, "last_register": 9}))
+        instruction["operands"][0]["register_class"] = 3
+        with self.assertRaisesRegex(ValueError, "unrecognized immediate destination"):
+            immediate_commoning(instruction, {"first_register": 7, "last_register": 9})
+
+    def test_unknown_operand_remains_opaque(self):
+        self.assertEqual(operand([3, 123, 0]), {"kind": 3, "raw": struct.pack("<3I", 3, 123, 0).hex()})
+
+    def test_fallthrough_branch_is_not_emitted(self):
+        records = emitted_instructions(fixture())
+        self.assertEqual([r["opcode"] for r in records], [0x89, 0x8B, 0x11])
+        self.assertIsNone(records[1]["line"])
+
+    def test_nonfallthrough_branch_is_emitted(self):
+        data = fixture()
+        data["labels"]["768"][1] = 0x100
+        self.assertEqual(len(emitted_instructions(data)), 4)
+
+    def test_branch_over_empty_blocks_is_fallthrough(self):
+        data = fixture()
+        data["blocks"][0]["words"][0] = 0x180
+        data["blocks"][1]["words"][1] = 0x190
+        data["blocks"][1:1] = [
+            {"address": 0x180, "words": [0x190, 0x100, 0, 0, 0, 0, 0, 3, 0, 0, 0], "instructions": []},
+            {"address": 0x190, "words": [0x200, 0x180, 0, 0, 0, 0, 0, 4, 0, 0, 0], "instructions": []},
+        ]
+        self.assertEqual([r["opcode"] for r in emitted_instructions(data)], [0x89, 0x8B, 0x11])
+
+    def test_branch_over_nonempty_block_is_retained(self):
+        data = fixture()
+        data["blocks"][1]["words"][0] = 0x300
+        data["blocks"].append({"address": 0x300,
+                               "words": [0, 0x200, 0, 0, 0, 0, 0, 3, 0, 0, 0], "instructions": []})
+        data["labels"]["768"][1] = 0x300
+        self.assertEqual(len(emitted_instructions(data)), 4)
+
+    def test_missing_final_target_is_rejected(self):
+        data = fixture()
+        data["labels"]["768"][1] = 0
+        with self.assertRaisesRegex(ValueError, "absent basic block"):
+            emitted_instructions(data)
+
+    def test_alignment_checks_real_operand_encoding(self):
+        code = bytes.fromhex("38e00000 7ce43b78 4e800020")
+        asm = ["li r7,0", "mr r4,r7", "blr"]
+        self.assertEqual(len(validate_alignment(fixture(), asm, code)), 3)
+        with self.assertRaisesRegex(ValueError, "operand encoding failed"):
+            validate_alignment(fixture(), asm, bytes.fromhex("38e00000 7ce53b78 4e800020"))
+
+    def test_alignment_rejects_shift_and_unknown_opcode(self):
+        with self.assertRaisesRegex(ValueError, "counts differ"):
+            validate_alignment(fixture(), ["li r7,0"], bytes(4))
+        with self.assertRaisesRegex(ValueError, "opcode alignment"):
+            validate_alignment(fixture(), ["li r7,0", "addi r4,r7,0", "blr"], bytes.fromhex("38e00000 7ce43b78 4e800020"))
+
+    def test_worldplanet_shift_and_condition_register_reads(self):
+        data = fixture()
+        shift = data["blocks"][0]["instructions"][0]["words"]
+        shift[8:] = [0x6D | (3 << 16)] + list(struct.unpack("<9I", reg(0) + reg(0, 1) + reg(3, 1)))
+        condition = data["blocks"][1]["instructions"][0]["words"]
+        condition[8:] = [0x82 | (1 << 16)] + list(struct.unpack("<3I", reg(0)))
+        code = bytes.fromhex("7c001e30 7c000026 4e800020")
+        asm = ["sraw r0,r0,r3", "mfcr r0", "blr"]
+        self.assertEqual(len(validate_alignment(data, asm, code)), 3)
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(data, ["sraw r0,r0,r4", "mfcr r0", "blr"], code)
+
+    def test_alignment_checks_explicit_registers(self):
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(fixture(), ["li r6,0", "mr r4,r7", "blr"], bytes.fromhex("38e00000 7ce43b78 4e800020"))
+
+    def test_effect3_signed_division_encoding(self):
+        data = fixture()
+        division = data["blocks"][0]["instructions"][0]["words"]
+        division[8:] = [0x45 | (3 << 16)] + list(struct.unpack("<9I", reg(0) + reg(0, 1) + reg(3, 1)))
+        asm = ["divw r0,r0,r3", "mr r4,r7", "blr"]
+        code = bytes.fromhex("7c001bd6 7ce43b78 4e800020")
+        self.assertEqual(len(validate_alignment(data, asm, code)), 3)
+        for bit in (0, 6, 10, 11, 16, 21, 26):
+            corrupt = struct.pack(">I", 0x7C001BD6 ^ (1 << bit)) + code[4:]
+            with self.subTest(bit=bit), self.assertRaisesRegex(ValueError, "operand encoding"):
+                validate_alignment(data, asm, corrupt)
+        with self.assertRaisesRegex(ValueError, "opcode alignment"):
+            validate_alignment(data, ["divwu r0,r0,r3", *asm[1:]], code)
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(data, ["divw r0,r3,r0", *asm[1:]], code)
+
+    def test_savegame_mask_and_complement_encodings(self):
+        data = fixture()
+        mask = data["blocks"][0]["instructions"][0]["words"]
+        mask[8:] = [0x56 | (4 << 16)] + list(struct.unpack(
+            "<12I", reg(8) + reg(8, 5) + immediate(1) + reg(0, register_class=1)))
+        complement = data["blocks"][1]["instructions"][0]["words"]
+        complement[8:] = [0x8D | (2 << 16)] + list(struct.unpack("<6I", reg(6) + reg(0, 5)))
+        asm = ["andi. r8,r8,1", "not r6,r0", "blr"]
+        code = bytes.fromhex("71080001 7c0600f8 4e800020")
+        self.assertEqual(len(validate_alignment(data, asm, code)), 3)
+        for offset in (0, 4):
+            for bit in (0, 16, 21, 26):
+                corrupt = bytearray(code)
+                word = int.from_bytes(corrupt[offset:offset + 4], "big") ^ (1 << bit)
+                corrupt[offset:offset + 4] = word.to_bytes(4, "big")
+                with self.subTest(offset=offset, bit=bit), self.assertRaisesRegex(ValueError, "operand encoding"):
+                    validate_alignment(data, asm, corrupt)
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(data, ["andi. r8,r9,1", *asm[1:]], code)
+        with self.assertRaisesRegex(ValueError, "opcode alignment"):
+            validate_alignment(data, ["ori r8,r8,1", *asm[1:]], code)
+        mask[-2] = 1  # andi. always defines CR0.
+        with self.assertRaisesRegex(ValueError, "invalid immediate mask"):
+            validate_alignment(data, asm, code)
+
+    def test_indexed_word_store_checks_all_three_registers(self):
+        data = fixture()
+        store = data["blocks"][0]["instructions"][0]["words"]
+        store[8:] = [0x33 | (3 << 16)] + list(struct.unpack("<9I", reg(31, 1) + reg(3, 1) + reg(29, 1)))
+        code = bytes.fromhex("7fe3e92e 7ce43b78 4e800020")
+        self.assertEqual(len(validate_alignment(data, ["stwx r31,r3,r29", "mr r4,r7", "blr"], code)), 3)
+        for instruction in ("stwx r30,r3,r29", "stwx r31,r4,r29", "stwx r31,r3,r28"):
+            with self.subTest(instruction=instruction), self.assertRaisesRegex(ValueError, "register alignment"):
+                validate_alignment(data, [instruction, "mr r4,r7", "blr"], code)
+        with self.assertRaisesRegex(ValueError, "opcode alignment"):
+            validate_alignment(data, ["stw r31,0(r3)", "mr r4,r7", "blr"], code)
+
+    def test_indexed_paired_single_store_alignment(self):
+        data = fixture()
+        store = data["blocks"][0]["instructions"][0]["words"]
+        args = reg(31, 1, 3) + reg(1, 1) + reg(0, 1) + immediate(0) + immediate(0)
+        store[8:] = [0x199 | (5 << 16)] + list(struct.unpack("<15I", args))
+        code = bytes.fromhex("13e1000e 7ce43b78 4e800020")
+        self.assertEqual(len(validate_alignment(data, ["psq_stx f31,r1,r0,0,0", "mr r4,r7", "blr"], code)), 3)
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(data, ["psq_stx f30,r1,r0,0,0", "mr r4,r7", "blr"], code)
+        with self.assertRaisesRegex(ValueError, "opcode alignment"):
+            validate_alignment(data, ["psq_st f31,0(r1),0,0", "mr r4,r7", "blr"], code)
+
+    def test_indexed_store_encodings(self):
+        cases = [
+            (0x2A, "stbx r4,r3,r0", reg(4, 1), 0, 0x7C8301AE),
+            (0x2E, "sthx r5,r3,r0", reg(5, 1), 0, 0x7CA3032E),
+            (0x33, "stwx r31,r3,r29", reg(31, 1), 29, 0x7FE3E92E),
+            (0x98, "stfsx f1,r3,r0", reg(1, 1, 3), 0, 0x7C23052E),
+        ]
+        for opcode, instruction, source, index, encoding in cases:
+            data = fixture()
+            store = data["blocks"][0]["instructions"][0]["words"]
+            store[8:] = [opcode | (3 << 16)] + list(struct.unpack("<9I", source + reg(3, 1) + reg(index, 1)))
+            asm = [instruction, "mr r4,r7", "blr"]
+            code = struct.pack(">3I", encoding, 0x7CE43B78, 0x4E800020)
+            with self.subTest(opcode=opcode):
+                self.assertEqual(len(validate_alignment(data, asm, code)), 3)
+            for bit in (0, 1, 11, 16, 21, 26):
+                corrupt = struct.pack(">3I", encoding ^ (1 << bit), 0x7CE43B78, 0x4E800020)
+                with self.subTest(opcode=opcode, bit=bit), self.assertRaisesRegex(ValueError, "operand encoding"):
+                    validate_alignment(data, asm, corrupt)
+
+    def test_indexed_store_rejects_invalid_register_class(self):
+        data = fixture()
+        store = data["blocks"][0]["instructions"][0]["words"]
+        store[8:] = [0x98 | (3 << 16)] + list(struct.unpack("<9I", reg(1, 1) + reg(3, 1) + reg(0, 1)))
+        with self.assertRaisesRegex(ValueError, "invalid indexed store operands"):
+            validate_alignment(data, ["stfsx r1,r3,r0", "mr r4,r7", "blr"],
+                               bytes.fromhex("7c23052e 7ce43b78 4e800020"))
+
+    def test_branch_hex_addresses_are_not_float_registers(self):
+        data = fixture()
+        data["blocks"][0]["instructions"][1]["words"][8] = 0x05 | (1 << 16)
+        for address in ("f0", "f13", "f150"):
+            with self.subTest(address=address):
+                asm = ["li r7,0", f"bgt+ {address} <test+0x{address}>", "mr r4,r7", "blr"]
+                self.assertEqual(len(validate_alignment(data, asm, bytes.fromhex("38e00000 41a10008 7ce43b78 4e800020"))), 4)
+
+    def test_branch_cannot_hide_an_ir_float_operand(self):
+        data = fixture()
+        branch = data["blocks"][0]["instructions"][1]["words"]
+        branch[8] = 0x05 | (2 << 16)
+        branch.extend(struct.unpack("<3I", reg(7, 1, 3)))
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(data, ["li r7,0", "bgt+ f7", "mr r4,r7", "blr"],
+                               bytes.fromhex("38e00000 41a10008 7ce43b78 4e800020"))
+
+    def test_symbol_annotation_is_not_a_register_operand(self):
+        asm = ["li r7,0 <f0>", "mr r4,r7", "blr"]
+        self.assertEqual(len(validate_alignment(fixture(), asm, bytes.fromhex("38e00000 7ce43b78 4e800020"))), 3)
+
+    def test_clrrwi_alias_checks_register_operands(self):
+        data = fixture()
+        load = data["blocks"][0]["instructions"][0]["words"]
+        load[8] = 0x67 | (5 << 16)
+        load[9:] = struct.unpack("<15I", reg(7) + reg(8, 1) + immediate(0) + immediate(0) + immediate(27))
+        code = bytes.fromhex("55070036 7ce43b78 4e800020")
+        self.assertEqual(len(validate_alignment(data, ["clrrwi r7,r8,4", "mr r4,r7", "blr"], code)), 3)
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(data, ["clrrwi r7,r9,4", "mr r4,r7", "blr"], code)
+
+    def test_rotate_aliases_check_complete_encoding(self):
+        # Encodings independently assembled with the project's PowerPC binutils.
+        cases = [
+            ("rotlwi r7,r8,3", (3, 0, 31), 0x5507183E),
+            ("rlwinm r7,r8,5,28,3", (5, 28, 3), 0x55072F06),
+            ("clrlwi r7,r8,4", (0, 4, 31), 0x5507013E),
+            ("slwi r7,r8,3", (3, 0, 28), 0x55071838),
+            ("srwi r7,r8,3", (29, 3, 31), 0x5507E8FE),
+        ]
+        for mnemonic, fields, encoding in cases:
+            data = fixture()
+            instruction = data["blocks"][0]["instructions"][0]["words"]
+            instruction[8:] = [0x67 | (5 << 16)] + list(struct.unpack(
+                "<15I", reg(7) + reg(8, 1) + b"".join(immediate(v) for v in fields)))
+            asm = [mnemonic, "mr r4,r7", "blr"]
+            code = struct.pack(">3I", encoding, 0x7CE43B78, 0x4E800020)
+            with self.subTest(mnemonic=mnemonic):
+                self.assertEqual(len(validate_alignment(data, asm, code)), 3)
+                for bit in range(32):
+                    corrupt = struct.pack(">I", encoding ^ (1 << bit)) + code[4:]
+                    with self.assertRaisesRegex(ValueError, "operand encoding"):
+                        validate_alignment(data, asm, corrupt)
+
+    def test_rotate_rejects_invalid_mask_and_shift_fields(self):
+        for field in range(3):
+            for value in (-1, 32):
+                fields = [3, 0, 31]
+                fields[field] = value
+                data = fixture()
+                instruction = data["blocks"][0]["instructions"][0]["words"]
+                instruction[8:] = [0x67 | (5 << 16)] + list(struct.unpack(
+                    "<15I", reg(7) + reg(8, 1) + b"".join(immediate(v) for v in fields)))
+                with self.subTest(field=field, value=value), self.assertRaisesRegex(ValueError, "invalid rotate"):
+                    validate_alignment(data, ["rotlwi r7,r8,3", "mr r4,r7", "blr"],
+                                       bytes.fromhex("5507183e 7ce43b78 4e800020"))
+
+    def test_blur_unsigned_division_encoding(self):
+        data = fixture()
+        division = data["blocks"][0]["instructions"][0]["words"]
+        division[8:] = [0x46 | (3 << 16)] + list(struct.unpack("<9I", reg(25) + reg(0, 1) + reg(5, 1)))
+        asm = ["divwu r25,r0,r5", "mr r4,r7", "blr"]
+        code = bytes.fromhex("7f202b96 7ce43b78 4e800020")
+        self.assertEqual(len(validate_alignment(data, asm, code)), 3)
+        for bit in range(32):
+            corrupt = struct.pack(">I", 0x7F202B96 ^ (1 << bit)) + code[4:]
+            with self.subTest(bit=bit), self.assertRaisesRegex(ValueError, "operand encoding"):
+                validate_alignment(data, asm, corrupt)
+        with self.assertRaisesRegex(ValueError, "opcode alignment"):
+            validate_alignment(data, ["divw r25,r0,r5", *asm[1:]], code)
+        with self.assertRaisesRegex(ValueError, "register alignment"):
+            validate_alignment(data, ["divwu r25,r5,r0", *asm[1:]], code)
+
+    def test_malformed_immediate_cannot_bypass_encoding_check(self):
+        data = fixture()
+        data["blocks"][0]["instructions"][0]["words"][12] = 5
+        with self.assertRaisesRegex(ValueError, "invalid immediate"):
+            validate_alignment(data, ["li r7,0", "mr r4,r7", "blr"], bytes.fromhex("38e00000 7ce43b78 4e800020"))
+
+    def test_symbolic_load_still_checks_opcode_base_and_destination(self):
+        for opcode, mnemonic, encoding in [(0x89, "li", 0x38E01234), (0x8A, "lis", 0x3CE01234)]:
+            data = fixture()
+            load = data["blocks"][0]["instructions"][0]["words"]
+            load[8] = opcode | (2 << 16)
+            load[12:15] = [0x203, 0x12345678, 0]
+            asm = [f"{mnemonic} r7,4660", "mr r4,r7", "blr"]
+            for corruption in (0, 0x10000, 0x200000, 0x4000000):
+                code = struct.pack(">3I", encoding ^ corruption, 0x7CE43B78, 0x4E800020)
+                with self.subTest(opcode=opcode, corruption=corruption):
+                    if corruption:
+                        with self.assertRaisesRegex(ValueError, "operand encoding"):
+                            validate_alignment(data, asm, code)
+                    else:
+                        self.assertEqual(len(validate_alignment(data, asm, code)), 3)
+            load[10] = 39
+            with self.assertRaisesRegex(ValueError, "invalid emitted GPR"):
+                validate_alignment(data, [f"{mnemonic} r39,4660", *asm[1:]], struct.pack(">3I", encoding, 0x7CE43B78, 0x4E800020))
+
+    def test_missing_block_head_label(self):
+        data = fixture()
+        data["blocks"][0]["words"][2] = 1234
+        with self.assertRaisesRegex(ValueError, "missing block-head label"):
+            validate_snapshot(data)
+
+    def test_corrupt_links_counts_and_widths(self):
+        for word, value in [(0, 0), (1, 123), (5, 0), (6, 0), (10, 0)]:
+            data = fixture()
+            data["blocks"][0]["words"][word] = value
+            with self.subTest(word=word), self.assertRaises(ValueError):
+                validate_snapshot(data)
+        for word in (0, 1, 2, 8):
+            data = fixture()
+            data["blocks"][0]["instructions"][0]["words"][word] = 123
+            with self.subTest(instruction_word=word), self.assertRaises(ValueError):
+                validate_snapshot(data)
+
+    def test_duplicate_address_and_cyclic_label(self):
+        data = fixture()
+        data["blocks"][1]["address"] = 0x100
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            validate_snapshot(data)
+        data = fixture()
+        data["labels"]["768"][0] = 768
+        with self.assertRaisesRegex(ValueError, "cyclic label"):
+            validate_snapshot(data)
+
+    def test_nonfinal_stage_cannot_align(self):
+        data = fixture()
+        data["stage"] = "AFTER REGISTER COLORING"
+        with self.assertRaisesRegex(ValueError, "only FINAL CODE"):
+            emitted_instructions(data)
+
+    def test_history_keeps_repeated_stages_and_absence(self):
+        data = fixture()
+        earlier = copy.deepcopy(data)
+        earlier["stage"] = "AFTER COPY PROPAGATION"
+        earlier["blocks"] = []
+        history = instruction_history([earlier, earlier, data], decode(data["blocks"][0]["instructions"][0]))
+        self.assertEqual([r["stage_index"] for r in history], [0, 1, 2])
+        self.assertIsNone(history[0]["record"])
+        self.assertIn("gpr7", describe(history[2]["record"]))
+
+    def memory_fixture(self, data):
+        memory = {}
+        for block in data["blocks"]:
+            for item in [block] + block["instructions"]:
+                raw = struct.pack("<" + "I" * len(item["words"]), *item["words"])
+                memory.update({item["address"] + i: byte for i, byte in enumerate(raw)})
+        for address, words in data["labels"].items():
+            raw = struct.pack("<3I", *words)
+            memory.update({int(address) + i: byte for i, byte in enumerate(raw)})
+        return memory
+
+    def test_capture_reads_only_proven_widths(self):
+        data = fixture()
+        memory = self.memory_fixture(data)
+        def read(address, size):
+            return bytes(memory[address + i] for i in range(size))
+        self.assertEqual(capture_snapshot(read, "test", "FINAL CODE", 0x100), data)
+
+    def test_capture_handles_call_clobber_operand_tail(self):
+        data = fixture()
+        call = data["blocks"][1]["instructions"][1]
+        call["words"][8] = (54 << 16) | 1
+        call["words"].extend(list(struct.unpack("<162I", reg(3, 3) * 54)))
+        memory = self.memory_fixture(data)
+        captured = capture_snapshot(lambda a, n: bytes(memory[a + i] for i in range(n)), "test", "FINAL CODE", 0x100)
+        self.assertEqual(len(decode(captured["blocks"][1]["instructions"][1])["operands"]), 54)
+
+    def test_capture_rejects_block_cycle_and_short_read(self):
+        data = fixture()
+        data["blocks"][1]["words"][0] = 0x100
+        memory = self.memory_fixture(data)
+        with self.assertRaisesRegex(ValueError, "cyclic"):
+            capture_snapshot(lambda a, n: bytes(memory[a + i] for i in range(n)), "test", "FINAL CODE", 0x100)
+        with self.assertRaisesRegex(ValueError, "short IR"):
+            capture_snapshot(lambda a, n: b"", "test", "FINAL CODE", 0x100)
+
+
+if __name__ == "__main__":
+    unittest.main()

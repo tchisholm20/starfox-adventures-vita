@@ -1,0 +1,394 @@
+# NOTE: All paths in this file can utilize decomp-toolkit's VFS (virtual file system).
+# This allows you to directly reference files inside of containers (disc images, .arc, etc.).
+# Files compressed with Yaz0 (SZS), Yay0 (SZP) are automatically decompressed.
+# Files compressed with NLZSS (Nintendo LZSS) can use a `:nlzss` suffix to decompress.
+# See https://github.com/encounter/decomp-toolkit#vfs-ls for more information on the VFS.
+
+game_name: Star Fox Adventures (USA)
+
+# (optional) Main module name. Defaults to "main".
+name: main
+
+# Retain the priority-sort table even though code addresses it through the
+# containing vidListNodes storage rather than by this symbol directly.
+force_active:
+  # shader.c reaches these objects through enclosing storage or keeps them
+  # without a direct relocation; the retail link retains their full extents.
+  - sShaderObjLoadMessages
+  - gLightmapDeferredObjects
+  - gMapCellRenderState
+  # Unreferenced zero retail keeps in the title screen init pool.
+  - gTitleScreenInitUnusedZero
+  # Retail retains this unreferenced ObjSeq API entry (40 bytes).
+  - ObjSeq_SetCameraTransformOverride
+  # Retain the initialized zero word before the default color.
+  - lbl_803DB744
+  # Unreferenced initialized words retained by retail in gametext_data.c.
+  # Dropping them shifts the following small-data globals despite exact objdiff.
+  - lbl_803DB3DC
+  - lbl_803DB3E4
+  - lbl_803DB404
+  # Retain the version/reset metadata previously used as a diagnostic address base.
+  - sGameLoopResetMessages
+  # GPU error handlers reach these strings through offsets from the boot
+  # texture/FIFO base, so their individual symbols have no direct relocations.
+  - sGpuHangSuspectedMessage
+  - sGpuHangStatusFormat
+  - sGpuHangXfStallMessage
+  - sGpuHangUnterminatedMessage
+  - sGpuHangIllegalInstructionMessage
+  - sGpuHangWaitingMessage
+  - sGpuHangUnknownMessage
+  - sGpuHangXfStallLog
+  - sGpuHangUnterminatedLog
+  - sGpuHangIllegalInstructionLog
+  - sGpuHangWaitingLog
+  - sGpuHangUnknownLog
+  - voicePrioritySortLinks
+  # dlls/objects/599_DR_EarthWar/DR_EarthWar.c: the retail link retained these
+  # two unreferenced .data tables that follow gDREarthWarriorRowIndices;
+  # dropping them would shorten .data and shift every later .data address.
+  - lbl_803352D0
+  - lbl_80335310
+  # dlls/engine/21/21.c: the retail link retained this unreferenced .sdata2
+  # zero atom at the tail of the pool; dropping it would shorten the pool and
+  # shift every later SDA2 reference.
+  - lbl_803E06C4
+  # main/objprint_dolphin.c: the retail link retained these two unreferenced
+  # .sbss tail words after gObjSelectedLights; dropping them would shorten the
+  # section and shift every later .sbss address.
+  - lbl_803DCC68
+  - lbl_803DCC6C
+  # dlls/engine/66/66.c: the retail link retained this unreferenced .sbss tail
+  # word; dropping it would shorten the section and shift every later .sbss
+  # address.
+  - lbl_803DD534
+  # dlls/engine/69/69.c: same unreferenced .sbss tail word.
+  - lbl_803DD544
+  # dlls/engine/78/78.c: same unreferenced .sbss tail word.
+  - lbl_803DD58C
+  # SB_Galleon.c: the retail link retained this unreferenced .sbss tail word.
+  - sSbGalleonUnused0
+  # DBstealerwo.c: the retail link retained the worm command-name table even
+  # though nothing references it by name; dropping it would shorten .data and
+  # shift every later .data address.
+  - gDbStealerwormCommandNames
+  # 597.c: the retail link retained the SnowBike race gamebit pairs, which
+  # SnowBike_init reaches through the path setup table base rather than by
+  # name; dropping them would shorten .data and shift every later .data address.
+  - gSnowBikeRaceGameBits
+  # SHthorntail.c: the retail link retained the per-state and talk-sequence
+  # tables that SHthorntail_update reaches through the linked-ident table base
+  # rather than by name; dropping them would shorten .data and shift every
+  # later .data address.
+  - gSHthorntailHitReactEntries
+  - gSHthorntailAsleepHitReactEntries
+  - gSHthorntailStateMoveIds
+  - gSHthorntailStateMoveStepScales
+  - gSHthorntailStateFlags
+  - gSHthorntailStatePrimaryEventSfx
+  - gSHthorntailStateSecondaryEventSfx
+  - gSHthorntailHerdAct1TalkSeqVariants
+  - gSHthorntailHerdAct2ClearTalkSeqVariants
+  - gSHthorntailHerdAct2SetTalkSeqVariants
+  - gSHthorntailHerdAct3ClearTalkSeqVariants
+  - gSHthorntailHerdAct3SetTalkSeqVariants
+  - gSHthorntailHerdAct5ClearTalkSeqVariants
+  # BossDrakor.c: the retail link retained this unreferenced .sdata tail atom.
+  - lbl_803DC19C
+  # DIMSnowHorn.c: the retail link retained this unreferenced .sdata2 zero atom
+  # at the tail of the pool.
+  - gDIMSnowHorn1ZeroOffset
+  # maketex.c: the retail link retained the memory-card banner asset name
+  # table and the .sdata tail atom even though nothing references them by
+  # name; dropping them would shorten .data and shift every later address.
+  - gMemoryCardBannerAssetNames
+  - lbl_803DB70C
+  # dll_012B_fxemit.c: the retail link retained this unreferenced .sdata2 zero
+  # atom; dropping it would shorten the pool and shift later SDA2 references.
+  - lbl_803E3E44
+  # gcrobotpatrol.c: the retail link retained this unreferenced .sdata2 zero
+  # atom; dropping it would shorten the pool and shift the mikaladon SDA2
+  # references that follow it.
+  - gGcRobotPatrolZero
+  # objlib.c: the retail link retained this unreferenced .sdata2 zero atom
+  # between the nearest-object search and the hit-cooldown pool run; dropping
+  # it would shorten the pool and shift every later SDA2 reference.
+  - gObjLibZero
+  # WispBaddie.c: the seq-driver TUs reach these per-family scalar tables
+  # only through the gBaddieMoveProgressTable base (+0x152C/+0x1538), so no
+  # relocation references them by name; dropping them would shorten .data and
+  # shift every later .data address.
+  - gBaddieEventDelayRanges
+  - gBaddieFamilySpeedScales
+  # aram_data.c: the retail link retained this unreferenced .bss block;
+  # dropping it would shorten the section and shift every later .bss address.
+  - lbl_803D4868
+  # picmenu.c: the retail link retained the thread message buffers and the
+  # video-decode stack even though live code reaches them only through the
+  # surrounding thread-area base pointers; dropping them would shorten .bss
+  # and shift every later .bss/.sdata address.
+  - gPicMenuReadedBuffer2Messages
+  - gPicMenuReadedBufferMessages
+  - gPicMenuFreeReadBufferMessages
+  - gPicMenuVideoDecodeThreadStack
+  # gameloop.c: the retail link retained this uncalled function (its jumptable
+  # and the .sbss word only it reads come along via its own references);
+  # dropping it would shorten .text and shift every later section.
+  - cardShowMessage
+  # audio_stream.c: the looped-object-sound table is reached through the
+  # gSfxLoopedObjectSoundFlags base, so no relocation names the id or object
+  # halves; dropping them would shorten .bss and shift every later address.
+  - gSfxLoopedObjectSoundIds
+  - gSfxLoopedObjectSoundObjects
+  # intersect_surfacesfx.c: the retail link retained this uncalled function
+  # (its own switch jumptable is the only thing that names it); dropping it
+  # would shorten .text and shift every later section.
+  - surfaceSfxGetRecord
+  # intersect.c: the retail link retained this unreferenced .sbss word;
+  # dropping it would shorten the section and shift every later .sbss address.
+  - sIntersectUnused0
+  # audio.c: the retail link retained the unreferenced .sdata atom and the two
+  # .sbss words that no relocation names; dropping them would shorten those
+  # sections and shift every later .sdata/.sbss address.
+  - lbl_803DB1EC
+  - sAudioUnused0
+  - sAudioUnused1
+  # dlls/engine/53/53.c: retain the unreferenced .sdata word between the
+  # info-start slot and texture IDs; retail keeps it and the following
+  # texture IDs and format strings depend on its four-byte footprint.
+  - lbl_803DBA00
+  # dlls/engine/5/5.c: retain the unused final .sbss word and the retail
+  # 60-byte .data color table when linking the complete sky TU from source.
+  - sSkyUnusedD
+  - sSkyUnusedColors
+  # Placeholders for retail objects the carve leaves unnamed, in units that are
+  # still NonMatching. Nothing references them, so mwld would dead-strip them
+  # the moment their unit is linked from our object, shortening .sbss/.sdata and
+  # moving _SDA_BASE_ for every TU. Arming them now keeps that flip cheap.
+  # dlls/engine/71/71.c
+  - lbl_803DD564
+  # dlls/engine/68/68.c
+  - lbl_803DD54C
+  # dlls/engine/2/2.c
+  - lbl_803DB74C
+  # main/voxmaps.c
+  - lbl_803DC8E4
+  # main/pi_dolphin.c
+  - sPiUnused0
+  - sPiUnused1
+  - sPiUnused2
+  - sPiUnused3
+  # dlls/objects/609_DR_LaserCan/DR_LaserCan.c
+  - lbl_803DDD6C
+  # dlls/objects/195_Player/player.c
+  - lbl_803DE4BC
+  # dlls/objects/454_DIMCannon/DIMCannon.c
+  - lbl_803DDB54
+  # dlls/objects/213_Kaldachom/Kaldachom.c
+  - lbl_803DDA9C
+  # main/shader_dolphin.c
+  - sWarpedRingRotAxes
+  - sWarpedRingIndMtx
+
+# Path to the main.dol file.
+object: sys/main.dol
+
+# (optional) SHA-1 hash of the main.dol file for verification.
+hash: e750e8e894707a52446118a4b84f1b58b677b269
+
+# (optional) If set, all object paths will be relative to this directory.
+# If not set, all object paths will be relative to the root of the project.
+# decomp-toolkit will search the root of this directory for any disc images. (ISO, RVZ, WBFS, etc.)
+# If a disc image is found, decomp-toolkit will fetch all objects from the disc image instead of the filesystem.
+# For example, if `game.iso` exists in the `object_base`, the object path would become the VFS path
+# `orig/GAMEID/game.iso:sys/main.dol`. See information on the VFS above.
+object_base: orig/GSAE01
+
+# (optional) If true, objects will be extracted from a disc image into `object_base`.
+# This allows users to delete the disc image after the initial build to save space.
+# Enabled by default if `object_base` is set.
+extract_objects: true
+
+# (optional) Path to the symbols.txt file.
+# This file will be created if it does not exist.
+# See docs/symbols.md for more information.
+symbols: config/GSAE01/symbols.txt
+
+# (optional) Path to the splits.txt file.
+# This file will be created if it does not exist.
+# See docs/splits.md for more information.
+splits: config/GSAE01/splits.txt
+
+# (optional) Version used to generate `.comment` sections in the split objects.
+# If not specified, no `.comment` sections will be generated.
+# See docs/comment_section.md for more information.
+# Known versions:
+# 8 - CodeWarrior for GameCube 1.0+
+# 10 - CodeWarrior for GameCube 1.3.2+
+# 11 - CodeWarrior for GameCube 2.7+
+# 14 - CodeWarrior for GameCube 3.0a3+
+mw_comment_version: 11
+
+# (optional) When enabled, function boundary analysis will be skipped.
+# Only valid _after_ initial analysis has been performed and
+# the symbols and splits files have been generated. 
+quick_analysis: false
+
+# (optional) When enabled, the analyzer will attempt to detect sizes
+# and data types of objects based on code usage and alignment.
+detect_objects: true
+
+# (optional) When enabled, the analyzer will attempt to detect strings,
+# wide strings, and string tables.
+detect_strings: true
+
+# (optional) Whether to write disassembly to the split output directory.
+# While not used in the build process, the disassembly is useful
+# for reading and usage with other tools, like decomp.me.
+write_asm: true
+
+# (optional) If symbols are _fully_ known (e.g. from a complete map file),
+# this can be set to true to skip most analysis steps, and ensure new
+# symbols are not created by the analyzer.
+# If you're not sure, leave this false.
+symbols_known: false
+
+# (optional) Whether to create `gap_` symbols to prevent the linker from
+# adjusting the alignment / address of symbols.
+# When alignments are fully known (e.g. from a complete map file),
+# this can be set to false.
+fill_gaps: true
+
+# (optional) By default, emitted objects will "export" all symbols (force active).
+# This is useful to prevent the linker from removing any symbols.
+# Individual symbols can be excluded using `noexport` in the symbols file.
+export_all: true
+
+# (optional) Scrub uninitialized data from the extab section.
+# Certain extab acctions contain uninitialized data from the compiler.
+# Affected games can use `dtk extab clean in.dol out.dol` to get a DOL with
+# the uninitialized data zeroed out. When targeting a cleaned DOL hash,
+# this option can be set to true to scrub the uninitialized data from 
+# the extab section in the split objects.
+#
+# Alternatively, you can set extab_padding on any affected objects in
+# configure.py, in order to exactly match the original DOL.
+clean_extab: false
+
+# Effect behavior flags can resemble code addresses. Scope recovered cases to
+# their literal instruction sites so real references to those addresses survive.
+# The remaining legacy target blocks below still cover unaudited cases.
+block_relocations:
+- target: 0x80380209
+  end: 0x8038020A
+- target: 0x80100100
+  end: 0x80100104
+- target: 0x80080200
+  end: 0x80080204
+- target: 0x80080208
+  end: 0x80080214
+- target: 0x80080610
+  end: 0x80080614
+- target: 0x80080404
+  end: 0x80080408
+- target: 0x800C0100
+  end: 0x800C0104
+- target: 0x80008000
+  end: 0x80008004
+# Effect1_spawnObject: 0x80080108
+- source: 0x800B02FC
+  end: 0x800B0304
+# Effect1_spawnObject: 0x80080110
+- source: 0x800B0A10
+  end: 0x800B0A18
+# Effect2_spawnObject: 0x80080100
+- source: 0x800B434C
+  end: 0x800B4354
+# Effect3_spawnObject: 0x80080110
+- source: 0x800B83D8
+  end: 0x800B83E0
+# Effect4_spawnObject: 0x80080112
+- source: 0x800B978C
+  end: 0x800B9794
+# Effect4_spawnObject: 0x80080112
+- source: 0x800B987C
+  end: 0x800B9884
+# Effect4_spawnObject: 0x80180104
+- source: 0x800BB614
+  end: 0x800BB61C
+# Effect5_spawnObject: 0x80080118
+- source: 0x800BC9D0
+  end: 0x800BC9D8
+# Effect5_spawnObject: 0x80080118
+- source: 0x800BCC08
+  end: 0x800BCC10
+# Effect5_spawnObject: 0x80180100
+- source: 0x800BD1F4
+  end: 0x800BD1FC
+# Effect6_spawnObject: 0x80180200
+- source: 0x800BD95C
+  end: 0x800BD964
+# Effect7_spawnObject: 0x80180100
+- source: 0x800BE6BC
+  end: 0x800BE6C4
+# Effect7_spawnObject: 0x80080100
+- source: 0x800BF360
+  end: 0x800BF368
+# Effect7_spawnObject: 0x80180200
+- source: 0x800BF6C0
+  end: 0x800BF6C8
+# Effect7_spawnObject: 0x80180210
+- source: 0x800BF72C
+  end: 0x800BF734
+# Effect8_spawnObject: 0x80080100
+- source: 0x800C0F78
+  end: 0x800C0F80
+# Effect9_spawnObject: 0x80180100
+- source: 0x800C141C
+  end: 0x800C1424
+# Effect9_spawnObject: 0x80180108
+- source: 0x800C1B40
+  end: 0x800C1B48
+# Effect12_spawnObject: 0x80180200
+- source: 0x800C5EE8
+  end: 0x800C5EF0
+# Effect14_spawnObject: 0x80180208
+- source: 0x800C77AC
+  end: 0x800C77B4
+# Effect16_spawnObject: 0x80180214
+- source: 0x800C81FC
+  end: 0x800C8204
+# Effect16_spawnObject: 0x80180214
+- source: 0x800C82A0
+  end: 0x800C82A8
+# Effect16_spawnObject: 0x80180200
+- source: 0x800C85DC
+  end: 0x800C85E4
+# Effect17_spawnObject: 0x80180200
+- source: 0x800CAB68
+  end: 0x800CAB70
+# Effect18_spawnObject: 0x80180100
+- source: 0x800CC740
+  end: 0x800CC748
+# Effect18_spawnObject: 0x80180200
+- source: 0x800CC9C0
+  end: 0x800CC9C8
+# Effect20_spawnObject: 0x80080100
+- source: 0x800D3224
+  end: 0x800D322C
+# Effect20_spawnObject: 0x80080100
+- source: 0x800D3434
+  end: 0x800D343C
+# Effect20_spawnObject: 0x80180200
+- source: 0x800D4558
+  end: 0x800D4560
+
+# Embedded copyrighted asset: the boot / loading-screen texture set (0x40000). dtk
+# extracts its bytes from the user's own disc into gitignored build/ at split time and
+# generates a C byte-array include; src/main/boot_logo.c #includes it. Nothing
+# copyrighted is committed. See docs/orig/embedded_assets.md.
+extract:
+- symbol: gLoadingScreenTextures
+  binary: gLoadingScreenTextures.bin
+  header: gLoadingScreenTextures.inc

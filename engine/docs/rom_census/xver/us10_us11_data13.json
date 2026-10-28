@@ -1,0 +1,75 @@
+{
+ "va": "US10",
+ "vb": "US11",
+ "section": ".sdata",
+ "norm": "data",
+ "addr_a": 2151526880,
+ "addr_b": 2151530048,
+ "regions": [
+  {
+   "kind": "INSERT",
+   "a_start": 2151527296,
+   "a_end": 2151527296,
+   "b_start": 2151530464,
+   "b_end": 2151530496,
+   "a_len": 0,
+   "b_len": 32,
+   "unit": "main/textrender.c",
+   "unit_end": "main/textrender.c",
+   "sym": "sJpDiscErrorBottomSpacerLine+0x0",
+   "sym_end": "sJpDiscErrorBottomSpacerLine+0x0"
+  },
+  {
+   "kind": "DELETE",
+   "a_start": 2151527328,
+   "a_end": 2151527360,
+   "b_start": 2151530528,
+   "b_end": 2151530528,
+   "a_len": 32,
+   "b_len": 0,
+   "unit": "main/textrender.c",
+   "unit_end": "main/textrender.c",
+   "sym": "sJpDiscLoadingMessageLines+0x0",
+   "sym_end": "sWrongDiscSpacerLine+0x0"
+  },
+  {
+   "kind": "RESIZE",
+   "a_start": 2151528996,
+   "a_end": 2151529000,
+   "b_start": 2151532164,
+   "b_end": 2151532176,
+   "a_len": 4,
+   "b_len": 12,
+   "unit": "dlls/engine/53/53.c",
+   "unit_end": "dlls/engine/53/53.c",
+   "sym": "sFrontendPercentFormat+0x0",
+   "sym_end": "sFrontendPercentFormat+0x0"
+  },
+  {
+   "kind": "REPLACE",
+   "a_start": 2151529468,
+   "a_end": 2151529476,
+   "b_start": 2151532644,
+   "b_end": 2151532652,
+   "a_len": 8,
+   "b_len": 8,
+   "unit": "dlls/engine/65/65.c",
+   "unit_end": "dlls/engine/65/65.c",
+   "sym": "gWarpStoneUiTextureX+0x0",
+   "sym_end": "gWarpStoneUiTextureY+0x0"
+  },
+  {
+   "kind": "INSERT",
+   "a_start": 2151532448,
+   "a_end": 2151532448,
+   "b_start": 2151535624,
+   "b_end": 2151535648,
+   "a_len": 0,
+   "b_len": 24,
+   "unit": "?",
+   "unit_end": "?",
+   "sym": "gDRCloudRunnerHeadingAngleOffset+0x4",
+   "sym_end": "gDRCloudRunnerHeadingAngleOffset+0x4"
+  }
+ ]
+}

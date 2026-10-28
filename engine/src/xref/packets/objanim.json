@@ -1,0 +1,79 @@
+{
+  "key": "objanim",
+  "labels": [
+    "objanim.c"
+  ],
+  "categories": [
+    "source"
+  ],
+  "direct_xref_count": 3,
+  "direct_function_count": 3,
+  "source_string_count": 1,
+  "orig": {
+    "root_file_count": 0,
+    "root_files": [],
+    "nested_file_count": 0,
+    "nested_files": [],
+    "named_directory_count": 0,
+    "named_directories": [],
+    "root_romlist_count": 0,
+    "root_romlists": []
+  },
+  "family_hint": null,
+  "map_hints": [],
+  "functions": [
+    {
+      "function_start": "0x8002EB54",
+      "function_name": "ObjAnim_SetBlendMove",
+      "xrefs": [
+        {
+          "xref_address": "0x8002EC00",
+          "pair_address": "0x8002EC04",
+          "target_address": "0x802CAD50",
+          "target_text": "<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d",
+          "pair_kind": "lis/addi",
+          "function_name": "ObjAnim_SetBlendMove"
+        }
+      ]
+    },
+    {
+      "function_start": "0x8002F23C",
+      "function_name": "Object_ObjAnimSetMove",
+      "xrefs": [
+        {
+          "xref_address": "0x8002F3B0",
+          "pair_address": "0x8002F3B4",
+          "target_address": "0x802CAD50",
+          "target_text": "<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d",
+          "pair_kind": "lis/addi",
+          "function_name": "Object_ObjAnimSetMove"
+        }
+      ]
+    },
+    {
+      "function_start": "0x80030334",
+      "function_name": "ObjAnim_SetCurrentMove",
+      "xrefs": [
+        {
+          "xref_address": "0x80030510",
+          "pair_address": "0x80030514",
+          "target_address": "0x802CAD50",
+          "target_text": "<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d",
+          "pair_kind": "lis/addi",
+          "function_name": "ObjAnim_SetCurrentMove"
+        }
+      ]
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x802CAD50",
+      "text": "<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d",
+      "tags": [
+        "source",
+        "warning"
+      ]
+    }
+  ],
+  "neighbor_strings": []
+}

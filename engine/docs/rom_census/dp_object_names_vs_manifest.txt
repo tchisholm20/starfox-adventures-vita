@@ -1,0 +1,1059 @@
+# DP OBJECTS.bin names (ROM-embedded, 15-char field) vs SFA dll_naming_manifest retail names (11-char field)
+# SFA named rows: 1050   DP objects: 1269
+# exact: 191  dp-extends-truncation: 239  no-dp-match: 620
+
+== DP EXTENDS SFA 11-CHAR TRUNCATION (dll, sfa_name, sfa_status, dp_candidates) ==
+0x0C6 AnimSnowCla COMPLETE -> animsnowclaw
+0x0C6 KT_AnimSpel COMPLETE -> kt_animspellsto
+0x0C6 AnimGuardCl COMPLETE -> animguardclaw
+0x0C6 CFPrisonCag COMPLETE -> cfprisoncage
+0x0C6 CFAnimSnowB COMPLETE -> cfanimsnowbike
+0x0C6 CFPowerDoor COMPLETE -> cfpowerdoor1;cfpowerdoor2;cfpowerdoor3;cfpowerdoor4
+0x0C6 CFPowerCrys COMPLETE -> cfpowercrystal1;cfpowercrystal2;cfpowercrystal3;cfpowercrystal_
+0x0C6 CF_RockPiec COMPLETE -> cf_rockpiece
+0x0C6 CFAnimPower COMPLETE -> cfanimpowerroom
+0x0C6 CFPowerRoom COMPLETE -> cfpowerroomkey;cfpowerroomkeya
+0x0C6 AnimSpellst COMPLETE -> animspellstone
+0x0C6 AnimKingEar COMPLETE -> animkingearthwa
+0x0C6 WCAnimSilve COMPLETE -> wcanimsilvertoo
+0x0C6 WCAnimGoldT COMPLETE -> wcanimgoldtooth
+0x0C6 WCAnimSunSt COMPLETE -> wcanimsunstone
+0x0C6 WCAnimMoonS COMPLETE -> wcanimmoonstone
+0x0C6 DIMafterbos COMPLETE -> dimafterbossrub
+0x0C6 DIMBridgeCo COMPLETE -> dimbridgecog1;dimbridgecog2;dimbridgecog3;dimbridgecog4;dimbridgecog5;dimbridgecogani;dimbridgecogcol;dimbridgecogmai
+0x0C6 DIMAlpineRo COMPLETE -> dimalpineroot;dimalpineroot2;dimalpinerootan
+0x0C6 DIMTruthHor COMPLETE -> dimtruthhorn;dimtruthhornpla;dimtruthhornpli
+0x0C6 IMSpaceTrac COMPLETE -> imspacetractor
+0x0C6 MMP_asteroi COMPLETE -> mmp_asteroid_fl;mmp_asteroid_re
+0x0C6 KP_AnimKraz COMPLETE -> kp_animkrazoa
+0x0C6 KP_RedKrazo COMPLETE -> kp_redkrazoa
+0x0C6 SC_animligh COMPLETE -> sc_animlightfoo
+0x0C6 SC_animchie COMPLETE -> sc_animchieflig
+0x0C6 SC_animbaby COMPLETE -> sc_animbabyligh
+0x0C6 VFP_mocklaz COMPLETE -> vfp_mocklazer
+0x0C6 VFP_corepla COMPLETE -> vfp_coreplat;vfp_coreplatani;vfp_coreplathol
+0x0C6 DFP_transla COMPLETE -> dfp_translator
+0x0C6 DFP_BigDoor COMPLETE -> dfp_bigdoor1;dfp_bigdoor2
+0x0C6 WM_BossDrak COMPLETE -> wm_bossdrakor
+0x0C6 WM_Spellboo COMPLETE -> wm_spellbook
+0x0C6 AnimShadowH COMPLETE -> animshadowhunte
+0x0C6 DR_AnimEart COMPLETE -> dr_animearthwar
+0x0C6 DR_LiftLeve COMPLETE -> dr_liftlever
+0x0C6 DR_AnimColl COMPLETE -> dr_animcollpiea
+0x0C6 DR_CloudDoo COMPLETE -> dr_clouddoora;dr_clouddoorb
+0x0C6 DR_HighDoor COMPLETE -> dr_highdoora;dr_highdoorb
+0x0C6 DR_LandSqua COMPLETE -> dr_landsquare
+0x0C6 SB_Cloudrun COMPLETE -> sb_cloudrunner;sb_cloudrunnera
+0x0C6 PortalDoorA COMPLETE -> portaldooranim
+0x0C6 VariableObj COMPLETE -> variableobject
+0x0C6 ExplodingWa COMPLETE -> explodingwall
+0x0C6 SidekickBal COMPLETE -> sidekickball;sidekickballani
+0x0C6 MagicDustSm COMPLETE -> magicdustsmall;magicdustsmalla
+0x0C6 MagicDustMi COMPLETE -> magicdustmid;magicdustmidani
+0x0C6 MagicDustLa COMPLETE -> magicdustlarge;magicdustlargea
+0x0C6 MagicDustHu COMPLETE -> magicdusthuge;magicdusthugean
+0x0D1 TumbleWeedB COMPLETE -> tumbleweedbush1;tumbleweedbush2;tumbleweedbush3
+0x0ED CFPowerCrys GUESSED -> cfpowercrystal1;cfpowercrystal2;cfpowercrystal3;cfpowercrystal_
+0x0ED CFPowerRoom GUESSED -> cfpowerroomkey;cfpowerroomkeya
+0x0ED CFExplosive GUESSED -> cfexplosivekey
+0x0ED DIMBridgeCo GUESSED -> dimbridgecog1;dimbridgecog2;dimbridgecog3;dimbridgecog4;dimbridgecog5;dimbridgecogani;dimbridgecogcol;dimbridgecogmai
+0x0ED DIMShackleK GUESSED -> dimshacklekey
+0x0ED DIMAlpineRo GUESSED -> dimalpineroot;dimalpineroot2;dimalpinerootan
+0x0ED DIMTruthHor GUESSED -> dimtruthhorn;dimtruthhornpla;dimtruthhornpli
+0x0ED DIM2SilverK GUESSED -> dim2silverkey
+0x0ED CCfireCryst GUESSED -> ccfirecrystal;ccfirecrystalin
+0x0EF DIMPushBloc GUESSED -> dimpushblock
+0x0EF DIM2IceBloc GUESSED -> dim2iceblock
+0x0EF CFDungeonBl GUESSED -> cfdungeonblock
+0x0F0 SC_warppoin COMPLETE -> sc_warppoint
+0x0F0 WM_WarpPoin COMPLETE -> wm_warppoint
+0x0F4 VFP_SmallRo GUESSED -> vfp_smallroundd
+0x0F4 VFP_RoundDo GUESSED -> vfp_rounddoor
+0x0F4 DFP_SmallBr GUESSED -> dfp_smallbrownd
+0x0F4 DFP_PerchBa GUESSED -> dfp_perchbase
+0x0F4 DFP_BigDoor GUESSED -> dfp_bigdoor1;dfp_bigdoor2
+0x0F4 DFP_SmallDo GUESSED -> dfp_smalldoor;dfp_smalldoor2
+0x0F4 DFP_SmallTu GUESSED -> dfp_smalltundoo
+0x0FB VFP_PuzzleP CONFIRMED -> vfp_puzzlepad
+0x0FF MagicDustMi CONFIRMED -> magicdustmid;magicdustmidani
+0x0FF MagicDustLa CONFIRMED -> magicdustlarge;magicdustlargea
+0x10A Fall_Ladder CONFIRMED -> fall_ladders
+0x10B FireFlyLant CONFIRMED -> fireflylantern
+0x10C LanternFire CONFIRMED -> lanternfirefly
+0x110 KT_RexDoorT NO-RETAIL-NAME -> kt_rexdoortrex
+0x110 CFPrisonDoo NO-RETAIL-NAME -> cfprisondoor;cfprisondoor2
+0x110 CF_MovDeckD NO-RETAIL-NAME -> cf_movdeckdoor
+0x110 CFTreasureD NO-RETAIL-NAME -> cftreasuredoor
+0x110 CFExplosive NO-RETAIL-NAME -> cfexplosivekey
+0x110 WCSunTemple NO-RETAIL-NAME -> wcsuntempledoor;wcsuntemplelase;wcsuntemplelift;wcsuntemplemain;wcsuntempleswit
+0x110 WCMoonTempl NO-RETAIL-NAME -> wcmoontempledoo;wcmoontemplelif
+0x110 WCGeneralDo NO-RETAIL-NAME -> wcgeneraldoor
+0x110 WCSunInside NO-RETAIL-NAME -> wcsuninsidedoor
+0x110 WCMoonInsid NO-RETAIL-NAME -> wcmooninsidedoo
+0x110 DIM2TrapDoo NO-RETAIL-NAME -> dim2trapdoorlef;dim2trapdoorrig
+0x110 DIM2CellDoo NO-RETAIL-NAME -> dim2celldoorlef;dim2celldoorrig
+0x110 DIM2PuzzleD NO-RETAIL-NAME -> dim2puzzledoor
+0x110 DIM2IceGrat NO-RETAIL-NAME -> dim2icegratedoo
+0x110 IMPrisonGat NO-RETAIL-NAME -> imprisongate
+0x110 KP_SectionD NO-RETAIL-NAME -> kp_sectiondoor
+0x110 SC_mounddoo NO-RETAIL-NAME -> sc_mounddoor
+0x110 SC_settelme NO-RETAIL-NAME -> sc_settelmentdo
+0x110 SC_stepping NO-RETAIL-NAME -> sc_steppingston
+0x110 VFP_Doorloc NO-RETAIL-NAME -> vfp_doorlock
+0x110 DFP_RoundDo NO-RETAIL-NAME -> dfp_rounddoor
+0x110 DR_CloudDoo NO-RETAIL-NAME -> dr_clouddoora;dr_clouddoorb
+0x110 DR_HighDoor NO-RETAIL-NAME -> dr_highdoora;dr_highdoorb
+0x111 CFDoubleSwi NO-RETAIL-NAME -> cfdoubleswitch
+0x111 DIMSnowHorn NO-RETAIL-NAME -> dimsnowhorn1;dimsnowhornshac
+0x111 DIMUseObjec NO-RETAIL-NAME -> dimuseobject
+0x111 DIM2UseObje NO-RETAIL-NAME -> dim2useobject
+0x111 VFP_PitSwit NO-RETAIL-NAME -> vfp_pitswitch
+0x111 VFP_PodiumP NO-RETAIL-NAME -> vfp_podiumpoint
+0x111 VFP_LiftSwi NO-RETAIL-NAME -> vfp_liftswitch
+0x111 DFP_PitSwit NO-RETAIL-NAME -> dfp_pitswitch
+0x111 DFP_ForceSw NO-RETAIL-NAME -> dfp_forceswitch
+0x112 KT_RexSeque NO-RETAIL-NAME -> kt_rexsequences
+0x112 CFGoldenPer NO-RETAIL-NAME -> cfgoldenperch
+0x112 DIMSeqObjec NO-RETAIL-NAME -> dimseqobject
+0x112 DIM2SeqObje NO-RETAIL-NAME -> dim2seqobject
+0x112 DIM2CellLoc NO-RETAIL-NAME -> dim2celllock
+0x112 DIM2StonePi NO-RETAIL-NAME -> dim2stonepillar
+0x112 MMP_seqobje NO-RETAIL-NAME -> mmp_seqobject
+0x112 KP_sequence NO-RETAIL-NAME -> kp_sequences
+0x112 SC_sequence NO-RETAIL-NAME -> sc_sequences
+0x112 DR_TrackDoo NO-RETAIL-NAME -> dr_trackdoor;dr_trackdoor2
+0x119 coldWaterCo CONFIRMED -> coldwatercontro
+0x128 WCApertures COMPLETE -> wcaperturesymbo
+0x128 DIMBridgeCo COMPLETE -> dimbridgecog1;dimbridgecog2;dimbridgecog3;dimbridgecog4;dimbridgecog5;dimbridgecogani;dimbridgecogcol;dimbridgecogmai
+0x128 DIM2TrapDoo COMPLETE -> dim2trapdoorlef;dim2trapdoorrig
+0x12A VFP_PowerBo COMPLETE -> vfp_powerbolt
+0x12A VFP_Spellst COMPLETE -> vfp_spellstone
+0x12A DFP_PowerBo COMPLETE -> dfp_powerbolt
+0x12A DFP_blockwa COMPLETE -> dfp_blockwall
+0x12A WM_NoPassVi COMPLETE -> wm_nopassvine
+0x12A WM_NoPassHo COMPLETE -> wm_nopasshorzvi
+0x12A WM_MoonSeed COMPLETE -> wm_moonseedmoun
+0x12E MMP_defenDo CONFIRMED -> mmp_defendoorl;mmp_defendoorr
+0x12E KP_console_ CONFIRMED -> kp_console_eart;kp_console_fire;kp_console_magi;kp_console_wate
+0x12E VFP_Maindoo CONFIRMED -> vfp_maindoor;vfp_maindoor2
+0x12E DR_IonCanno CONFIRMED -> dr_ioncannon;dr_ioncannonpol
+0x12E DR_TrackDoo CONFIRMED -> dr_trackdoor;dr_trackdoor2
+0x12E DR_CloudCal CONFIRMED -> dr_cloudcallpad
+0x132 WaterFallSp CONFIRMED -> waterfallspray
+0x136 WaveAnimato CONFIRMED -> waveanimator
+0x137 AlphaAnimat CONFIRMED -> alphaanimator
+0x138 GroundAnima CONFIRMED -> groundanimator
+0x13B WallAnimato CONFIRMED -> wallanimator
+0x13D ExplodeAnim CONFIRMED -> explodeanimator
+0x13F TexFrameAni COMPLETE -> texframeanimato
+0x142 FElevContro COMPLETE -> felevcontrol
+0x145 CloudPrison COMPLETE -> cloudprisoncont
+0x146 CloudShipCo COMPLETE -> cloudshipcontro
+0x14B CFMainCryst CONFIRMED -> cfmaincrystal
+0x14E CFPrisonGua CONFIRMED -> cfprisonguard
+0x14F CFPrisonUnc CONFIRMED -> cfprisonuncle
+0x151 CFScalesGal RAW -> cfscalesgalleon
+0x152 CF_ObjCreat RAW -> cf_objcreator
+0x159 CFBlastedWa CONFIRMED -> cfblastedwall
+0x159 CFBlastedTu CONFIRMED -> cfblastedtunnel
+0x15A CFExplodeWa GUESSED -> cfexplodewall
+0x15A CFExplodeFl GUESSED -> cfexplodefloor
+0x15A DRSmallExpl GUESSED -> drsmallexplodep;drsmallexplodew
+0x15B CFForceFiel CONFIRMED -> cfforcefield;cfforcefieldcon
+0x15C CFForceFiel RAW -> cfforcefield;cfforcefieldcon
+0x164 CFLevelCont CONFIRMED -> cflevelcontrol
+0x165 CFRemovalSh RAW -> cfremovalsharpy
+0x166 CFWallPieac NO-RETAIL-NAME -> cfwallpieaces
+0x166 CFExplodePi NO-RETAIL-NAME -> cfexplodepieces
+0x166 DRExplodePi NO-RETAIL-NAME -> drexplodepieces
+0x169 IMIceMounta CONFIRMED -> imicemountain
+0x16E IMAnimSpace CONFIRMED -> imanimspacecraf
+0x16F IMSpaceThru CONFIRMED -> imspacethruster
+0x176 DFSH_Door1S RAW -> dfsh_door1speci
+0x177 DFSH_Door3S NO-RETAIL-NAME -> dfsh_door3speci
+0x179 DFSH_ObjCre COMPLETE -> dfsh_objcreator
+0x17B DFSH_LaserB COMPLETE -> dfsh_laserbeam
+0x17E MMP_levelco COMPLETE -> mmp_levelcontro
+0x180 MMP_asteroi COMPLETE -> mmp_asteroid_fl;mmp_asteroid_re
+0x181 MMP_trenchF COMPLETE -> mmp_trenchfx
+0x182 MMP_moonroc COMPLETE -> mmp_moonrock
+0x183 MMP_gyserve COMPLETE -> mmp_gyservent
+0x186 CCgasventCo COMPLETE -> ccgasventcontro
+0x18B CClevcontro COMPLETE -> cclevcontrol
+0x191 ECSH_Creato COMPLETE -> ecsh_creator
+0x193 GPSH_ObjCre COMPLETE -> gpsh_objcreator
+0x1B5 SC_lightfoo COMPLETE -> sc_lightfoot;sc_lightfootspe
+0x1B5 SC_babyligh COMPLETE -> sc_babylightfoo
+0x1B6 SC_levelcon COMPLETE -> sc_levelcontrol
+0x1B8 SC_totempol COMPLETE -> sc_totempole
+0x1BA SC_totempuz COMPLETE -> sc_totempuzzle
+0x1BB SC_totembon COMPLETE -> sc_totembond
+0x1BC SC_totemstr COMPLETE -> sc_totemstrengt
+0x1C7 DIMLavaSmas COMPLETE -> dimlavasmash
+0x1C8 DIMBridgeCo COMPLETE -> dimbridgecog1;dimbridgecog2;dimbridgecog3;dimbridgecog4;dimbridgecog5;dimbridgecogani;dimbridgecogcol;dimbridgecogmai
+0x1C9 DIMDismount COMPLETE -> dimdismountpoin
+0x1CA DIMExplosio COMPLETE -> dimexplosion
+0x1CC DIMMagicBri COMPLETE -> dimmagicbridge
+0x1CD DIM_LevelCo COMPLETE -> dim_levelcontro
+0x1D1 DIMTruthHor COMPLETE -> dimtruthhorn;dimtruthhornpla;dimtruthhornpli
+0x1D5 DIM2Conveyo COMPLETE -> dim2conveyor
+0x1D7 DIM2SnowBal COMPLETE -> dim2snowball
+0x1D8 DIM2PathGen COMPLETE -> dim2pathgenerat
+0x1D9 DIM2PrisonM COMPLETE -> dim2prisonmammo
+0x1DC DIM2IceFloe COMPLETE -> dim2icefloe1;dim2icefloe2;dim2icefloe5
+0x1DE DIM2LavaCon COMPLETE -> dim2lavacontrol
+0x1E2 DIM_BossTon COMPLETE -> dim_bosstonsil
+0x1E5 DIM_BossSpi COMPLETE -> dim_bossspit
+0x1E6 DIMbosscrac COMPLETE -> dimbosscrackpar
+0x1E9 SB_Propelle COMPLETE -> sb_propeller
+0x1EE SB_CannonBa COMPLETE -> sb_cannonball
+0x1EF SB_CloudBal COMPLETE -> sb_cloudball
+0x1F7 SB_ShipGunB COMPLETE -> sb_shipgunbroke
+0x1F9 WM_ObjCreat COMPLETE -> wm_objcreator
+0x20A WM_GeneralS COMPLETE -> wm_generalscale
+0x216 VFP_LevelCo COMPLETE -> vfp_levelcontro
+0x217 VFP_ObjCrea COMPLETE -> vfp_objcreator
+0x218 VFP_MiniFir COMPLETE -> vfp_minifire
+0x223 VFP_corepla COMPLETE -> vfp_coreplat;vfp_coreplatani;vfp_coreplathol
+0x225 VFP_flamepo COMPLETE -> vfp_flamepoint
+0x226 VFP_lavapoo COMPLETE -> vfp_lavapool
+0x227 VFP_lavasta COMPLETE -> vfp_lavastar
+0x229 DFP_LevelCo COMPLETE -> dfp_levelcontro
+0x22A DFP_ObjCrea COMPLETE -> dfp_objcreator
+0x22D DFP_seqpoin COMPLETE -> dfp_seqpoint
+0x22F DFP_floorba COMPLETE -> dfp_floorbar
+0x231 DFP_ForceAw COMPLETE -> dfp_forceaway
+0x232 DFP_RotateP COMPLETE -> dfp_rotatepuzzl
+0x234 DFP_PerchSw COMPLETE -> dfp_perchswitch
+0x235 DFP_TargetB COMPLETE -> dfp_targetblock
+0x236 DFP_LaserBe COMPLETE -> dfp_laserbeam
+0x23A DFP_Platfor COMPLETE -> dfp_platform1
+0x242 DBstealerwo COMPLETE -> dbstealerworm
+0x268 DR_CageCont CONFIRMED -> dr_cagecontrol
+0x27A DR_Collapse RAW -> dr_collapsecont;dr_collapsetube
+0x27C DR_LightBea RAW -> dr_lightbeam
+0x280 DR_CloudPer RAW -> dr_cloudperch
+0x281 DR_EarthCal RAW -> dr_earthcallpad
+0x286 SPShopKeepe RAW -> spshopkeeper
+0x28C WCBouncyCra RAW -> wcbouncycrate
+0x28D WCLevelCont RAW -> wclevelcontrol
+0x28F WCPressureS RAW -> wcpressureswitc
+0x292 WCTrexStatu RAW -> wctrexstatue
+0x295 WCApertureS RAW -> wcaperturesymbo
+0x296 WCTempleDia RAW -> wctempledial
+0x297 WCTempleBri RAW -> wctemplebridge
+
+== EXACT MATCHES (dll, name, status, dp (id,dll_id) list) ==
+0x0C4 Tricky COMPLETE -> [(36, '0x8002')]
+0x0C6 AnimTricky COMPLETE -> [(356, '0x8005')]
+0x0C6 AnimKyte COMPLETE -> [(602, '0x8005')]
+0x0C6 AnimDrakor COMPLETE -> [(1339, '0x8005')]
+0x0C6 steggy COMPLETE -> [(19, '0x8005')]
+0x0C6 Nutter COMPLETE -> [(22, '0x8005')]
+0x0C6 Krazoa COMPLETE -> [(141, '0x8005')]
+0x0C6 AnimSpell COMPLETE -> [(865, '0x8005')]
+0x0C6 CFAnimBaby COMPLETE -> [(181, '0x8005')]
+0x0C6 CFMainDoorB COMPLETE -> [(156, '0x8005')]
+0x0C6 SpaceShip COMPLETE -> [(58, '0x8005')]
+0x0C6 MMP_Krazoa COMPLETE -> [(1313, '0x8005')]
+0x0C6 AnimKrystal COMPLETE -> [(1004, '0x8005')]
+0x0C6 VFP_Door2B COMPLETE -> [(939, '0x8005')]
+0x0C6 Rarelogo COMPLETE -> [(47, '0x8005')]
+0x0C6 N64logo COMPLETE -> [(44, '0x8005')]
+0x0C6 DFSH_Spirit COMPLETE -> [(413, '0x80E2')]
+0x0C6 DFSH_Door2 COMPLETE -> [(419, '0x8005')]
+0x0C6 DFSH_Door3 COMPLETE -> [(420, '0x8005')]
+0x0C6 DFSH_Door4 COMPLETE -> [(421, '0x8005')]
+0x0C6 ECSH_Door2 COMPLETE -> [(444, '0x8005')]
+0x0C6 ECSH_Door3 COMPLETE -> [(445, '0x8005')]
+0x0C6 ECSH_Door4 COMPLETE -> [(446, '0x8005')]
+0x0C6 DB_AnimEgg COMPLETE -> [(858, '0x8005')]
+0x0C6 AnimCamera COMPLETE -> [(30, '0x8005')]
+0x0C6 Override COMPLETE -> [(6, '0x8005')]
+0x0C6 animbubble COMPLETE -> [(1390, '0x8005')]
+0x0C6 AppleAnim COMPLETE -> [(1092, '0x8005')]
+0x0C6 beanAnim COMPLETE -> [(1093, '0x8005')]
+0x0D2 Tumbleweed3 COMPLETE -> [(1210, '0x8012')]
+0x0D4 SkeetlaWall COMPLETE -> [(1197, '0x8020')]
+0x0D9 Pollen COMPLETE -> [(1147, '0x8033')]
+0x0E0 SwarmBaddie CONFIRMED -> [(1443, '0x8025')]
+0x0E1 WispBaddie COMPLETE -> [(1446, '0x8028')]
+0x0E8 Checkpoint4 CONFIRMED -> [(5, '0x803A')]
+0x0E9 Setuppoint COMPLETE -> [(13, '0x803B')]
+0x0EA Sideload COMPLETE -> [(117, '0x803C')]
+0x0EC InfoPoint COMPLETE -> [(21, '0x803E')]
+0x0ED WCSunStone GUESSED -> [(52, '0x803F')]
+0x0ED WCMoonStone GUESSED -> [(53, '0x803F')]
+0x0ED DIM2CellKey GUESSED -> [(388, '0x803F')]
+0x0ED DIM2GoldKey GUESSED -> [(309, '0x803F')]
+0x0ED PadlockKey GUESSED -> [(26, '0x803F')]
+0x0ED GuardPass GUESSED -> [(158, '0x803F')]
+0x0ED Spellstone GUESSED -> [(10, '0x803F')]
+0x0EE EffectBox COMPLETE -> [(55, '0x8040')]
+0x0EF CCboulder GUESSED -> [(1454, '0x8041')]
+0x0EF VFP_Block2 GUESSED -> [(1354, '0x8041')]
+0x0EF DR_Platform GUESSED -> [(945, '0x8228')]
+0x0F1 InvHit COMPLETE -> [(102, '0x8043')]
+0x0F2 iceblast COMPLETE -> [(1260, '0x8044')]
+0x0F3 flameblast COMPLETE -> [(1264, '0x8045')]
+0x0F4 VFP_Door2 GUESSED -> [(936, '0x8046')]
+0x0F4 DFSH_Door1 GUESSED -> [(418, '0x8046')]
+0x0F5 SidekickBall CONFIRMED -> [(274, '0x8047')]
+0x0F6 Area COMPLETE -> [(304, '0x8048')]
+0x0F8 LevelName COMPLETE -> [(343, '0x804B')]
+0x0FE MagicPlant COMPLETE -> [(704, '0x8051')]
+0x100 TrickyWarp COMPLETE -> [(796, '0x8053')]
+0x101 TrickyGuard CONFIRMED -> [(1088, '0x8054')]
+0x103 CurveFish COMPLETE -> [(727, '0x8055')]
+0x108 EndObject COMPLETE -> [(1001, '0x805A')]
+0x10D PortalSpell CONFIRMED -> [(1201, '0x803F')]
+0x10F MMP_Bridge COMPLETE -> [(1340, '0x8061')]
+0x110 CFMainDoorA NO-RETAIL-NAME -> [(155, '0x8062')]
+0x110 WCSlabDoor NO-RETAIL-NAME -> [(1292, '0x8062')]
+0x110 WCBossDoor NO-RETAIL-NAME -> [(1297, '0x8062')]
+0x110 DIMWoodDoor NO-RETAIL-NAME -> [(587, '0x814D')]
+0x110 IMFence NO-RETAIL-NAME -> [(241, '0x8062')]
+0x110 CCclawdoor NO-RETAIL-NAME -> [(757, '0x8062')]
+0x110 KP_FinDoor NO-RETAIL-NAME -> [(1438, '0x8062')]
+0x110 SPDoor NO-RETAIL-NAME -> [(1150, '0x8062')]
+0x111 WCTeethBowl NO-RETAIL-NAME -> [(1277, '0x8063')]
+0x111 DIMLever NO-RETAIL-NAME -> [(552, '0x8063')]
+0x111 DIM2CellKey NO-RETAIL-NAME -> [(388, '0x803F')]
+0x111 MMP_padlock NO-RETAIL-NAME -> [(725, '0x8063')]
+0x112 CFseqobject NO-RETAIL-NAME -> [(189, '0x8064')]
+0x112 WCSeqObject NO-RETAIL-NAME -> [(1285, '0x8064')]
+0x112 DIMBridge NO-RETAIL-NAME -> [(547, '0x8064')]
+0x112 DIM2Mammoth NO-RETAIL-NAME -> [(387, '0x8076')]
+0x112 IMSeqObject NO-RETAIL-NAME -> [(238, '0x8064')]
+0x112 SPSeqObj NO-RETAIL-NAME -> [(1153, '0x8064')]
+0x112 DR_Seqobj NO-RETAIL-NAME -> [(950, '0x8064')]
+0x114 IMMultiSeq COMPLETE -> [(754, '0x8066')]
+0x118 Duster COMPLETE -> [(90, '0x8070')]
+0x120 TrickyGuard CONFIRMED -> [(1088, '0x8054')]
+0x125 curve COMPLETE -> [(110, '0x8073')]
+0x128 DIM2Mammoth COMPLETE -> [(387, '0x8076')]
+0x129 CampFire COMPLETE -> [(120, '0x8079')]
+0x12A DFP_dish COMPLETE -> [(1170, '0x807A')]
+0x12A WM_Walkway1 COMPLETE -> [(659, '0x807A')]
+0x12A WM_Walkway2 COMPLETE -> [(660, '0x807A')]
+0x12A DFSHcol COMPLETE -> [(464, '0x807A')]
+0x12A scalessword COMPLETE -> [(440, '0x807A')]
+0x12A ECSHcol COMPLETE -> [(471, '0x807A')]
+0x12B FXEmit COMPLETE -> [(212, '0x807B')]
+0x12D LFXEmitter COMPLETE -> [(611, '0x8081')]
+0x12E WCSunDoor CONFIRMED -> [(1311, '0x8082')]
+0x12E WCMoonDoor CONFIRMED -> [(1312, '0x8082')]
+0x12E DIM2Torch CONFIRMED -> [(684, '0x8082')]
+0x12E FirePole CONFIRMED -> [(138, '0x807F')]
+0x133 sfxPlayer COMPLETE -> [(645, '0x8039')]
+0x134 texscroll2 COMPLETE -> [(20, '0x808A')]
+0x135 texscroll COMPLETE -> [(15, '0x808B')]
+0x139 HitAnimator CONFIRMED -> [(591, '0x8090')]
+0x13A VisAnimator CONFIRMED -> [(1146, '0x8091')]
+0x13C XYZAnimator CONFIRMED -> [(8, '0x8093')]
+0x143 FEseqobject COMPLETE -> [(246, '0x809B')]
+0x148 CFGuardian COMPLETE -> [(195, '0x80A0')]
+0x14A CFPowerBase CONFIRMED -> [(218, '0x80A2')]
+0x14C CFCloudBaby NO-RETAIL-NAME -> [(228, '0x80A4')]
+0x14D LaserBeam COMPLETE -> [(233, '0x80A5')]
+0x153 CFPerch COMPLETE -> [(287, '0x80AE')]
+0x161 CFTreasRobo RAW -> [(674, '0x80BC')]
+0x162 CFMagicWall CONFIRMED -> [(676, '0x80BD')]
+0x16D IMIcePillar CONFIRMED -> [(705, '0x80CB')]
+0x170 IMSpaceRing CONFIRMED -> [(769, '0x80CE')]
+0x171 IMSpaceRing CONFIRMED -> [(769, '0x80CE')]
+0x175 DFropenode COMPLETE -> [(163, '0x80D3')]
+0x178 DFSH_Shrine CONFIRMED -> [(412, '0x80E0')]
+0x185 CCgasvent COMPLETE -> [(1452, '0x80FE')]
+0x188 CClightfoot COMPLETE -> [(755, '0x80F0')]
+0x18C MMSH_Shrine COMPLETE -> [(428, '0x8101')]
+0x18D MMSH_Scales COMPLETE -> [(434, '0x8102')]
+0x18F ECSH_Shrine COMPLETE -> [(441, '0x8104')]
+0x190 ECSH_Cup COMPLETE -> [(447, '0x8105')]
+0x192 GPSH_Shrine COMPLETE -> [(487, '0x8107')]
+0x194 GPSH_Scene COMPLETE -> [(499, '0x8109')]
+0x195 DBSH_Shrine COMPLETE -> [(514, '0x810C')]
+0x196 DBSH_Symbol COMPLETE -> [(525, '0x810D')]
+0x1BF DIMLavaBall COMPLETE -> [(397, '0x8140')]
+0x1C1 DIMSnowBall COMPLETE -> [(406, '0x8143')]
+0x1C2 DIMSnowBall COMPLETE -> [(406, '0x8143')]
+0x1C4 DIMIceWall COMPLETE -> [(457, '0x8146')]
+0x1CB DIMWoodDoor COMPLETE -> [(587, '0x814D')]
+0x1DD DIM2Icicle COMPLETE -> [(250, '0x8161')]
+0x1E0 DIM_Boss COMPLETE -> [(512, '0x8164')]
+0x1E1 DIM_BossGut COMPLETE -> [(341, '0x8165')]
+0x1E3 DIM_BossGut COMPLETE -> [(341, '0x8165')]
+0x1E4 MAGICMaker COMPLETE -> [(667, '0x8168')]
+0x1E8 SB_Galleon COMPLETE -> [(142, '0x816B')]
+0x1EA SB_ShipHead COMPLETE -> [(247, '0x816E')]
+0x1EB SB_ShipMast COMPLETE -> [(248, '0x816F')]
+0x1EC SB_ShipGun COMPLETE -> [(249, '0x8170')]
+0x1ED SB_FireBall COMPLETE -> [(276, '0x8171')]
+0x1F0 SB_KyteCage COMPLETE -> [(288, '0x8174')]
+0x1F1 SB_SeqDoor COMPLETE -> [(290, '0x8175')]
+0x1F2 SB_CageKyte COMPLETE -> [(289, '0x8176')]
+0x1F3 SB_MiniFire COMPLETE -> [(312, '0x8178')]
+0x20B FireFly COMPLETE -> [(175, '0x807A')]
+0x210 WM_Planets COMPLETE -> [(1377, '0x8195')]
+0x214 WM_TransTop COMPLETE -> [(1388, '0x8199')]
+0x21A VFP_statueb COMPLETE -> [(942, '0x819D')]
+0x21C VFP_Ladders COMPLETE -> [(944, '0x81A0')]
+0x21E VFP_Block1 COMPLETE -> [(953, '0x81A2')]
+0x222 VFPDragHead COMPLETE -> [(962, '0x81A6')]
+0x22B DFP_Torch COMPLETE -> [(1090, '0x81AF')]
+0x230 DFP_wallbar COMPLETE -> [(1160, '0x81B4')]
+0x233 DFP_Statue1 COMPLETE -> [(1175, '0x81B7')]
+0x23D DBPointMum COMPLETE -> [(737, '0x81C1')]
+0x23F DB_egg COMPLETE -> [(735, '0x81C5')]
+0x24D BossDrakor COMPLETE -> [(683, '0x81E8')]
+0x24F KT_RexLevel CONFIRMED -> [(984, '0x81EC')]
+0x250 KT_Rex COMPLETE -> [(985, '0x81ED')]
+0x252 KT_Lazerwall CONFIRMED -> [(992, '0x81EF')]
+0x253 KT_Lazerlight CONFIRMED -> [(995, '0x81F0')]
+0x254 KT_Fallingrocks CONFIRMED -> [(1000, '0x81F1')]
+0x256 DIMSnowHorn1 CONFIRMED -> [(399, '0x81F7')]
+0x257 DR_EarthWarrior CONFIRMED -> [(1046, '0x81F8')]
+0x258 DR_CloudRunner CONFIRMED -> [(1049, '0x81F9')]
+0x259 SB_Cloudrunner CONFIRMED -> [(140, '0x816C')]
+0x25A StaticCamera CONFIRMED -> [(68, '0x81FA')]
+0x25D CRCloudRace CONFIRMED -> [(907, '0x8208')]
+0x25F CRFuelTank COMPLETE -> [(1407, '0x820A')]
+0x261 DR_LaserCannon CONFIRMED -> [(1047, '0x820C')]
+0x265 DR_Creator COMPLETE -> [(1087, '0x8211')]
+0x266 KytesMum COMPLETE -> [(188, '0x8005')]
+0x26A DR_Geezer COMPLETE -> [(1132, '0x8216')]
+0x26B DR_Chimmey COMPLETE -> [(1136, '0x8217')]
+0x26D DR_Vines COMPLETE -> [(1131, '0x8219')]
+0x270 DR_Rock COMPLETE -> [(1158, '0x821C')]
+0x274 DR_pulley COMPLETE -> [(1185, '0x821F')]
+0x275 DR_cradle COMPLETE -> [(1191, '0x8220')]
+0x285 SPShop RAW -> [(1116, '0x822F')]
+0x287 SPScarab RAW -> [(1151, '0x8231')]
+0x288 SPDrape RAW -> [(1155, '0x8232')]
+0x289 SPitembeam RAW -> [(1198, '0x8233')]
+0x28E WCBeacon RAW -> [(1295, '0x823B')]
+0x290 WCPushBlock RAW -> [(1301, '0x823D')]
+0x291 WCTile RAW -> [(1309, '0x823E')]
+0x298 WCFloorTile RAW -> [(81, '0x8246')]
+
+== SFA-NAMED, NO DP COUNTERPART ==
+0x001 camcontrol DOL-RECOVERED
+0x00A expgfx DOL-RECOVERED
+0x014 Hcurves DOL-RECOVERED
+0x034 n_attractmode DOL-RECOVERED
+0x0C3 Player COMPLETE
+0x0C6 AnimatedObj (+AnimDummy COMPLETE
+0x0C6 AnimTrickyB COMPLETE
+0x0C6 staffAnim COMPLETE
+0x0C6 AnimStandar COMPLETE
+0x0C6 animSCweapo COMPLETE
+0x0C6 WBAnim COMPLETE
+0x0C6 AnimSharpcl COMPLETE
+0x0C6 DIMSpellsto COMPLETE
+0x0C6 AnimKytesMu COMPLETE
+0x0C6 CFAnimCloud COMPLETE
+0x0C6 AnimCFGuard COMPLETE
+0x0C6 AnimSpaceCr COMPLETE
+0x0C6 CFSmallPowe COMPLETE
+0x0C6 AnimCFTreas COMPLETE
+0x0C6 AnimRobotPa COMPLETE
+0x0C6 CFBrokenPil COMPLETE
+0x0C6 WCAnimGener COMPLETE
+0x0C6 DIMicefloor COMPLETE
+0x0C6 Blacksquare COMPLETE
+0x0C6 CCOceanDoor COMPLETE
+0x0C6 CCAnimCanno COMPLETE
+0x0C6 CCAnimgoldb COMPLETE
+0x0C6 WORLDcomm COMPLETE
+0x0C6 communicato COMPLETE
+0x0C6 commCube COMPLETE
+0x0C6 commCubeFro COMPLETE
+0x0C6 commRobHead COMPLETE
+0x0C6 commPepperH COMPLETE
+0x0C6 commPeppyHe COMPLETE
+0x0C6 commSlippyH COMPLETE
+0x0C6 commMemoryC COMPLETE
+0x0C6 commQuitObj COMPLETE
+0x0C6 AnimARWArwi COMPLETE
+0x0C6 AnimWhiteSp COMPLETE
+0x0C6 HazeSphere2 COMPLETE
+0x0C6 AnimWhitePl COMPLETE
+0x0C6 AnimConcuss COMPLETE
+0x0C6 WORLDanimpl COMPLETE
+0x0C6 WORLDanimcl COMPLETE
+0x0C6 WORLDanimdr COMPLETE
+0x0C6 WORLDanimwa COMPLETE
+0x0C6 WORLDanimda COMPLETE
+0x0C6 AnimFalco COMPLETE
+0x0C6 Animpeppy COMPLETE
+0x0C6 GF_PepperHe COMPLETE
+0x0C6 GF_planet COMPLETE
+0x0C6 Animrob COMPLETE
+0x0C6 AnimPilotse COMPLETE
+0x0C6 AnimPlanet COMPLETE
+0x0C6 Animspanner COMPLETE
+0x0C6 GF_DoorRigh COMPLETE
+0x0C6 NW_AnimGeys COMPLETE
+0x0C6 NW_AnimBoul COMPLETE
+0x0C6 NW_alpinero COMPLETE
+0x0C6 AnimGoldRoo COMPLETE
+0x0C6 NW_guardian COMPLETE
+0x0C6 NW_animmamm COMPLETE
+0x0C6 SH_AnimMap COMPLETE
+0x0C6 SH_krystalH COMPLETE
+0x0C6 SH_thorntai COMPLETE
+0x0C6 SH_whitemus COMPLETE
+0x0C6 SH_AnimBoul COMPLETE
+0x0C6 AnimSwapGif COMPLETE
+0x0C6 SHAnimBaby COMPLETE
+0x0C6 ScalesBelt COMPLETE
+0x0C6 SC_animmusc COMPLETE
+0x0C6 MMP_Key COMPLETE
+0x0C6 DFPSplstneA COMPLETE
+0x0C6 VFPSplstneA COMPLETE
+0x0C6 WM_Cloudrun COMPLETE
+0x0C6 WM_Krazoa1 COMPLETE
+0x0C6 WM_Krazoa2 COMPLETE
+0x0C6 WM_thorntai COMPLETE
+0x0C6 WM_Door2 COMPLETE
+0x0C6 WM_Door3 COMPLETE
+0x0C6 WM_Door4 COMPLETE
+0x0C6 WM_PlanDoor COMPLETE
+0x0C6 WM_Animcolr COMPLETE
+0x0C6 WM_Animspir COMPLETE
+0x0C6 AnimShadowC COMPLETE
+0x0C6 DBSH_PushCl COMPLETE
+0x0C6 Animscaless COMPLETE
+0x0C6 DBAnimThief COMPLETE
+0x0C6 AnimHightop COMPLETE
+0x0C6 GM_Token COMPLETE
+0x0C6 DR_ShieldIn COMPLETE
+0x0C6 DR_James2Bo COMPLETE
+0x0C6 AnimFox COMPLETE
+0x0C6 AnimFoxLink COMPLETE
+0x0C6 Arwingsteps COMPLETE
+0x0C6 DepthOfFiel COMPLETE
+0x0C6 hologrambas COMPLETE
+0x0C6 hologramhaz COMPLETE
+0x0C6 hazesphere COMPLETE
+0x0C6 RipplePlain COMPLETE
+0x0C6 BlueMushroo COMPLETE
+0x0C6 EnergyEggAn COMPLETE
+0x0C6 RedScarabAn COMPLETE
+0x0C6 GoldScarabA COMPLETE
+0x0C6 BombPlantSp COMPLETE
+0x0C6 animMoonSee COMPLETE
+0x0C6 ARWArwingFo COMPLETE
+0x0C6 ARWBlockerD COMPLETE
+0x0C6 ARWAnimSmal COMPLETE
+0x0C6 ARWAnimBigA COMPLETE
+0x0C6 ARWDarkIceP COMPLETE
+0x0C6 ARWDragonRo COMPLETE
+0x0C6 ARWCloudRun COMPLETE
+0x0C6 ARWWalledCi COMPLETE
+0x0C6 ARWDinoPlan COMPLETE
+0x0C6 ARWAnimBomb COMPLETE
+0x0C6 AnimFish COMPLETE
+0x0C6 WarpCigar COMPLETE
+0x0C6 WarpGasCyli) COMPLETE
+0x0C7 DIM2RoofRub (+CCfireCryst COMPLETE
+0x0C7 AnimGreatfo COMPLETE
+0x0C7 GreenScarab) COMPLETE
+0x0C8 DepthOfFieldPoint COMPLETE
+0x0C9 Baddie (+GuardClaw COMPLETE
+0x0C9 GCRobotPatr COMPLETE
+0x0C9 Vambat COMPLETE
+0x0C9 Firebat COMPLETE
+0x0C9 HagabonMK2 COMPLETE
+0x0C9 Mikaladon COMPLETE
+0x0C9 SpittingEba COMPLETE
+0x0C9 MutatedEba COMPLETE
+0x0C9 snowworm COMPLETE
+0x0C9 snowworm_ba COMPLETE
+0x0C9 Whirlpool COMPLETE
+0x0C9 Rachnop COMPLETE
+0x0C9 PinPon COMPLETE
+0x0C9 WB COMPLETE
+0x0C9 Weevil COMPLETE
+0x0C9 BattleDroid COMPLETE
+0x0C9 Kooshy COMPLETE
+0x0C9 HoodedZyck COMPLETE
+0x0C9 FireCrawler COMPLETE
+0x0C9 RedEye COMPLETE
+0x0C9 ShadowHunte COMPLETE
+0x0C9 SwampStride COMPLETE
+0x0C9 sharpclawSn COMPLETE
+0x0C9 sharpclawGr COMPLETE
+0x0C9 sharpclawSo COMPLETE
+0x0C9 sharpclawCo COMPLETE
+0x0C9 sharpclawAs COMPLETE
+0x0C9 sharpclawSh COMPLETE
+0x0C9 BossGeneral) COMPLETE
+0x0CC ChukChuk COMPLETE
+0x0CD IceBall (+IceBallSmal COMPLETE
+0x0CD ChukaChuck) COMPLETE
+0x0CF CannonClaw (+CannonClawO) COMPLETE
+0x0D0 Grimble COMPLETE
+0x0D2 Tumbleweed1 (+Tumbleweed2 COMPLETE
+0x0D2 Tumbleweed4) COMPLETE
+0x0D5 Kaldachom COMPLETE
+0x0D6 KaldachomMe COMPLETE
+0x0D7 kaldachomspit (+KaldachomSp GUESSED
+0x0D7 FireCrawler) GUESSED
+0x0D8 PinPonSpike CONFIRMED
+0x0DA PollenFragment (+DRHomingMis) CONFIRMED
+0x0DB MikaBomb COMPLETE
+0x0DC MikaBombShadow CONFIRMED
+0x0DD GCbaddieShield CONFIRMED
+0x0DE baddieInterestp CONFIRMED
+0x0DF Hagabon COMPLETE
+0x0E2 staff (+sword) COMPLETE
+0x0E3 fireball (+projball GUESSED
+0x0E3 AnimProjBal) GUESSED
+0x0E4 FlameThrowerspe (+FlameBall CONFIRMED
+0x0E4 BossDarkorF) CONFIRMED
+0x0E5 shield (+fox_shield CONFIRMED
+0x0E5 omni_shield) CONFIRMED
+0x0E6 ReStartMark CONFIRMED
+0x0E7 flammablevine (+CCeyeVines GUESSED
+0x0E7 BurnableVin) GUESSED
+0x0EB siderepel (+siderepelWi) COMPLETE
+0x0ED collectible (+CFCloudCalP GUESSED
+0x0ED CFPickKryst GUESSED
+0x0ED CF_ChestSpe GUESSED
+0x0ED WCGoldTrexT GUESSED
+0x0ED WCSilverTre GUESSED
+0x0ED CCgoldbar GUESSED
+0x0ED NW_SmallSca GUESSED
+0x0ED NW_trickyba GUESSED
+0x0ED NW_alpinero GUESSED
+0x0ED SH_MediumSc GUESSED
+0x0ED SH_LargeSca GUESSED
+0x0ED SH_MMPkey GUESSED
+0x0ED SH_NWkey GUESSED
+0x0ED SC_block_tr GUESSED
+0x0ED SC_block_sq GUESSED
+0x0ED SC_block_ci GUESSED
+0x0ED SB_Key GUESSED
+0x0ED SB_Spellsto GUESSED
+0x0ED WM_MediumSc GUESSED
+0x0ED WM_consoles GUESSED
+0x0ED GM_TokenPic GUESSED
+0x0ED EnergyEgg GUESSED
+0x0ED Apple GUESSED
+0x0ED MoonSeedCol GUESSED
+0x0ED WM_PureMagi) GUESSED
+0x0EF pushable (+WCPushBlock GUESSED
+0x0EF NW_boulder GUESSED
+0x0EF SH_boulder GUESSED
+0x0EF WM_5pushcra GUESSED
+0x0EF MetalPushBl) GUESSED
+0x0F0 WarpPoint (+MMP_WarpPoi COMPLETE
+0x0F0 RestartPoin) COMPLETE
+0x0F4 doorf4 (+CFPowerDoor GUESSED
+0x0F4 DFP_ToLinkD GUESSED
+0x0F4 WM_PlanDoor GUESSED
+0x0F4 WM_WarpDoor GUESSED
+0x0F4 ECSH_Door1) GUESSED
+0x0F9 ProjectileSwitch (+DRProjectil) CONFIRMED
+0x0FA InvisibleHitSwitch CONFIRMED
+0x0FB Pressureswitchfb (+WCTemplePre CONFIRMED
+0x0FB LINK_SnowPr CONFIRMED
+0x0FB LINK_UnderW CONFIRMED
+0x0FB CC_Pressure CONFIRMED
+0x0FB SH_Pressure CONFIRMED
+0x0FB SC_Pressure CONFIRMED
+0x0FB GroundQuake) CONFIRMED
+0x0FF MagicDust (+MagicDustSm CONFIRMED
+0x0FF MagicDustHu) CONFIRMED
+0x102 StayPoint COMPLETE
+0x104 SmallBasket (+ReinforcedC) CONFIRMED
+0x105 LargeCrate (+DrakorCrate COMPLETE
+0x105 LargeBasket COMPLETE
+0x105 LargeCrateL) COMPLETE
+0x106 Scarab (+GreenScarab CONFIRMED
+0x106 RedScarab CONFIRMED
+0x106 GoldScarab CONFIRMED
+0x106 RainScarab CONFIRMED
+0x106 Blue_bean) CONFIRMED
+0x110 — (+KT_RexDoorP NO-RETAIL-NAME
+0x110 CFWinPrison NO-RETAIL-NAME
+0x110 CFBrokenPil NO-RETAIL-NAME
+0x110 WCTempleDoo NO-RETAIL-NAME
+0x110 WCTempleTop NO-RETAIL-NAME
+0x110 DIM_Portcul NO-RETAIL-NAME
+0x110 DIM2IcePlat NO-RETAIL-NAME
+0x110 LINK_Portcu NO-RETAIL-NAME
+0x110 CCwaterShut NO-RETAIL-NAME
+0x110 CCOceanDoor NO-RETAIL-NAME
+0x110 CCskullDoor NO-RETAIL-NAME
+0x110 CCclawOnlyD NO-RETAIL-NAME
+0x110 CCprisonDoo NO-RETAIL-NAME
+0x110 GF_DoorLeft NO-RETAIL-NAME
+0x110 MMP_MagicCa NO-RETAIL-NAME
+0x110 NW_Portcull NO-RETAIL-NAME
+0x110 SH_MagicCav NO-RETAIL-NAME
+0x110 SH_QueensDo NO-RETAIL-NAME
+0x110 SH_Portcull NO-RETAIL-NAME
+0x110 SC_Shrine_d NO-RETAIL-NAME
+0x110 BossTRexPor NO-RETAIL-NAME
+0x110 SC_capeclaw NO-RETAIL-NAME
+0x110 SC_hutdoor NO-RETAIL-NAME
+0x110 OFPclawOnly NO-RETAIL-NAME
+0x110 DFP_Bridge NO-RETAIL-NAME
+0x110 WM_Door1 NO-RETAIL-NAME
+0x110 WMFinalDoor NO-RETAIL-NAME
+0x110 EC_Shrine_d NO-RETAIL-NAME
+0x110 DR_EarthDoo NO-RETAIL-NAME
+0x110 DR_Shield NO-RETAIL-NAME
+0x110 DR_James1Bo NO-RETAIL-NAME
+0x110 DR_DrakorDo NO-RETAIL-NAME
+0x110 MCProjDoor) NO-RETAIL-NAME
+0x111 — (+CFPowerLock NO-RETAIL-NAME
+0x111 SC_blockpla NO-RETAIL-NAME
+0x111 WM_padlock NO-RETAIL-NAME
+0x111 DRearthwalk) NO-RETAIL-NAME
+0x112 — (+BossDrakor_ NO-RETAIL-NAME
+0x112 LINKIseqobj NO-RETAIL-NAME
+0x112 CFRaceSeqob NO-RETAIL-NAME
+0x112 CAMERAseqob NO-RETAIL-NAME
+0x112 WCTempleBlo NO-RETAIL-NAME
+0x112 LINKE_stone NO-RETAIL-NAME
+0x112 linkB_Stone NO-RETAIL-NAME
+0x112 ANDSeqObjec NO-RETAIL-NAME
+0x112 GF_sequence NO-RETAIL-NAME
+0x112 SH_seqobjec NO-RETAIL-NAME
+0x112 VFPSeqObj NO-RETAIL-NAME
+0x112 VFP_Bobbing NO-RETAIL-NAME
+0x112 FrontSeq NO-RETAIL-NAME
+0x112 NWSH_Seqobj NO-RETAIL-NAME
+0x112 FireHoleCon NO-RETAIL-NAME
+0x112 DR_SeqobjBo NO-RETAIL-NAME
+0x112 KPLandingPa NO-RETAIL-NAME
+0x112 CF_BobbingC NO-RETAIL-NAME
+0x112 CFLandingPa NO-RETAIL-NAME
+0x112 LandingPad_ NO-RETAIL-NAME
+0x112 WC_LandingP NO-RETAIL-NAME
+0x112 SH_NT_Landi NO-RETAIL-NAME
+0x112 MSSeqObject NO-RETAIL-NAME
+0x112 ARWSeqObjec NO-RETAIL-NAME
+0x112 DFsequences) NO-RETAIL-NAME
+0x113 — (+CAMERAnewse NO-RETAIL-NAME
+0x113 LINKJseqobj NO-RETAIL-NAME
+0x113 LINKB_seqob NO-RETAIL-NAME
+0x113 LINKC_seqob NO-RETAIL-NAME
+0x113 CCBridge NO-RETAIL-NAME
+0x113 CCseqobj NO-RETAIL-NAME
+0x113 NWSteppingS NO-RETAIL-NAME
+0x113 NW_seqobjec NO-RETAIL-NAME
+0x113 SH_newseqob NO-RETAIL-NAME
+0x113 SH_BottomSe) NO-RETAIL-NAME
+0x116 WM_Column (+WM_Column_T COMPLETE
+0x116 GPSHpickobj) COMPLETE
+0x117 AppleOnTree CONFIRMED
+0x11A — (+DRDebrisGir NO-RETAIL-NAME
+0x11A DRDebrisPip NO-RETAIL-NAME
+0x11A LINKSnowTre NO-RETAIL-NAME
+0x11A LINKSnowLog NO-RETAIL-NAME
+0x11A nw_testobj NO-RETAIL-NAME
+0x11A SC_DummyTri NO-RETAIL-NAME
+0x11A SC_DummySqu NO-RETAIL-NAME
+0x11A SC_DummyCir NO-RETAIL-NAME
+0x11A SC_throne NO-RETAIL-NAME
+0x11A AlienTreePa NO-RETAIL-NAME
+0x11A SnowBush NO-RETAIL-NAME
+0x11A SnowLog NO-RETAIL-NAME
+0x11A SulphurCrys NO-RETAIL-NAME
+0x11A CobwebCorne NO-RETAIL-NAME
+0x11A CobwebCeili NO-RETAIL-NAME
+0x11A CobwebEdge NO-RETAIL-NAME
+0x11A GrassWeedCl NO-RETAIL-NAME
+0x11A GrassSupaCh NO-RETAIL-NAME
+0x11A FernBush NO-RETAIL-NAME
+0x11A FernCurly NO-RETAIL-NAME
+0x11A WaterLillyF) NO-RETAIL-NAME
+0x11B Landed_Arwi CONFIRMED
+0x11C — (+LINKStaffLe NO-RETAIL-NAME
+0x11C StaffAction NO-RETAIL-NAME
+0x11C StaffBoostP NO-RETAIL-NAME
+0x11C StaffBoulde NO-RETAIL-NAME
+0x11C StaffLeverO NO-RETAIL-NAME
+0x11C StaffLeverT) NO-RETAIL-NAME
+0x11D — (+TreasureChe NO-RETAIL-NAME
+0x11D MapTreasure) NO-RETAIL-NAME
+0x11E MagicCaveBo CONFIRMED
+0x11F MagicCaveTo CONFIRMED
+0x121 — (+InfoText NO-RETAIL-NAME
+0x121 LINKF_InfoT NO-RETAIL-NAME
+0x121 LinkG_InfoT NO-RETAIL-NAME
+0x121 MMPass_Info NO-RETAIL-NAME
+0x121 DIM_InfoTex NO-RETAIL-NAME
+0x121 NW_InfoText NO-RETAIL-NAME
+0x121 SH_InfoPoin NO-RETAIL-NAME
+0x121 SH_FireWeed NO-RETAIL-NAME
+0x121 VFP_InfoTex) NO-RETAIL-NAME
+0x122 CCTestInfot CONFIRMED
+0x123 fuelCell COMPLETE
+0x124 — (+deathGas NO-RETAIL-NAME
+0x124 deathGasNoF) NO-RETAIL-NAME
+0x126 Trigger (+TrigPnt CONFIRMED
+0x126 TrigCyl CONFIRMED
+0x126 TrigPln CONFIRMED
+0x126 TrigArea CONFIRMED
+0x126 TrigTime CONFIRMED
+0x126 TrigButt CONFIRMED
+0x126 TriggSetp CONFIRMED
+0x126 TrigBits CONFIRMED
+0x126 TrigCrve) CONFIRMED
+0x128 KT_Torch (+Trex1 COMPLETE
+0x128 WCAperturem COMPLETE
+0x128 DIMHutDoor COMPLETE
+0x128 DIMDoorBrid COMPLETE
+0x128 DIM2CellDoo) COMPLETE
+0x12A CFCrate (+LinkF_liftg COMPLETE
+0x12A LinkF_cog COMPLETE
+0x12A MMP_Organic COMPLETE
+0x12A VFP_newball COMPLETE
+0x12A VFP_liftgra COMPLETE
+0x12A VFP_locksym COMPLETE
+0x12A DFPSpSG COMPLETE
+0x12A DFP_WaterHi COMPLETE
+0x12A DFP_FireHit COMPLETE
+0x12A DFP_InnerRi COMPLETE
+0x12A DFP_OuterRi COMPLETE
+0x12A DFP_PlacePl COMPLETE
+0x12A DFP_Water COMPLETE
+0x12A DFPSpDB COMPLETE
+0x12A WM_dummyfox COMPLETE
+0x12A WM_krazoast COMPLETE
+0x12A WM_rock COMPLETE
+0x12A WM_fallenco COMPLETE
+0x12A WM_largeroc COMPLETE
+0x12A WM_Column_l COMPLETE
+0x12A WM_Planet COMPLETE
+0x12A WM_PlanetMo COMPLETE
+0x12A EnergyGem1) COMPLETE
+0x12C Transporter (+KP_Transpor) CONFIRMED
+0x12E CFLightWall (+LaserTurret CONFIRMED
+0x12E DIMSpellsto CONFIRMED
+0x12E InfoTablet CONFIRMED
+0x12E CFrunnersta CONFIRMED
+0x12E CFLightPill CONFIRMED
+0x12E CFDungeonLi CONFIRMED
+0x12E CFGCrubble1 CONFIRMED
+0x12E CFGCrubble2 CONFIRMED
+0x12E CFGCrubble3 CONFIRMED
+0x12E CFGCrubble4 CONFIRMED
+0x12E CFGCpillbre CONFIRMED
+0x12E CFGCsmallbl CONFIRMED
+0x12E SkyDome CONFIRMED
+0x12E CCdarkness CONFIRMED
+0x12E WORLDshield CONFIRMED
+0x12E GFRONT_Asse CONFIRMED
+0x12E LINKH_Asset CONFIRMED
+0x12E LINKC_Asset CONFIRMED
+0x12E LINKE_Asset CONFIRMED
+0x12E LINKJ_Asset CONFIRMED
+0x12E LINKF_Asset CONFIRMED
+0x12E AndrossSpir CONFIRMED
+0x12E GF_Pilotsea CONFIRMED
+0x12E GF_JukeBox CONFIRMED
+0x12E NWCellLock CONFIRMED
+0x12E SH_BeaconTw CONFIRMED
+0x12E VFP_Warding CONFIRMED
+0x12E DFPSplstne CONFIRMED
+0x12E VFPSplstne CONFIRMED
+0x12E WM_Explosiv CONFIRMED
+0x12E DBprotectZo CONFIRMED
+0x12E KillerSpike CONFIRMED
+0x12E DR_Tower CONFIRMED
+0x12E DR_TestWall CONFIRMED
+0x12E DieSeqObjec CONFIRMED
+0x12E ARWArwingTa CONFIRMED
+0x12E ARWStarFiel CONFIRMED
+0x12E DirectionSi CONFIRMED
+0x12E DragonFly) CONFIRMED
+0x12F BarrelPad (+NWCallOFEld) COMPLETE
+0x130 AreaFXEmit (+TAreaFXEmit) COMPLETE
+0x131 CF_DoorLight (+DR_LightPol) CONFIRMED
+0x13E — (+DIMBossIceSmash NO-RETAIL-NAME
+0x13E DIM2Explode) NO-RETAIL-NAME
+0x140 fogControl COMPLETE
+0x141 Lightning COMPLETE
+0x149 — (+CFWindLift NO-RETAIL-NAME
+0x149 CFTreasWind) NO-RETAIL-NAME
+0x14C — (+babycloudrunner NO-RETAIL-NAME
+0x14C CFAmbientCl NO-RETAIL-NAME
+0x14C SHCloudBaby) NO-RETAIL-NAME
+0x150 GCRobotLigh CONFIRMED
+0x154 CFPrisonCage (+CFCageSwitc) CONFIRMED
+0x157 SpiritDoorS CONFIRMED
+0x158 GunPowderBarrel (+MetalBarrel) CONFIRMED
+0x159 Blasted (+CFBlastedRo CONFIRMED
+0x159 DRBlastedWa) CONFIRMED
+0x15A explodable (+CFbrokenGra GUESSED
+0x15A CFbrokenWal GUESSED
+0x15A DIM2_WallEx GUESSED
+0x15A LINKE_Explo GUESSED
+0x15A CCExploding GUESSED
+0x15A NW_IcePriso GUESSED
+0x15A SH_BombWall GUESSED
+0x15A ExplodeWall GUESSED
+0x15A ExplodePlan) GUESSED
+0x15D — (+CFSlideDoor NO-RETAIL-NAME
+0x15D CFMainSlide) NO-RETAIL-NAME
+0x15F — (+CFAttractor NO-RETAIL-NAME
+0x15F DBAttractor) NO-RETAIL-NAME
+0x166 — (+CFbrokenGra NO-RETAIL-NAME
+0x166 CFbrokenWal NO-RETAIL-NAME
+0x166 DIM2_WallEx NO-RETAIL-NAME
+0x166 LINKE_Explo NO-RETAIL-NAME
+0x166 CCExploding NO-RETAIL-NAME
+0x166 NW_IcePriso NO-RETAIL-NAME
+0x166 SH_BombWall NO-RETAIL-NAME
+0x166 ExplodePlan NO-RETAIL-NAME
+0x166 DRSmallExpl) NO-RETAIL-NAME
+0x167 SpiritDoorL CONFIRMED
+0x168 HoloPoint RAW
+0x16A CRrockfall (+IMIcicle) COMPLETE
+0x16B — (+DIMMagicLig NO-RETAIL-NAME
+0x16B IMMagicLigh) NO-RETAIL-NAME
+0x172 LINKB_levco CONFIRMED
+0x173 LINK_levcon CONFIRMED
+0x174 CCriverflow CONFIRMED
+0x177 — (+DFSH_Door2S NO-RETAIL-NAME
+0x177 DFSH_Door4S) NO-RETAIL-NAME
+0x17A SpiritPrize (+ECSH_Spirit) COMPLETE
+0x17C GCRobotPatr RAW
+0x17D — (+DIM2_barrel NO-RETAIL-NAME
+0x17D MMP_barrel) NO-RETAIL-NAME
+0x17F — (+MSBush NO-RETAIL-NAME
+0x17F MSVine) NO-RETAIL-NAME
+0x184 — (+DIMAnimShar NO-RETAIL-NAME
+0x184 MMPAnimShar) NO-RETAIL-NAME
+0x187 CCqueen COMPLETE
+0x189 CCSharpclaw COMPLETE
+0x18A CCpedstal COMPLETE
+0x18E MMSH_WaterS COMPLETE
+0x198 NWSH_levcon COMPLETE
+0x19F NW_treebrid COMPLETE
+0x1A0 NW_geyser COMPLETE
+0x1A2 NW_tricky COMPLETE
+0x1A5 NW_levcontr COMPLETE
+0x1A6 SH_tricky COMPLETE
+0x1A8 SH_killermu COMPLETE
+0x1A9 BombPlant COMPLETE
+0x1AA BombPlantSp COMPLETE
+0x1AB BombPlantin COMPLETE
+0x1AC SH_queenear COMPLETE
+0x1AD SH_thorntail COMPLETE
+0x1AE SH_LevelControl COMPLETE
+0x1AF SH_swaplift COMPLETE
+0x1B0 SH_swapston COMPLETE
+0x1B1 SH_staff COMPLETE
+0x1B2 SH_staffHaz COMPLETE
+0x1B3 SH_Beacon COMPLETE
+0x1B4 SH_EmptyTum COMPLETE
+0x1B5 lightfoot (+SC_chieflig COMPLETE
+0x1B5 SC_blTarget COMPLETE
+0x1B5 SC_muscleli) COMPLETE
+0x1B7 SC_MusicTree (+SC_BirchTre) COMPLETE
+0x1B9 SC_Cloudrun COMPLETE
+0x1BD SC_paypoint (+SPWell) COMPLETE
+0x1BE DIMLava (+DIMLavaBall COMPLETE
+0x1BE DIMLavaDebr) COMPLETE
+0x1C0 DIMLogFire (+DIMLogFireR) COMPLETE
+0x1C3 DIMGate (+DIM2BossDoo) COMPLETE
+0x1C5 DIMBarrier (+DIM2CannonT) COMPLETE
+0x1C6 DIMCannon (+DIMCannonBa) COMPLETE
+0x1D0 DIM_tricky COMPLETE
+0x1D2 WORLDplanet COMPLETE
+0x1D3 worldobj (+WORLDcloudr COMPLETE
+0x1D3 WORLDdragro COMPLETE
+0x1D3 WORLDwalled COMPLETE
+0x1D3 WORLDdarkic COMPLETE
+0x1D3 WORLDcloudl COMPLETE
+0x1D3 WORLDpath1 COMPLETE
+0x1D3 WORLDpath2 COMPLETE
+0x1D3 WORLDpath3 COMPLETE
+0x1D3 WORLDpath4 COMPLETE
+0x1D3 WORLDpath5 COMPLETE
+0x1D3 WORLDpath6 COMPLETE
+0x1D3 WORLDpath7 COMPLETE
+0x1D3 WORLDpath8 COMPLETE
+0x1D3 WORLDarwing COMPLETE
+0x1D3 WORLDgreatf COMPLETE
+0x1D3 WORLDsun COMPLETE
+0x1D3 WORLDsunray COMPLETE
+0x1D3 WORLDpepper COMPLETE
+0x1D3 WORLDsunfla COMPLETE
+0x1D3 WORLDComet COMPLETE
+0x1D3 WORLDastGen COMPLETE
+0x1D3 WORLDhalo COMPLETE
+0x1D3 WORLDhalobr COMPLETE
+0x1D3 WORLDarrow) COMPLETE
+0x1D4 WORLDAstero COMPLETE
+0x1E7 DIMbossfire COMPLETE
+0x1F8 WM_Galleon COMPLETE
+0x1FA WM_seqobjec COMPLETE
+0x1FD WM_LaserTar COMPLETE
+0x201 WM_colrise COMPLETE
+0x204 WM_Torch COMPLETE
+0x205 WM_Vein COMPLETE
+0x206 LightSource COMPLETE
+0x207 WM_Worm COMPLETE
+0x208 WM_Wallpowe COMPLETE
+0x209 WM_LevelCon COMPLETE
+0x20C WM_spiritpl COMPLETE
+0x20D WM_seqpoint COMPLETE
+0x20E WM_sun COMPLETE
+0x20F WM_SpiritSe COMPLETE
+0x213 WM_VConsole COMPLETE
+0x215 WM_newcryst COMPLETE
+0x237 DFPSpPl COMPLETE
+0x238 LINKA_levco COMPLETE
+0x239 textblock DOL-RECOVERED
+0x23B DFP_Lightni COMPLETE
+0x23C DFP_PowerSl COMPLETE
+0x240 GCRobotBlas COMPLETE
+0x241 DrakorEnerg COMPLETE
+0x243 DBHoleContr COMPLETE
+0x24C BossDrakor__free CONFIRMED
+0x251 KT_RexFloorswitch CONFIRMED
+0x25B MSPlantingS RAW
+0x263 GM_MazeWell CONFIRMED
+0x269 ExplodePlan CONFIRMED
+0x273 FirePipe COMPLETE
+0x277 CFWindLiftL RAW
+0x279 DR_EnergyDi RAW
+0x27E DRMusicCont RAW
+0x282 BarrelGener RAW
+0x283 DR_BarrelGr RAW
+0x29A ARWArwing RAW
+0x29C ARWArwingBo RAW
+0x29D ARWArwingGu RAW
+0x29F ARWBombColl RAW
+0x2A1 ARWLevelCon RAW
+0x2A2 ARWSpeedStr RAW
+0x2A5 ARWGenerato RAW
+0x2A6 ARWSquadron RAW
+0x2A7 ARWProximit RAW
+0x2A8 ARWBlocker RAW
+0x2AA LGTDirectio RAW
+0x2AB LGTProjecte RAW
+0x2AC LGTControlL RAW
+0x2AE WaterFlowWe RAW
+0x2B0 BrokenPipe RAW
+0x2B1 CmbSrc RAW
+0x2B2 DustMoteSou RAW
+0x2B4 CNTcounter RAW
+0x2B5 Timer RAW
+0x2B6 CNThitObjec RAW
+0x2B7 MCUpgrade RAW
+0x2B8 MCUpgradeMa RAW
+0x2B9 MCStaffEffe RAW
+0x2BA MCLightning RAW
+0x2BB GF_LevelCon RAW
+0x2BC Andross RAW
+0x2BE AndrossBrai RAW
+0x2BF AndrossLigh RAW

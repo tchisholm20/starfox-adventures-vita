@@ -1,0 +1,106 @@
+Demo (E3 2002.05.17, default.dol descriptor table @0x802e8b60, 764 slots) vs
+retail GSAE01 (main.dol gResourceDescriptors @0x802C6300, 705 slots) — ENGINE bank.
+
+Bank layout (tab semantics verified against OBJECTS.bin def dll-ids: word0 = last
+engine slot idx, word1 = last modgfx idx, word3 = FIRST objects idx):
+  DP-2000  (DLLS.tab 67 B9 00 D1): engine 104 (0..103), modgfx 82, projgfx 23, objects 587 = 796
+  kiosk MIPS DLLS.bin (fossil)   : engine 104,          modgfx 83, projgfx 23, objects 590 = 800
+  demo GC  (DLLS.tab 5B AE 00 C6): engine 92  (0..91),  modgfx 83, projgfx 23, objects 566 = 764
+  retail   (DLLS.tab 58 AB 00 C3): engine 89  (0..88),  modgfx 83, projgfx 23, objects 510 = 705
+  (demo objects start at slot 198: demo Tricky def dll=199; retail objects start 195, Tricky=196)
+
+Demo engine roster = DP ids 1..92 MINUS {12 minic, 31 flash, 57, 58} PLUS 4 extra cam
+DLLs at the tail (from the DP 93..104 cam family) = 92 slots.
+Identity evidence: slotCountAndFlags counts match MIPS export_count+2 down the whole
+bank, plus demo-DOL string anchors: 9slcommandmenu.c->slot0, camcontrol.c->1,
+newday.c->6, expgfx.c->11, modgfx.c->12, objfsa.c->16, gameplay.c(gplay fns)->27,
+modelfx.c->29, baddieControl.c->30, pickup.c->51, Bpcurves.c->24 (retail: Hcurves),
+n_options.c->60, n_pausemenu.c->61, dswaphollow.c->76, attention.c->80, firstperson.c->81.
+Retail anchors (calibrated): expgfx.c->r10, Hcurves.c->r20, n_attractmode.c->r52,
+<camcontrol.c>->r1.
+
+demo slot | identity (DP name / string)      | retail slot
+  0  cmdmenu ("9slcommandmenu.c")            -> 0
+  1  camcontrol                              -> 1
+  2  ANIM (game/anim.c, ObjSeq)              -> 2  (maketex/ObjSeq)
+  3  race                                    -> 3  ("checkpoint")
+  4  AMSEQ (gutted on GC)                    -> 4  (dummy04)
+  5  AMSFX (already scf=0 dummy in demo)     -> DROPPED
+  6  newday ("newday.c")                     -> 5  ("sky")
+  7  id8 (sky-related)                       -> 6  ("sky2")
+  8  newclouds                               -> 7  ("newclouds")
+  9  newstars                                -> 8  ("skystars")
+ 10  newlfx                                  -> 9  ("cloudaction")
+     [id12 minic: absent already in demo]
+ 11  expgfx ("expgfx.c")                     -> 10  expgfx  [string-proven both sides]
+ 12  modgfx ("modgfx.c")                     -> 11  ("dll0b")
+ 13  projgfx                                 -> 12  ("projgfx")
+ 14  id16 (5008B, e3)                        -> 13  ("playershadow")
+ 15  partfx                                  -> 14  ("partfx")
+ 16  objfsa ("objfsa.c")                     -> 15
+ 17  id19 menu_gameplay                      -> 16  ("uicontroller")
+ 18  id20 screens                            -> 17  ("screens")
+ 19  id21 gametext                           -> DROPPED (gametext moved into main engine)
+ 20  id22 subtitles                          -> DROPPED
+ 21  id23                                    -> 18
+ 22  id24 waterfx                            -> 19  ("waterfx")
+ 23  id25                                    -> DROPPED
+ 24  id26 curves ("Bpcurves.c")              -> 20  Hcurves  [string-proven both sides]
+ 25  id27                                    -> 21
+ 26  id28 screen_fade                        -> 22
+ 27  id29 gplay ("gameplay.c")               -> 23
+ 28  id30 task                               -> 24  (one of d28/d29 dropped;
+ 29  id32 modelfx ("modelfx.c")                     the other -> r24)
+ 30  id33 BaddieControl                      -> 25
+ 31..49  ids34..52 partfx-family (19 slots)  -> 26..45 (20 slots; retail +1 new)
+ 50  id53 movelib                            -> 46
+ 51  id54 pickup ("pickup.c")                -> 47
+ 52  id55                                    -> 48 gutted to scf=0, or dropped
+ 53  id56 putdown                            -> (one of d52/d53 dropped)
+ 54  id59 minimap                            -> 49
+ 55  id60 post                               -> 50
+ 56  id61 rareware                           -> 51
+ 57  id62 mainmenu (rolling demo)            -> 52  n_attractmode
+ 58  id63 gameselect                         -> 53
+ 59  id64 nameentry                          -> 54
+ 60  id65 options ("n_options.c")            -> 55
+ 61  id66 pausemenu ("n_pausemenu.c")        -> 56
+ 62  id67 gameover                           -> 57
+ 63  id68 old_mainmenu (scf=0)               -> DROPPED
+ 64  id69 (112B stub)                        -> DROPPED (or d67; one of the two)
+ 65  id70 old_levelselect (scf=0)            -> DROPPED
+ 66  id71 old_selection (scf=0)              -> DROPPED
+ 67  id72                                    -> 58
+ 68  id73 old_picmenu                        -> 59
+ 69  id74 picmenu ("picmenu.c")              -> 60
+ 70  id75 frontend ("control.c" nearby)      -> 61
+ 71  id76                                    -> 62
+ 72  id77 scarab                             -> 63
+ 73  id78 credits                            -> 64
+ 74  id79 selection                          -> 65
+ 75  id80                                    -> DROPPED
+ 76  id81 swaphollow ("dswaphollow.c")       -> DROPPED (SwapStone Hollow cut)
+ 77  id82                                    -> DROPPED
+ 78  id83                                    -> DROPPED
+ 79  id84 camnormal                          -> 66
+ 80  id85 attentioncam ("attention.c")       -> } demo cam block (12 slots 80..91:
+ 81  id86 cam1stperson ("firstperson.c")     -> } attention, 1stperson, camslide,
+ 82..87  ids87..92 camslide,camdev,campath,  -> } camdev, campath, camstatic,
+         camstatic,camlockon,camshipbattle   -> } camlockon, camshipbattle + 4 more
+ 88..91  4 more cams (from DP ids 93..104)   -> } cams)
+                                                retail 67..88 = 22 cam-family slots
+                                                (retail re-added ~10 of the DP 93..103
+                                                cams: camclimb/camseq/camtalk/
+                                                cam1stperson2/camcrawl/camcannon/
+                                                camspellaim/camcloudrunner/camdrakor/
+                                                camdrop; r88 scf-count 3)
+
+Net demo->retail: -14 drops, +11 adds = -3 (matches tab delta 92 vs 89).
+
+Objects bank: demo 198..763 (566) vs retail 195..704 (510). Early bank aligned at +3
+(demo Tricky 199 = retail 196; CannonClaw 210 vs 207). Heavy re-rostering later:
+87 demo object DLLs have no retail name match (cut objects incl. Snaplack, Snipluck,
+TrickyGuard, CFIllusionClaw, CFForceField, SpellOverlay, Sea, icebeam...), 46
+retail-only. See obj_slot_pairs.txt / obj_slot_unmatched.txt.
+
+modgfx (83) and projgfx (23): identical counts in demo and retail; 1:1 with +3 offset.

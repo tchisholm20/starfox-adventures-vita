@@ -1,0 +1,8 @@
+# symbol_priority.txt -- per-SYMBOL provider decisions that override closure.py's per-directory
+# rule (HAL 3 > GAME 2 > BRIDGE 1 > SCAFFOLD 0). docs/47 runs 8-10 showed the directory rule
+# cannot be right everywhere: each entry here is one decided case, with its evidence.
+# Format: SYMBOL  CLASS(HAL|GAME|BRIDGE)  # why
+fileLoad                GAME  # run 10: dvd_shim's knows only the viewer's names (NULL gRcpTexIdRemap) and never fills gResourceFileBuffers
+fileLoadToBuffer        GAME  # run 10: same; the game's needs only DVD*/mmAlloc (HAL-provided)
+fileLoadToBufferOffset  GAME  # run 10: same; the ObjDef swap it carried moved to mldf_endian.c
+setFileInfo             GAME  # run 76: dvd_shim's is an empty stub; the game's sets gFileInfo, which loadFileByPathAsync reads -- without it every game-text load used a private DVDFileInfo, its completion callback matched no slot, slots sat in state 1, and the title menu drew no text

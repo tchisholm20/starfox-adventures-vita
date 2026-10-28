@@ -1,0 +1,175 @@
+# Every "official" mention in the DP repo (src/ + include/), with the decomp symbol it annotates.
+# file:line | decomp symbol | raw comment
+src/di_cpu.c:284 | diCpuTraceInit | // official name: diCpuTraceInit (probably)
+src/di_cpu.c:710 | diCpuXYPrintf | // official name: cpuXYPrintf (probably)
+src/objanim.c:53 | objAnimSet | // official name: objAnimSetMove
+src/objanim.c:413 | objGetAnimChange | // official name: objGetAnimChange
+src/objanim.c:819 | var_fv0 | // official name: setBlendMove (probably)
+src/object.c:479 | objGetSequence | // official name: objGetSequence
+src/object.c:525 | objSetupObjectActual | // official name: objSetupObjectActual
+src/object.c:1374 | objFreeObjdef | // official name: objFreeObjdef
+src/object.c:1471 | objGetControlNo | // official name: objGetControlNo
+src/object.c:1875 | objAddEffectBox | // official name: objAddEffectBox
+src/object.c:1886 | objFreeEffectBox | // official name: objFreeEffectBox
+src/model.c:247 | temp_v0 | // official name: createModelInstance
+src/model.c:497 | modFreeModel | // official name: modFreeModel
+src/model.c:581 | temp_t0 | // official name: makeModelAnimation
+src/model.c:734 | modLoadAnimActual | // official name: modLoadAnimActual
+src/intersect.c:11 | unk0 | /** @file official filename: track/intersect.c */
+src/intersect.c:813 | func_80055458 | // official name: trackGetIntersect2 ?
+src/intersect.c:1566 | trackGetHeight | // official name: trackGetHeight
+src/intersect.c:1890 | trackIntersectTick | // official name: trackIntersect ?
+src/intersect.c:2016 | trackIntersectModLineBuild | // official name: intersectModLineBuild ?
+src/intersect.c:2268 | func_8005A2BC | // official name: insertPoint
+src/joypad.c:263 | joyInit | // Official name: joyInit
+src/joypad.c:470 | joyResetMap | // Official name: joyResetMap
+src/joypad.c:482 | joyCreateMap | * Official name: joyCreateMap
+src/joypad.c:508 | joyGetController | * Official name: joyGetController
+src/joypad.c:524 | joyGetButtons | // Official name: joyGetButtons
+src/joypad.c:555 | joyGetPressed | // Official name: joyGetPressed
+src/joypad.c:591 | joyGetReleased | // Official name: joyGetReleased
+src/joypad.c:619 | joyGetStickX | // Official name: joyGetStickX
+src/joypad.c:650 | joyGetStickY | // Official name: joyGetStickY
+src/joypad.c:730 | joySetSecurity | // Official name: joySetSecurity
+src/curves.c:118 | curvesMove | // official name: curvesMove
+src/curves.c:173 | curvesSetupMoveNetworkCurve | // official name: curvesSetupMoveNetworkCurve
+src/texture.c:765 | texInitTextures | // official name: texInitTextures
+src/texture.c:784 | texSetMemColour | // official name: setTexMemColour
+src/texture.c:798 | GLOBAL_ASM | // official name: texLoadTexture
+src/texture.c:1130 | texFreeTexture | // official name: texFreeTexture
+src/texture.c:1189 | GLOBAL_ASM | // official name: texDPTextureX ?
+src/texture.c:1532 | texAnimateTexture | // official Name: texAnimateTexture
+src/texture.c:1615 | texGetFrameImg | // official name: texFrame
+src/texture.c:1647 | texDisableModes | // official name: texDisableModes
+src/texture.c:1652 | texEnableModes | // official name: texEnableModes
+src/lighting.c:469 | lightSetInside | // official name: newlightInside
+src/pi.c:26 | piInit | // official name: piInit
+src/pi.c:42 | piRomLoad | // official name: piRomLoad
+src/pi.c:88 | piRomLoadSection | // official name: piRomLoadSection
+src/pi.c:106 | piRomGetSectionPtr | // official name: piRomGetSectionPtr
+src/pi.c:123 | piRomGetFileSize | // official name: piRomGetFileSize
+src/pi.c:140 | romCopy | // official name: romCopy
+src/di_rcp.c:25 | diRcpTraceInit | // official name: diRcpTraceInit
+src/di_rcp.c:31 | diRcpTraceReset | // official name: diRcpTraceReset
+src/di_rcp.c:37 | diRcpTrace | // official name: diRcpTrace
+src/di_rcp.c:49 | diRcpTraceGetInfo | // official name: diRcpTraceGetInfo
+src/main.c:123 | gCurGfx | // official name: gfxBase
+src/main.c:125 | gCurGfx | // official name: gfx
+src/main.c:127 | gCurMtx | // official name: mtxBase
+src/main.c:129 | gCurMtx | // official name: mtx
+src/main.c:131 | gCurVtx | // official name: vtxBase
+src/main.c:133 | gCurVtx | // official name: vtx
+src/main.c:135 | gCurPol | // official name: polBase
+src/main.c:137 | gCurPol | // official name: pol
+src/main.c:162 | mainThreadEntry | // official name: mainThread ?
+src/main.c:531 | mainChangeMap | // officialName: mainChangeMap
+src/main.c:596 | mainGetPauseState | // official name: mainGetPauseMode ?
+src/main.c:605 | mainSetPauseState | // official name: mainSetPauseMode ?
+src/rarezip.c:34 | rarezipInit | // official name: rzipInit
+src/rarezip.c:41 | rarezipUncompressSize | // official name: rzipUncompressSize
+src/rarezip.c:50 | rarezipUncompressSizeROM | // official name: rzipUncompressSizeROM
+src/rarezip.c:65 | GLOBAL_ASM | // official name: rzipUncompress
+src/rarezip.c:90 | rarezip_huft_build | // official name: huft_build
+src/rsp_segment.c:9 | segSetBase | * Official name: segSetBase
+src/objtype.c:21 | objAddObjectType | // official name: objAddObjectType
+src/map.c:2088 | mapFree | // official name: trackFreeMap
+src/map.c:2400 | mapReadLayout | // official name: getdim
+src/map.c:3333 | blockEmplace | // official name: trackLoadBlockEnd
+src/map.c:4140 | mapUpdateObjectsStreaming | // official name: trackObjectControl
+src/map.c:4538 | mapCheckObjLoadMapAct | // official name: trackCheckObjectLoad
+src/map.c:4626 | mapSetObjLoaded | // official name: trackSetLoaded
+src/map.c:4651 | mapGetObjLoaded | // official name: trackGetLoaded
+src/map.c:4844 | mapRestoreSavedObjects | // official name: romdefMove_Set ?
+src/rcp.c:75 | rcpF3DEX_2_XBUS | * Official Name: rcpFast3d (likely the old name)
+src/rcp.c:137 | rcpWaitDP | // official name: rcpWaitDP
+src/rcp.c:157 | rcpSetScreenColour | * Official name: rcpSetScreenColour
+src/rcp.c:168 | rcpSetBorderColour | * Official name: rcpSetBorderColour
+src/rcp.c:175 | rcpClearScreen | // official name: rcpClearScreen
+src/rcp.c:243 | rcpInitDp | // official name: rcpInitDp
+src/rcp.c:274 | rcpInitSp | // official name: rcpInitSp
+src/rcp.c:283 | rcpInit | // official name: rcpInit
+src/rcp.c:296 | rcpTileWrite | // official name: rcpTileWrite ?
+src/rcp.c:393 | rcpScreenWrite | // official name: rcpScreenWrite (default.dol)
+src/rcp.c:711 | rcpTileWriteX | // official name: rcpTileWriteX ?
+src/footsteps.c:158 | footstepsTurnOn | // officialName: footstepsTurnOn
+src/di_cpu_stack.c:4 | diCpuTraceCurrentStack | // official name: diCpuTraceCurrentStack
+src/camera.c:125 | camInit | // official name: camInit
+src/camera.c:166 | camUseShake | // official name: camUseShake
+src/camera.c:171 | camIgnoreShake | // official name: camIgnoreShake
+src/camera.c:184 | camSetFOV | // official name: camSetFOV
+src/camera.c:300 | camDistance | // official name: camDistance
+src/camera.c:1261 | camTick | // official name: camTick
+src/audio.c:67 | amCreateAudioMgr | // Official name: amCreateAudioMgr
+src/audio.c:189 | amGo | // Official Name: amGo
+src/audio.c:196 | amStop | // Official Name: amStop
+src/boot.c:18 | boot | // official name: boot
+src/boot.c:40 | bootCheckStack | // official name: bootCheckStack
+src/math/acos_asin.c:53 | tableval | * Official Name: tableval
+src/math/acos_asin.c:89 | acoss | // Official Name: acoss
+src/math/acos_asin.c:108 | asins | // Official Name: asins
+src/math/acosf_asinf.c:6 | acosf | // official name: acosf
+src/math/atan2f.c:7 | atan2f | // official name: atan2f
+src/dlls/objects/357_ExplodeAnimator/EXPLODER.c:1 | ExplodeAnimator_create_partfx | //"EXPLODER.c" appears to be Rare's official filename, sourced from "default.dol"
+src/dlls/objects/740_DR_tube/DRyoutube.c:2 |  | "DRyoutube.c" seems to have been the official name, based on Kiosk strings (really)!
+src/dlls/objects/344_SpellOverlay/screenoverlay.c:1 | fadeInSpeed | //"screenoverlay.c" seems to have been Rare's official filename
+src/dlls/objects/638_DFPlevcontrol/DFPlevcontrol.c:1 |  | //Official name unknown, but VFPT's equivalent was named "VFlevcontrol.c"
+src/dlls/objects/327/327.c:1 | base | // Official DLL name unknown, but used for many basic stationary animated props/characters
+src/dlls/engine/86_cam1stperson/firstperson.c:11 | unk0 | // official filename: firstperson.c
+src/dlls/engine/79_selection/79.c:1 |  | //NOTE: official name unknown, but used for SwapStone / ShopKeeper's selection screens
+src/dlls/engine/3_ANIM/anim.c:30 | ANIM_EVT_SETDURATION | // official filename: game/anim.c (default.dol)
+src/dlls/engine/3_ANIM/anim.c:55 | ANIM_EVT_STORYBOARD | ANIM_EVT_ENVFX = 13, // TODO: "ENVFX" is presumably the official name but maybe we can do better?
+src/dlls/engine/3_ANIM/anim.c:3553 | anim_start_obj_sequence | // official name: startObjSequence
+src/dlls/engine/3_ANIM/anim.c:3756 | anim_end_obj_sequence | // official name: endObjSequence
+src/dlls/engine/3_ANIM/anim.c:3800 | anim_preempt_sequence_time | // official name: preemptSequenceTime
+src/dlls/engine/1_cmdmenu/cmdmenu.c:28 |  | // official filename: 9slcommandmenu.c (default.dol)
+src/dlls/engine/85_attentioncam/attention.c:13 | unk0 | // official filename: attention.c
+src/dlls/engine/2_camcontrol/camcontrol.c:21 | LockIcon_STATE_Hidden | // official filename: camcontrol.c
+src/dlls/engine/29_gplay/gplay.c:404 | gplay_load_game_options | // official name: gplayLoadOptions
+src/dlls/engine/29_gplay/gplay.c:579 | gplay_get_current_player_lactions | // official name: gplayGetCurrentPlayerLactions
+src/dlls/engine/29_gplay/gplay.c:589 | gplay_get_current_player_envactions | // official name: gplayGetCurrentPlayerEnvactions
+src/dlls/engine/26_curves/curves.c:36 | curves_add_curve_def | // official name: addCurveDef
+src/libnaudio/n_sndplayer.c:38 | n_alSndpNew | // official name: gsSndpNew ?
+src/libnaudio/n_sndplayer.c:447 | sndpCountStates | // official name: getSoundStateCounts
+src/libnaudio/n_sndplayer.c:560 | sndSetPriority | // official name: gsSndpSetPriority
+src/libnaudio/n_sndplayer.c:567 | sndGetState | // official name: gsSndpGetState
+src/libnaudio/n_sndplayer.c:576 | some_sound_func | // official name: ad_sndp_play
+src/libnaudio/n_sndplayer.c:659 | audioStop | // official name: gsSndpStop
+src/libnaudio/n_sndplayer.c:693 | func_80066854 | // official name: gsSndpStopAll
+src/libnaudio/n_sndplayer.c:698 | func_8006687C | // official name: gsSndpStopAllRetrigger
+src/libnaudio/n_sndplayer.c:703 | func_800668A4 | // official name: gsSndpStopAllLooped
+src/libnaudio/n_sndplayer.c:708 | audioPostEvent | // official name: gsSndpSetParam
+src/libnaudio/n_sndplayer.c:723 | func_8006694C | // official name: gsSndpGetMasterVolume
+src/libnaudio/n_sndplayer.c:728 | func_80066978 | // official name: gsSndpSetMasterVolume
+include/game/objects/object_def.h:201 |  | /*5a*/ s16 controlNo; // see ObjectControlNumber enum. official name: controlNo
+include/PR/os.h:625 |  | /* Nintendo's official button names */
+include/sys/rand.h:6 | mathSeed | // official name: mathSeed
+include/sys/rand.h:11 | mathRnd | // official name: mathRnd
+include/sys/math.h:180 | mathMtxXFMF | * Official name: mathMtxXFMF
+include/sys/math.h:185 | mathMtxFastXFMF | * Official name: mathMtxFastXFMF
+include/sys/math.h:188 | mathMtxCatF | // official name: mathMtxCatF
+include/sys/math.h:192 | mathMtxF2L | // official name: mathMtxF2L
+include/sys/math.h:197 | fastShortReflection | // official name: fastShortReflection
+include/sys/math.h:200 | mathSquashY | // official name: mathSquashY
+include/sys/math.h:202 | mathTransY | // official name: mathTransY
+include/sys/math.h:204 | mathRpyXyzMtx | // official name: mathRpyXyzMtx
+include/sys/math.h:228 | mathRotateRPY | * Official name: mathOneFloatRPY
+include/sys/math.h:233 | mathRotateYPR | * Official name: mathOneFloatYPR
+include/sys/math.h:238 | mathRotatePY | * Official name: mathOneFloatPY
+include/sys/math.h:243 | mathTranslateMtx | * Official name: mathTranslateMtx
+include/sys/math.h:250 | mathScaleMtx | * Official name: mathScaleMtx
+include/sys/math.h:259 | mathCosInterp | // official name: mathCosInterp
+include/sys/math.h:264 | mathSinInterp | // official name: mathSinInterp
+include/sys/math.h:269 | mathCos | // official name: mathCos
+include/sys/math.h:274 | mathSin | // official name: mathSin
+include/sys/math.h:277 | Cosf | // official name: Cosf
+include/sys/math.h:279 | Sinf | // official name: Sinf
+include/sys/math.h:282 | mathDiffAngle | // official name: mathDiffAngle
+include/sys/math.h:284 | splinePos | // official name: splinePos
+include/sys/math.h:295 | Arctanf | // official name: Arctanf
+include/sys/interrupt_util.h:14 | disableInterrupts | * Official name: disableInterrupts
+include/sys/interrupt_util.h:20 | enableInterrupts | * Official name: enableInterrupts
+include/sys/interrupt_util.h:24 | setIntDisFlag | /** Official name: setIntDisFlag */
+include/sys/gfx/animseq.h:59 | AnimCurvesEvent | /*2*/ s16 params; // official name: val
+include/sys/gfx/model_asm.h:15 | convert_mtxf_to_mtx_in_pool | // official name: camConvertMatrixList ?
+include/dlls/engine/1_cmdmenu.h:116 | EnergyBar | /*18*/ TextureTile fullbarTex[2]; // official name: Fullbartex (default.dol)
+include/dlls/engine/1_cmdmenu.h:117 | EnergyBar | /*30*/ TextureTile emptybarTex[2]; // official name: Emptybartex (default.dol)

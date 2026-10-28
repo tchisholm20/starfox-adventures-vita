@@ -1,0 +1,44 @@
+## US10 -> US11 (.text), mapped on side A via GSAE01
+TU                                                   sites    delta  functions touched
+main/audio.c                                             1      +20  _audioAlloc
+main/modelEngine.c                                       1       +c  gameTimerRun
+main/fileio.c                                            1       +c  dvdCheckError
+main/textrender_run.c                                    9      +7c  gameTextBuildSystemFontAtlas
+main/textrender_drawbox.c                                1      +10  gameTextDrawBox
+main/model.c                                             3      +14  ObjModel_LoadModelData
+main/object.c                                            1      +20  Obj_FreeObject
+main/pi_dolphin.c                                        2      +84  getTableFileEntry
+track/intersect_memcard.c                                8      +d8  showMemCardError
+dlls/engine/2/maketex.c                                  7      +38  saveGame_prepareAndWrite, loadMemCardImages, saveGame[NEWFN]
+dlls/engine/20_Hcurves/Hcurves.c                        15       -8  Objfsa_UpdateWalkGroupPatches
+dlls/engine/47/47.c                                      2      +18  Carryable_putDownAndSavePos, Carryable_updateHeld
+dlls/engine/52_n_attractmode/n_attractmode.c             1       +c  TitleMenu_run
+dlls/engine/53/53.c                                      4      +3c  SaveSelectScreen_render, SaveSelectScreen_run
+dlls/engine/0/0.c                                       21      +74  pauseMenuDraw, cMenuRun[NEWFN], GameUI_hudDraw
+dlls/engine/60/60.c                                      2      +30  Link_refreshOverlappingItemTimers, Link_scanItemVerticalBounds
+dlls/objects/196_Tricky/tricky.c                         1      +a0  tricky_SeqFn
+dlls/objects/201_Baddie/Baddie.c                         5      +6c  Tricky_resumeAfterCommand, tricky_handleDefeat, enemyObjAnimUpdate, baddieSetMove
+dlls/objects/202/guardclaw.c                             1      +18  guardClaw_update
+dlls/objects/245_SidekickBal/SidekickBal.c              13      +98  sidekickBall_handlePlayerInteraction, sidekickBall_launch, SidekickBall_update, trickyBallMove
+dlls/objects/251/251.c                                   1      +14  PressureSwitchFB_init
+dlls/objects/287_MagicCaveTo/MagicCaveTo.c               1      +24  MagicCaveTop_update
+dlls/objects/344/344.c                                   6      +38  gunpowderBarrel_triggerExplosion, gunpowderBarrel_updatePhysics, gunpowderBarrel_update, gunpowderBarrel_init
+dlls/objects/417/417.c                                   1      +1c  NW_mammoth_update
+dlls/objects/422_SH_tricky/SH_tricky.c                   1      +20  shTricky_init
+dlls/objects/644/644.c                                   1      +48  shopitem_free
+dlls/objects/589_BossDrakor/BossDrakor.c                 9      +40  bossdrakor_spawnAttackObjects, bossdrakor_update
+dlls/objects/613_DR_Creator/DR_Creator.c                 5      +30  DR_Creator_SeqFn
+dlls/objects/626/626.c                                   5      -58  hightop_handleMotionEvent, hightop_stateHandler02, HighTop_hitDetect
+dlls/objects/653_WCLevelCont/WCLevelCont.c               2      +58  wclevelcont_update, wclevelcont_init
+dlls/objects/659/659.c                                   1      +1c  suntemple_update
+dlls/objects/693_Timer/Timer.c                           1      +34  timer_update
+dolphin/os/OSRtc.c                                       1      +6c  OSGetWirelessID[NEWFN]
+dolphin/TRK_MINNOW_DOLPHIN/targimpl.c                    1       -4  TRKValidMemory32
+dlls/objects/598_DIMSnowHorn/DIMSnowHorn.c               2      +10  DIMSnowHorn1_update
+dlls/objects/599_DR_EarthWar/DR_EarthWar.c               1       +0  DR_EarthWarrior_stateHandler03
+?(past last unit)                                        1      +10  DR_CloudRunner_initialise
+
+whole-function insertions (B addr, size):
+  8007F91C +0x1b0
+  8012EBB4 +0xfc
+  80245FF8 +0x6c

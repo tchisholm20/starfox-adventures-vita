@@ -1,0 +1,15 @@
+## EU10 -> EU11 (.text), mapped on side B via GSAP01_rev1
+TU                                                   sites    delta  functions touched
+dlls/engine/20_Hcurves/Hcurves.c                        15       -8  Objfsa_UpdateWalkGroupPatches
+dlls/engine/47/47.c                                      2      +18  Carryable_putDownAndSavePos, Carryable_updateHeld
+dlls/engine/52_n_attractmode/n_attractmode.c             3      +24  TitleMenu_run
+dlls/objects/201_Baddie/Baddie.c                         5      +6c  Tricky_resumeAfterCommand, tricky_handleDefeat, enemyObjAnimUpdate, baddieSetMove
+dlls/objects/245_SidekickBal/SidekickBal.c               2      +38  sidekickBall_handlePlayerInteraction, sidekickBall_launch
+dlls/objects/273/273.c                                   1      +10  DoorLock_update
+dlls/objects/422_SH_tricky/SH_tricky.c                   1      +20  shTricky_init
+dlls/objects/510/510.c                                   1       -c  PressureSwitch_update
+dlls/objects/613_DR_Creator/DR_Creator.c                 5      +30  DR_Creator_SeqFn
+dlls/objects/626/626.c                                   1       +c  HighTop_hitDetect
+dolphin/TRK_MINNOW_DOLPHIN/targimpl.c                    1       +8  TRKValidMemory32
+dlls/objects/598_DIMSnowHorn/DIMSnowHorn.c               2      +10  DIMSnowHorn1_update
+?(past last unit)                                        1      -10  DR_CloudRunner_initialise

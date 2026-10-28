@@ -1,0 +1,5907 @@
+=== kidx 0 (engine) DPid=1 1_cmdmenu offset=0x0 size=34000 exports=25 ===
+  +0x00214  '9k$
+  +0x003e8  '9 ,
+  +0x00516   %0E
+  +0x0075a  (%'97
+  +0x00860  '9; 
+  +0x009b8  '9;<
+  +0x00a08  '9; 
+  +0x00a30  '9;\
+  +0x00a44  '9Ip
+  +0x00b2b  1'9H
+  +0x00bd4  '9IP
+  +0x00bec  '9I4
+  +0x00d5d   (%'9\
+  +0x00de9   (%'9=
+  +0x00e09  @0%'9K
+  +0x00e29  @0%'9
+  +0x00e49  @0%'9(
+  +0x011a5  b`#1
+  +0x0130e  8%$B
+  +0x01776  B@79
+  +0x0182c  '99p
+  +0x01889  yP!1H
+  +0x018f8  '99p
+  +0x0192d  Ax%$N
+  +0x019aa  x%%X
+  +0x01a28  '99p
+  +0x01a96  H%22
+  +0x01b8c  '99p
+  +0x01c13  ('99p
+  +0x01c66  X%'.
+  +0x01ca7  ('99p
+  +0x01ce1  A0%$Y
+  +0x02126   %0E
+  +0x022f8  '9; 
+  +0x02513  `0Y@
+  +0x0255c  '9; 
+  +0x02654  '9; 
+  +0x026bc  '9; 
+  +0x029d6   %'9'
+  +0x02bf6   %'9t
+  +0x02c4e   %'9F
+  +0x02ca5  b !$B
+  +0x02e4d  @(%&
+  +0x03149  *8#$
+  +0x03178  '9HP
+  +0x03305  m0!$
+  +0x03513  x'99
+  +0x035a2  `@%k
+  +0x03627  x'99
+  +0x036d2  H$Q 
+  +0x03767  x'99
+  +0x03a3d  @(%T
+  +0x03a91  @(%Tf
+  +0x03f77  D'97
+  +0x03fa6  (%'97
+  +0x04861  !@%5
+  +0x04cde  B@79
+  +0x04d9c  '99p
+  +0x04dcd  iP!1M
+  +0x04df5  iX#1p
+  +0x04e6c  '99p
+  +0x04eb6  x%$N
+  +0x04fdc  '99p
+  +0x05182  H%'99p
+  +0x0523f  X'99p
+  +0x052ef  4'99p
+  +0x0532a  0%$X
+  +0x05db1  @p%1
+  +0x060ea  `>&1
+  +0x066c5  @ %&
+  +0x0682e  B$DX
+  +0x068c6  x#$Y
+  +0x06f81   (%$
+  +0x071f5   (%$
+  +0x079ec  qInfoShow
+  +0x079f8  qInfoShowTex
+  +0x07a08   Width %i Length %i 
+  +0x07a20   Killing Bar 
+=== kidx 1 (engine) DPid=2 2_camcontrol offset=0x84d0 size=10304 exports=27 ===
+  +0x000f4  '9#l
+  +0x00576  (%'9
+  +0x008ed  @ %$
+  +0x01503  4'9#
+  +0x01552  0%$c
+  +0x022f2  x!19
+=== kidx 2 (engine) DPid=3 3_ANIM offset=0xad10 size=42784 exports=33 ===
+  +0x006c6  0%'9
+  +0x0076a  0%'9
+  +0x0082a  0%'9F
+  +0x00846  (%'9O
+  +0x00874  '9K 
+  +0x00982   %%)
+  +0x0099f  d'9.
+  +0x00aef  f'9'`
+  +0x00b26  x!'9F
+  +0x00b58  '91p
+  +0x00b82  (%'94
+  +0x00c02  (%'9I\
+  +0x00cda  (%'9^P
+  +0x00e6b  d'9n
+  +0x00f4a   %'9n
+  +0x011f6  8%%X
+  +0x011ff  r'96
+  +0x01226  (%'9I$
+  +0x01285  @(%'9]x
+  +0x01335  XH!'9F
+  +0x01368  '92h
+  +0x013d2  (%'9O
+  +0x01400  '9K 
+  +0x0144e  0%'9B,
+  +0x014fe  (%'9I$
+  +0x0154a  (%'9I$
+  +0x0156a  0%'9q
+  +0x015aa  X@'9
+  +0x015f2  p@%J
+  +0x017b6  0%Y`
+  +0x017d7  t'96
+  +0x01872  0%'96
+  +0x0192a  (%'9B,
+  +0x01961  @0%'9F
+  +0x01a16  (%'9B,
+  +0x01d5f  l'9n
+  +0x01e49    %$
+  +0x01e61    %$
+  +0x01e73  t'9n
+  +0x01e99    %$
+  +0x01eab  x'9n
+  +0x01ed1    %$
+  +0x01ee3  |'9n
+  +0x01f09    %$
+  +0x01f1b  l'9n
+  +0x01f2d    %$
+  +0x01f3f  l'9n
+  +0x01fdd    %$
+  +0x01ff5    %$
+  +0x02007  l'9n
+  +0x02019    %$
+  +0x0202b  l'9n
+  +0x0203d    %$
+  +0x02205    %$
+  +0x022a1    %$
+  +0x0232e  B$DK
+  +0x02389    %$
+  +0x023e9    %$
+  +0x02455    %$
+  +0x024b1    %$
+  +0x0251a  (%'9n
+  +0x025d1    %$
+  +0x02671    %Q 
+  +0x02687  l'9n
+  +0x026b1    %F
+  +0x026f7  l'9n
+  +0x029f5    %$
+  +0x02a87  d'9n
+  +0x02a91    %$
+  +0x02ba5    %'9n
+  +0x02bd5    %$
+  +0x02c71    %<
+  +0x02e23  r'96
+  +0x02e4a  (%'9I$
+  +0x02ee2  (%'9I$
+  +0x03106  0%7(
+  +0x0314e  (%1K
+  +0x031af  0'9K 
+  +0x03549   8%'9'`
+  +0x0356b  @'9I$
+  +0x035af  <'9K 
+  +0x0360a  p!'9F
+  +0x03629   (%'9
+  +0x0368e  @@%)
+  +0x0381b  <'9n
+  +0x03966  (%'9/
+  +0x03c79  `0%0
+  +0x03dbf  d'9n
+  +0x03eb9  `0%0
+  +0x03f86  x#0e
+  +0x04043  <'9AX
+  +0x04153  <'9n
+  +0x0455d    %$
+  +0x045ed    %$
+  +0x04a8d  @(%0Y
+  +0x04aa6   %'9^P
+  +0x04cb5  @@%<
+  +0x04e9a   %0E
+  +0x051d3  ,'9Q
+  +0x0533d  @(%F
+  +0x057b5  DX$U`
+  +0x0581d  @0%$
+  +0x05824  '9ZH
+  +0x05905  #P$Q@
+  +0x05988  '9ZH
+  +0x05a99  ` %'9ZH
+  +0x06245  08%'9e
+  +0x0628a   %%k
+  +0x06389  `0%$c
+  +0x063b3  L'9J|
+  +0x063fd  @(%'9^P
+  +0x064b1  @ %'9J|
+  +0x067a7  ('9V
+  +0x06939  `(%$
+  +0x06afd  @8%%
+  +0x06fa0  '9o$
+  +0x0728e  0%P@
+  +0x07b09  @ %$
+  +0x0804e   %'9
+  +0x084fd  `H%F
+  +0x08579  `H%F
+  +0x085f5  `H%F
+  +0x08aed  @ %$
+  +0x08d4d  `0%1K
+  +0x09036  P!'9
+  +0x0986e  0%3)
+  +0x0a184  Max activates reached
+  +0x0a19c  CODE OVERFLOW
+  +0x0a1ac  MAX_DECISION reached
+  +0x0a1c4  st->messages overflow
+  +0x0a1dc   MODEL NO %i 
+  +0x0a1ec   Could Not FInd Obj %i  over %i 
+  +0x0a210  ****END
+  +0x0a21c  game/anim.c: startObjSequence() seqno out of range [%d][%d]
+  +0x0a25c  game/anim.c: startObjSequence() couldn't find seqno free (ABORTED)!!
+  +0x0a2a4  endObjSequence: too many obj frees
+  +0x0a2c8  preemptSequenceTime() Overflow!!
+=== kidx 3 (engine) DPid=4 4_race offset=0x15430 size=8576 exports=15 ===
+  +0x000ee  (%%)
+  +0x006af  dF$0<<
+  +0x01511  lh!E
+  +0x020e8  Warning: calcPosition: Stack overflow!!
+  +0x02114  racePostion: Error! (romdefno: %d) %d %i  
+  +0x0214b  w?}p
+=== kidx 4 (engine) DPid=5 5_AMSEQ offset=0x175b0 size=15424 exports=36 ===
+  +0x000e9  @ %$
+  +0x00129  @ %$
+  +0x00335  @ %$
+  +0x00485  @ %$
+  +0x00635  bX!%l
+  +0x00649  bp!%
+  +0x00661  CX!$c
+  +0x00b8e  0%'9
+  +0x01496  ,t%)0h%J4d
+  +0x01b9a   %2e
+  +0x01c2a   %2e
+  +0x01c62   %2e
+  +0x02026  (%'9
+  +0x02055   0%'9
+  +0x02326  T$DN
+  +0x024e2   %2e
+  +0x02e56  T$DO
+  +0x02f2e  B$DD
+  +0x02fad  `0%$
+  +0x02fb9  dh$%
+  +0x03668  music %08x,%d
+  +0x03678  object+fade
+  +0x03688  AUDIO: Maximum sequence handles reached.
+  +0x036b4  registered %d,%08x
+  +0x036c8  already registered %d,%08x
+  +0x036e4  starting non-fade channels
+  +0x03700  starting static sequence
+  +0x0371c  amSeqPlayEx: Warning, player value '%d' out of range.
+  +0x03754  amSeqPlayEx: Warning, sequence value '%d' out of range.
+  +0x03790  amSeqStop: Warning, player value '%d' out of range.
+  +0x037c8  amSeqGetNo: Warning, player value '%d' out of range.
+  +0x03800  amSeqGetVolume: Warning, player value '%d' out of range.
+  +0x0383c  amSeqSetVolume: Warning, player value '%d' out of range.
+  +0x03878  startSequencer %d
+  +0x0388c  download sequence %d:%d
+  +0x038a8  AUDIO: MIDI sequence buffer failed.
+  +0x038d0  volumes %d,%d %d
+  +0x038e4  start c:%04x f:%04x d:%04x mask:%04x
+  +0x0390c  doaction %08x,%d
+  +0x03920  play %d on player %d
+  +0x03938  AMSEQ: player out of range
+  +0x03954  not already playing/cut set
+  +0x03974  cut %04x player %d otherplayer %d
+  +0x03998  c:%04x f:%04x d:%04x mask:%04x
+  +0x039b8  fade out %d
+  +0x039c8  already on player %d
+  +0x039e0  already c:%04x f:%04x d:%04x mask:%04x
+  +0x03a08  stop playing player %d
+  +0x03a20  amSeq: focus object deleted %08x,%d
+  +0x03a48  amSeq: seq object deleted
+  +0x03a64  determineVols %d %04x %04x %04x
+  +0x03a88  leave %d
+  +0x03a94  mute %d [0]
+  +0x03aa4  same %d
+  +0x03ab0  change %d [%d]
+  +0x03ac0  amAudio: WARNING invalid osc rate, using default.
+  +0x03af4  amAudio: WARNING invalid osc delay, using default.
+  +0x03b28  amAudio: WARNING invalid osc rise time, using default.
+  +0x03b60  amAudio: WARNING no free oscstates.
+  +0x03b88  amAudio: unsupported vibrato/tremolo type, %d
+=== kidx 5 (engine) DPid=6 6_AMSFX offset=0x1b1f0 size=11456 exports=21 ===
+  +0x00331    %'9
+  +0x00455    %'9
+  +0x00618  '9"@
+  +0x0063b  P'9"
+  +0x007a1  mx!%
+  +0x007dd  g(!$
+  +0x00b72   %'9
+  +0x010bd  h`#$
+  +0x0132e   %'9
+  +0x01346   %'9
+  +0x018ce  T$DX
+  +0x01a76  @%T 
+  +0x020a7  d'9"@
+  +0x020cf  h'9"
+  +0x020f7  ^'9$8
+  +0x027d4  AMSFX: Error sound effects bank missing!
+  +0x02800  amSfxPlayEx failed
+  +0x02814  amSfxSetVol: Warning,sound handle '%d' out of range.
+  +0x0284c  amSfxSetVol: Warning,invalid handle '%d'.
+  +0x02878  amSfxSetPitch: Warning,sound handle '%d' out of range.
+  +0x028b0  amSfxSetPitch: Warning,invalid handle '%d'.
+  +0x028e0  amSfxStop: Warning,sound handle '%d' out of range.
+  +0x02914  amSfxIsPlaying: Warning,sound handle '%d' out of range.
+  +0x02950  amSfxGetDefault: Warning,sound effect value '%d' out of range.
+  +0x02990  amSndPlayEx: Warning,sound '%d' out of range.
+  +0x029c0  amSndPlayEx: Warning,sound handle '%d' out of range.
+  +0x029f8  game/amsfx.c
+  +0x02a0c  game/amsfx.c
+  +0x02a20  game/amsfx.c
+  +0x02a34  game/amsfx.c
+  +0x02a48  AMSFX: Software bug in object (controlfunc %d)
+  +0x02a78         amSfxStop is required to release effect %d.
+  +0x02aac  AMSFX: Software bug in object (controlfunc %d)
+  +0x02adc         amSfxStop is required to stop effect %d.
+  +0x02b10  game/amsfx.c
+  +0x02b24  amSfxSetPitch: Warning,sound handle '%d' out of range.
+  +0x02b5c  amSfxSetPitch: Warning,invalid handle '%d'.
+  +0x02b8c  game/amsfx.c
+  +0x02ba0  game/amsfx.c
+  +0x02bb4  AMSFX: Maximum sfx handles allocated,%d (from %s:%d)
+  +0x02bec  AMSFX: allocSfxHandle handle out of range, %d
+  +0x02c1c  AMSFX: freeSfxHandle invalid handle, %d
+  +0x02c48  AMSFX: freeSfxHandle not used, %d
+  +0x02c6c  AMSFX: Warning min/max range identical
+  +0x02c9a  33<#
+=== kidx 6 (engine) DPid=7 7_newday offset=0x1deb0 size=26272 exports=24 ===
+  +0x00140  '9$d
+  +0x00168  '9$dD
+  +0x00221  )P!D
+  +0x00c1b  4'9!
+  +0x00d27  $'92
+  +0x01f01    %'9V
+  +0x01f69    %$
+  +0x0233e    8M
+  +0x03768  '9Q$
+  +0x03af5  "p!$B
+  +0x03b46  `!$B
+  +0x03cb6  !$DN
+  +0x03d11  BH!$B
+  +0x04021    %$
+  +0x04149    %F
+  +0x0416a  Q$DF
+  +0x04196  !$DF
+  +0x042e9    %$
+  +0x04415  `0%<
+  +0x0441d    %$
+  +0x046e2  8%(A
+  +0x047a5  C !$
+  +0x048e9  #P#F
+  +0x049bd  "H!%)
+  +0x04a49  "H!%)
+  +0x04ad1  "H!%)
+  +0x04b59  "H!%)
+  +0x04bb2  H%)!
+  +0x04c0a  H%)!
+  +0x04d12  Q$DG
+  +0x04d3e  !$DG
+  +0x04e8a  C $B
+  +0x0504a  Q$DG
+  +0x05076  !$DG
+  +0x052cd  @ %$
+  +0x055d1  @ %$
+  +0x05c15  @ %Q@
+  +0x05caa  (%1,
+  +0x05dba   %$B
+  +0x05e62  0%$B
+  +0x05ebe   %$B
+  +0x06260  ?fff?fffF
+  +0x062c0  ?fff?fffE
+  +0x062ec  ?fffE
+  +0x064f9  5kh&f
+  +0x0657e  Sz`F
+=== kidx 7 (engine) DPid=8  offset=0x24550 size=9456 exports=13 ===
+  +0x00b41  p !F
+  +0x00bad  P !F
+  +0x00f86  (C$A
+  +0x01855  "P#D
+  +0x018d9  HX#D
+  +0x01956   %(a
+  +0x02009  FX!$
+  +0x02096  0%$B
+=== kidx 8 (engine) DPid=9  offset=0x26a40 size=20544 exports=8 ===
+  +0x00259  @@%P
+  +0x005c5  .P!PA
+  +0x008c5  8x!F
+  +0x008e5  -P!F
+  +0x00b9e   %'9F
+  +0x00c36   %'9F
+  +0x00c5e   %'9F
+  +0x00e48  '9Hd
+  +0x01180  '9,T
+  +0x013a4  '9,T
+  +0x014b4  '9:(
+  +0x018be  B@79,
+  +0x01a72  8C%A
+  +0x01be5  @(%F
+  +0x01d1e   %'9F
+  +0x0207c  '9Hd
+  +0x0209c  '9K,
+  +0x02512  xC'!
+  +0x030f9  *X!D
+  +0x0376d  Bh#D
+  +0x037dd  CX#D
+  +0x0384d  B`#D
+  +0x038ed  Bx#D
+  +0x039d5  Bh#D
+  +0x03f19    %$
+  +0x03f81    %$
+  +0x04045    %$
+  +0x04082  !$DN
+  +0x040fe  KP79,
+  +0x04679    %$
+  +0x04d1c  !!! Error non-existant cloud id - %i - in snowKillSnowCloud
+  +0x04d5c  warning in newcloud dll no spare memory for light available
+  +0x04d9c  warning in newclouds dll no spare memory for clouds available
+  +0x04ddc  warning in newclouds dll no spare memory for clouds available
+  +0x04e1c  !!! Error non-existant cloud id - %i - in snowReposSnowCloud
+  +0x04e5c  !!! Error non-existant cloud id - %i - in snowPrintSnowCloud
+  +0x04e9c  !!! Error non-existant cloud id - %i - in snowFreeSnowCloud
+  +0x04edc  !!! Error non-existant cloud id - %i - in snowFreeSnowCloud
+=== kidx 9 (engine) DPid=10  offset=0x2ba80 size=5456 exports=3 ===
+  +0x00de6  h!$L
+  +0x00f69  ` %F
+  +0x00fd1  uP!$Y
+  +0x01029  ` %F
+  +0x013b0  warning in newstars dll no spare memory available
+  +0x013e4  warning in newstars dll no spare memory available
+=== kidx 10 (engine) DPid=11  offset=0x2cfd0 size=9536 exports=7 ===
+  +0x001a1    %$B
+  +0x00380  '9"H
+  +0x00621  `(%(
+  +0x00f92  B$DJ
+  +0x010b5  BX#D
+  +0x010d6  "$DM
+  +0x01102  B$DM
+  +0x011b5  "@#D
+  +0x01202  !$DJ
+  +0x0157e  Q@%k
+  +0x01f91  G@#1
+  +0x02450  too many tmoves
+  +0x02464  warning in newlfx dll no spare lights available
+  +0x02498  warning in newlfx dll no spare memory for light available
+  +0x024d4   Warning .. ! no spare palettes in dll newlfx.c
+=== kidx 11 (engine) DPid=12  offset=0x2f510 size=16624 exports=10 ===
+  +0x00429    %'98T
+  +0x00469    %'99@
+  +0x00685    %'98T
+  +0x006c5    %'99@
+  +0x00b2d  q !&1
+  +0x00ef1  `(%$
+  +0x010a2  @%(a
+  +0x010ce  @%(A
+  +0x01641  c(!F
+  +0x01968  '9:,
+  +0x01bf2  0%%J
+  +0x0234e  (%%J
+  +0x02624  5kC@
+  +0x026ce  P!$O
+  +0x028e7  H$c?
+  +0x02970  '9<H'
+  +0x02cb0  '9<H
+  +0x02dab  3(A.
+  +0x02e2a  `!5)@
+  +0x03153  .(A.
+  +0x031c2  x!$Y
+  +0x031f1  +(!$
+  +0x03339  Ap!$Y
+  +0x03959  PX!&
+  +0x03a45  PX!&
+  +0x03e6c  minic error %d null
+=== kidx 12 (engine) DPid=13 13_expgfx offset=0x33600 size=22448 exports=11 ===
+  +0x002c7  v'9I
+  +0x003b4  (Au1
+  +0x003ef  B'9P<
+  +0x00417  t'9O
+  +0x0054f  |'9 
+  +0x006b6  !$DN
+  +0x007c2  B$DX
+  +0x00c8b  |'9FD
+  +0x00d08  '9"@
+  +0x00e2a  H$Q 
+  +0x01015  JX!%)
+  +0x01052  (%'9O
+  +0x01365    %$
+  +0x01486   C$a
+  +0x0177e  H$U 
+  +0x0198d  ax$U
+  +0x01d28  5)KT5
+  +0x01e04  5JC@
+  +0x01e48  5kKT5
+  +0x01e78  79KP
+  +0x01ec5    %$
+  +0x01f29    %'9R
+  +0x02049  "p!T
+  +0x02439  Mp$Q
+  +0x024c7  L'9O
+  +0x02bfb  70m 
+  +0x02c5e  T$DK
+  +0x02cdb  90l@
+  +0x02e56  B$DM
+  +0x02f9a  B$DN
+  +0x03692  Q@0k
+  +0x036d8  '9S,
+  +0x04149  cP#D
+  +0x04972  @%0o
+  +0x04bbd  mx$U
+  +0x04c45  mx$U
+  +0x04cf6  @%+!
+  +0x04f89  (H$Q 
+  +0x04f9e  `!%J
+  +0x04ffe  ZB1d
+  +0x05046  x$%*
+  +0x05159  @ %)!
+  +0x05211  `8%$c
+  +0x0551c  WARN no free particle
+  +0x05534  error no texture
+  +0x05548  expgfx.c: invalid tabindex
+  +0x05564  expgfx.c: scale overflow
+  +0x05580  expgfx.c: Error on owner free
+  +0x055a1   exp x %f
+  +0x055ad   exp z %f
+  +0x055b8  expgfx.c: addToTable usage overflow
+  +0x055e0  expgfx.c: exptab is FULL
+  +0x055fc  expgfx.c: mismatch in add/remove in exptab
+  +0x05628  notexture 
+  +0x05634  notexture 
+  +0x05680  ?&ff?&ff?&ff?&ff=8Q
+=== kidx 13 (engine) DPid=14 14_modgfx offset=0x38db0 size=29360 exports=22 ===
+  +0x000e0  '9L 
+  +0x00124  '9L 
+  +0x001a7  ('9K
+  +0x0028a  (%'9L 
+  +0x00396  (%1B
+  +0x004da  (%2C
+  +0x006ba  (%'9L 
+  +0x00870  '9L 
+  +0x008b2  x!$B
+  +0x00916  x!$B
+  +0x00b10  (AN!T 
+  +0x00c25    %$
+  +0x00e4e  (%'9L 
+  +0x00e78  '9d8
+  +0x00ece  (%'9L 
+  +0x00ef8  '9d8
+  +0x00f30  '9Nl
+  +0x01191  @ %$
+  +0x01910  '9`|
+  +0x01948  '9X`
+  +0x019a5  u`!'9X`
+  +0x01b4a  B(4!
+  +0x01b68  '9gl
+  +0x01bd8  '9^d
+  +0x01ddd  u`!1
+  +0x022a0  '9L 
+  +0x0257e  (%'9L 
+  +0x0284e  (%'9N
+  +0x02e59  @ %$
+  +0x02f1d  !h$Q
+  +0x03036   %$B
+  +0x03079  @ %$
+  +0x035ad   H%0
+  +0x03ac1  !h%$
+  +0x03cba  P%$N
+  +0x03cd1  @H%$
+  +0x03cf5  @ %0
+  +0x03e12  P%$X
+  +0x03e29  @H%$
+  +0x03e4d  @ %0
+  +0x03f6a  P%$Y
+  +0x03f81  @H%$
+  +0x03fad  @ %0
+  +0x040c6  P%$M
+  +0x040dd  @H%$
+  +0x04109  @ %0
+  +0x0420a  P%$X
+  +0x04221  @H%$
+  +0x04245  @ %0
+  +0x04362  P%$L
+  +0x04379  @H%$
+  +0x043a5  @ %0
+  +0x044be  P%$M
+  +0x044d5  @H%$
+  +0x04501  @ %0
+  +0x046a2  C@79,
+  +0x05331  Ip!D
+  +0x05385  Ip!D
+  +0x053d9  Ip!D
+  +0x06a4a   %Q`
+  +0x06a5f  \'9Y
+  +0x06b23  \'9Y
+  +0x071c4  warning in modgfx dll no spare memory available
+  +0x071f9   modgfx x %f
+  +0x07209   modgfx z %f
+=== kidx 14 (engine) DPid=15  offset=0x40060 size=21952 exports=8 ===
+  +0x00235  8@!%
+  +0x0029c  (AN!
+  +0x00946  X!'9< 
+  +0x00ed2  D$DL
+  +0x00f51  #p#D
+  +0x01679  ex#%
+  +0x01eff  $0x@
+  +0x02079  ap$Q
+  +0x02235  @ %$
+  +0x02316  (%'94
+  +0x02505  a`$U
+  +0x02765  @ %$
+  +0x02cc2  (%'94
+  +0x02dd5  ` %$
+  +0x02df9  ` %$
+  +0x02f40  79C@
+  +0x03014  79KP
+  +0x04178  no free magic effects
+  +0x04190  warning in projgfx dll no spare memory available
+  +0x041c4  warning in projgfx dll no spare memory available
+  +0x041f8  ERRROR 3 %d 
+  +0x04208  ERRROR 1 %d
+  +0x04218  ERRROR 2 %d  a1 %f a2 %f
+  +0x04234  warning in projgfx dll no spare memory available
+=== kidx 16 (engine) DPid=17 17_partfx offset=0x469b0 size=50320 exports=3 ===
+  +0x03e76  D 79
+  +0x04851  A`!'
+  +0x04873   $Ic
+  +0x060d1  "`#D
+  +0x079e5  "P#D
+  +0x07dae  X%1y
+  +0x083bd  "`#D
+  +0x08512  4 79
+  +0x091b9  "`#D
+  +0x095fd  "P#D
+  +0x09a6d  "P#D
+  +0x09c01  bh#D
+  +0x09c35  "P#D
+  +0x0a0d9  "P#D
+  +0x0b9a0  alpha %d
+  +0x0be22  IR?&ff<#
+  +0x0be76  IR<#
+  +0x0c043  4>8Q
+  +0x0c1ae  \)8Q
+  +0x0c364  ;e`B;
+  +0x0c36c  ;e`B6
+=== kidx 17 (engine) DPid=18 18_objfsa offset=0x52e40 size=9168 exports=23 ===
+  +0x0024a  (%'9
+  +0x00266  (%'9
+  +0x0035e  (%'9
+  +0x00635  @8%$
+  +0x00962  (%P@
+  +0x009d6  (%P@
+  +0x00a6d   8%1
+  +0x00b61  HH#F
+  +0x023b4  ?fff?fff
+=== kidx 19 (engine) DPid=20 20_screens offset=0x55390 size=1488 exports=3 ===
+  +0x00310  79~&
+  +0x0038d  !h%1
+  +0x00439  `H%18
+  +0x005a4  SCREEN: No out of range!!
+=== kidx 20 (engine) DPid=21 21_gametext offset=0x55960 size=1600 exports=6 ===
+  +0x0011a  P!%K
+  +0x00542  H+U 
+=== kidx 21 (engine) DPid=22 22_subtitles offset=0x55fa0 size=9392 exports=10 ===
+  +0x0068d  @p%1
+  +0x006d6  PC%!
+  +0x00db1  ` %$B
+  +0x00e76  0!&1
+  +0x010c1    %2
+  +0x01552  P!1X
+  +0x0195e  8%'9
+  +0x01a31  ` %'9
+  +0x01b81  ` %2
+  +0x01c39  nx!U`
+  +0x01c66  @!*!
+  +0x01e1f   '9 
+  +0x01eb5  l !$
+  +0x02027  @'9 
+  +0x020e5    %&
+  +0x0239c  subtitles error: sentence has a delay less than %d ms
+  +0x023d4  Can't have more than one new line in a subtitle sentence, not enough space on screen
+=== kidx 23 (engine) DPid=24 24_waterfx offset=0x58550 size=8160 exports=8 ===
+  +0x000bb  @$i#
+  +0x00b05  8(!F
+  +0x00e65  ` %$
+  +0x00fa1  ` %$
+  +0x010a1  ` %$
+  +0x01439  Cp!)
+  +0x01b1e  (%%K
+  +0x01f8c  Could not allocate memory for waterfx dll
+=== kidx 24 (engine) DPid=25 25 offset=0x5a530 size=13264 exports=15 ===
+  +0x009ed  ,p#D
+  +0x00aa9    %F
+  +0x00b6e  B '9
+  +0x00c21    %F
+  +0x00e99  `(%$
+  +0x00ed5  @0%$B
+  +0x011e1    %'9
+  +0x012e9  @0%$B
+  +0x015d5   8%U
+  +0x016ad  `(%$
+  +0x016e9  @0%$B
+  +0x01d55  `H%F
+  +0x02f64  Error in isPointWithinPatchGroup
+=== kidx 25 (engine) DPid=26 26_curves offset=0x5d900 size=24368 exports=42 ===
+  +0x005a1  @0%P`
+  +0x005b2   %$e
+  +0x006f9  @0%P`
+  +0x0070a   %$e
+  +0x00bf5  @ %P
+  +0x00d12  H!&s
+  +0x016fd  Lh$U
+  +0x01c2e   %&E
+  +0x01e8a  (%'9
+  +0x0252a  (%'9
+  +0x0274d  `0%$c
+  +0x03741  iP!&1
+  +0x03c16  (%'9
+  +0x04091  ` %F
+  +0x04185  @(%F
+  +0x041a1  @ %'
+  +0x0424d  @(%F
+  +0x04269  @ %'
+  +0x044a1  @ %$
+  +0x048ed  @ %$
+  +0x052d1  @ %$
+  +0x05a55  @ %$
+  +0x05e48  curves.c: MAX_ROMCURVES exceeded!!
+  +0x05e6c  addCurveDef: max curves reached %d/%d
+  +0x05e94   Curve Id %i 
+  +0x05ea4   CI %i 
+  +0x05eac  Search
+  +0x05eb4  link:(%d) %d
+  +0x05ec4  Found: %d
+  +0x05ed4   list Branch No %i 
+  +0x05ee8   list Branch %i Max %i Branch No %i 
+=== kidx 26 (engine) DPid=27 27 offset=0x63830 size=10576 exports=9 ===
+  +0x004b9    %&
+  +0x00771   (%'9
+  +0x007f1   (%'9
+  +0x0084d   (%'9!
+  +0x0086d   (%'9$
+  +0x0088d   (%'9
+  +0x008b9   (%'9
+  +0x008e5   (%'9
+  +0x00911   (%'9
+  +0x00a65   (%'9
+  +0x00abd   (%'9
+  +0x00b7e  0%'9
+  +0x00c7a  0%'9
+  +0x00dd9  " !$c
+  +0x01416  p%&1
+  +0x01522  0%'9
+  +0x016dd   @%+
+  +0x020b1  c@!F
+  +0x02179  bH!3(
+  +0x0223d    %'
+  +0x02552   %0C
+  +0x028d4  Error findBounds obj romdefno %d  lastpolyworld %f %f %f
+=== kidx 27 (engine) DPid=28 28_screen_fade offset=0x66180 size=5968 exports=6 ===
+  +0x00525  !P%1
+  +0x005b7  P5)C@5
+  +0x00606  8%DM
+  +0x007b1  !P%1
+  +0x00843  P5)C@5
+  +0x00a36  X#0j
+  +0x00b7e   %0b
+  +0x00c65   0%'9
+  +0x00d9a  x%1l
+  +0x00e92  @%$X
+  +0x00ea9  +`!1
+  +0x00ffa  X!1n
+  +0x0104e   %$O
+  +0x010f1  @ %$
+  +0x01165  @ %$
+  +0x011a9  +p!1
+  +0x01246  XC1u
+  +0x0127a  2$DB
+  +0x012a6  B$DB
+  +0x0136e  X!%m
+  +0x014b6  X!1l
+  +0x014e2   %$X
+  +0x014f6  p!1l
+  +0x01525  1`#1
+  +0x0161d  )p!1
+=== kidx 28 (engine) DPid=29 29_gplay offset=0x678d0 size=8960 exports=49 ===
+  +0x00325  ` %$
+  +0x003f9    %$
+  +0x0190d  F(%$
+  +0x01ecc  gplayLoadGame error: savegame and backup failed to load.
+  +0x01f08  gplayLoadOptions error: saveoptions failed to load.
+  +0x01f40   WARNING : Not Enough Memort for Restart Point 
+  +0x01f71  WARNING gplay : Restart Point Not Set 
+  +0x01f9c  gameplay.c: gplayGetCurrentPlayerLactions: playerno overflow
+  +0x01fdc  gameplay.c: gplayGetCurrentPlayerEnvactions: playerno overflow
+  +0x0201c  gplayAddTime: MAX_TIMESAVES reached
+  +0x02044  Error in gplaySetObjGroupStatus (mapno %d, groupno %d)
+  +0x0207c  CHEAT OUT OF RANGE
+  +0x02090  CHEAT OUT OF RANGE
+  +0x020a4  CHEAT OUT OF RANGE
+  +0x020b8  CHEAT OUT OF RANGE
+  +0x020cc  CINEMA OUT OF RANGE
+  +0x020e4  CINEMA OUT OF RANGE
+=== kidx 29 (engine) DPid=30 30_task offset=0x69bd0 size=1344 exports=6 ===
+  +0x002ba  !C$a
+=== kidx 30 (engine) DPid=31 31_flash offset=0x6a110 size=3920 exports=2 ===
+  +0x0013e  8%'9
+  +0x002b6   %'9
+  +0x00339    %$
+  +0x0035e  8%'9
+  +0x00499  8P!0L
+  +0x00cc8  Savegame size in pages: %d %d
+  +0x00ce8  flashLoadGame: dest=%x slotno=%d size=%d
+  +0x00d14  Error reading from flash
+  +0x00d30  Flash checksum passed:
+  +0x00d49  loaded:     XOR %x %x 
+  +0x00d60  SUM %x %x
+  +0x00d6d  calculated: XOR %x %x 
+  +0x00d84  SUM %x %x
+  +0x00d90  Flash checksum failed:
+  +0x00da9  loaded:     XOR %x %x 
+  +0x00dc0  SUM %x %x
+  +0x00dcd  calculated: XOR %x %x 
+  +0x00de4  SUM %x %x
+  +0x00df0  Error in loading game number:%d
+  +0x00e14  flashSaveGame: slotno %d
+  +0x00e30  Error erasing flash sector
+  +0x00e4c  Error writing to flash write buffer
+  +0x00e74  Error writing to flash
+  +0x00e8c  Flash saved worked: %d
+  +0x00ea4  Checksum: XOR %x %x, 
+  +0x00ebc  SUM %x %x
+  +0x00ecc  Flash checksum was zero!, it is possible (about a million to one), but it's more likely that your flash is bust
+=== kidx 31 (engine) DPid=32 32 offset=0x6b060 size=14720 exports=6 ===
+  +0x00221  b`!$B
+  +0x00d79  BH!%
+  +0x00dd9  Bx!'
+  +0x00e39  BX!%J
+  +0x0126e  KP79,
+  +0x012d9  `(%$
+  +0x01a1d    %$
+  +0x01a51    %$
+  +0x01a85    %$
+  +0x01cd5    %$
+  +0x01d09    %$
+  +0x020a8  static float scal[]={
+  +0x020c0  %fF,
+  +0x020cc  static float zscal[]={
+  +0x020e4  %fF,
+  +0x0383a  ff?#S
+  +0x0384c  ?fff?\
+  +0x038c6  ff>6E
+  +0x038d8  ?fff?\
+=== kidx 32 (engine) DPid=33 33_BaddieControl offset=0x6e9e0 size=10672 exports=24 ===
+  +0x00b57  !(A 
+  +0x00c25   (%F
+  +0x012fa  P!1K
+  +0x0147d  `(%<
+  +0x01e5d    %'
+  +0x01fdd    %'
+  +0x020f9  @ %$
+  +0x0210d  @ %$
+  +0x024d9  @ %P
+  +0x02501  @(%<
+  +0x02910  %s hit by type %d for %d points
+=== kidx 33 (engine) DPid=34  offset=0x71390 size=15312 exports=3 ===
+  +0x0190a  (%$IR
+  +0x01fee  (%$Y*
+  +0x0212a  (%$Y*
+  +0x02266  (%$X*
+  +0x03661  lh%1
+  +0x03a43  o:2B
+  +0x03a82  jU<D
+  +0x03b1e  IR=L
+=== kidx 34 (engine) DPid=35  offset=0x74f60 size=15648 exports=3 ===
+  +0x01fda   %%k
+  +0x03a0b  o;e`B:
+  +0x03a1b  o;e`B=
+  +0x03a2e  \)>q
+  +0x03ae0  9\3r8
+  +0x03b62  9X<#
+  +0x03b73  o;e`B=,
+  +0x03b86  9X<#
+=== kidx 35 (engine) DPid=36  offset=0x78c80 size=8800 exports=3 ===
+  +0x01517  ($Nc
+  +0x021f8  ;e`B=#
+=== kidx 36 (engine) DPid=37  offset=0x7aee0 size=13808 exports=3 ===
+  +0x0330a  9X6j
+  +0x03343  o;r{
+  +0x0337f  o=8Q
+  +0x03412  jU<#
+=== kidx 37 (engine) DPid=38  offset=0x7e4d0 size=4864 exports=3 ===
+  +0x01238  ?3338'
+  +0x01246  IR8'
+  +0x0125a  IR<#
+  +0x01284  ;e`B:
+=== kidx 38 (engine) DPid=39  offset=0x7f7d0 size=4864 exports=3 ===
+  +0x00800  4!S05J
+=== kidx 39 (engine) DPid=40  offset=0x80ad0 size=8864 exports=3 ===
+  +0x0067b  `$J<
+  +0x0217a  ,(<#
+  +0x02194  ;e`B;
+  +0x02216  IR=L
+  +0x02232  \)8'
+=== kidx 40 (engine) DPid=41  offset=0x82d70 size=6528 exports=3 ===
+  +0x016a5  *X%1b
+  +0x018b2  `B<#
+  +0x018d0  ?fff=
+=== kidx 41 (engine) DPid=42  offset=0x846f0 size=6320 exports=3 ===
+  +0x01776  IR<#
+  +0x017fc  ;e`B8
+  +0x01804  ;e`B<#
+=== kidx 44 (engine) DPid=45  offset=0x88fd0 size=3968 exports=3 ===
+  +0x00f4e  IR;A
+=== kidx 46 (engine) DPid=47  offset=0x8a5d0 size=5408 exports=3 ===
+  +0x0094e  @@T@
+  +0x01480  ;e`B<u
+  +0x01502  \)?fff?fff?fff;
+=== kidx 48 (engine) DPid=49  offset=0x8cc40 size=3376 exports=3 ===
+  +0x0085e  $ $c
+  +0x00cb6  \)<#
+=== kidx 49 (engine) DPid=50  offset=0x8d970 size=3856 exports=3 ===
+  +0x00cf5  -H%1"
+=== kidx 50 (engine) DPid=51  offset=0x8e880 size=7408 exports=3 ===
+  +0x00c76  D$DM
+  +0x01bda  IR<u
+  +0x01c52  IR=L
+  +0x01c6e  \)=L
+=== kidx 52 (engine) DPid=53 53_movelib offset=0x90bb0 size=9136 exports=13 ===
+  +0x00451  @(%$
+  +0x0089d  hH!Y 
+  +0x00a56  UUP 
+  +0x00dcd    %'
+  +0x00f51  @(%$
+  +0x00fe9   0%'9
+  +0x01056  (%5l
+  +0x013bd  @ %<
+  +0x015ae  (%'9
+  +0x01652   %1K
+  +0x01916   %'9
+  +0x02241   MOVELIB LOADED 
+  +0x02255   MOVELIB FREEDED 
+  +0x02268   In turn Range 
+  +0x02278  Got Curve 
+  +0x02284   PathId %i Loc id %i 
+  +0x0229c   Tangent 1 %f %f %f 
+  +0x022b4   Tangent 2 %f %f %f 
+  +0x022cc  t value %f 
+  +0x022d8  WARNING: Max CreatePoint is Exceeded 
+  +0x02300  WARNING: Error Could not find createpoitn node 
+  +0x02330   Error Could not find node 
+  +0x0234c  CURVEPOINT :Error Could not find node 
+=== kidx 53 (engine) DPid=54 54_pickup offset=0x92f60 size=2448 exports=12 ===
+  +0x00112  0%'9
+  +0x0016d    %1
+  +0x00285  `(%<
+  +0x004b2   %7+
+=== kidx 54 (engine) DPid=55  offset=0x938f0 size=1936 exports=3 ===
+  +0x0009d    %'
+  +0x00761   PROJLIB LOADED 
+  +0x00775   PROJLIB FREEDED 
+=== kidx 55 (engine) DPid=56 56_putdown offset=0x94080 size=3184 exports=10 ===
+  +0x00171  @ %$
+  +0x002b9  v`$Q
+  +0x00569  K`!<
+  +0x00689  @H%%
+  +0x007dd    %0Y
+  +0x008e6  `!$c
+  +0x00aba  `@%*
+  +0x00b4e  pC$c
+  +0x00bd8  about to place object %d
+=== kidx 56 (engine) DPid=57  offset=0x94cf0 size=3664 exports=4 ===
+  +0x000f5  IP!$
+  +0x00529  c !F
+  +0x00611  o !F
+  +0x007c1  c !F
+=== kidx 57 (engine) DPid=58  offset=0x95b40 size=5520 exports=5 ===
+  +0x00979  #X#D
+  +0x00b01  e`#D
+  +0x00ede  T$DN
+  +0x00fa5  #X#D
+  +0x01012  !$DR
+  +0x010b2  D$DS
+  +0x0112d  e`#D
+  +0x0117e  Q$DT
+  +0x011aa  !$DT
+  +0x01316  A$DI
+  +0x01342  !$DI
+  +0x013e2  T$DJ
+=== kidx 58 (engine) DPid=59 59_minimap offset=0x970d0 size=6048 exports=2 ===
+  +0x00799  8x#F
+=== kidx 59 (engine) DPid=60 60_post offset=0x98870 size=3616 exports=3 ===
+  +0x00a6a  @<$c
+  +0x00c8e  !$DJ
+=== kidx 61 (engine) DPid=62 62_mainmenu offset=0x99dd0 size=3072 exports=3 ===
+  +0x000fd  @ %$c
+=== kidx 62 (engine) DPid=63 63_gameselect offset=0x9a9d0 size=11696 exports=3 ===
+  +0x0038e   %'9
+  +0x00530  '9 t
+  +0x00560  '9!`
+  +0x00590  '9"p
+  +0x00a05  `0%$
+  +0x00aae  H@%J
+  +0x01085  K`!'9
+  +0x0119a  (%0H
+  +0x01369  K !'9
+  +0x014d2   %'9
+  +0x01682   %'9
+  +0x0177d  K !'9
+  +0x019dd  K !'9
+  +0x01ad9  K !'9
+  +0x01e1a   %'9
+  +0x020c6   %'9
+  +0x02246   %'9
+  +0x027ac  %1d.
+  +0x027b4  %1d.
+  +0x027bc  %3d:%02d:%02d
+=== kidx 63 (engine) DPid=64 64_nameentry offset=0x9d780 size=4608 exports=3 ===
+  +0x002b9  @H%(A
+  +0x002d1  iX#$c
+  +0x00301  lh!%
+  +0x003dd  @ %'
+  +0x007d1  Mp%%
+=== kidx 64 (engine) DPid=65 65_options offset=0x9e980 size=16704 exports=3 ===
+  +0x0049b  X'9+P
+  +0x0053b  X'9,X
+  +0x005b3  X'9-P
+  +0x00667  X'92
+  +0x00707  X'92
+  +0x007cb  X'94
+  +0x014e3  8'95
+  +0x01e09  0 !0
+  +0x01e9d  p0!$
+  +0x02ab2   %'9
+  +0x02aee   %'9 
+  +0x02b0c  '9$8
+  +0x02f31  P !0
+  +0x03039  0 !0
+  +0x03848  %2d: %s
+  +0x03850  %2d:
+  +0x03858  %2d: %s
+  +0x03860  %2d:
+=== kidx 65 (engine) DPid=66 66_pausemenu offset=0xa2ac0 size=3904 exports=3 ===
+  +0x005f7  P5JC@5),
+  +0x00e80  %3d%%
+  +0x00e88  %3d:%02d:%02d
+=== kidx 66 (engine) DPid=67 67_gameover offset=0xa3a00 size=5200 exports=3 ===
+  +0x00c3a  (%DK
+  +0x00c46  8%1k
+  +0x00dee  (%DC
+  +0x00dfa  8%0c
+  +0x00f6e  (%DC
+  +0x00f7a  8%0c
+  +0x010b2  (%DI
+  +0x010be  8%1)
+  +0x0134c  %02d
+=== kidx 69 (engine) DPid=70 70_old_levelselect offset=0xa52c0 size=6832 exports=3 ===
+  +0x00119   (%$
+  +0x00179   (%$
+  +0x001e1   (%$
+  +0x0044e  (%'9
+  +0x0046e  (%'9
+  +0x004ae  (%'9
+  +0x004ce  (%'9
+  +0x0050e  (%'9
+  +0x0054e  (%'9
+  +0x0058e  (%'9
+  +0x005ae  (%'9
+  +0x005ce  (%'9
+  +0x005ee  (%'9
+  +0x0060e  (%'9
+  +0x0062e  (%'9
+  +0x0064e  (%'9
+  +0x0066e  (%'9
+  +0x0068e  (%'9
+  +0x006ae  (%'9
+  +0x006ce  (%'9
+  +0x006ee  (%'9
+  +0x0070e  (%'9
+  +0x0072e  (%'9
+  +0x0074e  (%'9
+  +0x0078e  (%'9
+  +0x007be  (%'9
+  +0x007de  (%'9
+  +0x007fe  (%'9
+  +0x0081e  (%'9
+  +0x00c6c  LEVEL NOT AVAILABLE
+  +0x00d5c  NEW GAME
+  +0x00d9c  LOAD GAME
+  +0x00e1c  SWAPSTONE HOLLOW
+  +0x00e5c  SWAPSTONE CIRCLE
+  +0x00edc  DARKICE MINES
+  +0x00f1c  DARKICE MINES TWO
+  +0x00f5c  WALLED CITY
+  +0x00f9c  DRAGON ROCK
+  +0x00fdc  CLOUDRUNNER FORTRESS
+  +0x0101c  KRAZOA PALACE
+  +0x0105c  BLACKWATER CANYON
+  +0x010dc  NORTHERN WASTES
+  +0x0111c  EARTHWALKER TEMPLE
+  +0x0115c  WILLOW GROVE
+  +0x0119c  DIAMOND BAY
+  +0x011dc  DISCOVERY FALLS
+  +0x0121c  MOON MOUNTAIN PASS
+  +0x0125c  CAPE CLAW
+  +0x0129c  GOLDEN PLAINS
+  +0x0131c  TEST OF COMBAT
+  +0x0135c  TEST OF STRENGTH
+  +0x0139c  TEST OF FEAR
+  +0x013dc  TEST OF CHARACTER
+  +0x0141c  TEST OF KNOWLEDGE
+  +0x0145c  TEST OF SACRIFICE
+  +0x0149c  TEST OF SKILL
+  +0x014dc  TEST OF MAGIC
+  +0x0159c  DARKICE BOSS
+  +0x015dc  GENERAL SCALES BOSS
+  +0x0161c  BLACKWATER BOSS
+  +0x0165c  CLOUDRUNNER RACE
+  +0x0169c  KAMERIA DRAGON BOSS
+  +0x016dc  DRAKOR FINAL BOSS
+  +0x0171c  ICE MOUNTAIN
+  +0x0179c  DESERT FORCE POINT
+  +0x017dc  VOLCANO FORCE POINT
+  +0x0185c  EARTHWALKER ACT TWO
+  +0x0189c  ENERGY DEMO
+  +0x0191c  WARLOCK ACT ONE
+  +0x0195c  WARLOCK ACT TWO
+  +0x0199c  WARLOCK ACT THREE
+  +0x019dc  WARLOCK ACT FOUR
+  +0x01a1c  WARLOCK ACT FIVE
+  +0x01a5c  WARLOCK ACT SIX
+=== kidx 70 (engine) DPid=71 71_old_selection offset=0xa6d70 size=1040 exports=3 ===
+  +0x003e8  CONTINUE
+  +0x003f4  SWAP
+  +0x003fc  TO WARLOCK
+=== kidx 72 (engine) DPid=73 73_old_picmenu offset=0xa73c0 size=2160 exports=9 ===
+  +0x00569  lh!%
+  +0x005c6  8%$B
+=== kidx 73 (engine) DPid=74 74_picmenu offset=0xa7c30 size=6736 exports=13 ===
+  +0x00306   %'9
+  +0x00606   %0E
+  +0x006ba   %0E
+  +0x00b7e  x#8x
+  +0x0130e  0!$B
+  +0x0186a  `!&R
+  +0x01974  PICMENU: maxitems exceeded
+  +0x01990  UPLINK overflow=%d
+  +0x019a4  DOWNLINK overflow=%d
+  +0x019bc  LEFTLINK overflow=%d
+  +0x019d4  RIGHTLINK overflow=%d
+  +0x019ec  PICMENU: tex overflow
+=== kidx 74 (engine) DPid=75 75_frontend offset=0xa9680 size=3744 exports=12 ===
+  +0x0074a   %'9
+  +0x0076a   %'9
+  +0x0078a   %'9
+  +0x008d9  "@#D
+=== kidx 75 (engine) DPid=76  offset=0xaa520 size=11248 exports=3 ===
+  +0x003ea  (C$a
+  +0x0078d  Qh!&R
+  +0x0080d  Qp!&R
+  +0x0104a   C$A
+  +0x01492   C$A
+  +0x01cd5  'x#%
+  +0x01fc9  ` %F
+  +0x02065  ` %$
+  +0x0207d  ` %$
+  +0x0225e  8#0n
+  +0x02285  cX#%k
+  +0x022be  X%$Y
+  +0x0238d  (x%$X
+  +0x023d1  cX#%k
+  +0x0240a  X%$Y
+  +0x0242e  8#$O
+  +0x024e1  (x%$X
+  +0x0250a  @#$N
+  +0x02552  r@$X
+  +0x02625  *x%$X
+  +0x02715  7p!$M
+=== kidx 78 (engine) DPid=79 79_selection offset=0xae3b0 size=5248 exports=4 ===
+  +0x00612  0%DY
+  +0x0061a  8%39
+  +0x009da  0%DI
+  +0x009e2  8%1)
+  +0x00d4a  0%DO
+  +0x01272  0%DN
+=== kidx 81 (engine) DPid=82 82 offset=0xafe10 size=128 exports=1 ===
+  +0x00054  in cave
+  +0x00060  out of cave
+=== kidx 83 (engine) DPid=84 84_camnormal offset=0xb0010 size=11696 exports=9 ===
+  +0x00079  @ %$
+  +0x0040d  @(%'9*\
+  +0x00431    %&
+  +0x008e9    %'
+  +0x00a06   %'9
+  +0x00b27  @'9"
+  +0x0102b  T'9*\
+  +0x0153b  #')@
+  +0x0216f  h'9$
+  +0x02197  h'9#
+  +0x021bf  \'9#
+  +0x021e3  h'9$
+  +0x0220b  T'9%
+  +0x0228b  @'9)
+  +0x0289b  80N 
+  +0x02977  (0N 
+  +0x02d08   CUT CAM 
+  +0x02d84  ?fffG
+=== kidx 84 (engine) DPid=85 85_attentioncam offset=0xb2dc0 size=5648 exports=4 ===
+  +0x000a5  @ %$
+  +0x00439  ` %'
+  +0x00461  ` %'
+  +0x00f02  p!&s
+  +0x00f4e  H!&1
+  +0x01296  h!$c
+  +0x015cc   ERROR: Attention cam given NULL data 
+=== kidx 85 (engine) DPid=86 86_cam1stperson offset=0xb43d0 size=5856 exports=4 ===
+  +0x0068a   %'9
+  +0x009b2   %'9
+  +0x01279    %'
+  +0x012a1    %'
+=== kidx 88 (engine) DPid=89 89_campath offset=0xb65f0 size=9360 exports=4 ===
+  +0x00099  @ %$
+  +0x00da3  P1L 
+  +0x0105e  8%$c
+  +0x0115a  0%$c
+  +0x01f3a  H$Q 
+  +0x02081  +`$U
+  +0x0210d  ,h$Q
+  +0x021a5  `0%'9
+  +0x021c9   8%'9
+  +0x0225d  @ %'
+  +0x02269  `0%'9
+  +0x02299  @ %'
+  +0x022a5  `0%'9
+  +0x02316  P$U@
+  +0x02440  PATHCAM error: need at least two control points
+=== kidx 89 (engine) DPid=90 90_camstatic offset=0xb8a80 size=3584 exports=4 ===
+  +0x00225    %D
+  +0x002c6  8%$c
+  +0x004f1  Nx#0
+  +0x007f6  8%$c
+=== kidx 90 (engine) DPid=91 91_camlockon offset=0xb9880 size=4096 exports=4 ===
+  +0x00222   %'9
+  +0x0027a   %'9
+  +0x002c2   %'9
+  +0x005f6   %'9
+  +0x00697  !(a#)T 
+  +0x006e7  $$o#($
+  +0x00827  #(a#)
+  +0x00fb6  33=#
+=== kidx 92 (engine) DPid=93 93_camclimb offset=0xbae30 size=2144 exports=4 ===
+  +0x00286  !$DL
+  +0x0039d    %'9
+  +0x004e1    %'
+  +0x00709  %@#D
+  +0x0075a  !$DJ
+=== kidx 94 (engine) DPid=95 95_camtalk offset=0xbb750 size=1616 exports=4 ===
+  +0x002ad   8%$
+  +0x002cd  H`#<
+  +0x00618   no lock 
+  +0x00624   No lock Pos
+  +0x00634   ctype %i 
+=== kidx 95 (engine) DPid=96 96_cam1stperson2 offset=0xbbda0 size=5440 exports=4 ===
+  +0x005f6   %'9
+  +0x0061e   %'9
+  +0x007ca  0%$g
+  +0x00931  ` %(
+  +0x010d1    %'
+  +0x010f9    %'
+  +0x014e4   %x %i 
+=== kidx 98 (engine) DPid=99 99_camcannon offset=0xbd880 size=592 exports=4 ===
+  +0x000e2  (%$c
+=== kidx 101 (engine) DPid=102 102_camdrakor offset=0xbe3b0 size=1776 exports=4 ===
+  +0x0008d  @ %$
+=== kidx 104 (modgfx) DPid=105  offset=0xbed90 size=1312 exports=1 ===
+  +0x000d5  )P#%K
+  +0x001aa   @'9
+=== kidx 106 (modgfx) DPid=107  offset=0xbf930 size=5104 exports=1 ===
+  +0x00ad1  `0%$
+  +0x00b21  `0%$
+  +0x00b69  `0%$
+  +0x00bbd  `0%$
+  +0x00c11  `0%$
+  +0x00c59  `0%$
+  +0x00ca1  `0%$
+  +0x00ce9  `0%$
+  +0x00d31  `0%$
+  +0x00d79  `0%$
+  +0x00dc1  `0%$
+  +0x00e0d  `0%$
+  +0x00e51  `0%$
+  +0x00e99  `0%$
+  +0x00ee5  `0%$
+  +0x00f29  `0%$
+  +0x00f71  `0%$
+  +0x00fbd  `0%$
+  +0x01001  `0%$
+  +0x01045  `0%$
+  +0x010bd  `0%$
+  +0x011d9  `0%$
+  +0x01251  `0%$
+  +0x012e8  !!!! This modgfx needs an owner object
+=== kidx 107 (modgfx) DPid=108  offset=0xc0d20 size=1600 exports=1 ===
+  +0x00109  )h#%
+=== kidx 108 (modgfx) DPid=109  offset=0xc1360 size=1600 exports=1 ===
+  +0x00109  )h#%
+=== kidx 110 (modgfx) DPid=111  offset=0xc22d0 size=1424 exports=1 ===
+  +0x00458  ?333?
+=== kidx 111 (modgfx) DPid=112  offset=0xc2860 size=1600 exports=1 ===
+  +0x003e5  AP%1K
+=== kidx 112 (modgfx) DPid=113  offset=0xc2ea0 size=1536 exports=1 ===
+  +0x001fd  gx#<
+  +0x00415  Ap%1
+  +0x00520  @&ff
+=== kidx 113 (modgfx) DPid=114  offset=0xc34a0 size=1824 exports=1 ===
+  +0x00409  AP%'
+  +0x00518  ?s33>
+=== kidx 114 (modgfx) DPid=115  offset=0xc3bc0 size=2368 exports=1 ===
+  +0x006e5  Ax%1
+  +0x00815  333=
+=== kidx 116 (modgfx) DPid=117  offset=0xc4a60 size=1584 exports=1 ===
+  +0x003d9  Ax%'
+  +0x004e8  >fff?
+  +0x004f1  333?
+=== kidx 120 (modgfx) DPid=121  offset=0xc6360 size=1392 exports=1 ===
+  +0x0039d  Ax%5
+=== kidx 121 (modgfx) DPid=122  offset=0xc68d0 size=1568 exports=1 ===
+  +0x001ca  P#%K
+  +0x00385  'H%1.
+=== kidx 124 (modgfx) DPid=125  offset=0xc7320 size=1152 exports=1 ===
+  +0x00116   @%)
+  +0x0034c  ?333
+=== kidx 130 (modgfx) DPid=131  offset=0xc9970 size=2016 exports=1 ===
+  +0x00369  fx#$
+=== kidx 131 (modgfx) DPid=132  offset=0xca150 size=2000 exports=1 ===
+  +0x00401  Ax%1
+=== kidx 132 (modgfx) DPid=133  offset=0xca920 size=1296 exports=1 ===
+  +0x00309  Gx#$
+  +0x003e5  Ax%1
+=== kidx 133 (modgfx) DPid=134  offset=0xcae30 size=816 exports=1 ===
+  +0x000e6   @%J
+=== kidx 134 (modgfx) DPid=135  offset=0xcb160 size=816 exports=1 ===
+  +0x000e6   @%J
+=== kidx 135 (modgfx) DPid=136  offset=0xcb490 size=1616 exports=1 ===
+  +0x00396   @'9
+  +0x0051c  ?333<#
+=== kidx 136 (modgfx) DPid=137  offset=0xcbae0 size=2704 exports=1 ===
+  +0x006e1  lh#$
+  +0x0077d  Ah%1
+=== kidx 137 (modgfx) DPid=138  offset=0xcc570 size=1552 exports=1 ===
+  +0x002f9  gx#D
+  +0x0031e   @%k
+=== kidx 138 (modgfx) DPid=139  offset=0xccb80 size=2064 exports=1 ===
+  +0x00599  AH%1*
+  +0x006ac  ?333F
+=== kidx 139 (modgfx) DPid=140  offset=0xcd390 size=2144 exports=1 ===
+  +0x00505  Ax%1
+  +0x0061e  33=L
+  +0x00626  33=L
+=== kidx 140 (modgfx) DPid=141  offset=0xcdbf0 size=1696 exports=1 ===
+  +0x0010a  H#%*
+  +0x00345  AX%1l
+  +0x00421    %$
+  +0x0047c  ?fff
+=== kidx 141 (modgfx) DPid=142  offset=0xce290 size=1248 exports=1 ===
+  +0x0021d  G`#$
+=== kidx 142 (modgfx) DPid=143  offset=0xce770 size=1792 exports=1 ===
+  +0x00331  Fh#$
+  +0x003a2   @%k
+  +0x005c0  ?333@UUU>
+=== kidx 143 (modgfx) DPid=144  offset=0xcee70 size=1136 exports=1 ===
+  +0x00141  G`#$
+  +0x001de   @%)
+  +0x00275  Ap%1
+=== kidx 144 (modgfx) DPid=145  offset=0xcf2e0 size=2320 exports=1 ===
+  +0x00399  Gx#$
+  +0x0045d  Ah%1
+  +0x006da  33<#
+  +0x006e6  ff<#
+  +0x006ee  33<#
+=== kidx 145 (modgfx) DPid=146  offset=0xcfbf0 size=1952 exports=1 ===
+  +0x0012e  H#%*
+  +0x003ed  AP%1K
+=== kidx 146 (modgfx) DPid=147  offset=0xd0390 size=2320 exports=1 ===
+  +0x00346   @'9
+=== kidx 147 (modgfx) DPid=148  offset=0xd0ca0 size=2336 exports=1 ===
+  +0x00509  GP%1N
+=== kidx 148 (modgfx) DPid=149  offset=0xd15c0 size=1984 exports=1 ===
+  +0x004b9  lh#$
+  +0x004fa   @%k
+=== kidx 149 (modgfx) DPid=150  offset=0xd1d80 size=1120 exports=1 ===
+  +0x00269  f@#D
+  +0x0032d  AH%1*
+=== kidx 150 (modgfx) DPid=151  offset=0xd21e0 size=1536 exports=1 ===
+  +0x000da  H#%*
+=== kidx 152 (modgfx) DPid=153  offset=0xd2db0 size=1536 exports=1 ===
+  +0x000da  H#%*
+=== kidx 153 (modgfx) DPid=154  offset=0xd33b0 size=832 exports=1 ===
+  +0x0006e  X#%l
+  +0x000be   @%)
+=== kidx 154 (modgfx) DPid=155  offset=0xd36f0 size=2256 exports=1 ===
+  +0x001ba  F|$B
+=== kidx 155 (modgfx) DPid=156  offset=0xd3fc0 size=2016 exports=1 ===
+  +0x004b9  Ax%'
+  +0x005c8  ?s33<#
+  +0x005d4  ?s33>L
+=== kidx 157 (modgfx) DPid=158  offset=0xd5350 size=1984 exports=1 ===
+  +0x00542   @%J
+=== kidx 159 (modgfx) DPid=160  offset=0xd6090 size=2000 exports=1 ===
+  +0x001cd  kp#%
+=== kidx 160 (modgfx) DPid=161  offset=0xd6860 size=1888 exports=1 ===
+  +0x001b1  kh#%
+=== kidx 162 (modgfx) DPid=163  offset=0xd74b0 size=1456 exports=1 ===
+  +0x0027d  AX%1l
+=== kidx 164 (modgfx) DPid=165  offset=0xd7f50 size=944 exports=1 ===
+  +0x000c6  X#%l
+  +0x002e8  <e`B<
+=== kidx 165 (modgfx) DPid=166  offset=0xd8300 size=1568 exports=1 ===
+  +0x002ed  AP%1K
+=== kidx 167 (modgfx) DPid=168  offset=0xd8e10 size=1776 exports=1 ===
+  +0x002bd  hx#$
+=== kidx 170 (modgfx) DPid=171  offset=0xda410 size=1728 exports=1 ===
+  +0x000f5  Jh#<
+=== kidx 171 (modgfx) DPid=172  offset=0xdaad0 size=1776 exports=1 ===
+  +0x00285  Gp#$
+  +0x003b1  Ax%1
+=== kidx 172 (modgfx) DPid=173  offset=0xdb1c0 size=1648 exports=1 ===
+  +0x000e9  )p#%
+=== kidx 174 (modgfx) DPid=175  offset=0xdbed0 size=1856 exports=1 ===
+  +0x00409  Ah%1
+=== kidx 175 (modgfx) DPid=176  offset=0xdc610 size=1648 exports=1 ===
+  +0x0017d  Fp#$
+  +0x00335  AX%1l
+=== kidx 176 (modgfx) DPid=177  offset=0xdcc80 size=1712 exports=1 ===
+  +0x000e6  P#%K
+  +0x001fe   @'9
+=== kidx 177 (modgfx) DPid=178  offset=0xdd330 size=1680 exports=1 ===
+  +0x000f9  )`#%
+  +0x00222   @%k
+=== kidx 178 (modgfx) DPid=179  offset=0xdd9c0 size=1744 exports=1 ===
+  +0x004c8  ?s33>
+=== kidx 179 (modgfx) DPid=180  offset=0xde090 size=2592 exports=1 ===
+  +0x00256   %$E
+  +0x00950  !!!! This modgfx needs an owner object
+=== kidx 181 (modgfx) DPid=182  offset=0xdf050 size=1920 exports=1 ===
+  +0x00591  Ap%'
+=== kidx 182 (modgfx) DPid=183  offset=0xdf7d0 size=1376 exports=1 ===
+  +0x0039d  Ax%5
+=== kidx 183 (modgfx) DPid=184  offset=0xdfd30 size=1536 exports=1 ===
+  +0x003b1  AP%1K
+  +0x004ca  ff<#
+=== kidx 184 (modgfx) DPid=185  offset=0xe0330 size=1536 exports=1 ===
+  +0x003a9  AP%1K
+=== kidx 187 (projgfx) DPid=187  offset=0xe0f20 size=1472 exports=1 ===
+  +0x00109  @ %'
+  +0x00395  ` %F
+  +0x0054c  was from %f %f %f to %f %f %f
+  +0x0056c  now from %f %f %f to %f %f %f
+=== kidx 192 (projgfx) DPid=192  offset=0xe2d10 size=1728 exports=1 ===
+  +0x0032d   (%F
+  +0x0039d   (%F
+  +0x00421   (%F
+=== kidx 193 (projgfx) DPid=193  offset=0xe33d0 size=1104 exports=1 ===
+  +0x00097  @4!@
+=== kidx 202 (projgfx) DPid=202  offset=0xe5c60 size=1312 exports=1 ===
+  +0x0050c  ?333
+=== kidx 208 (projgfx) DPid=208  offset=0xe8120 size=1040 exports=1 ===
+  +0x003fc  ?333
+=== kidx 210 (objects) DPid=210 210_player offset=0xe8a20 size=129968 exports=84 ===
+  +0x0033c  %JBt%kF
+  +0x003b0  %)nd%JxP%kx
+  +0x005fd  ` %$
+  +0x00615  ` %$
+  +0x0062d  ` %$
+  +0x0080d  @(%'9rL
+  +0x009cd  p0!$
+  +0x00a59  ` %'9
+  +0x00b45  @ %$
+  +0x00b95    %'9c
+  +0x00c39   0%&
+  +0x00c5d   0%'9
+  +0x00f4d  @ %$
+  +0x00f71  @ %'9ql
+  +0x0123d   (%'9%4
+  +0x012e5   (%'9G
+  +0x0146d  ah$1l 
+  +0x014cc  '9ax
+  +0x014d1    %F
+  +0x016d1   (%'
+  +0x016f1   (%<
+  +0x017c1    %D
+  +0x01975    %$
+  +0x01a3d    %$
+  +0x01cc1    %F
+  +0x02071  @(%'9$
+  +0x020f9  @(%$
+  +0x02169   (%'9m
+  +0x0220d  @(%$
+  +0x022c9  @(%$
+  +0x023cd  @(%$
+  +0x02591  @(%F
+  +0x0290e  (%'9
+  +0x02978  '9rLF
+  +0x03247  P1K@
+  +0x032d5    %'9;@
+  +0x034e0  '96<
+  +0x034f5    %$
+  +0x03519    %$
+  +0x03665    %$
+  +0x0386d  @ %$
+  +0x038b9  @ %$
+  +0x038d1  `(%'9
+  +0x03955  @ %$
+  +0x039b5  @ %'9
+  +0x03a25  `(%'9A
+  +0x03aad   0%4
+  +0x0407d  ` %$
+  +0x04261  C(%0
+  +0x045b3  4'9rL
+  +0x04bc2  P@%k
+  +0x053cb  !(A@
+  +0x06267  $'9rL
+  +0x063e9   0%<
+  +0x0646d    %'9~X
+  +0x07e1f  !(b?
+  +0x080b3  X'9}
+  +0x081ed  M@!1
+  +0x0820d  Y@!'
+  +0x086e1  `(%F
+  +0x086ea  0%&g
+  +0x08765    %7
+  +0x08786  (%&f
+  +0x087de  (%'9w
+  +0x08809  `(%F
+  +0x08812  0%&g
+  +0x08855  `(%F
+  +0x08862  8%&o
+  +0x08911  `(%F
+  +0x08989   (%F
+  +0x089ee  (%'9{
+  +0x0914d    %'
+  +0x09194  '9rL
+  +0x09569  2@#D
+  +0x09579  1P#D
+  +0x098c5    %F
+  +0x09bed    %$
+  +0x0a299  ` %&
+  +0x0a5ed    %U 
+  +0x0a62e  (%'9
+  +0x0a7bd    %S%
+  +0x0aa52  (%'9
+  +0x0abee  (%'9
+  +0x0ac16  (%'9
+  +0x0b08a  (%'9
+  +0x0b41e  PC%K
+  +0x0b4fd  @ %P
+  +0x0b712   %$B
+  +0x0bd08  '9~X
+  +0x0c3c6  x%'9
+  +0x0c485    %$
+  +0x0c554  '9~X
+  +0x0c6d5    %$
+  +0x0c7d9    %1*
+  +0x0cc99    %$
+  +0x0cd19    %$
+  +0x0ce45    %$
+  +0x0cffd    %$
+  +0x0d1d1    %$
+  +0x0d225    %$
+  +0x0d245    %$
+  +0x0d2bd    %$
+  +0x0d311    %$
+  +0x0d331    %$
+  +0x0d35d    %$
+  +0x0d3f5    %$
+  +0x0d43d    %$
+  +0x0d75d   (%'9
+  +0x0d941  @(%'9
+  +0x0dba9    %<
+  +0x0dd81  @(%'9
+  +0x0deb1   (%'9rL
+  +0x0e14c  '9rL
+  +0x0e2e5  @(%'9
+  +0x0e3a5    %$
+  +0x0e49d    %F
+  +0x0e7a1    %$
+  +0x0e8bd    %$
+  +0x0e9b4  '9rL
+  +0x0eaf5  Nx#D
+  +0x0ec0e  (%'9rL
+  +0x0ecbd  @(%'9
+  +0x0ece5  @(%'9
+  +0x0f07d   (%'9rL
+  +0x0f169  @(%'9
+  +0x0f784  '9rL
+  +0x0f855    %'9
+  +0x0f991    %$
+  +0x0fa89    %$
+  +0x0fbd8  '9rL
+  +0x0fc35    %$
+  +0x0fc81    %$
+  +0x0fd09    %$
+  +0x10215    %%
+  +0x10444  '9rL
+  +0x104e4  '9rL
+  +0x10718  '9rL
+  +0x10884  '9rL
+  +0x109f6   %'9
+  +0x10b69    %'9
+  +0x10c75    %$
+  +0x10cca  H@%J
+  +0x10f88  '9rL
+  +0x11055    %'9
+  +0x113aa  H%T`
+  +0x118a2  @%$c
+  +0x119de  @%$c
+  +0x11c95    %$
+  +0x11d58  '9rL
+  +0x11dee  @@%)
+  +0x120c4  '9rL
+  +0x12194  '9rL
+  +0x12481  @(%'9
+  +0x12538  '9rL
+  +0x12608  '9rL
+  +0x129b1  @ %$
+  +0x12da5  @ %$
+  +0x12f8a  !$DK
+  +0x13439  @ %$
+  +0x13489  @ %$
+  +0x134bf  ,'9(
+  +0x136bd   (%F
+  +0x136fc  '9~X
+  +0x13a6e  8%'9(
+  +0x13e69    %'9
+  +0x140a5    %$
+  +0x14235  @ %F
+  +0x1430d    %$
+  +0x14441    %'
+  +0x14491    %T`
+  +0x144d5    %$
+  +0x14515    %$
+  +0x14555    %$
+  +0x14729    %$
+  +0x14769    %$
+  +0x14d5a   %'9
+  +0x14da9  @ %&
+  +0x150dd  @ %'
+  +0x15278  '9rL
+  +0x15311   (%'9
+  +0x15471  @ %$
+  +0x15671  @ %Q
+  +0x157f1  @ %$
+  +0x15bd5    %F
+  +0x15c41    %$
+  +0x15c89    %$
+  +0x15cb5    %$
+  +0x15f2d  @(%'9rLF
+  +0x160b5  @(%'9rLF
+  +0x161a5    %'9rLF
+  +0x161b1  @(%F
+  +0x161ed    %F
+  +0x161f4  '9rL
+  +0x161f9  @(%F
+  +0x16225    %$
+  +0x16295    %'9rLF
+  +0x163ad    %W
+  +0x167c1  @(%'9
+  +0x16c9c  '9rL
+  +0x16d5c  '9rL
+  +0x16e48  '9rL
+  +0x16ebd  K`#D
+  +0x16fa5   (%'9rL
+  +0x17059    %'9
+  +0x17239    %$
+  +0x17275    %$
+  +0x172c1    %$
+  +0x17399    %$
+  +0x17998  '9rL
+  +0x179e8  '9rL
+  +0x17cae  (%'9
+  +0x1804a  (%'9
+  +0x181be  (%'9
+  +0x18439   (%$
+  +0x1858d  9`!F
+  +0x185e1  .x!F
+  +0x18632  P@%k
+  +0x18719   (%'9
+  +0x18821    %$
+  +0x18c5d    %$
+  +0x191d3  -'9m
+  +0x1934f  -'9m
+  +0x19ebe   %'9
+  +0x19f8d   (%4
+  +0x1a2ee   %&%
+  +0x1a7aa   %&%
+  +0x1aa56   %Qa
+  +0x1af61   (%'
+  +0x1b101    %$
+  +0x1b3a1    %7(
+  +0x1b5cd    %7(
+  +0x1ba31    %7(
+  +0x1c251    %$
+  +0x1c2f1    %D
+  +0x1c349    %F
+  +0x1c411   (%<
+  +0x1c662  (%'9
+  +0x1ca9a  (%'9
+  +0x1cf9a  (%T 
+  +0x1d236  0%T 
+  +0x1d9a7  P5l@
+  +0x1dd8d  @ %$
+  +0x1e6a8  zbuft %f %f
+  +0x1e6b8  WOBJ change
+  +0x1e6c8  WOBJ change 2
+  +0x1e6d8   HIDDEN 
+  +0x1e6e4  UNKNOWN mainGet VALUE %d
+  +0x1e700   Fireing Object Mind Read Bit %i 
+  +0x1e724   Mind READ Speell 
+  +0x1e738   Have Lock 
+  +0x1e744   Seting Stuff 
+  +0x1e754   ang %i 
+  +0x1e760   Portal READ Speell 
+  +0x1e778   Have Lock 
+  +0x1e784   Seting Stuff 
+  +0x1e794   ang %i 
+  +0x1e7a0  power %d
+  +0x1e7ac   Firing Model fx 
+  +0x1e7c0   hit sometime 
+  +0x1e7d0  krystal.c: objGetAnimChange Error
+  +0x1e7f4   Looking For Horny
+  +0x1e808   Found Horn Platform 
+  +0x1e820   Giving Food 
+  +0x1e830   Have Lock %i  
+  +0x1e840   Seting Stuff 
+  +0x1e850  CANNOT FIND CRAWL NODE
+  +0x1e868  throwdist %d
+  +0x1e878  error
+  +0x1e880   Light Created 
+  +0x1e890   WARNING: Screen Overlay already used 
+  +0x1e8b8   WARNING: Screen Overlay already Killed 
+  +0x1e9e2  33>L
+  +0x1eae0  ?333?
+  +0x1ecae  33=L
+  +0x1ecbc  ?&ff>
+  +0x1ed33  ,?s33>
+  +0x1ed3b  >@&ff?8Q
+  +0x1edd7  H?}p
+  +0x1ee2c  <49X<e`B<#
+  +0x1ee6c  <e`B<
+  +0x1ee73  o<e`BD
+  +0x1eea0  ?s33<#
+  +0x1eea8  <e`B?fff?333?
+  +0x1eef8  <49X<D
+  +0x1ef03  o?}p
+  +0x1ef62  \)<#
+  +0x1f050  ?333?z
+  +0x1f057  H?xQ
+  +0x1f05e  9X=L
+  +0x1f072  `B<#
+  +0x1f16a  `BA733A733<#
+  +0x1f212  ff>L
+  +0x1f28c  ?333>
+  +0x1f304  ?333?FffD
+  +0x1f370  ?333?Y
+  +0x1f380  ?333?Y
+  +0x1f6a4  ?333>
+  +0x1fb90  @@@@@@@@
+=== kidx 211 (objects) DPid=211 211_Tricky offset=0x1085d0 size=42512 exports=27 ===
+  +0x000d0  '9$ %
+  +0x00146  Dt%)HD%JI
+  +0x0055d  @ %$
+  +0x006aa   %'9
+  +0x0079e   %'9
+  +0x007ce   %'9
+  +0x008ea   %'9
+  +0x00ace   %'9
+  +0x00b1d  @ %$
+  +0x00bfa   %'9
+  +0x00f3f  ('9r
+  +0x00f6f  ('9r
+  +0x00faf  ('9u 
+  +0x01052  (%'9
+  +0x01105    %$
+  +0x01172  (%'9
+  +0x0147e  (%'9
+  +0x01751   (%'9
+  +0x0186d   (%'9
+  +0x0188d   (%'9
+  +0x01a12   %'9
+  +0x01a59    %<
+  +0x01a5e  BH'9T@
+  +0x01a81    %<
+  +0x01a88  '9T@
+  +0x01ab2  (%'9
+  +0x01b16  @@%)
+  +0x01b4d    %$
+  +0x01dfe  (%'9
+  +0x01e19    %'9
+  +0x01e72  @@%)
+  +0x01f42  (%'9
+  +0x01f7a  (%'9
+  +0x01fc9    %'9
+  +0x01fda  (%'9
+  +0x02005    %$
+  +0x02116   %$e
+  +0x02140  '9T@
+  +0x025aa   %'9
+  +0x025d0  '9T@
+  +0x02637  @'9O
+  +0x028a3  @'9O
+  +0x0293b  @'9O
+  +0x02962  (%'9
+  +0x029f6   %'9
+  +0x02b18  '9T@
+  +0x02b37   '9O
+  +0x02bd3   '9O
+  +0x02c1e   %'9
+  +0x02ca2   %'9
+  +0x02cc8  '9T@
+  +0x02d32   %'9
+  +0x02faa  H@%J
+  +0x02fd8  '9T@
+  +0x033ba   %'9
+  +0x03451    %$
+  +0x0347d    %<
+  +0x03484  '9T@
+  +0x034b9    %'9
+  +0x0353e   %$E
+  +0x035ad    %$
+  +0x03605    %$
+  +0x036ae  (%'9
+  +0x0371e  (%'9
+  +0x037e2   %$E
+  +0x03855    %<
+  +0x0385c  '9T@
+  +0x03875    %<
+  +0x0387c  '9T@
+  +0x038dd    %'9O
+  +0x03941    %'9O
+  +0x03965    %$
+  +0x039e9    %<
+  +0x039f0  '9T@
+  +0x03a09    %$
+  +0x03a6d    %'9
+  +0x03aa6   %'9
+  +0x03acd    %<
+  +0x03afa  0%'9O
+  +0x03b3a   %'9
+  +0x03cb2   %'9
+  +0x03e94  '9T@
+  +0x03ef0  '9T@
+  +0x03f32   %'9:
+  +0x03f54  '9T@
+  +0x03f72  (%'9
+  +0x03f8a   %'9:
+  +0x03faa  Ap'9T@
+  +0x03ff6  (%'9
+  +0x040ba   %'9
+  +0x04102  (%'9
+  +0x04127  L'9:
+  +0x04146   %'9
+  +0x0416c  '9<x
+  +0x04248  '9<x
+  +0x042be  @@%)
+  +0x04344  '9<x
+  +0x043da  h$'9:
+  +0x043fa   %'9
+  +0x04452  Ap'9T@
+  +0x044c0  '9T@
+  +0x0459d  @ %<
+  +0x045a2  AP'9T@
+  +0x045bd  @ %$
+  +0x04621  @ %<
+  +0x04628  '9T@
+  +0x0465d   (%'9
+  +0x046bd  @ %$
+  +0x047e5    %'9
+  +0x04849    %'9
+  +0x0486d  @ %<
+  +0x04872  BH'9T@
+  +0x0488d  @ %$
+  +0x049a7  %(a 
+  +0x04a2e  0%'9T@F
+  +0x04aaa   %$E
+  +0x04ada   %'9
+  +0x04b26  BH'9T@
+  +0x04c74  '9T@
+  +0x04c92  (%'9
+  +0x04cb6  8%%l
+  +0x04d1e  (%'9
+  +0x04dd9    %<
+  +0x04dde  BH'9T@
+  +0x04e49    %$
+  +0x04e95    %'9
+  +0x04f15    %<
+  +0x04f1c  '9T@
+  +0x04f3a  (%'9
+  +0x04fca  (%'9
+  +0x04ffd    %'9
+  +0x0513e  (%'9
+  +0x05265    %'9
+  +0x052d9    %$
+  +0x0532d    %&
+  +0x0536e  @@%)
+  +0x053d1    %'9
+  +0x05405    %F
+  +0x0549a  @@%)
+  +0x05565    %'
+  +0x056d5  @ %'9
+  +0x05e2d   (%'9
+  +0x05e6d   (%'9
+  +0x05ef1  @ %&
+  +0x05f31  @ %&
+  +0x06055  @ %$
+  +0x060f3  8*!4/
+  +0x06105  @ %$
+  +0x0624b  H'9z
+  +0x06271  @(%'9z
+  +0x062f1  @ %&
+  +0x06346  (%'9P
+  +0x06366  (%'9Q
+  +0x06386  (%'9S
+  +0x063bd  @ %'9
+  +0x063e1   (%'9w
+  +0x06787  l'9z
+  +0x068d5  @ %&
+  +0x06971  @ %'9
+  +0x06985  @ %&
+  +0x069d7  l'9z
+  +0x06af9  @ %F
+  +0x06c3d  @ %F
+  +0x06cd5  @ %D
+  +0x06d51  @ %F
+  +0x06d9d  @ %D
+  +0x06dd5  @ %F
+  +0x06e45  @ %F
+  +0x06f05  @ %'9
+  +0x06f19  @ %&
+  +0x06f6b  l'9z
+  +0x06fd1  @ %'9
+  +0x07081  @ %'9
+  +0x07095  @ %&
+  +0x070e7  l'9z
+  +0x07159   (%F
+  +0x07192  `$'9
+  +0x07669  @ %$
+  +0x07689    %$
+  +0x07798  5kKp5J,
+  +0x07901  @(%'
+  +0x07bf1   (%'9
+  +0x07c19   (%'9~
+  +0x07c3d   (%'9
+  +0x08526  (%'9
+  +0x085ca   %'9
+  +0x087ce  (%'9
+  +0x0888f  #(a@
+  +0x08ac5  ` %F
+  +0x091cd  @ %$
+  +0x0925d    %F
+  +0x092e9    %$
+  +0x0937a  (%'9
+  +0x093b5    %$
+  +0x093c1  @0%$
+  +0x0993c  %d %d %d %d
+  +0x0994c  hits: %d %d %d %d %d %d %d %d
+  +0x0996d  Energy: %d, Skill %d
+  +0x09984  find command used on the wrong object
+  +0x099ac  find command used on the wrong object
+  +0x099d4  sideCommandEnable error, command number too high
+  +0x09a08  sideFind 1
+  +0x09a14  sideFind 2
+  +0x09a20  Couldn't find a distract node
+  +0x09a40  DISTRACT_SPOTFINDING (1)
+  +0x09a5c  DISTRACT_SPOTTOSPOT (1)
+  +0x09a78  DISTRACT_SPOTDISTRACTING (1)
+  +0x09a98  DISTRACT_SPOTRETURING (1)
+  +0x09ab4  DISTRACT_SPOTFINDING (2)
+  +0x09ad0  DISTRACT_SPOTDISTRACTING (2)
+  +0x09af0  FLAME_NONE
+  +0x09afc  FLAME_FINDING_OUT
+  +0x09b10  FLAME_GOINGTOEDGE
+  +0x09b24  FLAME_TOSTART
+  +0x09b34  FLAME_OUT
+  +0x09b40  FLAME_FINDING_IN
+  +0x09b54  FLAME_IN
+  +0x09b60  FLAME_TOEND
+  +0x09b70  GUARD_INIT
+  +0x09b7c  GUARD_FINDING
+  +0x09b8c  GUARD_TOSPOT
+  +0x09b9c  GUARD_TOFRONT
+  +0x09bac  GUARD_TOBADDIE
+  +0x09bbc  GUARD_FLAME
+  +0x09bcc  GUARD_DOWNTOGROWL
+  +0x09be0  GUARD_GROWL
+  +0x09bf0  GUARD_UPFROMGROWL
+  +0x09c04  error tricky should never stop when circling
+  +0x09c34  BADDIEALERT_GOTO
+  +0x09c48  BADDIEALERT_BARK %d %d
+  +0x09c60  BADDIEALLERT_GOTOFLAME
+  +0x09c78  BADDIEALLERT_FLAME
+  +0x09c8c  GROWLAT_GOTO
+  +0x09c9c  GROWLAT_GROWLING
+  +0x09cb0  GROWLAT_GOTOFLAME
+  +0x09cc4  GROWLAT_FLAME
+  +0x09cd4  tricky wg %d->%d target wg %d, dest wg %d
+  +0x09d00  tricky last walk group is zero. Has he been loaded within a walk group? %f %f %f
+  +0x09d54  target is within a walkGroup or its patch
+  +0x09d80  target is not within a walkGroup or any patches
+  +0x09db4  target is within patch group %d
+  +0x09dd8  Patch %d: Last xyz %f %f %f
+  +0x09df8  Last Patch Point %f %f %f
+  +0x09e14  tricky error, target patch %d, targetWalkGroup %d, trickyWalkGroup %d, tricky last walkGroup %d, tricky in patch %d
+  +0x09e8c  tricky error 2!!!!!
+  +0x09ea4  walk wait
+  +0x09eb0  walk free
+  +0x09ebc  walk start patch
+  +0x09ed0  walk patch exit
+  +0x09ee4  walk end patch
+  +0x09ef4  about to turn
+  +0x09f04  large turn
+  +0x09f10  large turn
+  +0x09f1c  standing
+  +0x09f28  walk to node %d %d
+  +0x09f3c  walk types are %d %d %d
+  +0x09f58  curve setup
+  +0x09f68  walk nodes
+  +0x09f74  No route exists in the forward direction
+  +0x09fa0  Reverse direction is quicker
+  +0x09fc0  Reversing direction
+  +0x09fd8  Jump run up
+  +0x09fe8  Jump prep
+  +0x09ff4  Jumping
+  +0x0a000  Jump up run up
+  +0x0a010  i before %d
+  +0x0a020  i now %d
+  +0x0a02c  JUMPDOWN or JUMPUP
+  +0x0a040  JUMPDOWN_RUNUP
+  +0x0a050  TURNING
+  +0x0a05c  entered a non valid movementstate
+  +0x0a080  tricky left a valid area, pushing him back...
+  +0x0a1d4  Reached end of network, curve %d at (%f,%f)
+  +0x0a204  in water
+  +0x0a210  out of water
+  +0x0a220  Vel %f
+  +0x0a228  in water
+  +0x0a234  out of water
+  +0x0a244  in water
+  +0x0a250  out of water
+  +0x0a28f  o?}p
+  +0x0a340  ?s33?s33;
+  +0x0a380  ?&ff?s33?s33<
+  +0x0a398  ?s33;
+  +0x0a3a0  ?s33
+  +0x0a456  33?s33?s33:
+  +0x0a540  @S33@
+  +0x0a570  B4\)BJ
+=== kidx 212 (objects) DPid=212  offset=0x112be0 size=19120 exports=27 ===
+  +0x00239  @ %$
+  +0x0037b  V'9@
+  +0x003f3  d'9<
+  +0x0042f  V'9@
+  +0x005b5  @(%'9
+  +0x00686  (%'91(
+  +0x006ab  4'9!4
+  +0x006e6  0%'96P
+  +0x0070c  '92,
+  +0x0072f  x'90
+  +0x00748  '9AL
+  +0x0086d  @ %$
+  +0x0089d  @ %$
+  +0x00955  @ %&%
+  +0x00aa9    %$e
+  +0x00adf   '9!4
+  +0x00b85    %'90
+  +0x00cdf  $'9AL
+  +0x00f25    %)
+  +0x00f89  @(%'9
+  +0x00fd7  @'9 
+  +0x01076  0%'9
+  +0x011de  HC'!
+  +0x0159d    %'9
+  +0x01732   %'9
+  +0x01782   %'9
+  +0x01bd6  H$U2
+  +0x01c9e  X@1r
+  +0x01d59    %$E
+  +0x01dfd  /p!'
+  +0x01fa9    %$
+  +0x021a0  '9(h%
+  +0x021a8  %).4
+  +0x02359    %$
+  +0x02461    %'
+  +0x02a46  PC%!
+  +0x02e19  @(%F
+  +0x0378f  8'9@
+  +0x037f7  D0L@
+  +0x03956  (%'9?
+  +0x0398d  @ %$
+  +0x03a12  (%'9:
+  +0x03b15  @ %$
+  +0x03f21    %$
+  +0x04009    %$
+  +0x04015  @0%$
+  +0x043d0  kyte has enterd an invalid state
+  +0x043f4   In Seq 
+  +0x04400   Enable Dis %i 
+  +0x04410   cleaning Up Kyte 
+  +0x04424  sideCommandEnable error, command number too high
+  +0x04458   Removing Distract 
+  +0x0446c  kyte startup warning, flight group is zero
+  +0x04499  Initialising On Flight Group %i 
+  +0x044bd   Starting On Flight Group %i 
+  +0x044e0   Kyte Start on anon valid node 
+  +0x04500  error in setting up the curve network
+  +0x04528  curve %d, flightGroup %d, dir %d
+  +0x0454c  1.) Same as last frame
+  +0x04564  2.) psuedonode
+  +0x04574  3.) After psuedonode
+  +0x0458c  4.) Staying on the flight group %i 
+  +0x045b4  setting the flight group to %d
+  +0x045d4  5.) Used route finding
+  +0x045ec  6.) Next node of standard type (flightGroup %d)
+  +0x04620  7.) Staying on flight Group (even though invalid)
+  +0x04654  8.) Just taking any old curve
+  +0x04674  kyte error!, unable to find next curve node from %d!
+  +0x046ac  Extract route failed.
+  +0x046c4  Route finding, start %d finish %d
+  +0x046e8  routeFindNode error: couldn't find route between %d %d, return val %d
+  +0x04730  Node exists in curve network, that isn't Kyte AI, from curvenode %d
+  +0x04778   Found Perch 
+  +0x04788   Found Perch 
+  +0x04798   Perching %f 
+  +0x047a8  vel %f  dir %f 
+  +0x047ba   CURVES MOVE | CURVES MOVE 
+  +0x047d8   Trams 
+  +0x047e0  Performing Kyte action 
+  +0x047f8  Performing Kyte action 
+  +0x04810       PERCH ::: READ KYTTE PERCH COMMAND 
+  +0x0483f   Timer Reset 
+  +0x04850   LocK Activated 
+  +0x04864  clearing up
+  +0x04874   COMMAND ACTIVE 
+=== kidx 214 (objects) DPid=214 214_animobj offset=0x117770 size=1344 exports=7 ===
+  +0x00085    %$
+  +0x0028d  @(%$
+  +0x002a9  `H%UD
+=== kidx 215 (objects) DPid=215  offset=0x117cb0 size=23088 exports=9 ===
+  +0x0008e  +H'9-H%
+  +0x000a0  %k1l%
+  +0x00102  5|'96
+  +0x0010c  %)90%J:
+  +0x00114  %k;x%
+  +0x00182  B@%)C0%JC
+  +0x0018c  %kDp%
+  +0x001f4  '9HL%
+  +0x00200  %JJP%kL
+  +0x005b2  (%'9
+  +0x005de  0%'9
+  +0x005fe  (%'9
+  +0x00861    %$
+  +0x008ad    %$
+  +0x008f5    %$
+  +0x00939    %$
+  +0x00bcd  @(%'9
+  +0x00cb1  @(%'9
+  +0x00d3e   %'9
+  +0x00e2d  @(%'9
+  +0x00e55  @0%1
+  +0x00f45  @(%$
+  +0x011e3  P'9 8
+  +0x01257  P'9 8$
+  +0x012ff  P'9 8$
+  +0x0138f  P'9 8
+  +0x0149b  s'9&p
+  +0x014cf  P'9&p
+  +0x0153d  @ %&
+  +0x0157d  @ %D
+  +0x01825  @ %1
+  +0x02175   0%<
+  +0x0226d   0%$
+  +0x02521   0%$
+  +0x0289d    %$
+  +0x028c5    %Q`
+  +0x02c1d   (%'9%(
+  +0x02e59    %D
+  +0x03649    %$
+  +0x03785    %$
+  +0x038c1    %$
+  +0x03a8d    %$
+  +0x03bed    %$
+  +0x03d51    %$
+  +0x04159    %$
+  +0x04211    %$
+  +0x049e1  @ %<
+  +0x04b66   %&E
+  +0x04d97  <'9%(
+  +0x0550a  (%&d
+  +0x0553e   %&%
+  +0x057cf  o<e`B<u
+  +0x0580a  `A=H
+  +0x05836  `B<u
+  +0x059ac  ?333?.
+=== kidx 216 (objects) DPid=216 216_SnowWorm offset=0x11d6e0 size=17008 exports=9 ===
+  +0x000ab  t%) 
+  +0x000b0  %J#T%k& %
+  +0x0011c  '9/|%
+  +0x00122  2 %)4h%J5,%k6$%
+  +0x003c1   0%$
+  +0x004e1   (%'9
+  +0x00525   (%'9
+  +0x00545   (%'9
+  +0x00771    %$
+  +0x007b9    %$
+  +0x00c51  ` %$
+  +0x00c95  Jh!$
+  +0x00ce5  ` %$
+  +0x0114d    %$
+  +0x011bd    %F
+  +0x011fd    %$
+  +0x012b5    %F
+  +0x01481  pX#%
+  +0x0149e  (%'9
+  +0x019c9   (%$
+  +0x01a79    %5
+  +0x01cc1    %S
+  +0x01d51    %$
+  +0x0227a  B\3(
+  +0x02451    %Q`
+  +0x02481    %Q
+  +0x03025    %$
+  +0x0317d    %$
+  +0x03606   %Q@
+  +0x03c0e  P@%k
+  +0x03e1e  H@%J
+  +0x04088  BADDIE:SnowWorm Unknown message [%d]
+=== kidx 217 (objects) DPid=217 217_GuardClaw offset=0x121950 size=13024 exports=11 ===
+  +0x00104  '9(L%
+  +0x0010c  %)*x%J.T%k/t
+  +0x00382   %1*
+  +0x00399   0%'9
+  +0x004f5   (%'9
+  +0x00555   (%'9
+  +0x00575   (%'9
+  +0x0089a  (%3(
+  +0x00a7d   (%'9
+  +0x00b25  @ %'9
+  +0x00c21   0%1
+  +0x011cd  @(%$
+  +0x01299  @0%'9
+  +0x012d9  @0%'9
+  +0x012fe   %QA
+  +0x01311  @0%'9
+  +0x01651  @0%'9
+  +0x016f5  @(%F
+  +0x017e5    %$
+  +0x01ef1    %Q
+  +0x0203d    %Q
+  +0x02559   (%<
+  +0x02701   (%$
+  +0x02b79   (%<
+  +0x02be1   (%<
+  +0x02c79   (%<
+  +0x02ce1   (%<
+  +0x0317c  BADDIE:GuardClaw Unknown message [%d]
+  +0x031b8  <49X<
+  +0x031c4  <49X<
+  +0x031d8  <49X<49X<49X<49X<49X
+=== kidx 218 (objects) DPid=218  offset=0x124c30 size=9920 exports=9 ===
+  +0x00097  p%J <%k$|
+  +0x00272   %0C
+  +0x0060a  (%'9
+  +0x00642  0%'9
+  +0x00662  (%'9
+  +0x0083d    %$
+  +0x00885    %$
+  +0x008c9    %$
+  +0x00ab2  (%'9
+  +0x00b45    %'9
+  +0x00ba1    %D
+  +0x00dc1  ` %&
+  +0x00de1   0%'9
+  +0x00e01   0%'9
+  +0x00f79  ` %$
+  +0x00fad  Nx!$
+  +0x01019  ` %$
+  +0x0105d  ` %&
+  +0x01131   (%D
+  +0x01b5a  R$DL
+  +0x01b86  B$DL
+  +0x01c06  R$DN
+  +0x01c32  B$DN
+  +0x01edd  @ %<
+  +0x025da  33<#
+=== kidx 219 (objects) DPid=219  offset=0x1272f0 size=5264 exports=9 ===
+  +0x00332  (%'9
+  +0x00352  0%'9
+  +0x005ae  (%'9
+  +0x00641    %'9
+  +0x0069d    %D
+  +0x00869    %&
+  +0x009f1   (%D
+  +0x00c33   $N@
+  +0x00c53   $O@
+  +0x00fb1  @ %<
+  +0x010d3  !F& <
+  +0x011ba  (%&d
+  +0x011ee   %&E
+  +0x0123e  ApU 
+=== kidx 220 (objects) DPid=220 220_Chuka offset=0x128780 size=2560 exports=8 ===
+  +0x000d6  (%'9
+  +0x004a9    %$
+  +0x00501    %$
+  +0x00541    %$
+  +0x00591    %$
+  +0x005b5    %'
+  +0x005fe  (%'9
+  +0x00655    %$
+  +0x0082d  @ %$
+  +0x009b0  BADDIE:Chuka Unknown message [%d]
+=== kidx 221 (objects) DPid=221 221_ChukaChuck offset=0x129180 size=2288 exports=7 ===
+  +0x0028a   %'9
+  +0x002ce   %'9
+  +0x004d5  ` %$
+  +0x00575  ` %$
+  +0x00619  ` %$
+  +0x006b5  ` %$
+  +0x00715  ` %$
+  +0x008d6  \)?xQ
+=== kidx 222 (objects) DPid=222 222_SnowWormSmall offset=0x129a70 size=10752 exports=9 ===
+  +0x000bc  %k"(%
+  +0x00351   0%$
+  +0x004ad   (%'9
+  +0x004d5   (%'9
+  +0x004f5   (%'9
+  +0x006ad    %$
+  +0x006f5    %$
+  +0x00b55  ` %$
+  +0x00bf5  ` %$
+  +0x00d89    %D
+  +0x00f1d    %$
+  +0x00fdd  @ %'9
+  +0x01065  @ %$
+  +0x01111  @ %$
+  +0x012d6  (%%*
+  +0x0177d    %$
+  +0x018ce   %'9
+  +0x01902   %Q`
+  +0x01bf6   %'9
+  +0x0202d    %$
+  +0x02185    %$
+  +0x023e2   %Q@
+  +0x028a4  BADDIE:SnowWorm Unknown message [%d]
+  +0x028d8  ?333<#
+=== kidx 223 (objects) DPid=223 223_cannon_claw offset=0x12c470 size=816 exports=7 ===
+  +0x0018a   %'9
+  +0x001ca   %'9
+=== kidx 224 (objects) DPid=224  offset=0x12c7a0 size=9456 exports=7 ===
+  +0x000e4  '9!t%
+  +0x000ec  %)"d
+  +0x00392  0%'9
+  +0x003ca  0%'9
+  +0x003ea  (%'9
+  +0x00405    %'9
+  +0x00501    %$
+  +0x0054d    %$
+  +0x00595    %$
+  +0x005d9    %$
+  +0x00a1d   (%P@
+  +0x00c17  !(b?
+  +0x00f4d   (%$
+  +0x00f81  IX#D
+  +0x010b5   (%'9
+  +0x011b5  IX#D
+  +0x01222   %'9
+  +0x012c5   (%$
+  +0x012f9  IX#D
+  +0x013c1  @ %$
+  +0x01436  X@%y
+  +0x01895   (%$
+  +0x01a83  !(A?
+  +0x0243a  `B=#
+=== kidx 225 (objects) DPid=225 225_SabreBaddie offset=0x12ec90 size=11760 exports=7 ===
+  +0x0011f  8%J 
+  +0x00124  %k (%
+  +0x002bd    %$
+  +0x0040e  (%'9
+  +0x00446  0%'9
+  +0x00466  (%'9
+  +0x006a2  (%'9
+  +0x00735    %'9
+  +0x00791    %D
+  +0x0095e   %&%
+  +0x00b09   (%$
+  +0x00e62  0%%)
+  +0x016ad    %$
+  +0x01921    %$
+  +0x01b95    %$
+  +0x0218d  @ %<
+  +0x022b6  (%&d
+  +0x022ea   %&E
+  +0x02352  ApU@
+  +0x02ba4  <49X<49X<49X<u
+  +0x02cfc  <49X
+  +0x02dc4  ?333?.
+=== kidx 226 (objects) DPid=226 226_tumbleweedbush offset=0x131a80 size=2848 exports=8 ===
+  +0x0043a  !$DX
+  +0x00495  ` %'9
+  +0x004b5  ` %'9
+  +0x00a70  TumbleWeed cannot determin control type because of an incorrect object number.
+=== kidx 227 (objects) DPid=227 227_tumbleweed offset=0x1325a0 size=8912 exports=13 ===
+  +0x0034d  ` %$
+  +0x00361  ` %$
+  +0x003ee   %'9
+  +0x0040a   %'9
+  +0x00422   %'9
+  +0x004f9  @ %$
+  +0x00545  @ %$
+  +0x005f5  @ %$
+  +0x00631  @ %$
+  +0x00a75   (%'9
+  +0x00b2a   %'9 8
+  +0x00b52   %'9
+  +0x00e82  B$DN
+  +0x011cd   (%'9
+  +0x01282   %'9 8
+  +0x012aa   %'9
+  +0x01709  @ %$
+  +0x0171d  @ %$
+  +0x0196d  `(%F
+  +0x01e05    %'9
+  +0x01f22   %5l
+  +0x02294  ?s33<#
+=== kidx 228 (objects) DPid=228 228_Caictua offset=0x134870 size=7968 exports=9 ===
+  +0x00396  (%'9
+  +0x00422  (%'9
+  +0x00442  (%'9
+  +0x00935  ` %$
+  +0x00941  @0%$
+  +0x00dd5  @ %<
+  +0x00f35   (%D
+  +0x00fcd   (%&
+  +0x0107d   (%&
+  +0x011d5  @ %$
+  +0x01321    %F
+  +0x015f7  9(a 
+  +0x01e34  BADDIE:Caictua Unknown message [%d]
+=== kidx 229 (objects) DPid=229  offset=0x136790 size=12720 exports=9 ===
+  +0x000a4  %J$|%k&@%
+  +0x0033d  @ %$
+  +0x01679  Y@!D
+  +0x01839    %F
+  +0x01d56  (%'9
+  +0x01e2e   %9K
+  +0x027bb   '9%
+  +0x02978  )A#)
+  +0x0298e  #((a
+  +0x02b3d    %'9%
+  +0x02b9d  Ch!F
+  +0x02c31    %$
+  +0x02e5e   %'9%
+=== kidx 230 (objects) DPid=230  offset=0x139940 size=4768 exports=7 ===
+  +0x001c9  @ %$
+  +0x003d9  @ %'
+  +0x00469  @ %$
+  +0x004ad  @ %$
+  +0x004ed  @ %$
+  +0x006c5  @ %$
+  +0x00749  @ %$
+  +0x0083d  @ %$
+  +0x00851  @ %$
+  +0x00b17   5K@
+  +0x00c11  @(%$
+  +0x00e45  @ %TJ
+  +0x00f29    %3(
+  +0x0106a  0%3(
+  +0x01228   Loack Range %f 
+  +0x0123c   Attack Anim %i 
+=== kidx 231 (objects) DPid=231  offset=0x13abe0 size=10976 exports=7 ===
+  +0x00074  '9(h
+  +0x001c5  `0%$
+  +0x002aa  P@1l
+  +0x009b9  K !<
+  +0x00b38  %l"%%*
+  +0x00c5e  (%$c
+  +0x00fd1  @(%'9
+  +0x00ff1  @(%'9
+  +0x01011  @(%'9
+  +0x01089  @(%'9
+  +0x01169  #P!$B
+  +0x011c5  #p!F
+  +0x0125d  #P!F
+  +0x012b5  #p!F
+  +0x01582  !$DY
+  +0x016f5   (%D
+  +0x017ad   (%D
+  +0x01e9d  0P!D
+  +0x02022  Q$DD
+  +0x0204e  !$DD
+  +0x020c2  "$DE
+  +0x020ee  B$DE
+  +0x02422   *&q
+  +0x024a2  0%$L
+  +0x02572  p!'9
+  +0x02677  0'9#
+  +0x02a10  New State [%s]
+  +0x02a20  normalState
+  +0x02a2c  New AI State [%s]
+  +0x02a40  aiTop
+  +0x02a48  New AI State [%s]
+  +0x02a5c  aiIdle
+  +0x02a64  New AI State [%s]
+  +0x02a78  aiFlailAtPlayer
+=== kidx 232 (objects) DPid=232 232_VampireBat offset=0x13d6c0 size=4720 exports=7 ===
+  +0x0018d   0%$
+  +0x011b4  ?fff=
+=== kidx 233 (objects) DPid=233 233_BigScorpionRobot offset=0x13e930 size=6768 exports=7 ===
+  +0x001d5  @ %$
+  +0x00c65  @(%D
+  +0x00e59    %'9
+  +0x011dd    %'9
+  +0x01369    %'9
+  +0x014b5    %'9
+  +0x0162e   %'9
+  +0x016d1  @ %$
+  +0x0172d  @ %3
+  +0x018a5  @0%<
+=== kidx 234 (objects) DPid=234 234_ScorpionRobot offset=0x1403a0 size=7840 exports=8 ===
+  +0x001e9  @ %$
+  +0x004e9   (%&&
+  +0x00d92   %1l
+  +0x01019  @ %'9
+  +0x010a9  @(%D
+  +0x01309    %'9
+  +0x016f5    %'9
+  +0x018e5    %'9
+  +0x01a3d    %'9
+  +0x01b75   (%$
+  +0x01baa   %'9
+  +0x01d1d    %'9
+  +0x01e5f  '?xQ
+=== kidx 235 (objects) DPid=235  offset=0x142240 size=12416 exports=7 ===
+  +0x0008c  %J X
+  +0x000ac  %k.d
+  +0x003f1  @ %F
+  +0x00489  @ %$
+  +0x00495   0%$
+  +0x00661  @(%'9
+  +0x006f1  @ %'
+  +0x006fe  0%'9
+  +0x01015  @ %$
+  +0x01b71    %F
+  +0x01be6  0%'9
+  +0x01d79    %3
+  +0x021da  PC$A
+  +0x023a2  (%'(
+  +0x02b2a  (%1*
+  +0x02c59    %1*
+  +0x02e41   (%'9
+  +0x03006  `B<#
+  +0x03012  `B<#
+=== kidx 236 (objects) DPid=236 236_WG_Triffid offset=0x1452c0 size=4080 exports=7 ===
+  +0x005d9  @ %$
+  +0x005e5  `0%$
+  +0x009bd    %F
+=== kidx 237 (objects) DPid=237  offset=0x1462b0 size=6624 exports=7 ===
+  +0x007cd  ` %(
+  +0x00f35  @ %F
+  +0x00f5d  @ %F
+  +0x01015  @ %F
+  +0x01035  @ %F
+  +0x01292   %1m
+  +0x017a6  0%1*
+=== kidx 238 (objects) DPid=238  offset=0x147c90 size=3520 exports=7 ===
+  +0x005c9  @ %$
+  +0x005d5  `0%$
+=== kidx 240 (objects) DPid=240  offset=0x149890 size=12912 exports=7 ===
+  +0x00078  '9,8%
+  +0x001b5   0%$
+  +0x00221  @ %F
+  +0x00395  @ %&E
+  +0x004e5   (%D
+  +0x01571  `0%$
+  +0x01625  @0%'9
+  +0x016b5  `0%$
+  +0x01781  @0%'9
+  +0x017d1  ` %F
+  +0x01859  `0%F
+  +0x01886  (%'9
+  +0x021dd  AX!$
+  +0x02562   %&E
+  +0x025a1   (%'9#\
+  +0x026ed    %$
+  +0x029f9    %'9
+  +0x02a24  '9#\
+  +0x02c28  '9#\
+  +0x03167  4@&ff
+  +0x0319b  L?xQ
+  +0x031a0  @&ff@&ff=
+  +0x031be  ff<D
+  +0x031d0  ?fff?fff
+=== kidx 242 (objects) DPid=242  offset=0x14cdb0 size=2112 exports=7 ===
+  +0x0028a  8%%k
+=== kidx 243 (objects) DPid=243 243_Lunaimar offset=0x14d5f0 size=9712 exports=9 ===
+  +0x00381    %$
+  +0x003a5    %$
+  +0x00422  (%'9
+  +0x0044a  (%'9
+  +0x0046a  (%'9
+  +0x00609    %$
+  +0x00651    %$
+  +0x0095d  ` %$
+  +0x00999  ` %$
+  +0x00a19  ` %$
+  +0x00a4d  O@!$
+  +0x00ab9  ` %$
+  +0x00b3e  (%'9
+  +0x00e49  @(%'9
+  +0x012f5  @ %$
+  +0x01369  @ %$
+  +0x01425  @ %$
+  +0x01475  @ %$
+  +0x0152d  @ %$
+  +0x016e9    %$
+  +0x0174d  @ %$
+  +0x01ab2  8%'9
+  +0x01e01    %$
+  +0x01e49    %$
+  +0x01e7d    %$
+=== kidx 244 (objects) DPid=244  offset=0x14fbe0 size=1904 exports=7 ===
+  +0x0043a   %'9
+  +0x00462   %'9
+  +0x00515  @0%<
+=== kidx 245 (objects) DPid=245 245_BalloonBaddie offset=0x150350 size=4864 exports=7 ===
+  +0x000ed  @ %$
+  +0x0021d    %5*
+  +0x002a1    %'
+  +0x00356  2$DJ
+  +0x00382  B$DJ
+  +0x00469    %$
+  +0x00689    %$
+  +0x0082e  Cz0O
+  +0x008da  (%'9
+  +0x00999    %$
+  +0x009ed    %$
+  +0x00a31    %$
+  +0x012c7  o?fff
+=== kidx 246 (objects) DPid=246 246_SwarmBaddie offset=0x151650 size=2928 exports=7 ===
+  +0x000ed  @ %$
+  +0x00199    %$
+  +0x00251    %'
+  +0x00285    %$
+  +0x00405    %$
+  +0x0051a  Cz0X
+  +0x005c6  (%'9
+  +0x00b48  ?fff?L
+=== kidx 247 (objects) DPid=247  offset=0x1521c0 size=5152 exports=7 ===
+  +0x000e1  @ %$
+  +0x0022d    %5*
+  +0x0027d    %'
+  +0x00332  2$DI
+  +0x0035e  B$DI
+  +0x00429    %$
+  +0x004ad    %$
+  +0x00579    %$
+  +0x00696  Cz0K
+  +0x00762  (%'9
+  +0x00831    %$
+  +0x00885    %$
+  +0x008c9    %$
+  +0x013e8  ?fff
+  +0x013ed  fff?
+=== kidx 248 (objects) DPid=248 248_PirahnaBaddie offset=0x1535e0 size=2304 exports=7 ===
+  +0x000e1  @ %$
+  +0x00221    %'
+  +0x0025d    %$
+  +0x0037a  Cz0X
+  +0x00426  (%'9
+  +0x008d8  ?fff@
+=== kidx 249 (objects) DPid=249  offset=0x153ee0 size=3344 exports=7 ===
+  +0x000ed  @ %$
+  +0x00199    %$
+  +0x00251    %'
+  +0x0041d    %$
+  +0x00586  Cz0N
+  +0x00752  (%'9
+  +0x00ce8  ?fff@
+=== kidx 250 (objects) DPid=250 250_TurtleBaddie offset=0x154bf0 size=2240 exports=7 ===
+  +0x000e1  @ %$
+  +0x001e1    %'
+  +0x00221    %$
+  +0x0033e  Cz0O
+  +0x003ea  (%'9
+  +0x00890  ?fff@
+=== kidx 251 (objects) DPid=251 251_weapons offset=0x1554b0 size=10304 exports=20 ===
+  +0x00c0e  (%'9
+  +0x0248d  !P!79@
+  +0x024b6  8%P@
+  +0x024e9  `(%U
+  +0x02646  0@$B
+  +0x02651  &P!(A
+=== kidx 252 (objects) DPid=252 252_Cannon offset=0x157cf0 size=2640 exports=7 ===
+  +0x0044d  @ %$
+  +0x00a04  CANNON
+  +0x00a24  ?fff@
+=== kidx 253 (objects) DPid=253 253_CannonBall offset=0x158740 size=1072 exports=7 ===
+  +0x00422  \)?xQ
+=== kidx 255 (objects) DPid=255  offset=0x158cf0 size=3568 exports=7 ===
+  +0x00625   (%'9
+  +0x00b75  `(%<
+=== kidx 256 (objects) DPid=256  offset=0x159ae0 size=3200 exports=10 ===
+  +0x00129  @ %$
+=== kidx 257 (objects) DPid=257 257_tesla offset=0x15a760 size=4864 exports=8 ===
+  +0x0022e  (%'9
+  +0x003e6  (%'9
+  +0x005ad  ` %$
+  +0x00841  `(%E
+  +0x00a0d  `(%E
+  +0x00a61  `(%E
+  +0x00e2d  `(%$
+  +0x00e42  1$DJ
+  +0x00e6e  !$DJ
+  +0x00efe  R$DN
+  +0x00f2a  B$DN
+  +0x01288  Trying to strike baddie, but it doesn't work! Would someone please fix this.
+=== kidx 258 (objects) DPid=258 258_Caictua_Thorn offset=0x15ba60 size=1792 exports=7 ===
+  +0x0025d  @ %F
+  +0x002ad  @0%<
+  +0x002d1  @ %$
+  +0x002e9  @ %$
+  +0x003e1  @ %$
+=== kidx 259 (objects) DPid=259  offset=0x15c160 size=1952 exports=7 ===
+  +0x00555  `(%<
+=== kidx 260 (objects) DPid=260 260_Pollen offset=0x15c900 size=1984 exports=7 ===
+  +0x00345  ` %F
+  +0x00391  ` %$
+  +0x003b1  ` %$
+  +0x004c1  ` %$
+  +0x00552  I@1K
+  +0x00581  ` %'9
+=== kidx 261 (objects) DPid=261 261_PollenFragment offset=0x15d0c0 size=1136 exports=7 ===
+  +0x0045c  ?s33:
+=== kidx 262 (objects) DPid=262  offset=0x15d530 size=3264 exports=7 ===
+  +0x002f9  (P#D
+  +0x00381  @ %$
+  +0x003c1  @ %$
+  +0x00491  @(%1(
+  +0x004e1  @ %F
+  +0x00605  @ %$
+  +0x00695  @ %$
+  +0x008b5  @ %F
+=== kidx 263 (objects) DPid=263  offset=0x15e1f0 size=1680 exports=7 ===
+  +0x00235  @ %F
+  +0x002ad  @ %$
+  +0x003a5  @ %$
+  +0x00445  @ %$
+=== kidx 264 (objects) DPid=264 264_kamerian_flame offset=0x15e880 size=1872 exports=7 ===
+  +0x003c9    %F
+  +0x003f1    %$
+  +0x00411    %$
+  +0x004dd    %$
+  +0x00529    %'9
+=== kidx 265 (objects) DPid=265 265_SHvines offset=0x15efd0 size=1504 exports=7 ===
+  +0x00232   %5*@
+  +0x005a1   HIT HIT HIT HIT Hit by Booldy Side Kick 
+=== kidx 271 (objects) DPid=271 271_InfoPoint offset=0x160350 size=1792 exports=7 ===
+  +0x00289    %$
+  +0x0069c   Name %s Time %i 
+  +0x006b4   Anim %i 
+=== kidx 272 (objects) DPid=272 272_collectable offset=0x160a50 size=6720 exports=14 ===
+  +0x0075a   %'9
+  +0x01581  @ %$
+  +0x01a1c  ?333?}p
+=== kidx 274 (objects) DPid=274 274_pushpull offset=0x162a40 size=11600 exports=11 ===
+  +0x00581   (%'9 
+  +0x005a1   (%'9 
+  +0x007a9   (%'9"
+  +0x007d1   (%'9"
+  +0x00885   (%'9'
+  +0x008a5   (%'9*
+  +0x011b5    %$
+  +0x015d6  (%'9
+  +0x0168d  K !&
+  +0x01e45  @ %'
+  +0x01e4b  @'9 H
+  +0x0289d  @ %1*
+  +0x02c80  PUSHPULL OBJECT: hitpoint overflow
+  +0x02ca4  handle is %d
+=== kidx 275 (objects) DPid=275 275_WarpPoint offset=0x165790 size=2592 exports=7 ===
+  +0x009ad  bit %d  set %d %d %d %d %d %f %f %x
+  +0x009d5  doseq warp %x %d
+  +0x009e9  dowarp warp %x %d
+=== kidx 276 (objects) DPid=276  offset=0x1661b0 size=2816 exports=7 ===
+  +0x003ed  @ %F
+  +0x00479  @(%$
+  +0x00525  @ %F
+  +0x005b1  @(%$
+  +0x00895    %<
+  +0x00a4c  OBJ_InvHit: warning INVHIT_TYPE_FULL, t0 deleted
+  +0x00a80  OBJ_InvHit: warning INVHIT_TYPE_FULL, t0 deleted
+=== kidx 279 (objects) DPid=279 279_Door offset=0x1673b0 size=4656 exports=7 ===
+  +0x004c9  @ %'
+  +0x00959  @ %Q
+  +0x00c15  @ %'
+  +0x00c35  @ %'
+  +0x00cae  (%'9
+  +0x00e72  (%'9
+  +0x01119  C(&0
+=== kidx 280 (objects) DPid=280 280_SidekickBall offset=0x1685e0 size=3216 exports=10 ===
+  +0x000d5  @ %5
+  +0x003fa  T$DF
+  +0x00822   %'9
+  +0x00965   (%'9
+  +0x00c28  the side kick toy is unloading
+  +0x00c50  ?333?333
+=== kidx 282 (objects) DPid=282 282_Crate offset=0x169350 size=2224 exports=7 ===
+  +0x004b9  @ %F
+=== kidx 283 (objects) DPid=283 283_krazoatext offset=0x169c00 size=1904 exports=8 ===
+  +0x002cd   (%'9
+  +0x002ed   (%'9
+=== kidx 284 (objects) DPid=284 284_levelname offset=0x16a370 size=1696 exports=7 ===
+  +0x0067c  DIAMOND BAY
+=== kidx 285 (objects) DPid=285 285_ProjectileSwitch offset=0x16aa10 size=1536 exports=7 ===
+  +0x0019e  (%'9
+  +0x0024a  (%'9
+  +0x0031e  (%'9
+=== kidx 286 (objects) DPid=286  offset=0x16b010 size=1008 exports=7 ===
+  +0x002de  !$DM
+=== kidx 287 (objects) DPid=287 287_pressureswitch offset=0x16b400 size=2304 exports=7 ===
+  +0x00292   %'9
+  +0x006ed  O8!P
+  +0x008b4  PRESSURESWITCH.c: modelno out of range romdefno=%d
+=== kidx 288 (objects) DPid=288  offset=0x16bd00 size=1264 exports=7 ===
+  +0x00262  (%1l
+=== kidx 290 (objects) DPid=290 290_MagicPlant offset=0x16c770 size=4576 exports=7 ===
+  +0x00275   0%'9
+  +0x00295   0%'9
+  +0x002b5   0%'9
+  +0x002d5   0%'9
+  +0x002f5   0%'9
+  +0x00691  @ %$
+  +0x0076e  H@%J
+  +0x00775  *X!'9
+  +0x007ba   %'9
+  +0x00d99    %F
+  +0x00e05    %$
+  +0x01154  MAGICPLANT: modelno error
+=== kidx 291 (objects) DPid=291 291_MagicDust offset=0x16d950 size=4608 exports=7 ===
+  +0x00185    %5*
+  +0x004d9    %'
+  +0x00665    %1*
+  +0x0074e  (%5*
+  +0x009a9    %$
+  +0x009e5    %F
+  +0x00a73  05l@
+  +0x00ba9    %$
+  +0x00bbe  D$DF
+  +0x00fa5    %$
+=== kidx 294 (objects) DPid=294 294_curveFish offset=0x16f0b0 size=2896 exports=7 ===
+  +0x003e1    %'9
+  +0x0056f   $K@
+  +0x006ad    %D
+  +0x00721    %$
+  +0x00751    %F
+  +0x0079d    %$
+  +0x007c9    %D
+  +0x00815    %$
+  +0x0084d    %F
+  +0x008b9    %$
+  +0x00ae8  fish has reached the end of it life
+=== kidx 295 (objects) DPid=295 295_smallbasket offset=0x16fc00 size=8880 exports=7 ===
+  +0x000b1    %$
+  +0x002c5   0%7
+  +0x0083e   %'9
+  +0x009be   %1K
+  +0x00a93  l'9 
+  +0x00fc2   %0L
+  +0x011e9  ` %F
+  +0x014d1  @ %$
+=== kidx 296 (objects) DPid=296 296_medium_crate offset=0x171eb0 size=6176 exports=7 ===
+  +0x00509    %'
+  +0x005b5    %$
+  +0x0071d    %$
+  +0x00e5d  @ %$
+  +0x0161d  @ %$
+=== kidx 297 (objects) DPid=297 297_scarab offset=0x1736d0 size=6384 exports=7 ===
+  +0x000fb  F7( 
+  +0x00246   %38
+  +0x00b5e  0%'9
+  +0x0169e   %0J
+  +0x01878  fy %f %f
+  +0x01884  Crashed
+  +0x01898  ?&ff?
+  +0x018a2  ff>L
+=== kidx 298 (objects) DPid=298  offset=0x174fc0 size=4400 exports=7 ===
+  +0x000b5    %$
+  +0x002d1   0%5l
+  +0x0082a   %'9
+  +0x00936   %'9
+  +0x00b86  H!1'
+  +0x010c4   Z Bomb Exploded 
+  +0x010d8   Z Bomb Exploded 
+=== kidx 302 (objects) DPid=302 302_Fall_Ladders offset=0x1772b0 size=1248 exports=7 ===
+  +0x0013a   %'9
+  +0x004d0  ?fff>
+=== kidx 303 (objects) DPid=303 303_FireFlyLantern offset=0x177790 size=1280 exports=7 ===
+  +0x000f1  ` %'9
+=== kidx 304 (objects) DPid=304 304_LanternFireFly offset=0x177c90 size=4064 exports=10 ===
+  +0x0028d  @ %'9
+  +0x002a5  @ %'9
+  +0x00695  @ %$
+  +0x006c9  @ %$
+  +0x007dd  @ %F
+  +0x00f64   Creating Light 
+  +0x00f78   Num Part %i 
+  +0x00f88   Sending FireFly 
+=== kidx 305 (objects) DPid=305 305_PortalSpellDoor offset=0x178c70 size=1584 exports=7 ===
+  +0x0036d    %F
+  +0x00620   t %i 
+=== kidx 306 (objects) DPid=306  offset=0x1792a0 size=3488 exports=7 ===
+  +0x0014e  0%Y`
+  +0x0062a  (%'9
+  +0x00a7a  T$DX
+=== kidx 307 (objects) DPid=307 307 offset=0x17a040 size=2208 exports=7 ===
+  +0x0057d  `(%'9
+  +0x00689  `(%'9
+  +0x007c9  O(&0
+=== kidx 308 (objects) DPid=308 308_USEOBJ offset=0x17a8e0 size=1648 exports=7 ===
+  +0x00634  USEOBJ.c: modelno out of range romdefno=%d
+=== kidx 309 (objects) DPid=309 309_SEQOBJ offset=0x17af50 size=1664 exports=7 ===
+  +0x00648  SEQOBJ.c: modelno out of range romdefno=%d
+=== kidx 310 (objects) DPid=310  offset=0x17b5d0 size=1840 exports=7 ===
+  +0x0050c  newseqobj %d: Need Bit %d, Used Bit %d
+  +0x00534  newseqobj %d: need bit clear before preempting sequence
+  +0x00570  newseqobj %d: used bit set before preempting sequence
+  +0x005a8  newseqobj %d: about to prempt the sequence - objs %d
+  +0x005e0  newseqobj %d: need bit clear after sequence
+  +0x00610  newseqobj %d: used bit set after sequence
+  +0x0063c  newseqobj %d: need bit clear before sequence
+  +0x0066c  newseqobj %d: used bit set before sequence
+  +0x00698  newseqobj %d: about to start the sequence
+  +0x006c4  newseqobj %d: need bit clear during sequence
+  +0x006f4  newseqobj %d: used bit set during sequence
+=== kidx 311 (objects) DPid=311 311_IMMultiSeq offset=0x17bd00 size=1344 exports=7 ===
+  +0x001b1  jX!2
+  +0x00504  SEQOBJ.c: modelno out of range romdefno=%d
+=== kidx 312 (objects) DPid=312 312_NWMultiSeq offset=0x17c240 size=1472 exports=7 ===
+  +0x0021d  @ %$
+  +0x004be  X!Q$
+  +0x00594  prempting the sequence
+=== kidx 313 (objects) DPid=313 313_pickobj offset=0x17c800 size=672 exports=7 ===
+  +0x00270  SEQOBJ.c: modelno out of range romdefno=%d
+=== kidx 314 (objects) DPid=314 314_foodbag offset=0x17caa0 size=3296 exports=17 ===
+  +0x00472  (%'9
+  +0x00b46  P@%k
+  +0x00bdc   Food Type Found %i : Obj %i 
+=== kidx 315 (objects) DPid=315 315_sidefoodbag offset=0x17d780 size=1872 exports=13 ===
+  +0x006a0  submenu %d
+  +0x006ac  add food %d
+=== kidx 316 (objects) DPid=316  offset=0x17ded0 size=7424 exports=10 ===
+  +0x0039d    %1*
+  +0x00429    %$
+  +0x004e6  0%'9
+  +0x00509    %'
+  +0x00549    %'9
+  +0x00639    %'9
+  +0x0066d    %'9
+  +0x00691    %'9
+  +0x006f5    %'9
+  +0x00729    %'9
+  +0x007d5    %'9
+  +0x007f9    %'9
+  +0x00859    %$
+  +0x0087d    %F
+  +0x0089a  (%'9
+  +0x008f9    %$
+  +0x0096d    %F
+  +0x00991    %'9
+  +0x009ba  (%'9
+  +0x009d1  @ %$c
+  +0x00aad    %F
+  +0x00af9    %'9
+  +0x00b31    %'9
+  +0x00b5d    %F
+  +0x013ed    %&
+  +0x01431    %'9
+  +0x014d9    %'9
+  +0x01b19    %$
+  +0x01c38  Fruit info: nextY %f, acc %f, water acc %f, startHeight %f, yStart %f, obj->fy %f
+  +0x01c8c  Fruit upwardsBounceVelocity %f movementFdt %f
+=== kidx 317 (objects) DPid=317  offset=0x17fbd0 size=3280 exports=8 ===
+  +0x00479  jX#D
+  +0x00832  (%$c
+  +0x00961  @ %P
+  +0x00a79  mp!$
+=== kidx 318 (objects) DPid=318 318_fish offset=0x1808a0 size=9088 exports=7 ===
+  +0x007a6   %'9!P
+  +0x0095e   %'9
+  +0x009b2  0%'9
+  +0x00aae  0%'9
+  +0x00bee  (%'9
+  +0x00d36   %'9
+  +0x00d82   %'9
+  +0x00da2  (%'9
+  +0x00e66  0%'9
+  +0x011e2  (%'9
+  +0x01db9    %$
+  +0x01dd9    %$
+=== kidx 321 (objects) DPid=321 321_Duster offset=0x183810 size=2432 exports=7 ===
+  +0x00958  hit wall
+=== kidx 325 (objects) DPid=325 325_trigger offset=0x1847b0 size=13888 exports=7 ===
+  +0x00129   (%'9
+  +0x0014a   %'9
+  +0x0016d   (%'9
+  +0x0018d   (%'9&
+  +0x001d1   (%'9+
+  +0x0038e  8%'9
+  +0x0068f  X'9#
+  +0x006fb  X'9&0
+  +0x0079e  0%$c
+  +0x007ef  X'9+ 
+  +0x010ad  +0%0
+  +0x0124e   %'9
+  +0x016c9  @(%P@
+  +0x01cfe   %'9
+  +0x02693  ('9'<$e
+  +0x026bb   '9'<
+  +0x027a7  ,'9(
+  +0x02afe  0%'9
+  +0x02e50  triggers: unknown trigger object %d.
+  +0x02e78  TRIGGER: warning Script overflow
+  +0x02e9c  Trigger [%d], Gamplay Vulnerable
+  +0x02ec0  Trigger [%d], Music Action,       Action Num [%d] Free
+  +0x02ef8  Trigger [%d], Music Action,       Action Num [%d] Set
+  +0x02f30  Trigger [%d], Sound FX,           Action Num [%d],Handle Num [%d]
+  +0x02f74  Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]
+  +0x02fc4  Trigger [%d], Track Sky On
+  +0x02fe0  Trigger [%d], Track Sky Off
+  +0x02ffc  Trigger [%d], Track AntiAlias On
+  +0x03020  Trigger [%d], Track AntiAlias Off
+  +0x03044  Trigger [%d], Track SkyObjects On
+  +0x03068  Trigger [%d], Track SkyObjects Off
+  +0x0308c  Trigger [%d], Track Dome On
+  +0x030a8  Trigger [%d], Track Dome Off
+  +0x030c8  Trigger [%d], Track MrSheen On %d
+  +0x030ec  Trigger [%d], Track MrSheen Off
+  +0x0310c  Trigger [%d], Environment Effect, Action Num [%d], Range [%d]
+  +0x0314c  Trigger [%d], Lighting,           Action      [%d], Range [%d], PassDir [%d]
+  +0x0319c  Trigger [%d], Anim Sequence,      SequenceID [%d], Activate
+  +0x031d8  Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 1
+  +0x03214  Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 0
+  +0x03250  Trigger [%d], Trigger,            Local ID   [%d]
+  +0x03284  Storyboard disabled, please remove trigger
+  +0x032b0  Trigger [%d], LOD Model [%d]
+  +0x032d0  Trigger [%d], Setup Point,        Level      [%d], SetupPoint [%d]
+  +0x03314  Trigger [%d], Bits
+  +0x03328  Trigger [%d], Object Load
+  +0x03344  Trigger [%d], Object Free
+  +0x03360  Trigger [%d], Object Toggle
+  +0x03380  Trigger [%d], Tex Load
+  +0x03398  Trigger [%d], Tex Free
+  +0x033b0  TRIGGER: warning DLL not loaded
+  +0x033d4  Script [%d], Subscript [%d]
+  +0x033f4  Trigger [%d], Object Load
+  +0x03410  Trigger [%d], Object Free
+  +0x0342c  Restart Set [%d]
+  +0x03440  Restart Clear [%d]
+  +0x03454  Restart Goto [%d]
+  +0x03468  killing sidekick
+  +0x0347c  findobj %i 
+  +0x0348c  Trigger [%d], amSfxWaterFallsSetFlags,   Action [%d], PassDir [%d]
+=== kidx 328 (objects) DPid=328  offset=0x1883a0 size=2512 exports=7 ===
+  +0x00435    %'
+  +0x004ed   (%$
+  +0x0058d    %$
+  +0x00691    %$
+  +0x0078d    %'
+=== kidx 329 (objects) DPid=329  offset=0x188d70 size=1296 exports=7 ===
+  +0x00282  B T@
+=== kidx 330 (objects) DPid=330 330_CampFire offset=0x189280 size=1840 exports=7 ===
+  +0x00291    %$
+=== kidx 331 (objects) DPid=331 331_genprops offset=0x1899b0 size=9040 exports=7 ===
+  +0x019e6  A P@
+  +0x01c4a  Q!F0$
+  +0x020f9  Hit Krystal
+  +0x02109  Hit Krystal
+  +0x02119  MoonSeed Mound
+  +0x0212d  The Player Guesses that a Seed goes here!
+  +0x02159  NoPass Vine
+  +0x02169  The Player Burns it away!
+  +0x02185  NoPass Vine
+  +0x02195  The Player Burns it away!
+  +0x0230b  oFg\
+=== kidx 332 (objects) DPid=332 332_FXEmit offset=0x18bd00 size=3600 exports=7 ===
+  +0x002a5  @H%Q
+  +0x0032a   %0E
+  +0x00776   %'9
+  +0x008e6   %'9
+=== kidx 333 (objects) DPid=333  offset=0x18cb10 size=976 exports=7 ===
+  +0x00209  *0!0
+=== kidx 334 (objects) DPid=334 334_Transporter offset=0x18cee0 size=3728 exports=7 ===
+  +0x001ea  B U@
+  +0x00685  @ %$
+  +0x009dd  @ %$
+  +0x00a79    %$
+=== kidx 335 (objects) DPid=335  offset=0x18dd70 size=3136 exports=7 ===
+  +0x001ed  `(%$
+  +0x005c9  ` %$
+  +0x008c1  ` %$
+=== kidx 338 (objects) DPid=338  offset=0x18f480 size=2096 exports=9 ===
+  +0x00161  @(%F
+  +0x00199  @ %$
+  +0x003f9  @(%'9
+  +0x00449  @ %$
+=== kidx 340 (objects) DPid=340  offset=0x18fea0 size=4048 exports=7 ===
+  +0x004ad  @ %'9
+  +0x009d5  `0%$
+  +0x00b99  @ %F
+  +0x00ea1    %F
+=== kidx 342 (objects) DPid=342  offset=0x191210 size=1840 exports=7 ===
+  +0x005d9  @ %'9
+=== kidx 343 (objects) DPid=343 343_LightPole offset=0x191940 size=848 exports=7 ===
+  +0x0030c   TFRAME ANIMATOR: no speed give 
+  +0x00330   Set bit %i 
+=== kidx 344 (objects) DPid=344 344_SpellOverlay offset=0x191c90 size=2064 exports=8 ===
+  +0x00770   Playing Snd
+  +0x00780   DRAWING THE THING 
+  +0x00794   Anim %i 
+  +0x007a0   Anim %i 
+  +0x007ac  WARNING: UnKnown Texture Animation Command Input 
+=== kidx 345 (objects) DPid=345 345_WaterFallSpray offset=0x1924a0 size=1040 exports=7 ===
+  +0x001f9  ` %$
+  +0x00205   0%$
+  +0x00239  ` %$
+  +0x00245   0%$
+  +0x00279  ` %$
+  +0x00285   0%$
+  +0x002b9  ` %$
+  +0x002c5   0%$
+=== kidx 347 (objects) DPid=347 347_texscroll2 offset=0x1929e0 size=1408 exports=8 ===
+  +0x0009e  (%'9
+  +0x0013e  (%'9
+  +0x00528  TEXSCROLL: no scroll table
+  +0x00544  TEXSCROLL: cannot find texture '%d' %f %f %f %d
+=== kidx 348 (objects) DPid=348 348_texscroll offset=0x192f60 size=1904 exports=7 ===
+  +0x001be  (%'9
+  +0x0036d  @X%Y
+  +0x00714  TEXSCROLL: no scroll table
+  +0x00730  TEXSCROLL: cannot find texture '%d'
+=== kidx 349 (objects) DPid=349  offset=0x1936d0 size=5040 exports=10 ===
+  +0x00662  !$DY
+  +0x0098d  AX$Q`
+  +0x009a1  ,p#D
+  +0x00fba  "$DN
+  +0x00fe6  B$DN
+  +0x01052  1$DH
+  +0x0107e  !$DH
+=== kidx 350 (objects) DPid=350  offset=0x194a80 size=3968 exports=7 ===
+  +0x0022a  (%'9
+  +0x00245   (%'9
+  +0x00269   (%'9
+  +0x0081d   (%'9
+  +0x008ed   P%Q
+  +0x00951  K@!F
+  +0x00a5a  2$DY
+  +0x00a86  B$DY
+  +0x00b9e  x%W 
+  +0x00f58  %d:%d,%d %d:%d
+=== kidx 351 (objects) DPid=351 351_GroundAnimator offset=0x195a00 size=3920 exports=10 ===
+  +0x0037e   %4y
+  +0x00426  (%'9
+  +0x00495  @ %$
+  +0x004c5    %F
+  +0x0072d  b(!F
+  +0x00c4d  %X!$
+  +0x00f20  groundanim group overflow
+=== kidx 352 (objects) DPid=352  offset=0x196950 size=5696 exports=7 ===
+  +0x001f2  (%'9
+  +0x00451  @`%$
+  +0x004b5  $(!F
+  +0x00729  @ %F
+  +0x0087d  @ %F
+  +0x00a51  @ %$
+  +0x00bb5  @ %$
+  +0x00c92  (%'9
+  +0x00d01  @`%<
+  +0x00d6d  $(!F
+  +0x00e11   @%$
+  +0x00e6a  pC$a
+=== kidx 353 (objects) DPid=353 353_HitAnimator offset=0x197f90 size=1328 exports=7 ===
+  +0x00132  0%'9
+  +0x0035a  0%'9
+  +0x00439  `(%<
+  +0x00479  hx$1
+  +0x004a1  )h%1K
+  +0x0051c  id %d on %d
+=== kidx 354 (objects) DPid=354 354_VisAnimator offset=0x1984c0 size=976 exports=7 ===
+  +0x0011a  0%'9
+  +0x00149  Nx$7
+  +0x0025e  0%'9
+  +0x00309  `0%<
+=== kidx 355 (objects) DPid=355 355_WallAnimator offset=0x198890 size=3376 exports=10 ===
+  +0x001ae  (%'9
+  +0x001ed  @ %$
+  +0x00201  @ %$
+  +0x004c1  `H%$
+  +0x0095d  `@%F
+  +0x00a01  `(%$c
+  +0x00b55  %`!$
+=== kidx 356 (objects) DPid=356  offset=0x1995c0 size=7408 exports=7 ===
+  +0x002be  (%'9
+  +0x003e6  (%'9
+  +0x0043e   %'9
+  +0x00895  #h#D
+  +0x00929  C@!D
+  +0x00a45  Ch!D
+  +0x00ad1  cH#D
+  +0x0118a  (%'9
+  +0x01205   (%$
+  +0x0136d  IP!D
+  +0x014e9  8p#D
+  +0x01531  8p#D
+  +0x01579  8p#D
+=== kidx 357 (objects) DPid=357 357_ExplodeAnimator offset=0x19b2b0 size=992 exports=7 ===
+  +0x00319  `0%$
+=== kidx 358 (objects) DPid=358  offset=0x19b690 size=3952 exports=7 ===
+  +0x0023e  (%'9
+  +0x00a61    %$
+  +0x00f44  ?fff
+=== kidx 359 (objects) DPid=359  offset=0x19c600 size=1776 exports=7 ===
+  +0x004f2   %'9
+=== kidx 360 (objects) DPid=360  offset=0x19ccf0 size=3328 exports=7 ===
+  +0x00132  D 0Y
+  +0x007ce  H$Q 
+  +0x00901  )P#D
+  +0x0091d  lh#D
+  +0x00bd8   WARNING 3D Tex WALL: exceeded maximumm no of vertices 
+  +0x00c15   tex s %i t %i 
+  +0x00c28   Vec %i %i %i 
+  +0x00c38   tex t %f tex s %f 
+  +0x00c4d  T  Vec %f %f %f 
+  +0x00c61  S  Vec %f %f %f 
+  +0x00c75   WARNING : TDtexture cannot find a horiztonal or vertical vector 
+  +0x00cb8   ERROR: Wrong block has been obtained 
+  +0x00ce0   Cannot Load Block 
+=== kidx 361 (objects) DPid=361 361_TexFrameAnimator offset=0x19d9f0 size=1072 exports=7 ===
+  +0x003d8   TFRAME ANIMATOR: no speed give 
+  +0x003fc   TEXFRAMEANIM %i 
+  +0x00410   Set bit %i 
+=== kidx 362 (objects) DPid=362 362_portaltexanimator offset=0x19de20 size=1424 exports=7 ===
+  +0x0020e   %'9
+  +0x00301  BX#D
+  +0x0030d   (%F
+  +0x00315  @0%F
+  +0x00578  %d:%d,%d %d:%d
+=== kidx 364 (objects) DPid=364 364_FEseqobject offset=0x19e520 size=1696 exports=7 ===
+  +0x002ad   0%$
+  +0x002ed   0%$
+  +0x0032d   0%$
+  +0x0036d   0%$
+  +0x003ad   0%$
+=== kidx 366 (objects) DPid=366  offset=0x19ed30 size=1184 exports=7 ===
+  +0x0012d  @ %'9
+  +0x00149  @ %'
+  +0x00192  P!-A
+  +0x00331  @ %'
+  +0x0044c  Pause
+  +0x00454  Continue
+  +0x00460  Level sync
+=== kidx 367 (objects) DPid=367  offset=0x19f1d0 size=4304 exports=7 ===
+  +0x0016d  ` %'9
+  +0x00199  ` %'9
+  +0x001b9  ` %'
+  +0x005b9  ` %'
+  +0x005ed  ` %'9
+  +0x00619  ` %'9
+  +0x0063d  `0%U
+  +0x00972  (%'9
+  +0x00cda  (%'9
+  +0x00e99  K`!$
+=== kidx 369 (objects) DPid=369  offset=0x1a09f0 size=12240 exports=8 ===
+  +0x000d1    %$
+  +0x000e5    %$
+  +0x00636   %&E
+  +0x00847  |'9#P
+  +0x00a84  '9 (
+  +0x00a95  @ %&%
+  +0x00e83  |'9#PD
+  +0x00ee1  @(%<
+  +0x01169  @(%<
+  +0x0140b  |'9#P
+  +0x01a96   %'9'
+  +0x01b0e   %&%
+  +0x01b22   %&%
+  +0x01b46   %&%
+  +0x02115  @@%P`
+  +0x023f2  0%'9 ($
+  +0x02409  @ %'
+  +0x02437  p'9!
+  +0x0248f  d'9&@
+  +0x025ba   %Q!
+  +0x02aec   Initalise Guardian State %i 
+  +0x02b0c   GUARDIAN POS : %f %f %f 
+  +0x02b28   FREEING GUARDIAN 
+  +0x02b3c   TURN NECK 
+  +0x02b48  Guardian 
+  +0x02b54   UpWind Lift 
+  +0x02b64   LANDING 
+  +0x02b70  Guardian Out of WindLIft Boyo !!! 
+  +0x02b94   Xvel %f Zvel %f 
+  +0x02ba8   Stand 
+  +0x02bb0   Idle Tow 
+  +0x02bbc   Stand 
+  +0x02bc4   Idle Tow 
+  +0x02bd4   Guardian In Elevatoe 
+  +0x02bec  Guardian Out of WindLIft 
+  +0x02c08   Set Anim 
+  +0x02c14   OVeride Set 
+  +0x02c24   animnum %i 
+  +0x02c34   Make Sound 
+  +0x02c44   Set State %i 
+  +0x02c54   Error Could not find node 
+  +0x02c70  Got Curve 
+  +0x02c7c   PathId %i Loc id %i 
+  +0x02c94   Tangent 1 %f %f %f 
+  +0x02cac   Tangent 2 %f %f %f 
+  +0x02cc4  t value %f 
+  +0x02d24  ?s33>
+=== kidx 370 (objects) DPid=370  offset=0x1a39c0 size=4128 exports=7 ===
+  +0x004c6  (%&f
+  +0x00fbc   Object List Full 
+  +0x00fd0   Moving on Up 
+=== kidx 371 (objects) DPid=371  offset=0x1a49e0 size=1552 exports=7 ===
+  +0x00251    %$
+  +0x00415    %'
+  +0x00559    %'
+=== kidx 372 (objects) DPid=372  offset=0x1a4ff0 size=5104 exports=7 ===
+  +0x00865   (%F
+  +0x0137c  Setting  FY %f 
+  +0x01390   Cry action %d
+  +0x013a0   Cry action %d
+=== kidx 373 (objects) DPid=373  offset=0x1a63e0 size=9488 exports=9 ===
+  +0x0025d    %<
+  +0x00262  @@'9 T
+  +0x0030d    %5
+  +0x00335    %$
+  +0x0034d    %$
+  +0x003bd    %&
+  +0x00522  (%'9!
+  +0x006a5    %F
+  +0x006f2  (%'9!
+  +0x00975    %<
+  +0x00a15    %1
+  +0x00ab1   (%$
+  +0x00bc5    %$
+  +0x00c15    %<
+  +0x00dd5    %&
+  +0x0197a  (%'9
+  +0x019ea   %'9
+  +0x01d4e   %'9
+  +0x020f2  (%'9
+  +0x02119  @(%'9
+  +0x0233c   Goung to nearest cuve 
+  +0x02354   The Birdy End is Nigh 
+  +0x0236c  Bird Timer %i 
+  +0x0237c   Distracted 
+  +0x0238c  about to do dist check on %d
+  +0x023ac   of 
+  +0x023b4   FLYING AWAY
+  +0x023c4   PathId %i Loc id %i 
+  +0x023dc   Error Could not find node 
+  +0x023f8   PathId %i Loc id %i 
+  +0x02410   Tangent 1 %f %f %f 
+  +0x02428   Tangent 2 %f %f %f 
+  +0x02440  t value %f 
+  +0x0244c   Linking Object 
+=== kidx 375 (objects) DPid=375  offset=0x1a94c0 size=2896 exports=7 ===
+  +0x00182   %5*
+  +0x006a9  @0%-
+  +0x009a1    %'
+  +0x009cd    %'
+  +0x009f9   (%$
+  +0x00abc   Removing Guard 
+  +0x00ad0   Waiting G 
+  +0x00adc   Hit By Projectile My Friend
+  +0x00afc   State %i 
+  +0x00b08   of 
+  +0x00b14   Removed 
+=== kidx 376 (objects) DPid=376 376_CFPrisonUncle offset=0x1aa010 size=2912 exports=7 ===
+  +0x0014d    %'
+  +0x00255    %$
+  +0x002fd    %'9
+  +0x00399    %$
+  +0x003e9    %&
+  +0x00541    %D
+  +0x009d9  @ %$
+=== kidx 377 (objects) DPid=377  offset=0x1aab70 size=1680 exports=7 ===
+  +0x00604   used flag %i 
+  +0x00614   Playing Big Sequence 
+  +0x0062c   Playing Prempty Sequence
+  +0x00648   Playing Small Sequence 
+  +0x00664   Big Hit 
+=== kidx 380 (objects) DPid=380  offset=0x1ab580 size=15488 exports=7 ===
+  +0x0014d    %$
+  +0x00189    %$
+  +0x002ae   %'97
+  +0x002d5  @(%'9
+  +0x0048f  P'9  
+  +0x0057d    %1
+  +0x006fa  2$DH
+  +0x00726  B$DH
+  +0x00781   @%<
+  +0x007a6  2$DJ
+  +0x007d2  B$DJ
+  +0x008c6  X%38
+  +0x009ae   %$B
+  +0x00c59    %'
+  +0x00cdd    %'
+  +0x00dfd    %$
+  +0x00e20  '91x
+  +0x00e42  8%'9
+  +0x00e8e  0%'9
+  +0x00f1e  0%'9
+  +0x01002  (%'98
+  +0x01082  (%'9
+  +0x02093   '9.h
+  +0x024f3  8'9+
+  +0x0256c  5J@P
+  +0x0260d   X%$
+  +0x02649    %$n
+  +0x02791  `X%$
+  +0x028ba  KP79,
+  +0x02b2d    %'
+  +0x02bb6  (%'9 
+  +0x03219  @(%$
+  +0x03289  @ %$E
+  +0x03661  b@!$
+  +0x03bd4  ?&ff
+=== kidx 381 (objects) DPid=381  offset=0x1af200 size=14560 exports=7 ===
+  +0x00169    %$
+  +0x00281  @ %$
+  +0x00451    %$
+  +0x00469    %$
+  +0x0052e  (%'9)
+  +0x005d5    %'
+  +0x00605    %$
+  +0x00664  '9/(
+  +0x00cb9  ` %$
+  +0x00cff  t'95P
+  +0x00d98  '95P
+  +0x00dbf  h'96,
+  +0x00ddc  '96,
+  +0x00e61  ` %$
+  +0x00e8d  ` %$
+  +0x00ef9  ` %$
+  +0x00f75  ` %&E
+  +0x01021  ` %$
+  +0x010b9  ` %$
+  +0x012b1  K`!)
+  +0x01d64  '95P$
+  +0x02198  '9%LF
+  +0x02255  @ %$
+  +0x024bd  @ %<
+  +0x02509  @ %$
+  +0x02556  (%'9
+  +0x028b2   %PR
+  +0x02999    %$
+  +0x02a82  A (C
+  +0x02d29    %F
+  +0x0300f  X'93
+  +0x031f4  '94d
+  +0x037ec   ROBO not Overriden 
+  +0x03804  RobotAnimPatrol Beam Error!!
+  +0x03824   ROBO overriden %x 
+  +0x03838   Override Man %x 
+  +0x0384c   Override Trans 2 
+  +0x03862  33>L
+  +0x0387b  H?333<#
+=== kidx 382 (objects) DPid=382 382_CFIllusionClaw offset=0x1b2ae0 size=448 exports=7 ===
+  +0x000a1  @@%4
+=== kidx 384 (objects) DPid=384  offset=0x1b2f20 size=1232 exports=7 ===
+  +0x00431   (%$
+=== kidx 386 (objects) DPid=386  offset=0x1b35a0 size=1360 exports=7 ===
+  +0x001dd    %1
+  +0x00514   Setting Wait Bit %i 
+  +0x0052c   Setting Wait Bit %i 
+=== kidx 387 (objects) DPid=387  offset=0x1b3af0 size=896 exports=7 ===
+  +0x00129    %'
+  +0x00368   Preempt %i 
+=== kidx 388 (objects) DPid=388 388_CFbarrel offset=0x1b3e70 size=7648 exports=8 ===
+  +0x000bd    %$
+  +0x000d5    %$
+  +0x000ed    %$
+  +0x00236   %1*
+  +0x00426  (%'9
+  +0x005a3  (5*@
+  +0x0062a   %'9
+  +0x00642   %'9
+  +0x0067e   %'9
+  +0x0078d    %$
+  +0x0091e  (%'9
+  +0x00c81    %F
+  +0x00ded  ` %F
+  +0x00e3d    %F
+  +0x01332  (%'9
+  +0x01422   %%*
+  +0x01511  @ %$
+  +0x01896  Q 0J
+  +0x01a8a  (%'9
+  +0x01ca8   Should has Set position  %i %f %f 
+  +0x01cd0   floating 
+  +0x01cdc   Line IDNO %i 
+  +0x01cec   Hit Line 
+  +0x01cf8   No check 
+  +0x01d04   Landed On World Obj 
+  +0x01d1c   ob Obj %x  Defno %i 
+  +0x01d34   Object Hit 
+  +0x01d44   landed 
+  +0x01d50   Force Applied x %f y %f z%f 
+  +0x01d70   In ELEVATOR
+  +0x01d80  Out of ELEVATOR
+=== kidx 389 (objects) DPid=389  offset=0x1b5c50 size=1696 exports=7 ===
+  +0x00089    %$
+  +0x000ed    %0E
+  +0x003d6   %1e
+  +0x00614   Hit by barrels 
+  +0x00628   Hello My Friend 
+  +0x0063c   Yee Had 
+  +0x00648   AnimGroup %i 
+  +0x00658   Found Group  G1 %i 
+  +0x00670   Current Flag %i 
+=== kidx 390 (objects) DPid=390  offset=0x1b62f0 size=4336 exports=7 ===
+  +0x001c6  (%'9
+  +0x00c06  (%'9
+  +0x00d2d  @ %<
+  +0x00f90   Simple Exploder 
+  +0x00fa4   Sorry You have no displacement for the force 
+  +0x00fd4   Warning : DefNumber Lists in Exploder DLL is not set up correctly for this object
+  +0x01028   Creating Object 
+=== kidx 391 (objects) DPid=391  offset=0x1b73e0 size=2112 exports=7 ===
+  +0x0078e  P<$c
+=== kidx 392 (objects) DPid=392  offset=0x1b7c20 size=3936 exports=7 ===
+  +0x002d9    %'9
+  +0x00355    %$
+  +0x00452   %'9
+  +0x004c2   %'9
+  +0x00c89    %F
+  +0x00cf5  @ %F
+  +0x00f30   Side %x ObHit %x Romdef %i
+  +0x00f4c   Creating Light 
+=== kidx 394 (objects) DPid=394  offset=0x1b90e0 size=1344 exports=7 ===
+  +0x0023a   %Q@
+  +0x003ba   %Ua
+=== kidx 396 (objects) DPid=396 396_CFSupTreasureCh offset=0x1b9930 size=3744 exports=10 ===
+  +0x00de0   Treasure Created  With the Baby
+  +0x00e04   NO TREASURE FAIL 
+  +0x00e18   Treasure Freeded
+  +0x00e2c   RET 
+  +0x00e34   FLY AWAY BADY 
+  +0x00e44   Error Could not find node 
+  +0x00e60  CURVEPOINT :Error Could not find node 
+=== kidx 397 (objects) DPid=397  offset=0x1ba7d0 size=8288 exports=7 ===
+  +0x001d9    %$
+  +0x002c9    %'9
+  +0x00301    %'9
+  +0x003ce  (%'9
+  +0x00489    %'9
+  +0x00509    %F
+  +0x00656  p!'9
+  +0x00661    %&
+  +0x006a5    %F
+  +0x00731    %F
+  +0x00b99    %&
+  +0x00ea1  @(%&F
+  +0x00f61  @ %F
+  +0x01e98   ROBOT  ROBOT  CREATED 
+  +0x01eb4   First Robot Activated 
+  +0x01ecc   Asking to Stand Aside %i 
+  +0x01ee8   Get Treasure
+  +0x01ef8   Hello 
+  +0x01f00   On next Nodes 
+  +0x01f10   Tunnel is collapsing 
+  +0x01f28   Picked Up Treasure 
+  +0x01f40   Sorry You Have Failed 
+  +0x01f5c  ROBOT KILLED 
+  +0x01f70   Error Could not find node 
+  +0x01f8c   PathId %i Loc id %i 
+  +0x01fa4   Error Could not find node 
+  +0x01fc0   PathId %i Loc id %i 
+=== kidx 398 (objects) DPid=398 398_CFMagicWall offset=0x1bc830 size=1312 exports=7 ===
+  +0x002b5  b(#0
+  +0x002de   %'9
+  +0x00436  0%0o
+=== kidx 399 (objects) DPid=399  offset=0x1bcd50 size=1728 exports=7 ===
+  +0x0068c   Bit %i Set
+  +0x0069c   Should be Starting Sequence 
+=== kidx 400 (objects) DPid=400 400_CFLevelControl offset=0x1bd410 size=6000 exports=7 ===
+  +0x005a6  (%'9
+  +0x0061e  P@%k
+  +0x00f72  (%1*
+  +0x01321  @ %F
+  +0x013b2  P@%F
+  +0x014c4   Layer NO %i : 
+  +0x014d4   Loading Group %i 
+  +0x014e8   Cnt %i V %i 
+  +0x014f8   cnt %i v %i 
+  +0x01508   RESETING GROUP LOAD 
+  +0x01524   KYTE TRAPPED 
+  +0x01538   KYTE ESCAPPED 
+  +0x0154c   CRAP IS BOLLOX 
+  +0x01560   Freeing Baby 
+  +0x01570   CRAP IS BOLLOX 
+  +0x01584   CRAP IS BOLLOX 
+  +0x01598   CRAP IS BOLLOX 
+  +0x015ac   Couldn't find romdef %i 
+  +0x015c8   STart Seq Val %i 
+  +0x015dc   you have Passed 
+  +0x015f0   Lighting Flash 
+  +0x01682  *ODH
+=== kidx 401 (objects) DPid=401  offset=0x1beb80 size=6256 exports=7 ===
+  +0x00295    %F
+  +0x002e1    %'9
+  +0x0031d    %'9
+  +0x0036d    %&
+  +0x00bd9    %$
+  +0x00c59    %F
+  +0x00db9    %F
+  +0x0105d    %Q`
+  +0x012ad  (H!D
+  +0x01790   HELLO 
+  +0x01798   GOODBYE 
+  +0x017a4  Near 
+  +0x017ac   nx %f ny %f hz %f
+  +0x017c0   nx %f ny %f hz %f
+  +0x017d4   PathId %i Loc id %i 
+  +0x017ec   Error Could not find node 
+  +0x01808   PathId %i Loc id %i 
+=== kidx 402 (objects) DPid=402  offset=0x1c03f0 size=3440 exports=7 ===
+  +0x00155  @(%$c
+  +0x00642   %'9
+  +0x008c6  0%'9
+  +0x00a8d  @ %T
+  +0x00bd8   CHuck Gone 
+  +0x00be8   Pitch inc %i 
+  +0x00bf8   Hieght %f Pitch %i 
+  +0x00c10   OverFlow with number of Barrels 
+  +0x00c34   Set ident on Gone
+=== kidx 404 (objects) DPid=404  offset=0x1c16c0 size=2832 exports=8 ===
+  +0x00201  C(#(
+  +0x00abc  phys %i 
+  +0x00ac8   Freeing Physic Obj 
+  +0x00ae0   Hieght From Ground %i 
+=== kidx 406 (objects) DPid=406  offset=0x1c28e0 size=1008 exports=7 ===
+  +0x002e9  IP#%K;
+  +0x00398   Loaded Cheap Galleon 
+  +0x003b0   Ended Simple Cheap Galleon 
+  +0x003d0   FLIP FLIP 
+=== kidx 407 (objects) DPid=407  offset=0x1c2cd0 size=2848 exports=7 ===
+  +0x009f9  BX$Q`
+  +0x00a4a  HC1*
+  +0x00ab0   WARNING 3D Tex WALL: exceeded maximumm no of vertices 
+  +0x00aec   tex s %i t %i 
+  +0x00b00   start %i End %i 
+=== kidx 408 (objects) DPid=408 408_IMIceMountain offset=0x1c37f0 size=3408 exports=7 ===
+  +0x003fe   %'9
+  +0x0041a   %'9
+  +0x00436   %'9
+  +0x00452   %'9
+  +0x00996  (%'9
+=== kidx 409 (objects) DPid=409  offset=0x1c4540 size=2800 exports=7 ===
+  +0x008cd  @(%$
+  +0x00925  ` %$c
+=== kidx 411 (objects) DPid=411  offset=0x1c57f0 size=3264 exports=7 ===
+  +0x004be   %5*
+  +0x00905    %'
+  +0x00c84  mount
+=== kidx 413 (objects) DPid=413 413_IMspacecraft offset=0x1c65e0 size=1696 exports=10 ===
+  +0x00481  p !&R
+=== kidx 414 (objects) DPid=414  offset=0x1c6c80 size=2000 exports=7 ===
+  +0x00201  @ %%)
+  +0x0054e  P#%P
+  +0x00581    %$
+=== kidx 416 (objects) DPid=416  offset=0x1c76d0 size=1216 exports=7 ===
+  +0x00329    %F
+=== kidx 417 (objects) DPid=417 417_DFlog offset=0x1c7b90 size=9408 exports=21 ===
+  +0x00159    %$
+  +0x0017d    %$
+  +0x00242   %'9
+  +0x012de   %'9
+  +0x0183a  "$DM
+  +0x01866  B$DM
+  +0x01962  B$DX
+  +0x01d81  x`!F
+  +0x02079  l !$
+  +0x0234c  ?s33?s33?s33<#
+  +0x02362  ff?L
+=== kidx 418 (objects) DPid=418 418_DFriverflow offset=0x1ca050 size=768 exports=7 ===
+  +0x002d0  tryint to deactivate the river flow
+=== kidx 419 (objects) DPid=419 419_DFdockpoint offset=0x1ca350 size=688 exports=7 ===
+  +0x00155  @ %$
+=== kidx 420 (objects) DPid=420 420_DFropenode offset=0x1ca600 size=8736 exports=17 ===
+  +0x00189  @(%$
+  +0x007e1  @(%F
+  +0x00919  Ah!5
+  +0x00fa9  #H#F
+  +0x01665  N !$
+  +0x01785  @(%D
+  +0x01796  0 &&
+  +0x01a29    %'9
+  +0x01a51    %'9
+  +0x02188   WARNING: Rope Could Not Find Partner
+  +0x021b0  Error attaching too many springs to a vertex
+=== kidx 421 (objects) DPid=421 421_DFcradle offset=0x1cc820 size=2896 exports=7 ===
+  +0x006ad  `8%$
+  +0x0073d    %F
+  +0x00b0e  ff>L
+=== kidx 422 (objects) DPid=422 422_DFpulley offset=0x1cd370 size=1632 exports=7 ===
+  +0x00481  @ %$
+=== kidx 423 (objects) DPid=423 423_DFbarrel offset=0x1cd9d0 size=3232 exports=7 ===
+  +0x0017e   %'9
+  +0x00a2a  P!1K
+=== kidx 424 (objects) DPid=424 424_DFbarrelanim offset=0x1ce670 size=1664 exports=7 ===
+  +0x00085    %$
+  +0x002a1  @(%$
+  +0x003a5  @ %$
+=== kidx 425 (objects) DPid=425 425_DFbarrelcreator offset=0x1cecf0 size=608 exports=7 ===
+  +0x00135  @ %$
+=== kidx 427 (objects) DPid=427 427_DFlevelcontrol offset=0x1cf110 size=1408 exports=7 ===
+  +0x00499  @(%$
+=== kidx 428 (objects) DPid=428 428_DFmole offset=0x1cf690 size=7136 exports=7 ===
+  +0x00292  0%'9
+  +0x002ca  0%'9
+  +0x002ea  0%'9
+  +0x005b5  @ %PC
+  +0x01671   (%F
+  +0x017d1  Y@&-
+  +0x017fd   (%$
+=== kidx 432 (objects) DPid=432  offset=0x1d20b0 size=2592 exports=7 ===
+  +0x0083a  4$DJ
+=== kidx 433 (objects) DPid=433 433_DFSH_Shrine offset=0x1d2ad0 size=5360 exports=7 ===
+  +0x000bd    %$
+  +0x0108d   (%$
+  +0x010c5    %$
+  +0x010e1   (%0F
+  +0x01474  TIMER %d
+=== kidx 435 (objects) DPid=435 435_KrazoaSpirit offset=0x1d44b0 size=2544 exports=7 ===
+  +0x002f9  @(%$
+  +0x00315  `H%UD
+  +0x00405  @ %$
+  +0x0057d    %$
+=== kidx 436 (objects) DPid=436  offset=0x1d4ea0 size=3744 exports=7 ===
+  +0x00ae1  @ %$
+=== kidx 437 (objects) DPid=437 437_EWTrobotpatrol offset=0x1d5d40 size=17440 exports=9 ===
+  +0x00155    %$
+  +0x00223  T'9 `
+  +0x00250  '9;`
+  +0x002b2   %'9=
+  +0x002da   %&E
+  +0x00301  @(%'9
+  +0x0049c  '94T
+  +0x004bb  T'9 
+  +0x00574  '9;p
+  +0x00651    %1
+  +0x007ce  2$DH
+  +0x007fa  B$DH
+  +0x00855   @%<
+  +0x0087a  2$DJ
+  +0x008a6  B$DJ
+  +0x0099a  X%38
+  +0x00e9e  8%'9
+  +0x00eea  0%'9
+  +0x00f76  0%'9
+  +0x0107e  (%'99
+  +0x010f6  (%'9
+  +0x02107   '9.
+  +0x02567  8'9,8
+  +0x025e0  5J@P
+  +0x02681   X%$
+  +0x026bd    %$n
+  +0x02805  `X%$
+  +0x0292e  KP79,
+  +0x02ba1    %'
+  +0x02c2a  (%'9!X
+  +0x032b1  @ %$
+  +0x036e9  b@!$
+  +0x03c5f  X'9@
+  +0x04374  ?&ff
+=== kidx 439 (objects) DPid=439  offset=0x1da230 size=4176 exports=7 ===
+  +0x00099  ` %'9
+  +0x00169  *X!'9
+  +0x003f1  @ %$
+  +0x004da  0%'9
+  +0x004f6  0%'9
+  +0x0057d  @0%$
+  +0x0063e   %'9
+  +0x00671  @0%'9
+  +0x006da  (%'9
+  +0x00745  `0%$c
+  +0x007ea  (%'9
+  +0x00909  `(%'9
+  +0x0091a  x@&1
+  +0x00d71  `(%'9
+  +0x00d91  `(%'9
+  +0x00df1  `(%'9
+  +0x01000   Could Not find a nearest node 
+  +0x01020   Could Not get Nearest node 
+=== kidx 440 (objects) DPid=440  offset=0x1db280 size=3088 exports=7 ===
+  +0x00561    %$
+  +0x00711    %$
+=== kidx 441 (objects) DPid=441 441_MMP_levelcontrol offset=0x1dbe90 size=1232 exports=7 ===
+  +0x00381  ` %$
+  +0x003ed  ` %$
+=== kidx 442 (objects) DPid=442  offset=0x1dc360 size=1248 exports=7 ===
+  +0x003d9  ` %$
+  +0x00411  ` %$
+=== kidx 443 (objects) DPid=443  offset=0x1dc840 size=3392 exports=7 ===
+  +0x00c49  q !&s
+  +0x00c61  @ %5
+=== kidx 444 (objects) DPid=444  offset=0x1dd580 size=1248 exports=7 ===
+  +0x00389    %$
+=== kidx 445 (objects) DPid=445  offset=0x1dda60 size=3200 exports=7 ===
+  +0x001ad    %'9
+  +0x001da  (%'9
+  +0x0021d    %$
+  +0x003f9    %D
+  +0x004d1    %$
+  +0x00789  ` %$
+=== kidx 447 (objects) DPid=447 447_CCguardgiving offset=0x1de9b0 size=1984 exports=7 ===
+  +0x0056e   %$E
+=== kidx 448 (objects) DPid=448 448_CCcage offset=0x1df170 size=3360 exports=7 ===
+  +0x00241    %'9
+  +0x00286  (%'9
+  +0x00722  (%'9
+  +0x00781    %'9
+  +0x007a2  (%'9
+  +0x00882  (%'9
+  +0x00ce0  can't find lightfoot
+  +0x00cf8  can't find lightfoot
+=== kidx 451 (objects) DPid=451  offset=0x1e05a0 size=1120 exports=7 ===
+  +0x0008b  47(`
+=== kidx 452 (objects) DPid=452 452_CCfirecrystal offset=0x1e0a00 size=1904 exports=7 ===
+  +0x00181    %$
+  +0x001da  0%'9
+  +0x00219    %$
+  +0x00738  trying to kill fire crystal light
+=== kidx 453 (objects) DPid=453 453_CCfirecrystalin offset=0x1e1170 size=672 exports=7 ===
+  +0x0011d   (%%%
+=== kidx 454 (objects) DPid=454 454_CCgrub offset=0x1e1410 size=4928 exports=7 ===
+  +0x00111  @ %$
+  +0x00151  @ %$
+  +0x00289    %'
+  +0x00381    %'
+  +0x003c1    %S
+  +0x004f6  (%'9
+  +0x00555    %$
+  +0x006d7  %(A@
+  +0x00912  (%'9
+  +0x0097d    %F
+  +0x009c2  (%'9
+  +0x00a39    %&
+  +0x00aa1    %Q 
+  +0x00f99    %$
+  +0x01039    %$
+  +0x0117d    %&
+  +0x01264  msg %d
+  +0x0126c  grub has been collected
+  +0x01288  adding grub to foodbag
+  +0x012a0  increasing grub bit
+  +0x012e8  ?fff<
+  +0x012f4  ?s33?L
+  +0x01302  33=L
+  +0x0130c  ?fff?L
+  +0x01314  ?s33;
+=== kidx 455 (objects) DPid=455 455_CChightop offset=0x1e2750 size=2048 exports=7 ===
+  +0x000d5    %$
+  +0x002a1    %$
+  +0x002e1    %$
+  +0x003d1    %1
+  +0x004ed    %F
+  +0x007a8  trying to yawn
+  +0x007dc  ?s33;
+=== kidx 457 (objects) DPid=457 457_CCkrazoabright offset=0x1e31b0 size=5984 exports=7 ===
+  +0x00232  (%'9
+  +0x00252  (%'9
+  +0x00272  (%'9
+  +0x00292  (%'9
+  +0x002ae  (%'9
+  +0x002f6  p!$B
+  +0x00425    %'9
+  +0x009e1  qP!3(
+  +0x00aa9  ` %'9
+  +0x016e8  trying to start next seq
+=== kidx 461 (objects) DPid=461 461_CCsandwormBoss offset=0x1e55f0 size=8016 exports=7 ===
+  +0x00552  (%'9
+  +0x00661   (%F
+  +0x0075a  0%'9
+  +0x00802  (%'9
+  +0x00862  (%'9
+  +0x008ba  (%'9
+  +0x00912  (%'9
+  +0x00971    %$
+  +0x0099e  (%'9
+  +0x00a5e  0%'9
+  +0x00ab2  0%'9
+  +0x00b1d    %<
+  +0x00b92  (%'9
+  +0x00bb9    %$
+  +0x00cf1    %$
+  +0x00e19    %$
+  +0x00ee6  (%'9
+  +0x00f96  0%'9
+  +0x00fb2  (%'9
+  +0x00fd5    %5+@
+  +0x01762  R$DG
+  +0x0178e  B$DG
+  +0x01879    %$
+  +0x01961    %$
+  +0x01999    %$
+  +0x019d9    %$
+  +0x01a29    %$
+  +0x01d04  need to prempt fire crystal into correct position
+  +0x01d38  worm %d, barrel %d
+  +0x01d4c  kyte dist %d interest range 50.0F
+  +0x01d70  setting flight group to %d
+  +0x01d8c  setting flight group to %d
+  +0x01da8  eat player sequence
+  +0x01dc0  attack player from under ground
+  +0x01de4  eat barrel
+  +0x01df0  get up without attack
+  +0x01e08  barrel %x put to %f %f %f
+  +0x01e24  worm at %f %f %f
+  +0x01e38  boss dead
+  +0x01e44  turning on parts
+  +0x01e58  Parts all over
+  +0x01e68  yaw to player
+  +0x01eb4  ?s33?s33?s33?s33;
+  +0x01edc  ?s33E
+  +0x01ef4  ?s33E;
+=== kidx 462 (objects) DPid=462  offset=0x1e7540 size=1056 exports=7 ===
+  +0x003ec  obj mapno is %d
+=== kidx 466 (objects) DPid=466 466_mmshrine offset=0x1e82e0 size=4992 exports=7 ===
+  +0x000b9    %$
+  +0x00e2e  (%0F
+  +0x01052  (%0F
+=== kidx 467 (objects) DPid=467  offset=0x1e9660 size=1472 exports=7 ===
+  +0x001e9  @ %$
+  +0x002d9  @(%$
+  +0x002f5  `H%UD
+=== kidx 468 (objects) DPid=468  offset=0x1e9c20 size=3056 exports=7 ===
+  +0x00375  8P#1K
+=== kidx 469 (objects) DPid=469 469_ECSHshrine offset=0x1ea810 size=7184 exports=12 ===
+  +0x000e9    %$
+  +0x00229    %$
+  +0x0175d   (%$
+  +0x01795    %$
+  +0x017b1   (%0F
+=== kidx 472 (objects) DPid=472 472_GPSH_Shrine offset=0x1ed2a0 size=5776 exports=7 ===
+  +0x000b9    %$
+  +0x011a1   (%$
+  +0x011d9    %$
+  +0x011f5   (%0F
+  +0x015b4  scale %f %f  %f
+  +0x015c8  scale %f %f  %f
+  +0x015dd  time %d
+=== kidx 473 (objects) DPid=473 473_GPSH_ObjCreator offset=0x1ee930 size=1488 exports=7 ===
+  +0x00455  @ %$
+  +0x005b0  type %d
+=== kidx 474 (objects) DPid=474  offset=0x1eef00 size=944 exports=7 ===
+  +0x00129  `(%'
+  +0x00239  ` %$
+  +0x00318  Put the Root here
+  +0x0032c  Put the Nugget here
+  +0x00344  Put the Egg here
+  +0x00358  Put the Gem here
+  +0x0036c  Put the Barrel here
+  +0x00384  Put the Plant here
+=== kidx 475 (objects) DPid=475 475_GPSH_flybaddie offset=0x1ef2b0 size=2880 exports=7 ===
+  +0x00351    %'9
+  +0x003a9    %'9
+  +0x004c5    %'
+=== kidx 477 (objects) DPid=477 477_DBSH_Shrine offset=0x1f0200 size=4912 exports=7 ===
+  +0x000b9    %$
+  +0x00e8d   (%$
+  +0x00ec5    %$
+  +0x00ee1   (%0F
+=== kidx 478 (objects) DPid=478 478_DBSH_Symbol offset=0x1f1530 size=3872 exports=7 ===
+  +0x00ef6  ffA!
+  +0x00efe  ff<D
+=== kidx 479 (objects) DPid=479  offset=0x1f2450 size=1072 exports=7 ===
+  +0x002b1  @ %$
+=== kidx 480 (objects) DPid=480  offset=0x1f2880 size=3248 exports=7 ===
+  +0x003bd  j`#1
+  +0x004f2  H@%+
+=== kidx 481 (objects) DPid=481 481_NWSH_Shrine offset=0x1f3530 size=4848 exports=7 ===
+  +0x000b9    %$
+  +0x00db2  (%0F
+  +0x01254  ##############SAVED#############
+=== kidx 482 (objects) DPid=482  offset=0x1f4820 size=1392 exports=7 ===
+  +0x00399    %$
+  +0x00425  @ %$
+=== kidx 483 (objects) DPid=483  offset=0x1f4d90 size=1328 exports=7 ===
+  +0x004f4  fx->rate %d class %d
+=== kidx 485 (objects) DPid=485  offset=0x1f5570 size=1888 exports=7 ===
+  +0x0034d  @ %$
+=== kidx 486 (objects) DPid=486 486_CCSH_Shrine offset=0x1f5cd0 size=5072 exports=7 ===
+  +0x000bd    %$
+  +0x00f0d   (%$
+  +0x00f45    %$
+  +0x00f61   (%0F
+=== kidx 488 (objects) DPid=488 488_WGSH_Shrine offset=0x1f74c0 size=4640 exports=7 ===
+  +0x000bd    %$
+  +0x00e01   (%$
+  +0x00e39    %$
+  +0x00e55   (%0F
+  +0x011ac  time %d
+=== kidx 489 (objects) DPid=489 489_WGSH_ObjCreator offset=0x1f86e0 size=944 exports=7 ===
+  +0x00255  @ %$
+=== kidx 490 (objects) DPid=490 490_WGSH_flybaddie offset=0x1f8a90 size=3008 exports=7 ===
+  +0x003ee   %'9
+  +0x00446   %'9
+  +0x00961  @ %$
+=== kidx 492 (objects) DPid=492  offset=0x1f9e30 size=3328 exports=7 ===
+  +0x003ed  j`#1
+  +0x00522  H@%+
+  +0x00ca4  first %d door %d
+=== kidx 493 (objects) DPid=493 493_NWsfx offset=0x1fab30 size=784 exports=7 ===
+  +0x001ba   %$E
+=== kidx 494 (objects) DPid=494 494_NWtreebridge offset=0x1fae40 size=1696 exports=7 ===
+  +0x003e5  @ %$
+  +0x0043d  @ %$
+  +0x00491  @ %$
+  +0x004e1  @ %$
+  +0x00539  @ %$
+  +0x00589  @ %$
+  +0x005d5  @ %$
+=== kidx 495 (objects) DPid=495  offset=0x1fb4e0 size=816 exports=7 ===
+  +0x00229    %'$
+=== kidx 496 (objects) DPid=496 496_snowhorn offset=0x1fb810 size=10176 exports=7 ===
+  +0x000ad    %$
+  +0x0012e  (%'9
+  +0x0014e  (%'9
+  +0x0016e  (%'9
+  +0x0018e  (%'9
+  +0x001ae  (%'9"L
+  +0x00355    %0E
+  +0x0036d    %&
+  +0x0038d    %&
+  +0x003a5    %1l@
+  +0x00461    %'9
+  +0x004ce  (%'9
+  +0x004ee  (%'9
+  +0x0050e  (%'9
+  +0x0052e  (%'9
+  +0x0054e  (%'9"
+  +0x006c1    %'
+  +0x00769   (%$
+  +0x00c5e   %Q 
+  +0x00e3e   %1l
+  +0x01b75    %&
+  +0x01be6  @>1*
+  +0x023d8  MAM: curve setup failed
+  +0x023f4  noweeds=%d
+  +0x02468  ?&ff<
+  +0x024dc  <49X;
+  +0x025b8  <49X;
+  +0x025cc  <49X;
+  +0x025e0  <49X;
+=== kidx 497 (objects) DPid=497 497_NWtricky offset=0x1fdfd0 size=2512 exports=7 ===
+  +0x00988  menu start
+  +0x00994  menu cbuttons %d
+  +0x009a8  menu a button
+=== kidx 500 (objects) DPid=500  offset=0x1fee80 size=1152 exports=7 ===
+  +0x003a5  O(&0
+=== kidx 502 (objects) DPid=502 502_SHmushroom offset=0x1ff570 size=6528 exports=7 ===
+  +0x00189    %$
+  +0x001cd    %D
+  +0x00225    %$
+  +0x0025d    %D
+  +0x002ad    %$
+  +0x00309   (%<
+  +0x00385    %$
+  +0x003bd    %0
+  +0x00491    %$
+  +0x00525  @ %'
+  +0x00631    %$
+  +0x00651  @ %'
+  +0x006e9  @ %5
+  +0x00751  `(%'9
+  +0x00769  @ %1
+  +0x00b49  @ %F
+  +0x00eea  0%'9
+  +0x00f21    %$
+  +0x010f9    %1
+  +0x01112  0%'9
+  +0x01136  0%'9
+  +0x0116d    %$
+  +0x011a5    %1l
+  +0x011be  0%'9
+  +0x011e2  0%'9
+  +0x01219    %$
+  +0x012ed    %38
+  +0x01306  0%'9
+  +0x0132a  0%'9
+  +0x01361    %$
+  +0x013ad    %7
+  +0x01521    %$
+  +0x0168a  P@%k
+  +0x016a5    %<
+  +0x016d9    %'
+  +0x017ad    %$
+  +0x018b0  MUSHROOM: trapped!!!!
+  +0x018c8  MUSHROOM ERROR: no node found
+=== kidx 503 (objects) DPid=503 503_SHkillermushroom offset=0x200ef0 size=4304 exports=7 ===
+  +0x000de  0%'9
+  +0x002ad   (%$
+  +0x0035d    %$
+  +0x00402  (%'9
+  +0x00539   (%$
+  +0x00629    %$
+  +0x0078d    %$
+  +0x0090d    %$
+  +0x009fa  (%'9
+  +0x00ac6  B$DO
+  +0x00b81    %$
+  +0x00ba5    %'
+  +0x00c82  @@%J
+  +0x00c9d    %$
+  +0x0106e  =q7'
+=== kidx 504 (objects) DPid=504 504_SHrocketmushroom offset=0x201fc0 size=4880 exports=7 ===
+  +0x000da  (%'9
+  +0x00102  (%'9
+  +0x0068e   %'9
+  +0x006f6   %'9
+  +0x00882  (%'9
+  +0x00986  (%'9
+  +0x00e49    %$
+  +0x00e59  @0%$
+  +0x00fed  `8%&R
+=== kidx 505 (objects) DPid=505 505_SHspore offset=0x2032d0 size=3328 exports=7 ===
+  +0x000a5    %5
+  +0x0034d  `(%'9
+  +0x003a1  `(%'9
+  +0x00445  @ %F
+  +0x00519  @ %$
+  +0x00611  @ %$
+  +0x00719  @ %$
+=== kidx 507 (objects) DPid=507 507_SHqueenearthwalker offset=0x204220 size=1920 exports=7 ===
+  +0x002b1  b`!1
+=== kidx 508 (objects) DPid=508 508_SHthorntail offset=0x2049a0 size=9104 exports=7 ===
+  +0x000bd   (%'9
+  +0x000dd   (%'9
+  +0x000fd   (%'9
+  +0x00225    %$
+  +0x00379   (%'9
+  +0x00399   (%'9
+  +0x003b9   (%'9
+  +0x003d2   %'9
+  +0x0048a   %&%
+  +0x006c5  K(!$
+  +0x01737  H(a@
+  +0x020a4  THORNTAIL: cannot find a node
+  +0x020c4  THORNTAIL: help cannot find a node
+  +0x020e8  THORNTAIL: cannot find a node
+=== kidx 509 (objects) DPid=509 509_SHwaterLily offset=0x206d30 size=1040 exports=7 ===
+  +0x003d4  LILY ERROR: no node found
+  +0x003fc  ?fff
+=== kidx 516 (objects) DPid=516  offset=0x209200 size=8064 exports=7 ===
+  +0x00316  0%'9
+  +0x003b2  (%3(
+  +0x00611  @(%$
+  +0x0065a   %&%
+  +0x007a5  @ %$
+  +0x007f5  @ %$
+  +0x00845  @ %$
+  +0x00895  @ %$
+  +0x008fe  H!%J
+  +0x00905  *X!$
+  +0x00915  @ %<
+  +0x009f5  @ %$
+  +0x00a4d  @(%$
+  +0x00b19  @ %$
+  +0x00e22  (%$F
+  +0x01115  lh!%
+  +0x011bd   (%D
+  +0x0142a  (%$F
+  +0x01549   (%$
+  +0x015d2  (%$F
+  +0x0169d   (%$
+  +0x0174d  *X!%
+  +0x01755  lh!$
+  +0x0184c  4!uW
+  +0x01f32  \)<u
+=== kidx 517 (objects) DPid=517 517_SCbabyLightFoot offset=0x20b180 size=2624 exports=7 ===
+  +0x00216  0%'9
+  +0x003d5  @(%$
+  +0x006aa  (%$f
+=== kidx 518 (objects) DPid=518  offset=0x20bbc0 size=5168 exports=7 ===
+  +0x002b9    %'9
+  +0x0033a  (%'9
+  +0x00679  @(%$
+  +0x00706   %&%
+  +0x00bfe  (%$F
+  +0x00c4d    %$
+  +0x00c6d    %$
+=== kidx 519 (objects) DPid=519 519_SC_levelcontrol offset=0x20cff0 size=5632 exports=9 ===
+  +0x001fa  H@$M
+  +0x00262  p@$H
+  +0x002ca  H@$M
+  +0x008a9  IP!%k
+  +0x00959  @ %(a
+  +0x00c76  8%(A
+  +0x00c96  @@%)
+  +0x00d65    %%
+  +0x0107a  P@%k
+  +0x0137d  ` %$
+=== kidx 520 (objects) DPid=520  offset=0x20e5f0 size=4592 exports=7 ===
+  +0x0011d  @ %D
+  +0x0014d  @ %F
+  +0x00201  ` %'
+  +0x002a1  @(%'9
+  +0x002f9  @(%'9
+  +0x00395  @(%'9
+  +0x00415  `(%$
+  +0x0056d  @(%$
+  +0x00ae9  ` %$
+  +0x00b1d  ` %$
+  +0x00b51  ` %$
+  +0x00b85  ` %$
+=== kidx 521 (objects) DPid=521 521_SC_totempole offset=0x20f7e0 size=1552 exports=7 ===
+  +0x00111    %'9
+  +0x001a6  !$DY
+  +0x003a9    %U
+=== kidx 523 (objects) DPid=523 523_SCcollectables offset=0x2108a0 size=3120 exports=9 ===
+  +0x0032e   %'9
+  +0x0040e  (%'9
+  +0x007f5  `(%F
+=== kidx 524 (objects) DPid=524 524_SCanimobj offset=0x2114d0 size=2592 exports=7 ===
+  +0x00085    %$
+  +0x002ad  @(%$
+  +0x002c9  `P%Ud
+  +0x004b1  @ %0x
+  +0x00631  @ %$
+  +0x006d5  @ %$
+=== kidx 525 (objects) DPid=525 525_SCtotempuzzle offset=0x211ef0 size=2336 exports=7 ===
+  +0x002e6  (%'9
+  +0x00436  SC%!
+=== kidx 527 (objects) DPid=527 527_SC_totembond offset=0x212be0 size=3392 exports=7 ===
+  +0x000f5  @0%0n
+  +0x0010e  (%'9
+  +0x002ce  (%'9
+  +0x004c1  @ %$
+  +0x004e9  @ %$
+  +0x00b4a   %&%
+=== kidx 528 (objects) DPid=528 528_SC_totemstrength offset=0x213920 size=4384 exports=7 ===
+  +0x00259    %$
+  +0x00311    %$
+  +0x008e1  `(%F
+  +0x00eb2  4$DE
+  +0x010b8  Enable music change
+=== kidx 530 (objects) DPid=529  offset=0x214f60 size=3072 exports=9 ===
+  +0x0009a   %'9
+  +0x00212   %'9
+  +0x0031e   %7)
+=== kidx 531 (objects) DPid=530 530_DIMLavaBallGenerator offset=0x215b60 size=1744 exports=9 ===
+  +0x0029d  @ %$
+=== kidx 532 (objects) DPid=531  offset=0x216230 size=2496 exports=8 ===
+  +0x00182  (%'9
+  +0x00696  (%'9
+=== kidx 533 (objects) DPid=532  offset=0x216bf0 size=7904 exports=7 ===
+  +0x0025d  cx!D
+=== kidx 537 (objects) DPid=536 536_DIMBoulder offset=0x2193f0 size=1968 exports=7 ===
+  +0x00774  ?333
+=== kidx 538 (objects) DPid=537 537_DIMCannon offset=0x219ba0 size=6368 exports=7 ===
+  +0x0020e   %'9
+  +0x00a32   %'9
+  +0x00c0f  P(a 
+  +0x00fdb  P*! 
+  +0x01321  @ %$
+  +0x0153a   %'9
+  +0x01576   %'9
+  +0x015a9  (H!)!
+=== kidx 539 (objects) DPid=538  offset=0x21b480 size=1296 exports=7 ===
+  +0x000e6  (%'9
+=== kidx 544 (objects) DPid=543  offset=0x21c930 size=2896 exports=7 ===
+  +0x00122  8%Y`
+  +0x0065e  (%'9
+  +0x008c6  T$DX
+=== kidx 546 (objects) DPid=545 545_DIMTent offset=0x21d7f0 size=3072 exports=7 ===
+  +0x0033d  @ %$
+  +0x00545    %$
+  +0x005e9  `(%$
+  +0x00851  ` %$
+  +0x0085d  @0%$
+  +0x008f1  ` %$
+  +0x008fd  @0%$
+  +0x00925  ` %$
+  +0x00931  @0%$
+=== kidx 547 (objects) DPid=546 546_DIMBikeDoor offset=0x21e3f0 size=448 exports=7 ===
+  +0x001a8  id %d angle %d
+=== kidx 548 (objects) DPid=547 547_GP_LevelControl offset=0x21e5b0 size=1920 exports=7 ===
+  +0x00691  @(%$
+=== kidx 549 (objects) DPid=548  offset=0x21ed30 size=6560 exports=7 ===
+  +0x0056a   %&E
+  +0x005f2  (%'-
+  +0x006d6   %&E
+  +0x00819    %5
+  +0x00831   (%$
+  +0x0087d    %&
+  +0x008b1    %$
+  +0x008c6  8%5K
+  +0x0095d    %$
+  +0x00a0d    %&
+  +0x00a3d    %$
+  +0x00d75    %PA
+  +0x00e29    %$
+  +0x00e76  8%%J
+  +0x00e95    %'9
+  +0x00f11    %&
+  +0x00f25    %&
+  +0x0175c   Initalise Guardian State %i 
+  +0x0177c   GUARDIAN POS : %f %f %f 
+  +0x01798   GUARDIAN FEET %i %f %f %f 
+  +0x017b8   part 
+  +0x017c0   Set Flag 
+  +0x017cc  Unknown give item type
+  +0x017e4   HERE 
+  +0x017ed   Object Given %i Prob %i 
+  +0x01808   animnum %i 
+=== kidx 550 (objects) DPid=549 549_GP_ShrinePillar offset=0x2206d0 size=1760 exports=7 ===
+  +0x00678  control
+  +0x00684   PREMPT %i seqtime %i 
+  +0x006a0  override %d
+=== kidx 552 (objects) DPid=550 550_WGbouncyVine offset=0x2211b0 size=1344 exports=7 ===
+  +0x002ca  8%1K
+=== kidx 553 (objects) DPid=551  offset=0x2216f0 size=1504 exports=7 ===
+  +0x00580  control
+  +0x0058c   PREMPT %i seqtime %i 
+  +0x005a8  override %d
+  +0x005b8  dist %d
+  +0x005c4  timer
+=== kidx 554 (objects) DPid=552 552_WGboulder offset=0x221cd0 size=1536 exports=7 ===
+  +0x00159   (%<
+  +0x001d9    %'9
+  +0x00341  Ap!F
+  +0x004f1  ` %F
+  +0x005c8  state %d
+  +0x005da  \)?xQ
+=== kidx 557 (objects) DPid=555  offset=0x2227c0 size=3216 exports=7 ===
+  +0x0026d  @ %'
+  +0x002dd  @ %$
+  +0x003c5   (%F
+  +0x00635    %7(
+  +0x0069a  X#%c
+  +0x006cd    %$
+  +0x0099d    %'9
+=== kidx 558 (objects) DPid=556  offset=0x223450 size=2512 exports=7 ===
+  +0x00606   %5(
+  +0x009ac  ?333?fff
+=== kidx 559 (objects) DPid=557  offset=0x223e20 size=1504 exports=8 ===
+  +0x003a6   !$c
+  +0x0058c  DIM2pathgenerator: Cannot find start node
+  +0x005b8  still in the obj type list
+=== kidx 560 (objects) DPid=558  offset=0x224400 size=2304 exports=7 ===
+  +0x001dd    %1
+  +0x00796  (%'9
+  +0x008ec  ;K)_;
+=== kidx 561 (objects) DPid=559  offset=0x224d00 size=1776 exports=7 ===
+  +0x006d0  ?fff=
+=== kidx 563 (objects) DPid=561  offset=0x225af0 size=1408 exports=7 ===
+  +0x002ed  @ %&
+  +0x00416  !$DL
+=== kidx 564 (objects) DPid=562 562_DIM2Icicle offset=0x226070 size=1648 exports=7 ===
+  +0x0024e   %U@
+=== kidx 565 (objects) DPid=563  offset=0x2266e0 size=1120 exports=8 ===
+  +0x000e2  (%'9
+  +0x00102  (%'9
+  +0x00262  (%'9
+=== kidx 567 (objects) DPid=565  offset=0x227580 size=18720 exports=9 ===
+  +0x0008a  .H'9/p%
+  +0x00092  10%)2
+  +0x00098  %J4D%k5
+  +0x000fa  <@'9<
+  +0x00104  %)=<%J>
+  +0x006cd   (%'9
+  +0x006f1   8%'9
+  +0x0084c  '9%P
+  +0x00ade   %X`
+  +0x00ed5  @ %<
+  +0x00f59  @0%$
+  +0x00fe1  `(%'9
+  +0x0106a  (%'9
+  +0x010c5  @ %D
+  +0x01155  `(%'9
+  +0x012d9  K`!)
+  +0x013b4  '9, &
+  +0x01d31  ` %'9
+  +0x01f45  ` %$
+  +0x01f85  ` %$
+  +0x020a5  ` %$
+  +0x020f5  ` %$
+  +0x0229d  ` %$
+  +0x02431  ` %$
+  +0x02611  @ %$
+  +0x02659  @ %$
+  +0x026c5  @ %$
+  +0x026f9  @ %$
+  +0x02779  @ %$
+  +0x027f9  @ %$
+  +0x02839  @ %$
+  +0x0284d  @(%$
+  +0x02979  @ %$
+  +0x029ba  8%&1
+  +0x02a4d  @ %$
+  +0x02a75  @ %$
+  +0x02a91  @ %$
+  +0x02fe5    %$
+  +0x0360d    %$
+  +0x039f9    %$
+  +0x03a75    %$
+  +0x03b91    %$
+  +0x03e79  @ %<
+  +0x041c2  (%'9
+  +0x0442e  H@%J
+  +0x0459a  (%'9
+  +0x047a4  ?s33>
+  +0x047bc  ?fff;
+  +0x04830  <e`B<
+  +0x0483b  o<e`B<D
+=== kidx 569 (objects) DPid=567  offset=0x22c0e0 size=5824 exports=9 ===
+  +0x0039a  0%'9
+  +0x009e9   (%'9
+  +0x00a45  ` %D
+  +0x01141  @ %$
+=== kidx 570 (objects) DPid=568  offset=0x22d7a0 size=3424 exports=9 ===
+  +0x0016a   %0C
+  +0x00a09  @ %F
+  +0x00c3d    %$
+  +0x00d54  ?&ff
+=== kidx 571 (objects) DPid=569 569_MAGICMaker offset=0x22e500 size=960 exports=7 ===
+  +0x00121  I !$
+=== kidx 572 (objects) DPid=570 570_DIM_BossSpit offset=0x22e8c0 size=2480 exports=7 ===
+  +0x00086   %'9
+  +0x003d1    %$
+  +0x003e9    %$
+  +0x00535    %$
+  +0x00611  @ %$
+  +0x0064d  @ %$
+  +0x0085d  @ %%*
+  +0x008e1  @ %$
+  +0x009a2  \)?xQ
+=== kidx 574 (objects) DPid=572 572_SB_Galleon offset=0x22f5a0 size=11584 exports=12 ===
+  +0x00306   %'9
+  +0x0037e   %'9
+  +0x02c5d  fff?fff
+  +0x02d1e  ff>.
+=== kidx 575 (objects) DPid=573  offset=0x2322e0 size=5920 exports=12 ===
+  +0x00c81  @ %$
+  +0x01429    %$
+  +0x016f0  ?s33E
+  +0x01700  @&ff
+=== kidx 576 (objects) DPid=574 574_SB_Propeller offset=0x233a00 size=2032 exports=7 ===
+  +0x00622  a$DE
+  +0x0064e  !$DE
+=== kidx 577 (objects) DPid=575 575_SB_ShipHead offset=0x2341f0 size=2960 exports=7 ===
+  +0x0013e   %3(
+  +0x00521  @ %$
+  +0x00b5c  CASE3
+  +0x00b64  CASE4
+  +0x00b6c  CASE5
+  +0x00b74  CASE8
+=== kidx 579 (objects) DPid=577 577_SB_ShipGun offset=0x235030 size=3520 exports=7 ===
+  +0x003b9  @ %<
+  +0x0040d  @ %Q
+  +0x00446  8%7.
+  +0x0066d  @ %(a
+  +0x00779  @ %$
+  +0x00975  @ %'
+  +0x009f9  @ %$
+  +0x00b0d  @ %<
+=== kidx 580 (objects) DPid=578 578_SB_FireBall offset=0x235df0 size=1536 exports=7 ===
+  +0x0021e   %'9
+=== kidx 581 (objects) DPid=579  offset=0x2363f0 size=2608 exports=7 ===
+  +0x00515    %$
+  +0x0072d  @ %1l
+  +0x0080d  @ %$
+=== kidx 582 (objects) DPid=580  offset=0x236e20 size=1984 exports=7 ===
+  +0x00581    %1
+  +0x0062d    %$
+=== kidx 583 (objects) DPid=581 581_SB_KyteCage offset=0x2375e0 size=2496 exports=7 ===
+  +0x001ed  @@%(a
+  +0x00381  @H%1K
+=== kidx 589 (objects) DPid=587  offset=0x239930 size=3728 exports=7 ===
+  +0x002a5  @(%$
+  +0x002c1  `H%UD
+  +0x007ed  @ %$
+  +0x00815  @ %$
+  +0x008a1  ` %$
+  +0x00a9d  `0%<
+  +0x00add  @ %$
+  +0x00b5d  `0%$
+  +0x00bc1  `0%$
+=== kidx 592 (objects) DPid=590 590_WL_Galleon offset=0x23ac10 size=2688 exports=7 ===
+  +0x000b9    %$
+  +0x000dd   (%%
+=== kidx 593 (objects) DPid=591  offset=0x23b690 size=3760 exports=7 ===
+  +0x00d41    %$
+=== kidx 594 (objects) DPid=592  offset=0x23c540 size=1072 exports=7 ===
+  +0x00189  b8!$
+=== kidx 595 (objects) DPid=593 593_WL_DeadDino offset=0x23c970 size=3264 exports=7 ===
+  +0x001bd    %$
+  +0x00231    %'
+  +0x00261    %'
+  +0x002f5    %'
+  +0x004f5    %$
+  +0x005e5    %$
+  +0x005f9    %$
+  +0x006fd    %$
+  +0x00729    %$
+  +0x007d1    %'9
+  +0x00a82  ff<#
+=== kidx 596 (objects) DPid=594  offset=0x23d630 size=4432 exports=7 ===
+  +0x00d91  @ %$
+=== kidx 599 (objects) DPid=597  offset=0x23f1b0 size=1344 exports=7 ===
+  +0x000c5   0%'9
+  +0x0028e   %5K
+=== kidx 600 (objects) DPid=598 598_WM_Wizard offset=0x23f6f0 size=5952 exports=7 ===
+  +0x001fa   %'9
+  +0x00216   %'9
+  +0x00232   %'9
+  +0x0024e   %'9
+  +0x0042e   %'9
+  +0x0044a   %'9
+  +0x00466   %'9
+  +0x00482   %'9
+  +0x0156c  diff %d
+=== kidx 606 (objects) DPid=604  offset=0x242850 size=2896 exports=7 ===
+  +0x00365  @ %$
+  +0x005dd  @ %$
+=== kidx 608 (objects) DPid=606 606_WL_Wallpower offset=0x243860 size=1440 exports=7 ===
+  +0x003bd  @ %$c
+=== kidx 609 (objects) DPid=607 607_WL_LevelControl offset=0x243e00 size=6944 exports=7 ===
+  +0x00306   %'9
+  +0x00322   %'9
+  +0x0033e   %'9
+  +0x0035a   %'9
+  +0x00376   %'9
+  +0x00392   %'9
+  +0x003ae   %'9
+  +0x0050d  O !$
+  +0x0055d  bH!$
+  +0x008ee  (%'9
+  +0x00956  (%'9
+  +0x00da9  @ %$
+  +0x00f35  @ %$
+  +0x010f9  `(%$
+  +0x01386  )oTa
+=== kidx 610 (objects) DPid=608  offset=0x245920 size=2800 exports=7 ===
+  +0x0026d    %$
+  +0x0030d    %$
+  +0x00449  @ %$
+  +0x00471  @ %$
+  +0x004f9  ` %$
+  +0x006f1  `0%<
+  +0x00731  @ %$
+  +0x007b1  `0%$
+  +0x00815  `0%$
+=== kidx 611 (objects) DPid=609 609_WLFireFly offset=0x246410 size=3088 exports=8 ===
+  +0x00285    %'9
+  +0x0029d    %'9
+  +0x00bc4   Sending FireFly 
+=== kidx 612 (objects) DPid=610 610_WL_spiritplace offset=0x247020 size=1696 exports=7 ===
+  +0x001f1    %$
+  +0x00275    %$
+  +0x002b1    %$
+  +0x002ed    %$
+  +0x003a1    %$
+=== kidx 613 (objects) DPid=611 611_WL_seqpoint offset=0x2476c0 size=6304 exports=7 ===
+  +0x012c8  starting seq %d
+  +0x012de  What is it ? ...
+  +0x012f2  I Can Feel Something Strange !
+  +0x01316  Randorn...  Are You There ??
+  +0x01336  Be Careful..Skeetas Everywhere !
+  +0x0135a  Stay Close to a Torch!
+  +0x01376  Light Kills Them
+  +0x0138a  Krystal! How Is My Son?
+  +0x013a6  Sabre Is Just Glad Your Alive
+  +0x013ca  When His Brother Died I blamed Myself
+  +0x013f6  I Couldn't Face Being A Father
+  +0x0141a  Until I Found You My Dear Girl
+  +0x0143e  He Understands Why You Left Him
+  +0x01462  He Is A Good Son
+  +0x01476  I've Yet To See Him To Apologise
+  +0x0149a  He Has Already Forgiven You
+  +0x014ba  When This Is Over You Shall Be Reunited!
+  +0x014e6  What's happening to you Randorn?
+  +0x0150a  There's not much energy left in this Mountain
+  +0x0153e  I'm dying..I need food
+  +0x0155a  Do You Remember How We Got Here?
+  +0x0157e  Of Course I Remember...
+  +0x0159a  Back On Our Own Planet We Found A
+  +0x015c2  Strange Room In The Lost City..
+  +0x015e6  There We Uncovered A Message From The
+  +0x01612  King EarthWalker, Begging Us To Help Him.
+  +0x01642  And Then I Entered A Wormhole
+  +0x01666  And Arrived On Dinosaur Planet
+  +0x0168a  You Followed Later With Sabre
+  +0x016ae  Yes, We Ended Up In A Chamber Beneath
+  +0x016da  One Of The Earthwalker Temples
+  +0x016fe  Unless You Can Find A Cure For Me
+  +0x01726  I'm Not Going To Last Much Longer
+  +0x0174e  But What Can We Do
+  +0x01766  There Must Be A Similiar Room Here
+  +0x0178e  That Will Allow Us To Return
+  +0x017ae  Either You Or Sabre Must Find It
+=== kidx 614 (objects) DPid=612 612_WL_Crystal offset=0x248f60 size=8320 exports=7 ===
+  +0x00539    %$
+  +0x00b4d    %$
+  +0x00b6d    %'9
+  +0x00d21    %$
+  +0x00d95    %$
+  +0x01189    %$
+  +0x01215    %$
+  +0x012b1    %F
+  +0x01321   (%$
+  +0x01ff4  @333=
+  +0x0200c  @333F
+=== kidx 617 (objects) DPid=615 615_crawler offset=0x24b5b0 size=7536 exports=7 ===
+  +0x0027d    %'
+  +0x00506   %'9
+  +0x00602   %'9
+  +0x0065a   %'9
+  +0x0069a  @!(a
+  +0x006be   %'9
+  +0x008b2   %'9
+  +0x01cac   Range %f  
+  +0x01cb8   Set MOve 
+  +0x01cc4   BITE 
+  +0x01ccc   Free CRawler
+  +0x01cdc   Deactivateing Crawler 
+  +0x01d00  ?s33
+  +0x01d18  ?333=
+=== kidx 618 (objects) DPid=616  offset=0x24d320 size=2096 exports=7 ===
+  +0x004f1  @(%<
+=== kidx 620 (objects) DPid=618 618_WM_TransTop offset=0x24dc80 size=1712 exports=7 ===
+  +0x0027d  @ %$
+  +0x0030d  ` %$
+=== kidx 621 (objects) DPid=619 619_VFP_LevelControl offset=0x24e330 size=3088 exports=7 ===
+  +0x004e6   %'9
+  +0x006c2   %'9
+  +0x0087a   %'9
+  +0x00bec  ACT %d 
+=== kidx 622 (objects) DPid=620  offset=0x24ef40 size=1952 exports=7 ===
+  +0x00289    %$
+  +0x004b9  @ %$
+  +0x0054d  @ %$
+  +0x00659    %$
+=== kidx 623 (objects) DPid=621  offset=0x24f6e0 size=1936 exports=7 ===
+  +0x00331    %$
+  +0x003a1    %$
+  +0x003f1    %$
+  +0x004e5    %$
+=== kidx 625 (objects) DPid=623  offset=0x250110 size=2032 exports=7 ===
+  +0x005c1  @ %$
+=== kidx 627 (objects) DPid=625  offset=0x250f00 size=1312 exports=7 ===
+  +0x000de   %'9
+  +0x004e4  bit %d %d set %d %d
+  +0x004fc  bit %d %d set %d %d
+=== kidx 628 (objects) DPid=626  offset=0x251420 size=6496 exports=7 ===
+  +0x001b6   %'9
+  +0x001de   %'9
+  +0x00206   %'9
+  +0x0022e   %'9
+  +0x00d05   (%$
+  +0x0123d  @0%<
+  +0x018f4  lift state %d
+=== kidx 631 (objects) DPid=629  offset=0x253d30 size=1344 exports=7 ===
+  +0x0035d  @ %$
+=== kidx 634 (objects) DPid=632  offset=0x255470 size=608 exports=7 ===
+  +0x00250  ?333>
+=== kidx 637 (objects) DPid=635  offset=0x255f20 size=1648 exports=7 ===
+  +0x00361    %$
+  +0x00551    %$
+=== kidx 640 (objects) DPid=638 638_DFPlevcontrol offset=0x256e40 size=5088 exports=8 ===
+  +0x003d2   %'9
+  +0x0051a   %'9
+  +0x00536   %'9
+  +0x007b1  0H!&
+  +0x007e5  0`!&
+  +0x0091d  @(%$
+  +0x009b9  0@!&
+  +0x00c19  0H!&
+  +0x00c4d  0`!&
+  +0x00db9  0x!&
+  +0x00fe5  0@!&
+  +0x0119d  @ %$
+  +0x011d5  0X!&
+=== kidx 641 (objects) DPid=639  offset=0x258220 size=4128 exports=7 ===
+  +0x001a9  @ %$
+  +0x002b9  @ %$
+  +0x002fe  P@%K
+  +0x0052d  @ %$
+  +0x00745  @ %$
+  +0x00845  @ %$
+=== kidx 642 (objects) DPid=640  offset=0x259240 size=3024 exports=7 ===
+  +0x00351  8P#1K
+  +0x0046a  P@%K
+=== kidx 645 (objects) DPid=643  offset=0x25af60 size=2688 exports=7 ===
+  +0x00212   %'9
+  +0x00246   %'9
+  +0x00262   %'9
+=== kidx 646 (objects) DPid=644 644_DFP_floorbar offset=0x25b9e0 size=1952 exports=7 ===
+  +0x00764  needbit %d
+=== kidx 647 (objects) DPid=645  offset=0x25c180 size=1648 exports=7 ===
+  +0x00102  8%%)
+=== kidx 648 (objects) DPid=646 646_DFP_ForceAway offset=0x25c7f0 size=4144 exports=7 ===
+  +0x002ca  `>$c
+  +0x002e1   (%F
+  +0x00316  p<$c
+  +0x003a2  p<$c
+  +0x0068a  p<$c
+  +0x006c6  `>$c
+  +0x00706  p<$c
+  +0x008ce  `>$c
+  +0x008e5  `(%F
+  +0x0091a  p<$c
+  +0x009a6  p<$c
+  +0x00c51  @(%F
+  +0x00cdd   0%F
+  +0x00d12  p<$c
+  +0x00d52  `>$c
+  +0x00d9e  p<$c
+=== kidx 649 (objects) DPid=647  offset=0x25d820 size=4640 exports=7 ===
+  +0x0010d    %2
+  +0x00221  ` %$
+  +0x00325  ` %$
+  +0x003ad  RP#'
+  +0x00486  (%'9
+  +0x00515  ` %$
+  +0x005a9  ` %$
+  +0x0063d  ` %$
+  +0x00a40  (A#(
+  +0x00c74  (A#(
+  +0x00ea8  (A#(
+  +0x010a4  (A#(
+=== kidx 652 (objects) DPid=650  offset=0x25f1c0 size=4560 exports=7 ===
+  +0x00421    %$
+  +0x00519    %$
+  +0x0115c  move %f %f
+  +0x01168  2was %f %f %f   now %f %f %f
+=== kidx 653 (objects) DPid=651  offset=0x260390 size=3216 exports=7 ===
+  +0x00849  @ %$
+=== kidx 655 (objects) DPid=653  offset=0x261530 size=1760 exports=7 ===
+  +0x006b4  to %d range %f
+=== kidx 658 (objects) DPid=656  offset=0x2624c0 size=12432 exports=7 ===
+  +0x000a3  ('9%
+  +0x004d9  #p!D
+  +0x004fd  C`!D
+  +0x00a6c   Rock Fall Error Has No Generator Object 
+=== kidx 659 (objects) DPid=657  offset=0x265550 size=896 exports=7 ===
+  +0x00360   Rock Generator Loaded 
+=== kidx 660 (objects) DPid=658 658_DBPointMum offset=0x2658d0 size=10560 exports=7 ===
+  +0x003be   %'9
+  +0x00812  (%P@
+  +0x00a8c  '9!x
+  +0x00b85  `(%'
+  +0x00c75    %$
+  +0x00d19    %F
+  +0x00db1    %TA
+  +0x00dfd    %F
+  +0x0127e   %'9
+  +0x016b2  (%'9
+  +0x0186e  0C$a
+  +0x018aa  8%'9#
+  +0x01b06   %'9
+  +0x01eba   %0C
+  +0x02345  p !6-
+  +0x02355  p !6/
+  +0x02365  p !6(
+  +0x02375  p !6*
+  +0x02389  p !&s
+  +0x0247e  `!(a
+  +0x025f4   ACt Number %i 
+  +0x02604   Running Mummy 
+  +0x02614   Set OPERATION BIT %i  
+  +0x0262c   Menu operation Activated  %i 
+  +0x0264c   Bit Set 
+  +0x02658   No Bits Drowned %i 
+  +0x02670   Linking TO Object 
+  +0x02684   Build Nest 
+  +0x02698   KeyPressy 
+  +0x026a4   A Button 
+  +0x026b0   B button 
+  +0x026bc   Trying Again 
+  +0x026cc   Error Could not find node 
+  +0x026e8  Got Curve 
+  +0x026f4   Could Not Find Curve 
+  +0x0270c   PathId %i Loc id %i 
+  +0x02724   Tangent 1 %f %f %f 
+  +0x0273c   Tangent 2 %f %f %f 
+  +0x02754  t value %f 
+  +0x02760  Turning %i 
+=== kidx 661 (objects) DPid=659 659_DBTrigger offset=0x268210 size=2048 exports=7 ===
+  +0x007d0   Max X %f Y %f Z %f 
+=== kidx 662 (objects) DPid=660 660_DBSpike offset=0x268a10 size=1248 exports=7 ===
+  +0x001ae  H@%J
+  +0x001d1    %$
+  +0x0027d    %$
+=== kidx 664 (objects) DPid=662 662_DBEgg offset=0x269420 size=8768 exports=9 ===
+  +0x00142   %'9
+  +0x008be   %'9
+  +0x00ff6   %'9
+  +0x0114e  0%1l
+  +0x01622   %0C
+  +0x01c89    %$
+  +0x01d11    %$
+  +0x020d4   Stolen 
+  +0x020e0   GREATER 
+  +0x020ec  Caught
+  +0x020f4   Hit Line 
+  +0x02100   Curve Egg
+  +0x0210c   CARRY ONLY EGG
+  +0x0211c   Message Op State %i %i 
+  +0x02138   Op State %i 
+  +0x02148   Egg Stolen 
+  +0x02158   EGG X %f Y %f Z %f  
+  +0x02170   Egg Trown Away 
+  +0x02184   EGG TOKEN AWAY 
+  +0x021d4  ?fff?&ff
+  +0x021dd  s33>
+  +0x021fe  33E;
+  +0x02204  ?s33=L
+=== kidx 665 (objects) DPid=663 663_DBlevelControl offset=0x26b660 size=1232 exports=7 ===
+  +0x00470   NO EGGS %i 
+  +0x00480  Flood Level  %i 
+=== kidx 666 (objects) DPid=664  offset=0x26bb30 size=1536 exports=7 ===
+  +0x00086   %P@
+=== kidx 667 (objects) DPid=665  offset=0x26c130 size=5840 exports=7 ===
+  +0x0057d    %'
+  +0x00d6d  '(!%)
+  +0x00f19  '(!%)
+  +0x011f2  H@%'
+  +0x012c1  B(#D
+=== kidx 668 (objects) DPid=666  offset=0x26d800 size=5168 exports=11 ===
+  +0x00169  @(%$
+  +0x001b1  @(%$
+  +0x0112d  AX%$h
+  +0x01234   dx %f dy %f 
+  +0x01244   y %f 
+  +0x0124c   dx %f dy %f 
+  +0x0125c   Amount %i 
+  +0x01268  r %i 
+  +0x01270  ->i %i 
+  +0x012ac  F~m3Ep
+  +0x01410  ?333
+=== kidx 669 (objects) DPid=667  offset=0x26ec30 size=2880 exports=7 ===
+  +0x0011e  8%Y`
+  +0x00636  (%'9
+  +0x0089e  T$DX
+=== kidx 671 (objects) DPid=669  offset=0x26fae0 size=7856 exports=7 ===
+  +0x00155  @ %F
+  +0x003f9  X(!'9
+  +0x004fa  @#S 
+  +0x0050d  H !'9
+  +0x0054e  X@Vk
+  +0x005f5  C0#(
+  +0x00a5e  (%'9
+  +0x00bd2  (%'9
+  +0x01476  8#P`
+  +0x016d2  h@)!
+  +0x01a6c   Romdef %i 
+  +0x01a78   Lists is not given for object 
+  +0x01a98   Setting Old Position 
+  +0x01ab0   FinalSetPosList for ident %i 
+  +0x01ad4   {%f,%f,%f},
+  +0x01ae4   }; 
+  +0x01aec   No pieaces %i Not Equal Amt %i 
+  +0x01b10   Sorry You have no displacement for the force 
+  +0x01b40  Error in setting up Explode Pieace List
+  +0x01b6a  \)=L
+  +0x01bb1  e+ID
+  +0x01bc9  e VD
+=== kidx 673 (objects) DPid=671  offset=0x271ba0 size=2992 exports=7 ===
+  +0x0047d  @ %'9
+  +0x005ce  @#P`
+  +0x00836  h@)A
+  +0x00afc  init
+  +0x00b04  %i r %i g %i b %i 
+  +0x00b18   Beam Cont %i 
+  +0x00b28   Add vtx %i vertno %i  
+  +0x00b40  %i x %i y %i z %i 
+  +0x00b54   Add polys %i 
+=== kidx 674 (objects) DPid=672  offset=0x272750 size=3920 exports=7 ===
+  +0x00646  A$DE
+  +0x00672  !$DE
+  +0x00ba2  !$DH
+  +0x00cc9    %F
+=== kidx 675 (objects) DPid=673 673_DBbignest offset=0x2736a0 size=1888 exports=7 ===
+  +0x0024a   %$e
+  +0x006f4   Egg Added 
+  +0x00700   Egg Count %i 
+  +0x00710   Egg taken Away 
+  +0x00724   Have Dropped off All the eggs 
+=== kidx 676 (objects) DPid=674 674_DBwaterplant offset=0x273e00 size=1264 exports=7 ===
+  +0x004e8  ?s33
+=== kidx 677 (objects) DPid=675  offset=0x2742f0 size=4352 exports=7 ===
+  +0x00946  PC1K
+  +0x00b8d    %F
+  +0x00d54   noverts %i 
+  +0x00e62  7L<u
+  +0x00ef3  %>e`B>bM
+  +0x00f44  >333>%
+  +0x00f4e  1'>I
+  +0x00f7b  o=49X<
+  +0x00fb6  33?c
+  +0x01090  >;dZ>/
+  +0x010d2  hs=}
+  +0x010dc  =49X=D
+=== kidx 678 (objects) DPid=676 676_DBplatform offset=0x2753f0 size=1344 exports=7 ===
+  +0x0051c   Removing Cylinder 
+=== kidx 679 (objects) DPid=677  offset=0x275930 size=5360 exports=10 ===
+  +0x00312  (%'9
+  +0x0035d  ` %'9
+  +0x00411  ` %F
+  +0x0052d  ` %$
+  +0x00591  ` %'9
+  +0x00675  ` %'9
+  +0x006b9  ` %1
+  +0x00779  ` %$
+  +0x00785   0%$
+  +0x007f9  ` %'9
+  +0x00d4a  Q$DM
+  +0x00d76  !$DM
+  +0x00f4a  2$DO
+  +0x00f76  B$DO
+  +0x01450   Flow %f 
+  +0x01488  ?fff>L
+=== kidx 680 (objects) DPid=678 678_DBbridgeanim offset=0x276e20 size=1376 exports=7 ===
+  +0x00196   %'9
+  +0x004e4   On 
+  +0x004ec   Creating Step Number %i 
+  +0x00508   Removing Step %i 
+=== kidx 681 (objects) DPid=679  offset=0x277380 size=4000 exports=9 ===
+  +0x0010d  ` %'9
+  +0x00146  8%5*
+  +0x00161  ` %$
+  +0x002ae  (%'9
+  +0x00402  (%'9
+  +0x004a1  ` %$
+  +0x0050e  (%'9
+  +0x00515  ` %$
+  +0x00781    %$
+  +0x00be5  @ %$
+  +0x00f4c   Creating Bullets
+  +0x00f60  WARNING: Bullet Buffer Full 
+=== kidx 682 (objects) DPid=680  offset=0x278320 size=2928 exports=11 ===
+  +0x0030a  (%'9
+  +0x00855  ` %$
+  +0x008c9  JX!)a
+=== kidx 683 (objects) DPid=681  offset=0x278e90 size=1408 exports=7 ===
+  +0x00528   Shield Han no %i 
+  +0x0053c   Killing Bullet 
+  +0x00550  ?s33?L
+=== kidx 684 (objects) DPid=682  offset=0x279410 size=3552 exports=7 ===
+  +0x001d2   %'9
+  +0x006b6   %&E
+  +0x0072e   %&E
+  +0x00d68   KILLBOT State %i Amt %i 
+  +0x00d88   Fireing 
+  +0x00db4  ?333E
+=== kidx 685 (objects) DPid=683 683_DBSupShield offset=0x27a1f0 size=464 exports=7 ===
+  +0x001a8   Killing Bullet 
+=== kidx 686 (objects) DPid=684 684_DBDustGeezer offset=0x27a3c0 size=3600 exports=10 ===
+  +0x000d9  ` %$
+  +0x00105  ` %$
+  +0x00119  ` %$
+  +0x0060e   %'9
+  +0x00981   (%D
+  +0x009c5   (%D
+  +0x00add  ` %$
+  +0x00b29  ` %F
+  +0x00b85  ` %F
+  +0x00c35  @ %$
+  +0x00d80   Creating BoneDust
+  +0x00d94   Firing %i 
+  +0x00da0  WARNING: BoneDust Buffer Full 
+  +0x00dc0   Called Part effect 
+  +0x00df8  ?fff?
+  +0x00e00  ?fff?
+=== kidx 687 (objects) DPid=685 685_DBbonedust offset=0x27b1d0 size=1664 exports=9 ===
+  +0x0065c   Attached 
+  +0x00668  ?333=
+=== kidx 688 (objects) DPid=686  offset=0x27b850 size=3408 exports=12 ===
+  +0x002bd  @ %$
+  +0x004c9  @(%<
+  +0x0053d  @ %F
+  +0x0070d  @ %$
+  +0x00739  @ %$
+  +0x00ca0   weight %f 
+  +0x00cb0   Crashing 
+  +0x00cbc   Killing Boulder y  %f  yvel %f 
+  +0x00ce0   Kill Me 
+=== kidx 690 (objects) DPid=688 688_DBstealerworm offset=0x27caa0 size=23152 exports=9 ===
+  +0x000b2  %L%)&
+  +0x000bc  %k+T%
+  +0x00124  '9=x%
+  +0x00130  %JCl%kC
+  +0x00241   0%$
+  +0x00327  \'9K
+  +0x0036d   (%$
+  +0x004a1   0%$
+  +0x0059d   (%'9
+  +0x005c5   (%'9
+  +0x005e5   (%'9
+  +0x00c95  ` %$
+  +0x00cc9  IP!$
+  +0x00d35  ` %$
+  +0x01129    %$
+  +0x011f9  @ %'9
+  +0x01281  @ %$
+  +0x01329  @ %$
+  +0x02251   (%$
+  +0x022e9    %$
+  +0x02341    %Q
+  +0x02371    %Q 
+  +0x025e9    %$
+  +0x026a9    %$
+  +0x028f7  0'9M\
+  +0x029cd    %5K
+  +0x02a1d    %$
+  +0x02ab3  <'9K|
+  +0x02e4a  0%'9L
+  +0x02e76  (%'9
+  +0x031ee  0%'9L
+  +0x0321a  (%'9
+  +0x0353d    %'9L
+  +0x03551    %$
+  +0x03591  @ %1*
+  +0x035c9  @0%$
+  +0x03639  @ %Q
+  +0x03745  @8%'9M
+  +0x037b3  <'9L
+  +0x037db  D'9M
+  +0x037ff  <'9M
+  +0x03883  0'9L
+  +0x038af  <'9M
+  +0x039a6  (%'9
+  +0x039da  0%'9L
+  +0x03ab5  @8%'9M
+  +0x03cb9  @ %'
+  +0x03d53  8'9M
+  +0x03ebf  $'9M
+  +0x04239  @ %<
+  +0x042e7  $'9L
+  +0x04353  $'9L
+  +0x044df  $'9K|
+  +0x0495f  \'9L
+  +0x04b9f  $'9L
+  +0x04cfc  '9M\
+  +0x04d23  ,'9M\
+  +0x04d73   '9M\
+  +0x04fd8   IN STATE: %i %x 
+  +0x04fec  BADDIE:SnowWorm Unknown message [%d]
+  +0x05014   HIT BY SHIT 
+  +0x05024   Fireing Projectile at Player 
+  +0x05044   WARNING : going to no locked on object 
+  +0x05070   Error : main_fdt is zero 
+  +0x0508c   WARNING : going to no locked on object 
+  +0x050b8   Error : main_fdt is zero 
+  +0x050d4   WARNING AVOIDANCE FAILED: Obj Intersection 
+  +0x05104   Sy %f  Uy %f  XZ %f Uz %f T %f : g %f 
+  +0x05130  New State [%s]
+  +0x05140  popOutOfGround
+  +0x05150  New State [%s]
+  +0x05160  burstIntoGround
+  +0x05170  New State [%s]
+  +0x05180  biteAttack
+  +0x0518c  New State [%s]
+  +0x0519c  standStill
+  +0x051a8  New State [%s]
+  +0x051b8  standAndSpit
+  +0x051c8  New State [%s]
+  +0x051d8  hitFightMain
+  +0x051e8  New State [%s]
+  +0x051f8  fight_die
+  +0x05204  New State [%s]
+  +0x05214  run to object
+  +0x05224  New State [%s]
+  +0x05234  run to object
+  +0x05244   WARNING : Has No LOCK 
+  +0x0525c  New State [%s]
+  +0x0526c  pick up  object
+  +0x0527c  New State [%s]
+  +0x0528c  throw egg object
+  +0x052a0  New State [%s]
+  +0x052b0  wait to catch egg object
+  +0x052cc   WARNING : Current Type Not Found 
+  +0x052f0   Sending Off to pick up EGG %x 
+  +0x05314   GOING TO CATCH IT 
+  +0x05328  New State [%s]
+  +0x05338  going to catch ball
+  +0x0534c   HAS BALL : %x= %x
+  +0x05360   I don't have he ball 
+  +0x05378   THROW CHANCE %i 
+  +0x0538c  -> Going TO Throw 
+  +0x053a0  New State [%s]
+  +0x053b0  try to catch
+  +0x053c0  New State [%s]
+  +0x053d0  catching egg
+  +0x053e0  New State [%s]
+  +0x053f0  going to kill
+  +0x05400  New AI State [%s]
+  +0x05414  aiTop
+  +0x0541c  New AI State [%s]
+  +0x05430  aiIveBeenHit
+  +0x05440  New AI State [%s]
+  +0x05454  aiIamDying
+  +0x05460  New AI State [%s]
+  +0x05474  aiIamDead
+  +0x05480  New AI State [%s]
+  +0x05494  aiDormant
+  +0x054a0  New AI State [%s]
+  +0x054b4  aiL2_MainEngageControl
+  +0x054cc  New AI State [%s]
+  +0x054e0  aiL2_MainEngageStackControl
+  +0x054fc   STACK EMPTY SO RESETING 
+  +0x05518   None Of the Object Exists Any More 
+  +0x05540   LOCK is Not of Given Type
+  +0x0555c   None Of the Object Exists Any More 
+  +0x05584   Egg Has Been Picked Up By Someone Else
+  +0x055ac  DBSTEALERWORM: state stack overflow
+  +0x055d4   Stack -------------------
+  +0x055f0  %i : %s : Opand %i 
+  +0x0561c  ?333<#
+  +0x05824  popOutOfGround
+  +0x05833  burstIntoGroun
+  +0x05842  biteAttack    
+  +0x05851  standStill    
+  +0x05860  standAndSpit  
+  +0x0586f  hitFightMain  
+  +0x0587e  fight_die     
+  +0x0588d  runto_Object  
+  +0x0589c  runto_ThrowObj
+  +0x058ab  pickup_Object 
+  +0x058ba  throw_AtObject
+  +0x058c9  wait_forObject
+  +0x058d8  Wait_for_throw
+  +0x058e7  try_to_catch  
+  +0x058f6  catch_Object  
+  +0x05905  Kill_Object   
+  +0x059fc  ?333
+=== kidx 691 (objects) DPid=689  offset=0x282510 size=1664 exports=7 ===
+  +0x001ca  Q@1K
+  +0x0061c   Tricky Has Hit Me AAAgh 
+  +0x00638   Sending it backward %i 
+  +0x00654   Frame %i  fract %i fr %i
+=== kidx 692 (objects) DPid=690 690_DB_SuperSymbol offset=0x282b90 size=2864 exports=7 ===
+  +0x0013d  @ %'9
+  +0x00181  @ %$
+  +0x002fd    %'9
+  +0x00a8c  def bits %d %d %d
+  +0x00aa0  USEOBJ.c: modelno out of range romdefno=%d
+  +0x00acc   paused is True 
+  +0x00ae0   Creating Diamond 
+=== kidx 693 (objects) DPid=691 691_DB_FakeHorizon offset=0x2836c0 size=736 exports=7 ===
+  +0x002b4   Found Vertex With No Alpha %i 
+=== kidx 694 (objects) DPid=None KIOSK-ONLY offset=0x2839a0 size=2320 exports=7 ===
+  +0x005a6   %$E
+  +0x005d9    %$
+  +0x00890   RECIEVED STOP MESSAGE 
+  +0x008a8  Sending Out A Sand Thief  %i 
+  +0x008c8   AUTO HEEL 
+  +0x008d4   HEEL 
+  +0x008e0   %x Active 
+  +0x008f0   FREE EGGS 
+  +0x008fc   FREE EGGS 
+=== kidx 695 (objects) DPid=692  offset=0x2842b0 size=4448 exports=8 ===
+  +0x00186   %'9
+  +0x00589  @ %$
+  +0x00aa9  @(%$
+=== kidx 696 (objects) DPid=693  offset=0x285410 size=2336 exports=9 ===
+  +0x00811    %F
+  +0x00831    %F
+=== kidx 697 (objects) DPid=694  offset=0x285d30 size=1984 exports=9 ===
+  +0x0017a  !$DJ
+  +0x006c9    %$
+  +0x006e9    %$
+=== kidx 700 (objects) DPid=697 697_BossDrakor offset=0x286cc0 size=3696 exports=7 ===
+  +0x00225    %'9
+  +0x00242  (%'9
+  +0x00262  0%'9
+  +0x004dd  @ %$
+  +0x00771  @0%'9
+  +0x00a1a  (%$F
+  +0x00a66  H@%J
+  +0x00b46  (%$F
+=== kidx 701 (objects) DPid=698 698_BossDrakor_Laser offset=0x287b30 size=2848 exports=8 ===
+  +0x008ed    %$
+  +0x00929    %$
+=== kidx 702 (objects) DPid=699  offset=0x288650 size=3648 exports=7 ===
+  +0x00602   %'9
+  +0x0091a   %%J
+  +0x00962  "$DF
+  +0x0098e  B$DF
+  +0x00ac1  )P!F
+  +0x00b0a  2$DE
+  +0x00b36  B$DE
+  +0x00ca1  @ %$
+  +0x00d09  @ %D
+=== kidx 705 (objects) DPid=702 702_KTrex offset=0x289c40 size=16176 exports=9 ===
+  +0x0009a  &D'9(
+  +0x000ac  %k,T%
+  +0x00112  1`'92
+  +0x0011a  30%)4
+  +0x00295    %5
+  +0x00689   (%'9
+  +0x008c1    %$
+  +0x00979    %$
+  +0x0099d  @(%$
+  +0x00a51    %F
+  +0x00c96  HC1*
+  +0x010fe  `@1+
+  +0x012e1  f !$
+  +0x01439  ` %$
+  +0x01481  ` %$
+  +0x014c9  ` %$
+  +0x01511  ` %$
+  +0x01569  ` %$
+  +0x01621  ` %$
+  +0x0169d  ` %$
+  +0x0170d  ` %$
+  +0x01765  ` %$
+  +0x017bd  ` %$
+  +0x0185d  ` %$
+  +0x01901  ` %$
+  +0x01a15  ` %$
+  +0x01a49  ` %$
+  +0x01ae9  ` %$
+  +0x01b1d  ` %$
+  +0x01bb1  ` %$
+  +0x01be5  ` %$
+  +0x01c79  ` %$
+  +0x01cad  ` %$
+  +0x01d41  ` %$
+  +0x01d75  ` %$
+  +0x01e09  ` %$
+  +0x01e3d  ` %$
+  +0x01e8d  ` %$
+  +0x024de   %&1
+  +0x0257a  P!'9
+  +0x025d6   %'9
+  +0x02701  +`!%
+  +0x02e75  @ %<
+  +0x033ea  Dz$c
+  +0x03422   %$c
+  +0x0393a  (%'9
+  +0x03da8  TREX: state stack overflow
+  +0x03dc4  State Error!!!
+  +0x03e18  ?333>
+  +0x03e8a  9X<D
+=== kidx 706 (objects) DPid=703 703_KT_RexFloorSwitch offset=0x28db70 size=3072 exports=7 ===
+  +0x000be  (%'9
+  +0x003b5    %$
+  +0x0046d    %$
+  +0x00bc0  Could not find node [%d]
+=== kidx 707 (objects) DPid=704 704_KT_Lazerwall offset=0x28e770 size=2048 exports=7 ===
+  +0x0038d  ` %$
+  +0x0040d  ` %$
+  +0x00531  ` %$
+=== kidx 709 (objects) DPid=706  offset=0x28f580 size=672 exports=7 ===
+  +0x00159  `8%F
+=== kidx 710 (objects) DPid=707 707_KamerianBoss offset=0x28f820 size=8928 exports=7 ===
+  +0x00d69  @ %&
+  +0x01129  `(%'9
+  +0x01219  `(%'9
+  +0x01315  @ %$
+  +0x0136d  @ %$
+  +0x01416   %'9
+  +0x01469  @ %$
+  +0x014d5  @ %$
+  +0x01541  @ %$
+  +0x015e9  @ %)
+  +0x01611  @ %$
+  +0x01669  @ %%
+  +0x01745  @ %D
+  +0x0177d  @ %$
+  +0x018c9  @ %D
+  +0x01901  @ %$
+  +0x01a75  @ %$
+  +0x01b5d  @ %$
+  +0x01c1e  (%'9
+  +0x01c52  0%'9
+  +0x01ef1    %<
+  +0x01f02  A &R
+  +0x01fcd    %<
+  +0x021fc  health:%d
+  +0x02208  initialising neck stuff
+=== kidx 711 (objects) DPid=708  offset=0x291b00 size=5344 exports=7 ===
+  +0x00c71  ` %F
+  +0x00ce5  )P%$
+  +0x00dbd  ` %F
+  +0x00e0d  ` %F
+  +0x00f95  Op#F
+  +0x01142  (%3(
+  +0x01221    %'9
+=== kidx 714 (objects) DPid=711 711_IMSnowBike offset=0x293590 size=19136 exports=21 ===
+  +0x001ca  (%'9<0
+  +0x001dd    %&
+  +0x00261    %$
+  +0x00498  '9<0
+  +0x0056d  @ %F
+  +0x00575   (%'
+  +0x00598  '940
+  +0x00895   (%'94
+  +0x008e1  @ %1K
+  +0x00929    %$
+  +0x009f7  D'9<0
+  +0x00a91   0%'9:4
+  +0x00ae9    %$
+  +0x00c6d  @ %'93
+  +0x00ca6  H&-)
+  +0x00ed4  '9=L
+  +0x010e6  8%'940
+  +0x011f5    %1
+  +0x01850  '9<0
+  +0x0187a   %&%
+  +0x0312a   %1K
+  +0x032a1  "(#0
+  +0x037a0  '9=L
+  +0x038c7  $'940
+  +0x0397d  `(%$
+  +0x03c59  @ %D
+  +0x03d16  (%'940
+  +0x04934  Finished Is SEt for Some Reason 
+  +0x04958  @333@333?o
+  +0x04999  s33?
+  +0x049d4  ?333<#
+  +0x049e0  @s33@s33
+=== kidx 715 (objects) DPid=712 712_DIMSnowHorn1 offset=0x298050 size=14176 exports=21 ===
+  +0x000b0  '9!t
+  +0x000e8  %)$p%J%
+  +0x0012b  0'940
+  +0x003c1    %$
+  +0x003fd    %$
+  +0x00465  @ %&
+  +0x00551    %$
+  +0x005b1    %$
+  +0x0064d    %'9
+  +0x00791   (%'
+  +0x00975  !P$$
+  +0x00b22  0%'9
+  +0x00d71    %$
+  +0x00d8d    %$
+  +0x00dc5    %&
+  +0x00e3d    %$
+  +0x00e61    %&
+  +0x00f45  @(%T
+  +0x00f99  @(%Tf
+  +0x0115d  @8%&
+  +0x0188e  0%'9
+  +0x01a6f  !(A@
+  +0x01cad    %&
+  +0x020cd    %'9
+  +0x02125    %%)
+  +0x02275    %$
+  +0x023a9  @ %'9
+  +0x023fd  @ %%
+  +0x033ad    %$
+  +0x033c6  8%5*
+  +0x0368c  <e`B<e`B<D
+  +0x036ac  ?fff
+  +0x03734  ;K)_;
+=== kidx 716 (objects) DPid=713 713_DR_EarthWarrior offset=0x29b7b0 size=14416 exports=21 ===
+  +0x000ba  $T'9'
+  +0x000c2  (`%)-
+  +0x001dd    %$
+  +0x002dd  @ %$
+  +0x00319  @ %$
+  +0x003a1    %$
+  +0x003c1  @ %$
+  +0x00541    %$
+  +0x0063d    %%
+  +0x0069d    %&
+  +0x006b5    %&
+  +0x007b5    %&
+  +0x00895   (%$
+  +0x00add    %'9
+  +0x00c79  AX$$
+  +0x010ca  0%'9
+  +0x011cd  K0!$
+  +0x0197d  @8%&
+  +0x020b1  ` %$
+  +0x02119  ` %$
+  +0x0227f  ('9!t
+  +0x02551  ` %5
+  +0x026db  a'9!t
+  +0x02c96  8%'9
+  +0x02d42  H%U 
+  +0x02e56  8%5*
+  +0x03039    %'9!t
+  +0x03085    %$
+  +0x030d5    %$
+  +0x031c7  ('9!t
+  +0x032f2  X!(a
+  +0x03680   EARTHWALK ENERGY : %i 
+  +0x03698   num %i 
+  +0x0372f  =<49X>
+  +0x0373c  ?fff
+  +0x037ec  ;K)_
+  +0x03800  ?333?
+=== kidx 717 (objects) DPid=714 714_DR_CloudRunner offset=0x29f000 size=15552 exports=21 ===
+  +0x000c8  %J0<%k1
+  +0x002cc  '95t1f
+  +0x00429    %$
+  +0x00475    %$
+  +0x00595    %&E
+  +0x005dd    %$
+  +0x007c1   (%$
+  +0x0080d   (%$
+  +0x008a5    %'9
+  +0x00a81  !P$$
+  +0x00bbe  0%'98
+  +0x00dcd    %$
+  +0x00df5    %$
+  +0x00e29    %&
+  +0x00e99    %&
+  +0x010e7  !(A@
+  +0x011b7  ,0O@
+  +0x01728  '95t
+  +0x0188e   %5*
+  +0x018d6   %'9
+  +0x01d45   (%1K
+  +0x01d53   '95t
+  +0x01f7f   '95t
+  +0x02edd    %1
+  +0x02f91  @ %$
+  +0x030e6   %'9
+  +0x031db  u'97
+  +0x03335    %$
+  +0x0338d  @ %$
+  +0x03b48  <49X<
+  +0x03b50  ?fff
+  +0x03c0c  ;K)_;
+  +0x03c80  ?333?
+=== kidx 719 (objects) DPid=716 716_kyteFireFlys offset=0x2a2eb0 size=1760 exports=11 ===
+  +0x000b9  ` %'9
+  +0x000f9  ` %$
+  +0x005c5   (%F
+  +0x006bc  should activate the command
+=== kidx 720 (objects) DPid=717  offset=0x2a3590 size=1760 exports=11 ===
+  +0x003f6  2$DJ
+  +0x00422  B$DJ
+=== kidx 722 (objects) DPid=719  offset=0x2a4220 size=1584 exports=11 ===
+  +0x005e0  trying to flame
+  +0x005f4  particle
+  +0x00600  Start flaming
+=== kidx 724 (objects) DPid=721 721_SC_beacon offset=0x2a4d80 size=3440 exports=11 ===
+  +0x002bd    %'9
+  +0x00485   (%1K
+  +0x004c1   (%1
+  +0x00726   %'9
+  +0x00ae5    %$
+  +0x00bde  (%1K
+  +0x00d24  Error romdef ident no known!
+=== kidx 725 (objects) DPid=722 722_MMP_mseedrecept offset=0x2a5af0 size=3984 exports=11 ===
+  +0x001c9  ` %$
+  +0x0026e  A P@
+  +0x00301  ` %'9
+  +0x00411  ` %$
+  +0x0051e  T 1*
+  +0x005d9  ` %$
+  +0x008a5  ` %$
+  +0x00975  ` %$
+  +0x00a9e  T$DD
+  +0x00f54  Error romdef ident no known!
+=== kidx 726 (objects) DPid=723 723_GPbonfire offset=0x2a6a80 size=3536 exports=11 ===
+  +0x003b5  @ %R 
+  +0x004f1  `(%1
+  +0x0052d  `(%3
+  +0x00745  ` %%l
+  +0x00da6  \)>H
+=== kidx 727 (objects) DPid=724  offset=0x2a7850 size=1120 exports=11 ===
+  +0x00428  getting kyte in
+  +0x0043c  getting kyte out
+=== kidx 728 (objects) DPid=725 725_SC_flamegameflame offset=0x2a7cb0 size=1216 exports=11 ===
+  +0x001e5    %$
+=== kidx 729 (objects) DPid=726  offset=0x2a8170 size=1808 exports=11 ===
+  +0x006b8   Kyte Landed Action 
+  +0x006d2   Setting Used Bit 
+  +0x006e8   DURATION %i 
+  +0x006f8   AVG %f 
+=== kidx 730 (objects) DPid=727  offset=0x2a8880 size=4160 exports=7 ===
+  +0x00245  @ %&
+  +0x0027a  8%'9
+  +0x003c5  @8%'9
+  +0x00401  @0%&G
+  +0x00aa8   CREATING NODES
+  +0x00ab8  REMOVED %i 
+  +0x00ac4   CREATING NODES
+  +0x00ad4   %i : Ident %i 
+  +0x00ae4   REmove Obj %i 
+  +0x00af4  U %i 
+  +0x00e18  ?fff
+  +0x00ea8  ?s33?
+  +0x00eb4  ?fff
+=== kidx 731 (objects) DPid=728  offset=0x2a98c0 size=4256 exports=7 ===
+  +0x0043d    %'
+  +0x00475    %%
+  +0x00a85    %$
+  +0x00bba  (%'9
+  +0x00cfd    %'
+  +0x00fd8   Objlist is NULL
+  +0x00fec   Not A Bike Riding Object 
+  +0x01008   GETON GETON GETON 
+  +0x01020   GETOFF LET A WOMAN 
+=== kidx 733 (objects) DPid=730 730_CRspellStone offset=0x2aaf50 size=1104 exports=9 ===
+  +0x0015e   %5l@
+  +0x00408   DO Win BIT 
+  +0x0041a   Hit By ONVEHICLE HIT 
+=== kidx 735 (objects) DPid=732 732_CRSnowBike offset=0x2ab6f0 size=20384 exports=21 ===
+  +0x0028a  (%'9@
+  +0x0029d    %&
+  +0x002eb  05KJ
+  +0x0031d    %$
+  +0x00609   (%'
+  +0x00879  b`%1
+  +0x00935   (%'97l
+  +0x00981  @ %3
+  +0x00a7f  D'9@
+  +0x00b19   0%'9=
+  +0x00cd9  @ %'96<
+  +0x00d08  '9#d
+  +0x00d12  H&-)
+  +0x01128  '9A 
+  +0x013e1    %$
+  +0x01539  `(%'96
+  +0x01625    %1
+  +0x01ddf  0'9@
+  +0x01f8d    %$
+  +0x01fe9    %$
+  +0x0203d    %$
+  +0x02095    %$
+  +0x03529  "(#0
+  +0x03a09    %'
+  +0x03b24  '9A 
+  +0x03c63  $'96
+  +0x03d19  `(%$
+  +0x03eda   %'9
+  +0x040ea  (%'96
+  +0x04d14   FInished Is SEt for Some Reason 
+  +0x04d38   FInished Is SEt for Some Reason 
+  +0x04d5c   FUEL AMT %i 
+  +0x04d6e  RAN OUT OF FUEL 
+  +0x04d80   HIT OBJECT %i 
+  +0x04d94   Bike Can Mount %i 
+  +0x04da8  tracks %d
+  +0x04db4  ident %d
+  +0x04dc0   YJOY %i 
+  +0x04dcc  @333@333=
+  +0x04dd8  ?s33=
+  +0x04e3a  33?o
+  +0x04e60  ?333<#
+  +0x04e6c  @s33@s33
+=== kidx 736 (objects) DPid=733  offset=0x2b0690 size=4464 exports=7 ===
+  +0x000cd  @ %5
+  +0x00101  @ %$
+  +0x0014d  @ %'9
+  +0x001ed    %7(@
+  +0x00225    %&
+  +0x003b2  (%'9
+  +0x00591    %'9
+  +0x00f4d  @ %$
+  +0x010e8   Turret Timer %i 
+  +0x010fc   HHITS %i %i 
+  +0x0110c   DTIME %i 
+  +0x01118   WARNING EXPR: This Object has no Head 
+  +0x01140   Anim %i 
+=== kidx 737 (objects) DPid=734 734_DR_PushCart offset=0x2b1800 size=10688 exports=8 ===
+  +0x000d9  +p%5
+  +0x001ae  (%'9%
+  +0x001f1    %$
+  +0x00235    %'9
+  +0x00251    %&
+  +0x00a69    %$
+  +0x00ea2  (%'9
+  +0x00ef6  (%'9
+  +0x0121e  (%'9
+  +0x01266  (%'9
+  +0x01611  @(%'9
+  +0x016c1  @ %$
+  +0x01b49  @ %$
+  +0x02315  @ %$
+  +0x02800   HELLO I AM THE PUSHCART
+  +0x0281c   Mine Cart Loaded 
+  +0x02830  speed %f 
+  +0x0283d   Brake Message %i 
+  +0x02854   Mine Cart At Doors 
+  +0x0286c   COLLISION
+  +0x02878  Creating  BarrelCnt Is %i 
+  +0x02894   TRACK DOORS OPENDED 
+  +0x028ac  SETTING POSITION TO NODE IDNY 
+  +0x028d0   list Branch No %i 
+  +0x028e4   list Branch %i Max %i Branch No %i 
+  +0x0290d  333?333=
+  +0x02926  33?L
+=== kidx 738 (objects) DPid=735 735_DRbullet offset=0x2b41c0 size=3040 exports=11 ===
+  +0x002f5  @0%<
+  +0x00885  ` %$
+  +0x008c1  ` %$
+  +0x00991  HH!)!
+  +0x00b9c   hit sometime 
+  +0x00bac   long time 
+  +0x00bb8   Kill Me 
+=== kidx 739 (objects) DPid=736  offset=0x2b4da0 size=1536 exports=7 ===
+  +0x003c5    %1
+  +0x00471    %$
+=== kidx 740 (objects) DPid=737 737_DRLavaControl offset=0x2b53a0 size=2432 exports=7 ===
+  +0x000fa  (%'9
+  +0x0011a  (%'9
+  +0x00491    %'9
+  +0x0060e  (#'9
+  +0x0090c   bit set %i 
+  +0x0091c   WAVE OBJ %x 
+  +0x0092c   Creating LIGHT %i  x %f z %f 
+=== kidx 741 (objects) DPid=738  offset=0x2b5d20 size=2272 exports=7 ===
+  +0x00838   %i 
+  +0x00840   Time %i 
+  +0x0084c   Time %i 
+  +0x00858   Exceed Max 
+  +0x00868   Killed Them All 
+  +0x0087c   Light Too CLose 
+  +0x00890   Time %i 
+  +0x0089c  Creating The Boyo 
+=== kidx 742 (objects) DPid=739 739_DR_SupGuardClaw offset=0x2b6600 size=4400 exports=7 ===
+  +0x00169    %$
+  +0x0019f  (5i@
+  +0x001f5    %$
+  +0x003d9    %Q
+  +0x00491    %$
+  +0x00511    %&
+  +0x00645    %&
+  +0x008c7  87(@
+  +0x00cde   %QA
+  +0x01040   YAW DIFF 
+  +0x0104c   Edanble FoodType %i 
+  +0x01066   Have Set Bit %i 
+  +0x0107c   FoodType %i 
+  +0x0108c   Edanble FoodType %i 
+  +0x010a4   FoodType %i 
+=== kidx 743 (objects) DPid=740 740_DR_tube offset=0x2b7730 size=1776 exports=7 ===
+  +0x000a5  )P%1K
+  +0x000c2   !'9
+  +0x0021d    %$
+  +0x0049a  (%'9
+  +0x004ba  (%'9
+  +0x006bc   Anim %i 
+=== kidx 744 (objects) DPid=741  offset=0x2b7e20 size=1168 exports=7 ===
+  +0x00468   FIRING COLLAPSING SEQUENCE 
+=== kidx 745 (objects) DPid=742 742_DR_ExplodeDoor offset=0x2b82b0 size=1328 exports=7 ===
+  +0x000ce   %7(@
+=== kidx 746 (objects) DPid=743  offset=0x2b87e0 size=1568 exports=7 ===
+  +0x00279  @ %$
+  +0x002a9  @(%'
+  +0x0039d  lh#)
+  +0x003e1  @ %$
+  +0x00455  @ %$
+  +0x00482  XC%A
+  +0x005f4   firing 
+=== kidx 747 (objects) DPid=744  offset=0x2b8e00 size=1456 exports=8 ===
+  +0x00151  @ %$
+  +0x00584   TIME %i 
+  +0x00590   Chim Freed 
+=== kidx 748 (objects) DPid=745  offset=0x2b93b0 size=3936 exports=8 ===
+  +0x001bd  @ %$
+  +0x005ce  `C%a
+  +0x009d2  0%1l
+  +0x00ed0   Loading in Cage 
+  +0x00ee5   HIT HIT HIT HIT Hit by Booldy Side Kick 
+  +0x00f14   HIT BY PROJ 
+  +0x00f24   Only the One 
+  +0x00f38  ?333?xQ
+  +0x00f40  ?333>
+=== kidx 750 (objects) DPid=747  offset=0x2baae0 size=2384 exports=9 ===
+  +0x000c5   @%1*
+  +0x001e9  QX!U+
+  +0x0075e   %&f
+  +0x00934   Rope id %i 
+=== kidx 751 (objects) DPid=748  offset=0x2bb430 size=1824 exports=7 ===
+  +0x002ca  !$DF
+  +0x0050a  P@%k
+  +0x006a0   bellstopcnt %i 
+  +0x006b4   VOL %f 
+  +0x006c1   HIT HIT HIT HIT Hit by BELL 
+=== kidx 752 (objects) DPid=749  offset=0x2bbb50 size=2848 exports=10 ===
+  +0x009ed  @ %<
+=== kidx 753 (objects) DPid=750  offset=0x2bc670 size=9344 exports=8 ===
+  +0x002b1    %$
+  +0x002ed    %$
+  +0x00361  @ %$
+  +0x00381    %$
+  +0x003a9    %'
+  +0x00476  H$1K
+  +0x006de  0%'9
+  +0x00705    %&
+  +0x00739    %&
+  +0x00849    %'
+  +0x00e7d  @8%&
+  +0x0154a   %'9
+  +0x01660  '9! 
+  +0x0176a  X!(a
+  +0x01a96   %(A
+  +0x01e0e  F:$D
+  +0x01f22   %'9
+  +0x02348  ?fff
+  +0x0245c  ;K)_
+=== kidx 754 (objects) DPid=751  offset=0x2beaf0 size=3072 exports=7 ===
+  +0x00899    %$
+=== kidx 755 (objects) DPid=752  offset=0x2bf6f0 size=1568 exports=7 ===
+  +0x00608  start sfx
+=== kidx 756 (objects) DPid=753  offset=0x2bfd10 size=2528 exports=7 ===
+  +0x00155  ` %$
+  +0x005d1  @ %F
+  +0x0095c   FOUND CURVES 
+  +0x0096c   Speed %i 
+  +0x00978   NOT ON
+  +0x00980   Cradle Activated 
+=== kidx 757 (objects) DPid=754  offset=0x2c06f0 size=1488 exports=7 ===
+  +0x0057c   DOING WARP YEAH HAA 
+  +0x00594   Start Seq
+  +0x005a0   Wait bit %i %i 
+  +0x005b4   DOING WARP YEAH HAA 
+=== kidx 758 (objects) DPid=755  offset=0x2c0cc0 size=1376 exports=7 ===
+  +0x001be  0%'9
+  +0x001de  (%'9
+  +0x00322  (%'9
+  +0x00528   HIT BY THING %i %i 
+  +0x00540   pos %i 
+=== kidx 759 (objects) DPid=756  offset=0x2c1220 size=2784 exports=7 ===
+  +0x002c9   (%'9
+  +0x003a1  C #(
+  +0x00a94   Freeing Physic Obj 
+=== kidx 760 (objects) DPid=757  offset=0x2c1d00 size=1312 exports=7 ===
+  +0x00500   FIRING SEQUENCE MY MAN 
+=== kidx 761 (objects) DPid=758  offset=0x2c2220 size=960 exports=7 ===
+  +0x003a8   COLL TIMER %i 
+=== kidx 762 (objects) DPid=759  offset=0x2c25e0 size=3104 exports=7 ===
+  +0x00372   %'9
+  +0x003a2   %&%
+  +0x003ae  0%'9
+  +0x008fd  ` %F
+  +0x0094d  ` %'9
+  +0x00bd8   CaveIn Speed : %f %i  
+=== kidx 763 (objects) DPid=760  offset=0x2c3200 size=1072 exports=7 ===
+  +0x00408   ScROLL %i 
+=== kidx 764 (objects) DPid=761  offset=0x2c3630 size=1856 exports=7 ===
+  +0x00425  `(%'9
+  +0x00535  `(%'9
+  +0x00675  O(&0
+=== kidx 767 (objects) DPid=764 764_DR_CloudPerch offset=0x2c4750 size=1056 exports=9 ===
+  +0x003f0   Playing Sequence for Calling Dino 
+=== kidx 768 (objects) DPid=765 765_DR_EarthCallPad offset=0x2c4b70 size=928 exports=8 ===
+  +0x0035c   Playing Sequence for Calling Dino 
+  +0x00380   Creating Effect Emitter 
+=== kidx 769 (objects) DPid=766  offset=0x2c4f10 size=1472 exports=7 ===
+  +0x00594  starting sequence %d
+=== kidx 771 (objects) DPid=768 768_SPShop offset=0x2c5ae0 size=3808 exports=21 ===
+  +0x00c6b  E#&(-
+  +0x00c7b  Fdddd
+  +0x00c9b  H#&(-
+  +0x00cbb  J227<
+  +0x00cdb  L#&(-
+  +0x00ceb  M9<AF7
+  +0x00ddb  R-27<(
+  +0x00deb  S#&(+
+  +0x00dfb  T#&(+
+=== kidx 772 (objects) DPid=769  offset=0x2c69c0 size=8576 exports=7 ===
+  +0x001f9    %&
+  +0x002a1  @(%$
+  +0x002dd   (%'
+  +0x00365    %&
+  +0x00389    %&
+  +0x00436  0%$E
+  +0x00917  !(a 
+  +0x00ae2  (%&&
+  +0x00bf6   %'9
+  +0x00c91   (%'9
+  +0x015b5    %$
+  +0x0170d    %%J
+  +0x018c2  (%'9
+  +0x020a4  TREX: state stack overflow
+  +0x020c0  DISAPPEAR
+  +0x020cc  APPEAR
+  +0x020d4  SHOP KEEPER: Cannot find valid attach node
+  +0x02139  fff<
+=== kidx 774 (objects) DPid=771  offset=0x2c9060 size=2384 exports=7 ===
+  +0x00282  (%'9
+  +0x002b5    %$
+  +0x00369    %$
+  +0x00449    %$
+  +0x0054a  (%'9
+  +0x007a1  O(&0
+=== kidx 776 (objects) DPid=773  offset=0x2c9c00 size=1632 exports=7 ===
+  +0x00265    %&
+  +0x00289    %&
+  +0x00332  0%$E
+=== kidx 777 (objects) DPid=774  offset=0x2ca260 size=1232 exports=7 ===
+  +0x0019d    %&
+=== kidx 778 (objects) DPid=775 775_WCTrex offset=0x2ca730 size=2976 exports=7 ===
+  +0x001c9    %$
+  +0x00239   (%<
+  +0x00281    %$
+  +0x00389    %&
+  +0x003a9    %&
+  +0x00452  0%$E
+  +0x00b50  ERROR: end of curve reached
+=== kidx 779 (objects) DPid=776 776_WCbouncycrate offset=0x2cb2d0 size=880 exports=7 ===
+  +0x00362  \)?L
+=== kidx 782 (objects) DPid=779 779_WCLevelControl offset=0x2cb8a0 size=8528 exports=21 ===
+  +0x0071d  FX!%
+  +0x0078e  H!%J
+  +0x00e61  FX!%
+  +0x00ed2  H!%J
+  +0x015a6   %5K
+  +0x01efc  SUNBLOCK: invalid grid position
+  +0x01f20  SUNBLOCK: invalid grid position
+  +0x01f44  SUN GRID PUZZLE: Error cannot find given id
+  +0x01f74  SUN GRID PUZZLE: Error cannot find given id
+  +0x01fa4  MOONBLOCK: invalid grid position
+  +0x01fc8  MOONBLOCK: invalid grid position
+  +0x01fec  MOON GRID PUZZLE: Error cannot find given id
+  +0x0201c  MOON GRID PUZZLE: Error cannot find given id
+=== kidx 784 (objects) DPid=781 781_WCpressureswitch offset=0x2ce020 size=2224 exports=7 ===
+  +0x002ba   %'9
+  +0x006a1  O8!P
+  +0x00860  PRESSURESWITCH.c: modelno out of range romdefno=%d
+  +0x00894   Avitvate %i 
+=== kidx 785 (objects) DPid=782 782_WCpushblock offset=0x2ce8d0 size=4768 exports=7 ===
+  +0x003e9   (%&
+  +0x00445    %&
+  +0x00491    %&
+  +0x004e1    %&
+  +0x00531    %&
+  +0x00585    %&
+  +0x005d1    %&
+  +0x00621    %&
+  +0x00671    %&
+  +0x007ce  B$DE
+  +0x00ac9    %$
+  +0x00b55    %$
+  +0x00b95    %$
+  +0x00d9d  @0%'9
+=== kidx 788 (objects) DPid=785  offset=0x2d05d0 size=2288 exports=7 ===
+  +0x008a4  USEOBJ.c: modelno out of range romdefno=%d
+=== kidx 789 (objects) DPid=786 786_WCTempleLift offset=0x2d0ec0 size=912 exports=7 ===
+  +0x00145  @ %F
+  +0x00219  @ %F
+=== kidx 790 (objects) DPid=787 787_WCApertureSymbol offset=0x2d1250 size=2144 exports=7 ===
+  +0x00844  dpos=%f dt=%f
+=== kidx 792 (objects) DPid=789  offset=0x2d2660 size=1776 exports=7 ===
+  +0x0017a   %0M
+  +0x002da  X$U`
+  +0x0032e   %TP
+  +0x00381  ` %$
+  +0x003cd  ` %$
+  +0x00435  ` %'9
+=== kidx 793 (objects) DPid=790  offset=0x2d2d50 size=2896 exports=7 ===
+  +0x0014a  0%Y`
+  +0x0044e  (%'9
+  +0x0065a  (%'9
+  +0x008c2  T$DX
+=== kidx 794 (objects) DPid=791  offset=0x2d38a0 size=1696 exports=7 ===
+  +0x00462  B$DM
+  +0x004c5   (%'9
+=== kidx 796 (objects) DPid=793 793_BWlog offset=0x2d4340 size=10624 exports=21 ===
+  +0x000ed    %$
+  +0x0033a  (%'9
+  +0x00575  @0%'9
+  +0x0086c  '9  
+  +0x00888  '9$D
+  +0x01052  A$DM
+  +0x0107e  !$DM
+  +0x0118e  B$DF
+  +0x012da  !$DF
+  +0x0177a  (%'9
+  +0x017ae  (%'9
+  +0x02029    %&
+  +0x021ce  B$DE
+  +0x02335  . $0
+  +0x02894  Water too high
+  +0x028a4  [%d]=%f
+  +0x028b4  ?s33=L
+  +0x028ef  R?~v
+  +0x02904  ?333?xQ
+  +0x02920  ?s33?s33?s33:
+=== kidx 797 (objects) DPid=794  offset=0x2d6cc0 size=1168 exports=7 ===
+  +0x00458  Error: BWalphaanim.c : MAX_SPEEDS exceeded!
+=== kidx 799 (objects) DPid=796 796_AMLevelControl offset=0x2d7340 size=768 exports=7 ===
+  +0x000ce  H@%J
+  +0x00156  @@%)
+  +0x002c8  FFM3
+  +0x002d3  fFFM3

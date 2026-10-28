@@ -1,0 +1,14 @@
+#include "PowerPC_EABI_Support/Msl/MSL_C/MSL_Common/alloc.h"
+#include "PowerPC_EABI_Support/Runtime/exception.h"
+#include "PowerPC_EABI_Support/Runtime/New.h"
+
+inline void operator delete(void* arg0) throw() {
+    if (arg0 != 0) {
+        free(arg0);
+    }
+}
+
+namespace std {
+const char* exception::what() const { return "exception"; }
+
+} // namespace std

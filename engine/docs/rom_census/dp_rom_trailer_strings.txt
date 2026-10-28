@@ -1,0 +1,182 @@
+03B1F224 trailer          objects/dragrock/DRcollpieace.c
+03B1F244 trailer          SFX_BigSlabHit1+mathRnd(0,2)
+03B1F264 trailer           Freeing Physic Obj 
+03B1F7C0 trailer           FIRING SEQUENCE MY MAN 
+03B1FC94 trailer           COLL TIMER %i 
+03B208A4 trailer          objects/dragrock/DRcavein.c
+03B208C0 trailer          SFX_DR_CaveinRumble1
+03B208D8 trailer          objects/dragrock/DRcavein.c
+03B208F4 trailer          SFX_DR_CaveinRumble2
+03B2090C trailer           CaveIn Speed : %f %i  
+03B20D54 trailer           ScROLL %i 
+03B21E64 trailer          objects/dragrock/DRhalolight.c
+03B21E84 trailer          halo->sfxnum
+03B22310 trailer           Playing Sequence for Calling Dino 
+03B226EC trailer           Playing Sequence for Calling Dino 
+03B22710 trailer           Creating Effect Emitter 
+03B22CE4 trailer          starting sequence %d
+03B23D78 trailer          objects/shop/SPshop.c
+03B24027 trailer          M9<AF7
+03B24117 trailer          R-27<(
+03B26314 trailer          TREX: state stack overflow
+03B26330 trailer          DISAPPEAR
+03B2633C trailer          APPEAR
+03B26344 trailer          objects/shop/SPshopkeeper.c
+03B26364 trailer          objects/shop/SPshopkeeper.c
+03B26384 trailer          SHOP KEEPER: Cannot find valid attach node
+03B2694C trailer          objects/shop/SPscarab.c
+03B26964 trailer          SFX_scarabpickup
+03B27334 trailer          objects/shop/SPdrape.c
+03B2734C trailer          SFX_SHOP_CurtainRustle
+03B27364 trailer          objects/shop/SPdrape.c
+03B2737C trailer          SFX_SHOP_CurtainOpen
+03B27394 trailer          objects/shop/SPdrape.c
+03B273AC trailer          SFX_SHOP_CurtainOpen
+03B273C4 trailer          objects/shop/SPdrape.c
+03B273DC trailer          SFX_SHOP_CurtainLoop
+03B273F4 trailer          objects/shop/SPdrape.c
+03B2740C trailer          SFX_SHOP_CurtainOpen
+03B27424 trailer          objects/shop/SPdrape.c
+03B2743C trailer          SFX_SHOP_CurtainOpen
+03B28EF8 trailer          ERROR: end of curve reached
+03B2B43C trailer          SUNBLOCK: invalid grid position
+03B2B460 trailer          SUNBLOCK: invalid grid position
+03B2B484 trailer          SUN GRID PUZZLE: Error cannot find given id
+03B2B4B4 trailer          SUN GRID PUZZLE: Error cannot find given id
+03B2B4E4 trailer          MOONBLOCK: invalid grid position
+03B2B508 trailer          MOONBLOCK: invalid grid position
+03B2B52C trailer          MOON GRID PUZZLE: Error cannot find given id
+03B2B55C trailer          MOON GRID PUZZLE: Error cannot find given id
+03B2B58C trailer          objects/wallcity/WClevcontrol.c
+03B2B5AC trailer          MUSIC_WALLEDCITY_CLOCK
+03B2B5C4 trailer          objects/wallcity/WClevcontrol.c
+03B2B5E4 trailer          MUSIC_WALLEDCITY_MAIN
+03B2B5FC trailer          objects/wallcity/WClevcontrol.c
+03B2B61C trailer          MUSIC_WALLEDCITY_MAIN
+03B2B634 trailer          objects/wallcity/WClevcontrol.c
+03B2B654 trailer          MUSIC_WALLEDCITY_CLOCK
+03B2B66C trailer          objects/wallcity/WClevcontrol.c
+03B2B68C trailer          MUSIC_WALLEDCITY_MAIN
+03B2B6A4 trailer          objects/wallcity/WClevcontrol.c
+03B2B6C4 trailer          MUSIC_WALLEDCITY_MAIN
+03B2B6DC trailer          objects/wallcity/WClevcontrol.c
+03B2B6FC trailer          MUSIC_WALLEDCITY_CLOCK
+03B2B714 trailer          objects/wallcity/WClevcontrol.c
+03B2B734 trailer          MUSIC_WALLEDCITY_MAIN
+03B2BED8 trailer          objects/wallcity/WCbeacon.c
+03B2BEF4 trailer          SFX_FIRENORM
+03B2BF04 trailer          objects/wallcity/WCbeacon.c
+03B2BF20 trailer          SFX_FIREROAR
+03B2C8B8 trailer          PRESSURESWITCH.c: modelno out of range romdefno=%d
+03B2C8EC trailer           Avitvate %i 
+03B2C8FC trailer          objects/wallcity/WCpressureswitch.c
+03B2C920 trailer          SFX_SWITCH_PRESS
+03B2C934 trailer          objects/wallcity/WCpressureswitch.c
+03B2C958 trailer          SFX_SWITCH_PRESS
+03B2DC38 trailer          objects/wallcity/WCpushblock.c
+03B2DC58 trailer          SFX_BLOCK_MOVE
+03B2DC68 trailer          objects/wallcity/WCpushblock.c
+03B2DC88 trailer          SFX_BLOCK_LOCK
+03B2DC98 trailer          objects/wallcity/WCpushblock.c
+03B2DCB8 trailer          SFX_BLOCK_HIT
+03B2DCC8 trailer          objects/wallcity/WCpushblock.c
+03B2DCE8 trailer          SFX_BLOCK_HIT
+03B2DCF8 trailer          objects/wallcity/WCpushblock.c
+03B2DD18 trailer          SFX_BLOCK_DISAPPEAR
+03B2DD2C trailer          objects/wallcity/WCpushblock.c
+03B2DD4C trailer          SFX_BLOCK_APPEAR
+03B2F074 trailer          USEOBJ.c: modelno out of range romdefno=%d
+03B2FC60 trailer          dpos=%f dt=%f
+03B30854 trailer          objects/wallcity/WClaser.c
+03B30870 trailer          LASEROFF
+03B3087C trailer          objects/wallcity/WClaser.c
+03B30898 trailer          LASERHUM
+03B308A4 trailer          objects/wallcity/WClaser.c
+03B308C0 trailer          LASERON
+03B308C8 trailer          objects/wallcity/WClaser.c
+03B308E4 trailer          LASERSTRIKE
+03B30FD8 trailer          objects/wallcity/WCdial.c
+03B30FF4 trailer          AMSFX_DEFAULT_INCORRECT_ACTION
+03B31014 trailer          objects/wallcity/WCdial.c
+03B31030 trailer          AMSFX_DEFAULT_CORRECT_ACTION
+03B322C4 trailer          objects/wallcity/WCfloortile.c
+03B322E4 trailer          SFX_WALLCITY_FloorFall
+03B35060 trailer          Water too high
+03B35070 trailer          objects/vehicles/BWlog.c
+03B3508C trailer          SFX_SPLASHOUT
+03B3509C trailer          objects/vehicles/BWlog.c
+03B350B8 trailer          SFX_SPLASHIN
+03B350C8 trailer          [%d]=%f
+03B350D4 trailer          objects/vehicles/BWlog.c
+03B350F0 trailer          SFX_INWATER
+03B350FC trailer          objects/vehicles/BWlog.c
+03B35118 trailer          SFX_DF_LogBump
+03B3512C trailer          ?s33=L
+03B3517C trailer          ?333?xQ
+03B35198 trailer          ?s33?s33?s33:
+03B35768 trailer          Error: BWalphaanim.c : MAX_SPEEDS exceeded!
+03B381DC trailer          """"""""
+03B394FC trailer          44444444
+03B3967C trailer          >>>>>>>>
+03B39B54 trailer          77777777
+03B3AC34 trailer          ++++++++ffffffff
+03B3B0AC trailer          AAAAAAAASSSSSSSS
+03B3B7D4 trailer          Psssssss
+03B3BC5C trailer          77777777
+03B3BEEC trailer          ````````
+03B3BFB4 trailer          dddddddd
+03B3C00C trailer          ||||||||
+03B3C0D4 trailer          cccccc
+03B3C0DB trailer          cJJJJJJ
+03B3C12C trailer          DDDDDDDD
+03B3C4EC trailer          AAAAAAAAvvvvvvvv
+03B3C54C trailer          AAAAAAAA
+03B3C6CC trailer          DDDDDDDD
+03B3C914 trailer          PPPPPPPPUUUUUUUU
+03B3C96C trailer          Z.......
+03B3CA8C trailer          ffffffff>>>>>>>>((((((((
+03B3CAFC trailer          11111111
+03B3CB4C trailer          ffffffff>>>>>>>>((((((((
+03B3CBBC trailer          44444444
+03B3CC0C trailer          oooooooo
+03B3CC1C trailer          ((((((((
+03B3CD94 trailer          PPPPPPPPUUUUUUUU
+03B3CE4C trailer          ffffffff>>>>>>>>ZZZZZZZZ
+03B3CEB4 trailer          SSSSSSSS
+03B3CF14 trailer          DDDDDPDD(((D
+03B3CFD4 trailer          %%%%%%%%
+03B3D034 trailer          ZZZZZZZZAAAAAAAA
+03B3D0F4 trailer          ++++++++AAAAAAAA
+03B3D38C trailer          ffffffffZZZZZZZZ
+03B3D514 trailer          >>>>>>>>
+03B3D634 trailer          >>>>>>>>
+03B3D69C trailer          44444444
+03B3DA48 trailer          @Z=qyyyy
+03B3DDBC trailer          %%%%%%%%
+03B3F13C trailer          MMMMMMMM
+03B3F18C trailer          @@@@@@@@@@@@@@@@@@@@@@@@
+03B3FA8C trailer          ........GGGGGGGG!!!!!!!!
+03B4026C trailer          DDDDDDDD
+03B40454 trailer          PPPPPPPPUUUUUUUU
+03B404B4 trailer          ZZZZZZZZAAAAAAAA
+03B412FC trailer          oooooooo
+03B4140C trailer          JJJJJJJJ++++++++
+03B419BC trailer          ffffffff
+03B41A7C trailer          PPPPPPPP
+03B41B3C trailer          DGGGGGGG
+03B41E3C trailer          ]Gi">]|f
+03B41F4C trailer          PPPPPPPP
+03B429D4 trailer          WWWWWWWWDDDDDDDD
+03B42DEC trailer          cccccccc
+03B431AC trailer          MMMMMMMM
+03B431BC trailer          44444444
+03B43334 trailer          WWWWWWWW++++++++
+03B43394 trailer          ]]]]]]]]ssssssss
+03B433EC trailer          ffffffff44444444
+03B436EC trailer          ;;;;;;;;44444444
+03B43B0C trailer          ZZZZZZZZ
+03B43B1C trailer          >>>>>>>>
+03B43BD4 trailer          ]]]]]]]]
+03B43C34 trailer          ZZZZZZZZ
+03B43F8C trailer          llllllllyyyyyyyy
+03B4410C trailer          ]AAAAAAAZ|||||||

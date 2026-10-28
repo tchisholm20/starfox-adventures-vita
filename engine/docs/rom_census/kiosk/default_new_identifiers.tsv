@@ -1,0 +1,1626 @@
+off	new_ids	string
+0x002eb8c4	renderOpDisplayList			+++++ renderOpDisplayList +++++ ARGS: %x %x
+0x002efab4	renderOpShader			+++++ renderOpShader +++++ ARGS: %x %x
+0x002eb974	renderOpDisplayList			----- renderOpDisplayList -----
+0x002efb40	renderOpShader			----- renderOpShader -----
+0x002eb834	renderOpTexture			----- renderOpTexture -----
+0x0031ada0	Wormhole			And Then I Entered A Wormhole
+0x0031aa94	Careful,Everywhere,Skeetas			Be Careful..Skeetas Everywhere !
+0x0031acb8	Remember			Do You Remember How We Got Here?
+0x0031abf8	Already,Forgiven			He Has Already Forgiven You
+0x0031ab9c	Understands			He Understands Why You Left Him
+0x0031aa50	Strange			I Can Feel Something Strange !
+0x0031ab54	Couldn,Father			I Couldn't Face Being A Father
+0x0031ae84	Going			I'm Not Going To Last Much Longer
+0x0031ac9c	dying			I'm dying..I need food
+0x0031abd4	Apologise			I've Yet To See Him To Apologise
+0x0031ad70	Begging			King EarthWalker, Begging Us To Help Him.
+0x0031aad4	Kills			Light Kills Them
+0x0031acdc	Remember			Of Course I Remember...
+0x0031ae38	Temples			One Of The Earthwalker Temples
+0x0031aa74	Randorn			Randorn...  Are You There ??
+0x0031ad20	Strange			Strange Room In The Lost City..
+0x0031aec4	Similiar			There Must Be A Similiar Room Here
+0x0031ad44	Uncovered			There We Uncovered A Message From The
+0x0031ac44	Randorn,happening			What's happening to you Randorn?
+0x0031ab28	Brother,Myself,blamed			When His Brother Died I blamed Myself
+0x0031ac18	Reunited,Shall			When This Is Over You Shall Be Reunited!
+0x0030b234	Fault,Windows			Windows Protection Fault
+0x0031ae0c	Beneath			Yes, We Ended Up In A Chamber Beneath
+0x0031ade8	Followed			You Followed Later With Sabre
+0x002eb94c	displayListSize			displayList=%x displayListSize=%d
+0x002eb728	renderGCModel		+++++ renderGCModel +++++ ARGS: %x %x
+0x0030ff54	NoPass		NoPass Vine
+0x0030ff64	Burns		The Player Burns it away!
+0x0030ff28	Guesses		The Player Guesses that a Seed goes here!
+0x00303ea0	corrupt		The message queue for the meter thread has become corrupt
+0x00303edc	Would,someone		Would someone fix this please.
+0x002f4278	mathRnd		action.life = %d + mathRnd(%d, %d);
+0x002f41c4	mathRnd		action.ox = %fF * (float)mathRnd(%d, %d);
+0x002f41f0	mathRnd		action.oy = %fF * (float)mathRnd(%d, %d);
+0x002f421c	mathRnd		action.oz = %fF * (float)mathRnd(%d, %d);
+0x002f4248	mathRnd		action.scale = %fF * (float)mathRnd(%d, %d);
+0x002f42a0	texno		action.texno = %d;
+0x002f413e	mathRnd		action.vx = %fF * (float)mathRnd(%d, %d);
+0x002f416c	mathRnd		action.vy = %fF * (float)mathRnd(%d, %d);
+0x002f4198	mathRnd		action.vz = %fF * (float)mathRnd(%d, %d);
+0x002fef1f	camcontrol1		camcontrol1
+0x002e88a0	numColours		numColours=%d
+0x002e88e8	numDisplayLists		numDisplayLists=%d
+0x002e88d8	numJoints		numJoints=%d
+0x002e8890	numNormals		numNormals=%d
+0x002e887c	numPositions		numPositions=%d
+0x002e88b0	numTexCoords		numTexCoords=%d
+0x002e88c4	numTextures		numTextures=%d
+0x002e8918	numVertexAnims		numVertexAnims=%d
+0x002e8868	renderStream		renderStream=%x
+0x002e8900	renderStreamSize		renderStreamSize=%d
+0x002e883c	vertexColours		vertexColours=%x
+0x002e8828	vertexNormals		vertexNormals=%x
+0x002e8984	vertexNormals		vertexNormals[%d]=(%d,%d,%d)
+0x002e8810	vertexPositions		vertexPositions=%x
+0x002e8948	vertexPositions		vertexPositions[%d]=(%d,%d,%d)
+0x002e8850	vertexTexcoords		vertexTexcoords=%x
+0x0030caea	L1CMiss	  L1CMiss %d,	CPU %f%
+0x0031eb94	polys	 Add polys %i 
+0x0031eb68	vertno	 Add vtx %i vertno %i  
+0x00312b5c	Couldn	 Couldn't find romdef %i 
+0x0031fb50	Creating	 Creating Diamond 
+0x003213bc	Creating	 Creating Effect Emitter 
+0x0030f858	Creating	 Creating Light 
+0x00312508	Creating	 Creating Object 
+0x0031ee80	Creating	 Creating Step Number %i 
+0x00303fb8	Creatiung	 Creatiung Di Display List 
+0x00320fd0	DOING	 DOING WARP YEAH HAA 
+0x003102dc	DRAWING,THING	 DRAWING THE THING 
+0x003206fc	DTIME	 DTIME %i 
+0x002ea05c	Sidekicks	 ERROR : ERROR : Error in Get Sidekicks Loaded  
+0x002ea02c	Players	 ERROR : Error in Get Main More Players Loaded 
+0x002eff24	Partitioned	 ERROR : New Size %i of Partitioned Romlist Not Equal to old size %i
+0x002f04b0	Romlistsize	 ERROR : Romlistsize has exceeded Maximum 
+0x00320978	Edanble,FoodType	 Edanble FoodType %i 
+0x0031f984	Picked	 Egg Has Been Picked Up By Someone Else
+0x0031e23c	Stolen	 Egg Stolen 
+0x0031e264	Trown	 Egg Trown Away 
+0x0031f660	main_fdt	 Error : main_fdt is zero 
+0x00319e10	FInished	 FInished Is SEt for Some Reason 
+0x00311a30	FREEING	 FREEING GUARDIAN 
+0x0031e9ec	FinalSetPosList	 FinalSetPosList for ident %i 
+0x0031f018	Fireing	 Fireing 
+0x0030b8f8	Fireing	 Fireing Object Mind Read Bit %i 
+0x0031f614	Fireing	 Fireing Projectile at Player 
+0x003209a8	FoodType	 FoodType %i 
+0x003200b0	GETOFF,WOMAN	 GETOFF LET A WOMAN 
+0x00320098	GETON	 GETON GETON GETON 
+0x00312be8	GOODBYE	 GOODBYE 
+0x00324318	HELLO	 HELLO 
+0x003206ec	HHITS	 HHITS %i %i 
+0x0030f911	Booldy	 HIT HIT HIT HIT Hit by Booldy Side Kick 
+0x0031ec90	Dropped	 Have Dropped off All the eggs 
+0x003242e0	Hello	 Hello 
+0x00312354	Friend,Hello	 Hello My Friend 
+0x00312e3c	Hieght	 Hieght From Ground %i 
+0x003201b2	ONVEHICLE	 Hit By ONVEHICLE HIT 
+0x00311eb4	Friend	 Hit By Projectile My Friend
+0x003122e0	ELEVATOR	 In ELEVATOR
+0x003119f4	Initalise	 Initalise Guardian State %i 
+0x00312b38	ESCAPPED	 KYTE ESCAPPED 
+0x00312b24	TRAPPED	 KYTE TRAPPED 
+0x0031df7c	KeyPressy	 KeyPressy 
+0x00302268	Killing	 Killing Bar 
+0x0031f060	Bullet,Killing	 Killing Bullet 
+0x0031f968	Given	 LOCK is Not of Given Type
+0x0031df58	Linking	 Linking TO Object 
+0x002ff8a9	FREEDED	 MOVELIB FREEDED 
+0x0031df40	Drowned	 No Bits Drowned %i 
+0x0030ae28	Viewer	 No Memory for Perf Viewer 
+0x0031ea20	pieaces	 No pieaces %i Not Equal Amt %i 
+0x002f0364	romdefs	 OVer FLOW FLOW in RD saves for moving romdefs 
+0x00311a8c	OVeride	 OVeride Set 
+0x00320058	Objlist	 Objlist is NULL
+0x0030aa9c	PACKET	 PACKET SIZE %i 
+0x002ffa35	FREEDED,PROJLIB	 PROJLIB FREEDED 
+0x002ffa21	PROJLIB	 PROJLIB LOADED 
+0x0031272c	Picked	 Picked Up Treasure 
+0x00312b0c	RESETING	 RESETING GROUP LOAD 
+0x003126c0	CREATED	 ROBOT  ROBOT  CREATED 
+0x002f03d8	Removed	 Removed Restored Num %i 
+0x0031ed88	Removing	 Removing Cylinder 
+0x0031ee9c	Removing	 Removing Step %i 
+0x002ea658	Result1	 Result1 
+0x002ea678	Result2	 Result2 
+0x0031e99c	Romdef	 Romdef %i 
+0x0031deec	Mummy	 Running Mummy 
+0x0031f924	RESETING	 STACK EMPTY SO RESETING 
+0x00315e60	FREELEVEL,STARTING	 STARTING BOSS FREELEVEL 
+0x00315edc	LOADLEVEL,STARTING	 STARTING LOADLEVEL 
+0x002f03b0	Romdef	 Saving Romdef for for %i tab no %i 
+0x003211c0	ScROLL	 ScROLL %i 
+0x0030f880	Sending	 Sending FireFly 
+0x0031f7d8	Sending	 Sending Off to pick up EGG %x 
+0x0031fa64	Sending,backward	 Sending it backward %i 
+0x0031defc	OPERATION	 Set OPERATION BIT %i  
+0x003125a4	ObHit,Romdef	 Side %x ObHit %x Romdef %i
+0x00312460	Exploder	 Simple Exploder 
+0x00312744	Sorry	 Sorry You Have Failed 
+0x00312484	Sorry	 Sorry You have no displacement for the force 
+0x0031e198	Stolen	 Stolen 
+0x00310228	TFRAME	 TFRAME ANIMATOR: no speed give 
+0x00311d40	Birdy	 The Birdy End is Nigh 
+0x00312854	Freeded	 Treasure Freeded
+0x0031dfa0	Trying	 Trying Again 
+0x003206d8	Turret	 Turret Timer %i 
+0x002ed874	Finding	 VOXMAPS : Overflow in Route Points for Net Route Finding 
+0x00311b24	MGetAngle	 Values MGetAngle %i Object Yaw  %i 
+0x00312f30	maximumm	 WARNING 3D Tex WALL: exceeded maximumm no of vertices 
+0x002f6f30	Memort	 WARNING : Not Enough Memort for Restart Point 
+0x002ea4e8	hitlist	 WARNING : OBJHITS hitlist has overflowed 
+0x003108b5	TDtexture,horiztonal	 WARNING : TDtexture cannot find a horiztonal or vertical vector 
+0x00302238	alreadby,cmdmenu	 WARNING : cmdmenu Energy bar alreadby freed 
+0x00302278	cmdmenu	 WARNING : cmdmenu No energy bar present 
+0x002e803c	alreadly	 WARNING : temp dll no %i is alreadly created 
+0x002e806c	alreadly	 WARNING : temp dll no %i is alreadly removed 
+0x0031f67c	AVOIDANCE,Intersection	 WARNING AVOIDANCE FAILED: Obj Intersection 
+0x002eadb0	Contrl	 WARNING: Expr Contrl Flag does not exist 
+0x00316248	Partner	 WARNING: Rope Could Not Find Partner
+0x003124b4	DefNumber,Exploder	 Warning : DefNumber Lists in Exploder DLL is not set up correctly for this object
+0x002ea468	HitModel,Polyhits	 Warning HitModel %x [%d] has no Polyhits
+0x00312274	Defno	 ob Obj %x  Defno %i 
+0x00311e9d	Removing	 y| Removing Guard 
+0x00312dcd	GhCFwalltorch	!GhCFwalltorch.c
+0x00313b3d	XTDIMlavaball	"XTDIMlavaball.c
+0x00313b8d	dimlavagen	"^ dimlavagen:action
+0x002ec648	DVDLOAD,piRomLoadAddr	######## DVDLOAD piRomLoadAddr() ----- file=%s  #################
+0x002ec960	DVDLOAD,piRomLoadLevel	######## DVDLOAD piRomLoadLevel() ---- file=%s  #################
+0x002ecca4	DVDLOAD,piRomLoadLevel,piTable	######## DVDLOAD piRomLoadLevel() ---- file=%s  piTable 0x%x #################
+0x002ecd44	DVDLOAD,piRomLoadLevel	######## DVDLOAD piRomLoadLevel() ----- file=%s  #################
+0x002ec83c	DVDLOAD,piRomLoadSectionL	######## DVDLOAD piRomLoadSectionL() ----- file=%s  #################
+0x00316095	pDIMbossspit	#:pDIMbossspit.c
+0x0030cb87	BalloonBaddieDLL	#BalloonBaddieDLL
+0x003161ad	OHtryint	#OHtryint to deactivate the river flow
+0x002e7fa0	CHANGEMAP	$$$$$  CHANGEMAP 
+0x00316db5	xshrine	$]xshrine.c
+0x00316e6d	gxcreator	$gxcreator.c
+0x0031630e	cDFcradle	%cDFcradle.c
+0x00320f42	cDRcradle	%cDRcradle.c
+0x002da630	NL_ONE,attenselect,diffuseatten,sCNTRL_REG	%sCNTRL_REG.attenselect == SPECULAR but %sCNTRL_REG.diffuseatten != NL_ONE
+0x002f0078	SMAPNO	&&&&&&&&&&&&&&&&&&&& SMAPNO %d &&&&&&&&&&&&&
+0x002f001c	SMAPNO	&&&&&RESET&&&&&&& SMAPNO %d &&&&&&&&&&&&&
+0x002f0048	SMAPNO	&&&&&RESET&&&&&&&&&& SMAPNO %d &&&&&&&&&&&&&
+0x00319035	adscalesanim	&adscalesanim.c
+0x003190ed	rLbrokecannon	&rLbrokecannon.c
+0x002d845c	GXInitFogAdjTable	'GXInitFogAdjTable' is not allowed between GXBegin/GXEnd
+0x002d6b88	GXInitSpecularHA	'GXInitSpecularHA' is not allowed between GXBegin/GXEnd
+0x002d5938	GXPokeBlendUpdate	'GXPokeBlendUpdate' is not allowed between GXBegin/GXEnd
+0x002d68c8	GXReadBoundingBox	'GXReadBoundingBox' is not allowed between GXBegin/GXEnd
+0x0030d5c0	BADDIE_HITTAB_SIZE,damagetab	(sizeof(damagetab)/sizeof(s8)) == BADDIE_HITTAB_SIZE
+0x0030d57c	BADDIE_HITTAB_SIZE	(sizeof(hittab)/sizeof(int)) == BADDIE_HITTAB_SIZE
+0x0030af98	diPrintf	*** diPrintf Error *** ---> Out of string space. (Print less text!)
+0x002e84f0	mmAllocAtAddr	*** mmAllocAtAddr: '%s' size = 0 ***
+0x002e59e4	INSERT	**** HEAP INSERT ****
+0x002e8a20	LISTS	***** DISPLAY LISTS:
+0x002e87e0	STRUCTURE	***** STRUCTURE:
+0x002e89a4	COLOURS	***** VERTEX COLOURS:
+0x002e89bc	TEXCOORDS	***** VERTEX TEXCOORDS:
+0x0031fbd5	RECIEVED	*aH RECIEVED STOP MESSAGE 
+0x002e78a0	lightControlGetLightsNearObject	+++++ lightControlGetLightsNearObject %d %d +++++
+0x002eb614	objprintDrawGCChildModel	+++++ objprintDrawGCChildModel +++++ ARGS: %x %x
+0x002eb560	objprintDrawGCModel	+++++ objprintDrawGCModel +++++ ARGS: %x %x
+0x002e73c6	tFONTS	+tFONTS - can't add a string to window %d, out of range./n
+0x00320ca5	ydDRvines	+ydDRvines.c
+0x003131b7	MMP_asteroid	,MMP_asteroid.c
+0x00321cc5	f0WCfloortile	,f0WCfloortile.c
+0x002e7948	lightControlGetLightsNearObject	----- lightControlGetLightsNearObject -----
+0x002eb6a0	objprintDrawGCChildModel	----- objprintDrawGCChildModel -----
+0x002eb5f0	objprintDrawGCModel	----- objprintDrawGCModel -----
+0x002eb7a0	renderGCModel	----- renderGCModel -----
+0x0031f864	Going	-> Going TO Throw 
+0x003056f0	savegames	../../work/db/savegames/
+0x002e5420	MusicActions	/audio/data/MusicActions.data
+0x002f3af1	jDEXF2_NONE	/jDEXF2_NONE
+0x002eb704	modelno	1: objprint.c: modelno overflow
+0x002eb414	modelno	2: objprint.c: modelno overflow
+0x002eb438	modelno	3: objprint.c: modelno overflow
+0x0031fa47	AAAgh	4 Tricky Has Hit Me AAAgh 
+0x002eb478	modelno	4: objprint.c: modelno overflow
+0x002f12b7	MAX_DECISION	4MAX_DECISION reached
+0x003127ab	KILLED	4ROBOT KILLED 
+0x0031342f	trying	4trying to kill fire crystal light
+0x0030997b	objed	8objed:romdef
+0x00313593	trying	8trying to start next seq
+0x002ec171	mXanimtest	9mXanimtest
+0x00302065	slcommandmenu	9slcommandmenu.c
+0x0030a22d	xLJump	9xLJump Drop
+0x0030a8d1	z4Distance	9z4Distance = %d
+0x0030ae05	zpPERF_VIEWER	9zpPERF_VIEWER
+0x002ec7d8	DCmiss,L1misscyc	<Cyc %d | Instr %d | L1misscyc %d | DCmiss %d>
+0x00316790	mmshrineshrine,objControl	<objControl> mmshrineshrine.c WARNING switch statement hit default
+0x0032d56c	fffDz	?&ff?fffDz
+0x0030f59e	dduster	?dduster.c
+0x00315847	DIMlevcontrol	@DIMlevcontrol.c
+0x0030fef7	genprops	@genprops.c
+0x00309918	ACCURATE	ACCURATE
+0x002f046c	ROMDEF	ADD ROMDEF: no map!!!
+0x002ec618	ROMLOAD	ADDR ROMLOAD file=%s
+0x002d419c	OBSOLETED	AISetStreamSampleRate(): OBSOLETED. Only 48KHz streaming from disk is supported!
+0x0030539c	AIgrading	AIgrading
+0x002ecbc0	DB_ANIM	ALL BASES FULL DB_ANIM
+0x002ecc08	DB_ANIMTAB	ALL BASES FULL DB_ANIMTAB
+0x002eca00	DB_BLOCKS	ALL BASES FULL DB_BLOCKS
+0x002eca64	DB_BLOCKSTAB	ALL BASES FULL DB_BLOCKSTAB
+0x002ecb18	DB_MODELS	ALL BASES FULL DB_MODELS
+0x002ecb6c	DB_MODTAB	ALL BASES FULL DB_MODTAB
+0x002ecdec	DB_TEXTAB	ALL BASES FULL DB_TEXTAB
+0x002ecd04	DB_TEXTAB2	ALL BASES FULL DB_TEXTAB2
+0x002ecd9c	DB_TEXTURES	ALL BASES FULL DB_TEXTURES
+0x002ecc5c	DB_TEXTURES2	ALL BASES FULL DB_TEXTURES2
+0x00320900	AMBIENT_LAVAPIT	AMBIENT_LAVAPIT
+0x00311c44	AMB_WINDLIFT	AMB_WINDLIFT
+0x00311c54	AMB_WINDLIFTOUT	AMB_WINDLIFTOUT
+0x0031310c	AMMUSICACTION_MMP_Ambience	AMMUSICACTION_MMP_Ambience
+0x00313128	AMMUSICACTION_MMP_AmbienceKill	AMMUSICACTION_MMP_AmbienceKill
+0x0031855c	AMMUSICACTION_SC_AmbienceDay	AMMUSICACTION_SC_AmbienceDay
+0x0031851c	AMMUSICACTION_SC_AmbienceKill	AMMUSICACTION_SC_AmbienceKill
+0x0031853c	AMMUSICACTION_SC_AmbienceNight	AMMUSICACTION_SC_AmbienceNight
+0x0031857c	AMMUSICACTION_SC_ForcedSwap	AMMUSICACTION_SC_ForcedSwap
+0x003184dc	AMMUSICACTION_SC_MainTuneDay	AMMUSICACTION_SC_MainTuneDay
+0x003184bc	AMMUSICACTION_SC_MainTuneNight	AMMUSICACTION_SC_MainTuneNight
+0x003184fc	AMMUSICACTION_SC_MaintuneKill	AMMUSICACTION_SC_MaintuneKill
+0x00318828	AMMUSICACTION_SC_TotemFade	AMMUSICACTION_SC_TotemFade
+0x003202fc	AMMUSICACTION_TREX_MainTune	AMMUSICACTION_TREX_MainTune
+0x00320318	AMMUSICACTION_TREX_MainTuneKill	AMMUSICACTION_TREX_MainTuneKill
+0x002f0efc	startframe	ANIM: move=%d startframe=%d
+0x002f14fc	noanims	ANIM: noanims overflow
+0x002e9974	ANIMBANK	ANIMBANK overflow
+0x002f10a0	ANIMCOUNT1	ANIMCOUNT1 SET: val=%d
+0x002f10b8	ANIMCOUNT2	ANIMCOUNT2 SET: val=%d
+0x002cd210	ANIMHOLD	ANIMHOLD
+0x002e81f4	ANIMSEQ_COL	ANIMSEQ_COL
+0x002e81d0	ANIMS_COL	ANIMS_COL
+0x0032453c	APPEAR	APPEAR
+0x002d4328	ILLEGAL,SDRAM	ARInit(): ILLEGAL SDRAM REFRESH VALUE
+0x002d43c8	anymore	ARSetSize(): I don't do anything anymore!
+0x00322600	ARWarwingattachment	ARWarwingattachment.c
+0x002e81dc	AUDIO_COL	AUDIO_COL
+0x002d919c	Accumulation	Accumulation is on in BUMP stage 0.
+0x003083b0	Aggression	Aggression
+0x0030ac68	AntiAliasing	AntiAliasing   :
+0x0030ae79	Assertion	Assertion failed: '%s' in file %s, line %d
+0x002f6afc	Assigning	Assigning curve node link between %d and %d to walkgroup %d
+0x0030d27c	SnowWorm	BADDIE:SnowWorm Unknown message [%d]
+0x002cd0d0	BEENHIT	BEENHIT
+0x002cd170	BEHINDME	BEHINDME
+0x002e5a58	BITSTREAM	BITSTREAM: failed read
+0x002ecabc	BLOCKSTAB	BLOCKSTAB
+0x0031fe78	BOSSdrakor_laser	BOSSdrakor_laser.c
+0x002edb44	tevStageID,texCoordID,texMapID,texMatrixID	BUMP: tevStageID=%d texMatrixID=%d texMapID=%d texCoordID=%d
+0x003245bc	BWlog	BWlog.c
+0x0030a56c	Backwards	Backwards
+0x002ff7bc	BaddieControlDLL	BaddieControlDLL
+0x00308720	Baddies	Baddies
+0x00323dc0	BlkNo	BlkNo 
+0x00321e38	Recharging	Bomb: Recharging
+0x00323180	BossDIM	BossDIM
+0x0030a254	Boundary	Boundary
+0x0030abb8	BssStart	BssStart		= %x	Size = %x
+0x002da268	MATRIXINDEX0_REG	Bumpmap textures are defined, which requires the binormals and tangents to be transformed by a normal matrix, but MATRIXINDEX0_REG.geom is set to an invalid value (%d)
+0x002daa94	MATRIXINDEX0_REG	Bumpmap textures are defined, which requires the normal matrix values pointed to by MATRIXINDEX0_REG.geom (%d) to be loaded, however...
+0x003232a4	CAM_COL	CAM_COL
+0x003244f0	CASE3	CASE3
+0x003244f8	CASE4	CASE4
+0x00324500	CASE5	CASE5
+0x00324508	CASE8	CASE8
+0x00304328	CClaw_Shrine	CClaw_Shrine
+0x00312bf4	CFTreasSharpy	CFTreasSharpy.c
+0x00312244	CFbarrel	CFbarrel.c
+0x00312d78	CFchuckobj	CFchuckobj.c
+0x00312474	CFexploder	CFexploder.c
+0x00312590	CFforcecontrol	CFforcecontrol.c
+0x00312b9c	CFleveControl	CFleveControl.c
+0x0031275c	CFtreasRobo	CFtreasRobo.c
+0x002f7174	CINEMA	CINEMA OUT OF RANGE
+0x002dc748	CMUUA	CMUUA 
+0x002e818c	CODE_COL	CODE_COL
+0x002e4f5c	CR_FTFOT	CR_FTFOT
+0x002e4f68	CR_GTKBD	CR_GTKBD
+0x002e4f74	CR_HTNTT	CR_HTNTT
+0x002e4f98	CR_MCWIW	CR_MCWIW
+0x002e4f80	CR_SNORE	CR_SNORE
+0x002e4f8c	CR_TGWTK	CR_TGWTK
+0x00323190	CR_TMH	CR_TMH
+0x003231a0	CR_WTG	CR_WTG
+0x00323188	CR_YDTB	CR_YDTB
+0x00320270	CRdropbombs	CRdropbombs.c
+0x00320210	CRfueltank	CRfueltank.c
+0x00319e00	CRsnowbike	CRsnowbike.c
+0x00320088	CRsnowclaw	CRsnowclaw.c
+0x002cd0bc	CURVEFOLLOW	CURVEFOLLOW
+0x002ff9a0	CURVEPOINT	CURVEPOINT :Error Could not find node 
+0x00305f58	CURVETYPE	CURVETYPE %s	LINKS %d %d %d %d
+0x003099c0	Cactus,baddy	Cactus baddy
+0x002e56ec	Worldmtx	Cam: Worldmtx overflow!!!
+0x002f6480	sentence	Can't have more than one new line in a subtitle sentence, not enough space on screen
+0x002f0338	Cannot	Cannot move object with an ident of -1!!!
+0x002e76cd	UNDEFINED	Char '%c'   :: UNDEFINED
+0x0030414c	Characters	Characters
+0x00321eac	Click	Click Timers: left=%f right=%f
+0x00304120	Collectables	Collectables
+0x002dabd4	MATRIXINDEX0_REG	Color %d lighting requires the normal matrix values pointed to by MATRIXINDEX0_REG.geom (%d) to be loaded, however...
+0x002da6bc	MATRIXINDEX0_REG	Color %d lighting requires the normal to be transformed by a normal matrix, but MATRIXINDEX0_REG.geom is set to an invalid value (%d)
+0x00304114	Container	Container
+0x002f3d3c	creation	Control on the creation frame
+0x002efecc	Correcting	Correcting Size: %d(%f,%f,%f) (%d->%d)
+0x0030c0dc	Couldn,distract	Couldn't find a distract node
+0x003083dc	Courage	Courage
+0x002dd750	Crossfade	Crossfade information pointer is NULL.
+0x002dfa78	originally	Current ARAM address does not match originally allocated one
+0x0030dfc8	Cleanup	Curve Node %d, Cleanup code: link is linked to a node with four links already!
+0x0030e018	Cleanup,making	Curve Node %d, Cleanup code: making a link two ways
+0x0031efef	KILLBOT	D KILLBOT State %i Amt %i 
+0x002e98d0	DANGER,createModelInstance,totalsize	DANGER: createModelInstance: Actual size exceeded totalsize!!!
+0x0031f00c	DBKillbot	DBKillbot.c
+0x0030430c	DBay_Shrine	DBay_Shrine
+0x0031f108	DBbonedust	DBbonedust.c
+0x0031ef38	DBbullet	DBbullet.c
+0x0031f0b0	DBdustgeezer	DBdustgeezer.c
+0x0031f158	DBkillboulder	DBkillboulder.c
+0x0031ede4	DBlightgo	DBlightgo.c
+0x0031e044	DBpointmum	DBpointmum.c
+0x0031efa8	DBprotection	DBprotection.c
+0x0031dd00	DBrockfall	DBrockfall.c
+0x0031eee8	DBshooter	DBshooter.c
+0x0031e118	DBspike	DBspike.c
+0x0031ec18	DBwaterflow	DBwaterflow.c
+0x002f1008	DECISION,jumplabel	DECISION: jumplabel=%d cond=%d
+0x003042cc	DFalls_Shrine	DFalls_Shrine
+0x003163a0	DFbarrel	DFbarrel.c
+0x003163e8	DFbarrelanim	DFbarrelanim.c
+0x003165d8	DFlantern	DFlantern.c
+0x0032458c	DFlog	DFlog.c
+0x003164d8	DFmole	DFmole.c
+0x00304368	DForce_Point	DForce_Point
+0x00316358	DFpulley	DFpulley.c
+0x00316520	DFwhirlpool	DFwhirlpool.c
+0x003158d8	DIM2conveyor	DIM2conveyor.c
+0x00315950	DIM2flameburst	DIM2flameburst.c
+0x00315a28	DIM2generator	DIM2generator: Control point array overflow
+0x00315a08	DIM2generator	DIM2generator: Null node!!!
+0x00315bd4	Cannont,DIM2icefloe	DIM2icefloe: Cannont find generator
+0x00315ba8	DIM2icefloe,deleted	DIM2icefloe: Generator has been deleted
+0x00315c38	DIM2icicle	DIM2icicle.c
+0x00315b60	DIM2lift	DIM2lift.c
+0x00315a58	Cannot,DIM2pathgenerator	DIM2pathgenerator: Cannot find start node
+0x00315b18	DIM2projrock	DIM2projrock.c
+0x003159c0	DIM2snowball	DIM2snowball.c
+0x003159a0	DIM2snowball	DIM2snowball: Lost generator
+0x003155dc	DIMboulder	DIMboulder.c
+0x00315628	DIMcannon	DIMcannon.c
+0x00315670	DIMlavasmash	DIMlavasmash.c
+0x00313be8	DIMlogfire	DIMlogfire.c
+0x003154bc	DIMsnowball	DIMsnowball.c
+0x00315790	DIMwooddoor	DIMwooddoor.c
+0x00319594	DISAPPEAR	DISAPPEAR
+0x002cd15c	DISTRACTED	DISTRACTED
+0x0030c154	DISTRACT_SPOTDISTRACTING	DISTRACT_SPOTDISTRACTING (1)
+0x0030c1ac	DISTRACT_SPOTDISTRACTING	DISTRACT_SPOTDISTRACTING (2)
+0x0030c11c	DISTRACT_SPOTFINDING	DISTRACT_SPOTFINDING (1)
+0x0030c190	DISTRACT_SPOTFINDING	DISTRACT_SPOTFINDING (2)
+0x0030c174	DISTRACT_SPOTRETURING	DISTRACT_SPOTRETURING (1)
+0x0030c138	DISTRACT_SPOTTOSPOT	DISTRACT_SPOTTOSPOT (1)
+0x002e6750	entrypoint	DLLS: warning DLL entrypoint mismatch, dll %d (%d/%d).
+0x00323284	DLL_COL	DLL_COL
+0x002cd0e4	DONEOVERRIDE	DONEOVERRIDE
+0x003208a8	DRCloudball	DRCloudball.c
+0x00321418	DRbarrelplace	DRbarrelplace.c
+0x00320e48	DRbells	DRbells.c
+0x00320850	DRbullet	DRbullet.c
+0x00320b58	DRcagecontrol	DRcagecontrol.c
+0x00321160	DRcavein	DRcavein.c
+0x00320c0c	DRcloudcage	DRcloudcage.c
+0x00319f48	DRcloudrunner	DRcloudrunner.c
+0x00320a20	DRcreator	DRcreator.c
+0x00319b90	DRearthwalk	DRearthwalk.c
+0x00320ac0	DRexplodeDoor	DRexplodeDoor.c
+0x00320b08	DRgeezer	DRgeezer.c
+0x003206c8	DRlaserturret	DRlaserturret.c
+0x003208f0	DRlavacontrol	DRlavacontrol.c
+0x00321040	DRprojswitch	DRprojswitch.c
+0x00320f88	DRpulley	DRpulley.c
+0x00320d00	DRshackle	DRshackle.c
+0x003209b8	DRsimplehuman	DRsimplehuman.c
+0x00320a7c	DRyoutube	DRyoutube.c
+0x002d2944	DVDOpendir	DVDOpendir(): directory '%s' is not found under %s  
+0x002d297c	DVDOpendir	DVDOpendir(): file '%s' is specified as a directory name  
+0x002d2908	DVDOpendir	DVDOpendir(): null pointer is specified to directory name  
+0x0030ab9c	DataStart	DataStart	= %x	Size = %x
+0x00309a4c	Defend	Defend spawn point
+0x00309a60	Defend	Defend squadron point
+0x00309f70	LineHits	Delete-LineHits
+0x003048e0	Diagnostics	Diagnostics
+0x00304bac	DinoVista	DinoVista:
+0x00309c24	Disactivating	Disactivating
+0x0030b1d4	linehit	Do you wish to save your linehit data?
+0x0030b168	trackmap	Do you wish to save your trackmap data?
+0x002d3ad0	Doesn	Doesn't match TV format: TV format in bootrom is %d but TV format specified in the game is %d (0:NTSC, 1:PAL, 2:MPAL)
+0x00321e98	Click	Double Click Right
+0x002efd18	DrawGroups	DrawGroups overflow
+0x00323ed0	Drop2	Drop2
+0x0030998c	devil	Dust devil
+0x003042ec	ECaves_Shrine	ECaves_Shrine
+0x002e5074	ActiveSounds,GetFreeActiveSound	ERROR in GetFreeActiveSound(), ActiveSounds[] is full!
+0x002ece54	piRomLoadLevel	ERROR in piRomLoadLevel file %d
+0x002f4398	EXF_NOOWNER	ERROR partfx EXF_NOOWNER & no attrib %d
+0x002e5378	SequenceID,audioPlayStream	ERROR: audio.c: audioPlayStream(%d), SequenceID not found!
+0x002e504c	wouldn	ERROR:FileName wouldn't fit in string
+0x002e5230	MAX_PLAYING_SONGS,PlayingSongs	ERROR:PlayingSongs[] is full!  MAX_PLAYING_SONGS = 8
+0x002efe58	checkMap	ERROR:track.c/checkMap() missing node size MAX=%d i=%d
+0x002efe90	checkMap	ERROR:track.c/checkMap() size not word aligned for %d, %d
+0x002f2a5c	ERRROR	ERRROR 1 %d
+0x002f2a6c	ERRROR	ERRROR 2 %d  a1 %f a2 %f
+0x002f2a4c	ERRROR	ERRROR 3 %d 
+0x002f3bc8	EXF2_ACCELERATE1	EXF2_ACCELERATE1
+0x002f3bdc	EXF2_ACCELERATE2	EXF2_ACCELERATE2
+0x002f3bf0	EXF2_ACCELERATE3	EXF2_ACCELERATE3
+0x002f3c04	EXF2_ACCELERATE4	EXF2_ACCELERATE4
+0x002f3c3c	EXF2_ALPHADEC2	EXF2_ALPHADEC2
+0x002f3b58	EXF2_COLORBLEND	EXF2_COLORBLEND
+0x002f3b10	EXF2_CONTROLATCREATE	EXF2_CONTROLATCREATE
+0x002f3c60	EXF2_DAYLIGHT	EXF2_DAYLIGHT
+0x002f3c4c	EXF2_DIFFUSELIGHT	EXF2_DIFFUSELIGHT
+0x002f3c18	EXF2_DISPERSE1	EXF2_DISPERSE1
+0x002f3c70	EXF2_EDITTEX	EXF2_EDITTEX
+0x002f3b28	EXF2_FASTTRACK	EXF2_FASTTRACK
+0x002f3ba8	EXF2_FFASTTRACK	EXF2_FFASTTRACK
+0x002f3c80	EXF2_MAINLEAVES	EXF2_MAINLEAVES
+0x002f3c28	EXF2_MOTIONDRAG1	EXF2_MOTIONDRAG1
+0x002f3b68	EXF2_NOTEX	EXF2_NOTEX
+0x002f3b00	EXF2_OUTLINE	EXF2_OUTLINE
+0x002f3b74	EXF2_OWNERFADE	EXF2_OWNERFADE
+0x002f3bb8	EXF2_SCALEDEC	EXF2_SCALEDEC
+0x002f3c90	EXF2_SIDELEAVES	EXF2_SIDELEAVES
+0x002f3b84	EXF2_TALL	EXF2_TALL
+0x002f3b38	EXF2_VELOPING2	EXF2_VELOPING2
+0x002f3b48	EXF2_VELOTOCHAR	EXF2_VELOTOCHAR
+0x002f3b90	EXF2_WIDEX	EXF2_WIDEX
+0x002f3b9c	EXF2_WIDEZ	EXF2_WIDEZ
+0x002f3308	EXF_ABSOLUTE	EXF_ABSOLUTE
+0x002f3390	EXF_ALPHADEC	EXF_ALPHADEC
+0x002f3454	EXF_ALPHAINC	EXF_ALPHAINC
+0x002f3380	EXF_ALPHAPING	EXF_ALPHAPING
+0x002f3354	EXF_BOUNCE	EXF_BOUNCE
+0x002f33c0	EXF_BOUNCE1	EXF_BOUNCE1
+0x002f33cc	EXF_BOUNCE2	EXF_BOUNCE2
+0x002f33d8	EXF_BOUNCE3	EXF_BOUNCE3
+0x002f33e4	EXF_BOUNCE4	EXF_BOUNCE4
+0x002f34b8	EXF_CONVECT	EXF_CONVECT
+0x002f349c	EXF_DOSPLASH	EXF_DOSPLASH
+0x002f3448	EXF_FLICKER	EXF_FLICKER
+0x002f3420	EXF_FULLCAM	EXF_FULLCAM
+0x002f3464	EXF_GRAVITY	EXF_GRAVITY
+0x002f348c	EXF_HORIZONTAL	EXF_HORIZONTAL
+0x002f3370	EXF_HORZFLIP	EXF_HORZFLIP
+0x002f33f0	EXF_IMKILL	EXF_IMKILL
+0x002f33b0	EXF_INFINITE	EXF_INFINITE
+0x002f3338	EXF_LOWGRAVITY	EXF_LOWGRAVITY
+0x002f3470	EXF_NOCAM	EXF_NOCAM
+0x002f32fc	EXF_NONE	EXF_NONE
+0x002f343c	EXF_NOOWNER	EXF_NOOWNER
+0x002f3348	EXF_NOZB	EXF_NOZB
+0x002f3410	EXF_PRETRANS	EXF_PRETRANS
+0x002f3328	EXF_RELATANG	EXF_RELATANG
+0x002f3318	EXF_RELATIVE	EXF_RELATIVE
+0x002f342c	EXF_SCALEINC	EXF_SCALEINC
+0x002f34ac	EXF_SETSFX	EXF_SETSFX
+0x002f347c	EXF_SPECIALROT	EXF_SPECIALROT
+0x002f33fc	EXF_SPECIALROTINC	EXF_SPECIALROTINC
+0x002f34c4	EXF_SWAY	EXF_SWAY
+0x002f33a0	EXF_VELOPING	EXF_VELOPING
+0x002f3360	EXF_VERTFLIP	EXF_VERTFLIP
+0x002e8200	EXPGFX_COL	EXPGFX_COL
+0x00310774	EXPLODER,modelno	EXPLODER.c: modelno out of range romdefno=%d
+0x0030cb9c	Balloon	Error Balloon Baddie MUST have a baddie curve network!
+0x00316270	attaching,springs	Error attaching too many springs to a vertex
+0x002f6c70	findBounds,lastpolyworld	Error findBounds obj romdefno %d  lastpolyworld %f %f %f
+0x002f69d8	getPatchEndPoint	Error in getPatchEndPoint 1
+0x002f69f8	getPatchEndPoint	Error in getPatchEndPoint 2
+0x002f70f0	groupno,mapno	Error in gplayGetObjGroupStatus (mapno %d, groupno %d)
+0x002f7128	groupno,mapno	Error in gplaySetObjGroupStatus (mapno %d, groupno %d)
+0x003020e4	info_text	Error in info_text: more than four lines
+0x0031ea74	Pieace	Error in setting up Explode Pieace List
+0x0030cc30	swarm	Error swarm Baddie MUST have a baddie curve network!
+0x003214b0	BWalphaanim,MAX_SPEEDS	Error: BWalphaanim.c : MAX_SPEEDS exceeded!
+0x002e7140	attempting	FONTS - You must specify a font to use before attempting to print anything
+0x002e72c0	attempting	FONTS - attempting to use font %d, font out of range.
+0x002e7350	unspecified	FONTS - cannot word wrap a string using an unspecified font.
+0x002e70d8	trying	FONTS - trying to print a string to a no existent window!
+0x002e70a0	unable	FONTS - unable to free font number %d, out of range
+0x002e7068	unable	FONTS - unable to load font number %d, out of range
+0x0030c9a8	SIDECMD_GUARD,nearestLowObj	Failed assertion !( !nearestLowObj && command != SIDECMD_GUARD )
+0x002ea228	OBJ_STATE_ISFROZEN	Failed assertion !(object->stateFlags&OBJ_STATE_ISFROZEN)
+0x002efb00	GC_SHADERATTRIBUTE_WATER	Failed assertion !(shader->attributes&GC_SHADERATTRIBUTE_WATER)
+0x002eb854	GC_VERTEXFORMAT_COLOUR,inputFormat	Failed assertion !(shader->inputFormat&GC_VERTEXFORMAT_COLOUR)
+0x002e7aa0	channelInfo	Failed assertion !channelInfo[GX_ALPHA0].set
+0x002e7b00	channelInfo	Failed assertion !channelInfo[GX_ALPHA1].set
+0x002e7a10	channelInfo	Failed assertion !channelInfo[GX_COLOR0A0].set
+0x002e7a70	channelInfo	Failed assertion !channelInfo[GX_COLOR0].set
+0x002e7a40	channelInfo	Failed assertion !channelInfo[GX_COLOR1A1].set
+0x002e7ad0	channelInfo	Failed assertion !channelInfo[GX_COLOR1].set
+0x002e79e0	channelID,channelInfo	Failed assertion !channelInfo[channelID].set
+0x0030fae0	krystalIsClaw,objGetMain	Failed assertion !krystalIsClaw(objGetMain())
+0x002dfb34	cmdList	Failed assertion ((u32)cmdList & 0x1F)==0
+0x002eaab8	mdist	Failed assertion *mdist > 0.0F
+0x002dc614	CurrAutoSample	Failed assertion CurrAutoSample < 0
+0x002dc598	CurrAutoSample	Failed assertion CurrAutoSample >= 0
+0x002dc5ec	CurrToken,TOKEN_MAX	Failed assertion CurrToken == TOKEN_MAX
+0x002f0938	GCShadowDP,GCShadowDPPtr,MAX_SHADOW_GFX	Failed assertion GCShadowDPPtr - GCShadowDP < MAX_SHADOW_GFX * sizeof(Gfx)
+0x002ce5f8	cellEnd	Failed assertion MINOBJSIZE <= (char*) cellEnd - (char*) end
+0x002e9cf0	MAX_OBJECTS,ObjListSize	Failed assertion ObjListSize<MAX_OBJECTS
+0x002e7c60	angleCutOff	Failed assertion angleCutOff>=0 && angleCutOff<=90.0F
+0x002e91b4	animInstance	Failed assertion animInstance
+0x002e9554	animNum,numAnims	Failed assertion animNum>=0 && animNum<model->numAnims
+0x002e9514	animNum,numVertexAnims	Failed assertion animNum>=0 && animNum<model->numVertexAnims
+0x002e96e4	ANIMMAP_SIZE,animCacheSize,animSize	Failed assertion animSize<model->animCacheSize-ANIMMAP_SIZE
+0x002e7d7c	LIGHT_ANIM_MAX,animType	Failed assertion animType<LIGHT_ANIM_MAX
+0x002e86c8	animsLoadedTable	Failed assertion animsLoadedTable
+0x0030fab4	BP_NUMTYPES	Failed assertion back->type != BP_NUMTYPES
+0x00321458	barrelobj	Failed assertion barrelobj
+0x002ef308	GCpolygons,blockBase,blockEnd	Failed assertion block->GCpolygons>=blockBase && block->GCpolygons<blockEnd
+0x002ef2bc	GCtextures,blockBase,blockEnd	Failed assertion block->GCtextures>=blockBase && block->GCtextures<blockEnd
+0x002ef288	GCtextures	Failed assertion block->GCtextures[i]
+0x002ef5c0	blockBase,blockEnd	Failed assertion block->displayLists>=blockBase && block->displayLists<blockEnd
+0x002ef658	blockBase,blockEnd	Failed assertion block->displayLists[i].displayList>=blockBase && block->displayLists[i].displayList<blockEnd
+0x002ef78c	displayListSize,listNum	Failed assertion block->displayLists[listNum].displayListSize>0 && !(block->displayLists[listNum].displayListSize&0x1f)
+0x002ef354	blockBase,blockEnd	Failed assertion block->polygonGroups>=blockBase && block->polygonGroups<blockEnd
+0x002ef4ac	blockBase,blockEnd,renderStream	Failed assertion block->renderStream>=blockBase && block->renderStream<blockEnd
+0x002ef610	blockBase,blockEnd	Failed assertion block->shaders>=blockBase && block->shaders<blockEnd
+0x002ef4fc	blockBase,blockEnd,transparentRenderStream	Failed assertion block->transparentRenderStream>=blockBase && block->transparentRenderStream<blockEnd
+0x002ef400	blockBase,blockEnd,vertexColours	Failed assertion block->vertexColours>=blockBase && block->vertexColours<blockEnd
+0x002ef3a8	blockBase,blockEnd,vertexPositions	Failed assertion block->vertexPositions>=blockBase && block->vertexPositions<blockEnd
+0x002ef454	blockBase,blockEnd	Failed assertion block->vertexTexCoords>=blockBase && block->vertexTexCoords<blockEnd
+0x002ef564	blockBase,blockEnd,waterRenderStream	Failed assertion block->waterRenderStream>=blockBase && block->waterRenderStream<blockEnd
+0x002ef260	blockSize	Failed assertion blockSize==block->size
+0x002e79a0	channelID	Failed assertion channelID>=GX_COLOR0 && channelID<=GX_COLOR1A1
+0x002e7b54	channelID,channelInfo	Failed assertion channelInfo[channelID].set
+0x002eac60	parentobj	Failed assertion childObject->parentobj==NULL
+0x002eac90	OBJ2_CHILDPLACE,childPosition	Failed assertion childPosition<=OBJ2_CHILDPLACE
+0x002eabd0	childPosition,noplacements,objdata	Failed assertion childPosition>=0 && childPosition<parentObject->objdata->noplacements
+0x002ef848	colourNum,numColours	Failed assertion colourNum>=0 && colourNum<block->numColours
+0x002e9364	colourNum,numColours	Failed assertion colourNum>=0 && colourNum<model->numColours
+0x002ef888	coordNum,numColours	Failed assertion coordNum>=0 && coordNum<block->numColours
+0x002e93a4	coordNum,numColours	Failed assertion coordNum>=0 && coordNum<model->numColours
+0x002e9a74	curr2	Failed assertion curr2->count > 2
+0x0030fca8	STAFFACTION_LEVER	Failed assertion def->actionType==STAFFACTION_LEVER
+0x002eb8f4	displayListSize	Failed assertion displayList->displayListSize>0 && !(displayList->displayListSize&0x1f)
+0x002e7c98	eccentricity	Failed assertion eccentricity>=1.0F && eccentricity<=256.0F
+0x003021e4	Emptybartex,enbar	Failed assertion enbar->Emptybartex[0].texture
+0x003021b4	Fullbartex,enbar	Failed assertion enbar->Fullbartex[0].texture
+0x00321440	genobj	Failed assertion genobj
+0x002ef904	groupNum,numGroups	Failed assertion groupNum>=0 && groupNum<block->numGroups
+0x002e958c	groupNum,numGroups	Failed assertion groupNum>=0 && groupNum<model->numGroups
+0x002e99c0	GQR_SCALE_MAX,posNrmShift	Failed assertion hdr->posNrmShift < GQR_SCALE_MAX
+0x002e9998	posNrmShift	Failed assertion hdr->posNrmShift > 0
+0x002e99f4	sk2ListArray	Failed assertion hdr->sk2ListArray
+0x002e9a18	sk2ListArray	Failed assertion hdr->sk2ListArray[0].count
+0x002e9a44	sk2ListArray,vertSrc	Failed assertion hdr->sk2ListArray[0].vertSrc
+0x002edd7c	MAX_LIGHTMAPS	Failed assertion i<MAX_LIGHTMAPS
+0x002e785c	numLightsInList	Failed assertion i<numLightsInList
+0x002eacec	numChildren	Failed assertion i<parentObject->numChildren
+0x002ea1bc	instanceNum,noframes,objdata	Failed assertion instanceNum>=0 && instanceNum<object->objdata->noframes
+0x002ea9d4	jointNum,numJoints	Failed assertion jointNum >= 0 && jointNum < modelIns->mod->numJoints
+0x002ea940	jointNum,numJoints	Failed assertion jointNum >= 0 && jointNum < modelInstance->mod->numJoints
+0x002e9420	jointNum,numJoints	Failed assertion jointNum>=0 && jointNum<model->numJoints
+0x002eb45c	jointmtx	Failed assertion jointmtx
+0x002e5afc	highPtr,keyPtr,sparseArray	Failed assertion keyPtr!=sparseArray->highPtr
+0x002e5ad0	keyPtr,sparseArray	Failed assertion keyPtr<sparseArray->endPtr
+0x002edb9c	MAX_SHADER_MATERIAL_LAYERS,layerNum	Failed assertion layerNum>=0 && layerNum<MAX_SHADER_MATERIAL_LAYERS
+0x0032293c	lightData	Failed assertion lightData
+0x00322900	lightData	Failed assertion lightData->light
+0x002e7b30	lightID	Failed assertion lightID<=GX_LIGHT7
+0x002edcc8	lightMap	Failed assertion lightMap
+0x002edce4	lightMap	Failed assertion lightMap->texture->usage<USHRT_MAX
+0x002edc1c	lightMaps	Failed assertion lightMaps[i].texture
+0x002e7c34	LIGHT_TYPE_MAX	Failed assertion lightType<LIGHT_TYPE_MAX
+0x002ef74c	listNum,numDisplayLists	Failed assertion listNum>=0 && listNum<block->numDisplayLists
+0x002e945c	listNum,numDisplayLists	Failed assertion listNum>=0 && listNum<model->numDisplayLists
+0x002e7978	channelOneMask	Failed assertion mask&channelOneMask
+0x002e78d4	MAX_LIGHTS_PER_OBJECT	Failed assertion maxLights<=MAX_LIGHTS_PER_OBJECT
+0x002e981c	maxModelNum	Failed assertion maxModelNum<=SHRT_MAX
+0x002eaaa0	mdist	Failed assertion mdist
+0x002defe8	SYNTH_FX_MIDISET	Failed assertion midiSet!=SYNTH_FX_MIDISET
+0x0030212c	maxenergy,minenergy	Failed assertion minenergy < maxenergy
+0x002e90dc	GCpolygons,modelEnd	Failed assertion model->GCpolygons>=modelBase && model->GCpolygons<modelEnd
+0x002e8c54	GCtextures,modelEnd	Failed assertion model->GCtextures>=modelBase && model->GCtextures<modelEnd
+0x002e8b1c	GCtextures	Failed assertion model->GCtextures[i]
+0x002e8e48	modelEnd	Failed assertion model->displayLists>=modelBase && model->displayLists<modelEnd
+0x002e8fd4	modelEnd	Failed assertion model->displayLists[i].displayList>=modelBase && model->displayLists[i].displayList<modelEnd
+0x002e949c	displayListSize,listNum	Failed assertion model->displayLists[listNum].displayListSize>0 && !(model->displayLists[listNum].displayListSize&0x1f)
+0x002e8c14	modelEnd	Failed assertion model->exT>=modelBase && model->exT<modelEnd
+0x002e8b90	modelEnd	Failed assertion model->joints>=modelBase && model->joints<modelEnd
+0x002e9128	modelEnd	Failed assertion model->polygonGroups>=modelBase && model->polygonGroups<modelEnd
+0x002e8bd4	modelEnd	Failed assertion model->radi>=modelBase && model->radi<modelEnd
+0x002e8df8	modelEnd,renderStream	Failed assertion model->renderStream>=modelBase && model->renderStream<modelEnd
+0x002e8f8c	modelEnd	Failed assertion model->shaders>=modelBase && model->shaders<modelEnd
+0x002e8ee8	modelEnd,skin2Matrices	Failed assertion model->skin2Matrices>=modelBase && model->skin2Matrices<modelEnd
+0x002e8f3c	modelEnd,skinWeights	Failed assertion model->skinWeights>=modelBase && model->skinWeights<modelEnd
+0x002e8b44	modelEnd,sphereHits	Failed assertion model->sphereHits>=modelBase && model->sphereHits<modelEnd
+0x002e8e98	modelEnd,vertexAnims	Failed assertion model->vertexAnims>=modelBase && model->vertexAnims<modelEnd
+0x002e9088	modelEnd,vertexAnims	Failed assertion model->vertexAnims[i]>=modelBase && model->vertexAnims[i]<modelEnd
+0x002e8d4c	modelEnd,vertexColours	Failed assertion model->vertexColours>=modelBase && model->vertexColours<modelEnd
+0x002e8cf8	modelEnd,vertexNormals	Failed assertion model->vertexNormals>=modelBase && model->vertexNormals<modelEnd
+0x002e8ca0	modelEnd,vertexPositions	Failed assertion model->vertexPositions>=modelBase && model->vertexPositions<modelEnd
+0x002e8da0	modelEnd	Failed assertion model->vertexTexCoords>=modelBase && model->vertexTexCoords<modelEnd
+0x002e871c	maxModelNum,modelNum	Failed assertion modelNum>=0 && modelNum<maxModelNum
+0x002e86a4	modelsLoadedTable	Failed assertion modelsLoadedTable
+0x002e5ab4	newElement	Failed assertion newElement
+0x002eaa1c	nofeet	Failed assertion nofeet > 0 && nofeet < 16
+0x002e9324	normalNum,numNormals	Failed assertion normalNum>=0 && normalNum<model->numNormals
+0x002e7908	MAX_LIGHTS_CONTRIBUTING,numContributingLights	Failed assertion numContributingLights<MAX_LIGHTS_CONTRIBUTING
+0x002eb9f8	MAX_LIGHTS_PER_OBJECT,numLights	Failed assertion numLights<=MAX_LIGHTS_PER_OBJECT
+0x002e7828	MAX_LIGHTS_IN_LIST,numLightsInList	Failed assertion numLightsInList<MAX_LIGHTS_IN_LIST
+0x002eba2c	numProjectedTextureLights	Failed assertion numProjectedTextureLights<=2
+0x002edb00	numTevStages	Failed assertion numTevStages<15
+0x002eda08	numTevStages	Failed assertion numTevStages<16
+0x002edb24	numTexGens	Failed assertion numTexGens<7
+0x002eda80	numTexGens	Failed assertion numTexGens<8
+0x002edae0	numTexGens	Failed assertion numTexGens<=8
+0x002e9f78	objdata	Failed assertion obj->objdata
+0x002eab14	lockdata,objdata	Failed assertion obj->objdata->lockdata
+0x002eaa48	nofeet,noplacements,objdata,placeno	Failed assertion obj->objdata->noplacements > placeno+nofeet
+0x00322bec	OBTYPE_LIGHTEMIT,lightObject,objCheckType	Failed assertion objCheckType( lightObject, OBTYPE_LIGHTEMIT)
+0x002ea150	modelno,noframes,objdata	Failed assertion object->modelno>=0 && object->modelno<object->objdata->noframes
+0x00322618	OBJ_ARWArwingBooster	Failed assertion object->romdefno==OBJ_ARWArwingBooster
+0x00322650	OBJ_ARWArwingGunFlashLeft,OBJ_ARWArwingGunFlashRight	Failed assertion object->romdefno==OBJ_ARWArwingGunFlashLeft || object->romdefno==OBJ_ARWArwingGunFlashRight
+0x003226c0	OBJ_ARWArwingRoll	Failed assertion object->romdefno==OBJ_ARWArwingRoll
+0x002eacc0	numChildren	Failed assertion parentObject->numChildren
+0x002eac28	MAX_CHILDREN,numChildren	Failed assertion parentObject->numChildren<MAX_CHILDREN
+0x002ea98c	noplacements,objdata,placeNum	Failed assertion placeNum>=0 && placeNum < obj->objdata->noplacements
+0x002ea8f8	noplacements,objdata,placeNum	Failed assertion placeNum>=0 && placeNum<object->objdata->noplacements
+0x002ef940	numPolygons,polygonNum	Failed assertion polygonNum>=0 && polygonNum<block->numPolygons
+0x002e95c8	numPolygons,polygonNum	Failed assertion polygonNum>=0 && polygonNum<model->numPolygons
+0x002e987c	posVec	Failed assertion posVec
+0x002ef804	numPositions,positionNum	Failed assertion positionNum>=0 && positionNum<block->numPositions
+0x002e92e0	numPositions,positionNum	Failed assertion positionNum>=0 && positionNum<model->numPositions
+0x002e9240	numPositions,positionNum	Failed assertion positionNum>=0 && positionNum<modelInstance->mod->numPositions
+0x002e7bec	referenceBrightness	Failed assertion referenceBrightness>=0 && referenceBrightness<=1.0F
+0x002e7bc4	referenceDistance	Failed assertion referenceDistance>=0
+0x002eb7bc	renderStream	Failed assertion renderStream
+0x002dc5c0	PERFCurrSample	Failed assertion sample < PERFCurrSample
+0x002eb7dc	GC_VERTEXFORMAT_NORMAL,inputFormat	Failed assertion shader->inputFormat&GC_VERTEXFORMAT_NORMAL
+0x002eb894	numMaterialLayers	Failed assertion shader->numMaterialLayers==1
+0x002ef70c	numShaders,shaderNum	Failed assertion shaderNum>=0 && shaderNum<block->numShaders
+0x002e92a0	numShaders,shaderNum	Failed assertion shaderNum>=0 && shaderNum<model->numShaders
+0x002e91f4	numShaders,shaderNum	Failed assertion shaderNum>=0 && shaderNum<modelInstance->mod->numShaders
+0x002e5a94	sparseArray	Failed assertion sparseArray
+0x002ef8c4	numTextures,textureNum	Failed assertion textureNum>=0 && textureNum<block->numTextures
+0x002e93e0	numTextures,textureNum	Failed assertion textureNum>=0 && textureNum<model->numTextures
+0x00320100	DROP_MAX	Failed assertion type>=0 && type < DROP_MAX
+0x0030bd38	weaponObject	Failed assertion weaponObject
+0x002dd6e8	synthesizer	Fatal: Could not allocate synthesizer voice array.
+0x00319297	Fdddd	Fdddd
+0x0030efb7	Ffoodbag	Ffoodbag.c
+0x0030f5ee	Fhfish	Fhfish has reached the end of it life
+0x00305b6c	Filename	Filename:
+0x003087fc	Fires	Fires a warning
+0x0030a560	Forwards	Forwards
+0x002f0418	Romdef	Found Romdef for %i tab no %i %f %f %f 
+0x002ef078	Freak	Freak a0 %x  a1 %x 
+0x0030f148	startHeight	Fruit info: nextY %f, acc %f, water acc %f, startHeight %f, yStart %f, obj->fy %f
+0x0030f19c	movementFdt,upwardsBounceVelocity	Fruit upwardsBounceVelocity %f movementFdt %f
+0x002e8230	GAME_COL	GAME_COL
+0x003232bc	GFX_COL	GFX_COL
+0x003042fc	GPlains_Shrine	GPlains_Shrine
+0x002d87ec	doughnut	GXDrawTorus: doughnut too fat
+0x002d84c4	GXInitFogAdjTable	GXInitFogAdjTable: invalid width value
+0x002d8498	GXInitFogAdjTable	GXInitFogAdjTable: table pointer is null
+0x002d6c6c	GXLoadLightStateImm	GXLoadLightStateImm: Invalid Light Id
+0x002d5644	Cannot,making	GXSetMisc: Cannot change DL context setting while making a display list
+0x002f0bb4	G_MVO_LOOKATX	G_MVO_LOOKATX
+0x002f0bc4	G_MVO_LOOKATY	G_MVO_LOOKATY
+0x002f0b9c	G_MV_MMTX	G_MV_MMTX
+0x002f0ba8	G_MV_PMTX	G_MV_PMTX
+0x002f0b8c	G_MW_MATRIX	G_MW_MATRIX
+0x00323dc8	GamNo	GamNo 
+0x00304aa8	Diagnostics	Game Diagnostics
+0x00304db0	Editor	Game Editor
+0x00304108	GamePlay	GamePlay
+0x0030b314	Purpose	General Purpose Registers %d-%d
+0x0030a9b0	Generating	Generating weapon data
+0x0030413c	GraphicEffect	GraphicEffect
+0x00301af8	Greetings,McCloud	Greetings, Fox McCloud.
+0x00309ac4	walls	Ground and walls
+0x00309ad8	walls	Ground, walls and world objects
+0x002dea6c	songgroup	Group ID=%d is no songgroup.
+0x002dea8c	soundstack	Group ID=%d is not on soundstack.
+0x00311a50	WindLIft	Guardian Out of WindLIft Boyo !!! 
+0x002dbc9f	HColor	HColor 1 control register
+0x002cd1c0	HERELOCK	HERELOCK
+0x00317f30	dframe	HIT dframe=%f
+0x002cd1d4	HITTINGME	HITTINGME
+0x003044a4	Headphones	Headphones
+0x0030a1e0	HeightType	HeightType 
+0x00323f1c	HitOn	HitOn
+0x00301ba0	outcome	I compute a successful outcome.
+0x00309de4	ILLEGAL	ILLEGAL CLASS
+0x002ccff4	ILLUSION	ILLUSION
+0x00313920	IMicicle	IMicicle.c
+0x003197f8	IMsnowbike	IMsnowbike.c
+0x00313a10	IMspacecraft	IMspacecraft.c
+0x002ecbf8	INANIM	INANIM LOCK %x
+0x002ec9d0	INANIMCURVE	INANIMCURVE LOCK %x
+0x002ec9e8	INANIMCURVETAB	INANIMCURVETAB LOCK %x
+0x002ecc48	INANIMTAB	INANIMTAB LOCK %x
+0x002eca50	INBLOCKS	INBLOCKS LOCK %x
+0x002ecac8	INBLOCKTAB	INBLOCKTAB LOCK %x
+0x002cd1fc	INFIGHT	INFIGHT
+0x002ecb58	INMODELS	INMODELS LOCK %x
+0x002ecbac	INMODTABLOCK	INMODTABLOCK %x
+0x002ccfcc	INSEQ	INSEQ
+0x002ccfe0	INSEQBLEND	INSEQBLEND
+0x00323fdc	INTA16	INTA16
+0x00323fec	INTA4	INTA4
+0x00323fe4	INTA8	INTA8
+0x002ecddc	INTEX	INTEX LOCK %x
+0x002eccf4	INTEX2	INTEX2 LOCK %x
+0x002ece2c	INTEXTAB	INTEXTAB LOCK %x
+0x002ecd88	INTEXTAB2	INTEXTAB2 LOCK %x
+0x002ece40	INTEXTABB	INTEXTABB LOCK %x
+0x003087a4	Ignore,peaceful	Ignore peaceful
+0x00304de0	Instrumentation	Instrumentation:
+0x00304358	Intro_Sequence	Intro_Sequence
+0x002d9f00	host_normal	Invalid value (%d) for INVERTEXSPEC_REG.host_normal
+0x002f1028	JUMPTARGET	JUMPTARGET: label=%d
+0x002f1058	JUMPTOLABEL	JUMPTOLABEL: label=%d
+0x002f1040	JUMPTOTIME	JUMPTOTIME: time=%d
+0x003223c0	JoyStick	JoyStick: x=%2f y=%2f l=%2f r=%2f
+0x002f00d8	Cannot,LAYERVDFSIZE	LAYERVDFSIZE exceeded!!! Cannot add layer vdf
+0x00321087	LDRcollpieace	LDRcollpieace.c
+0x003232b4	LFX_COL	LFX_COL
+0x00322bd8	LGTcontrollight	LGTcontrollight.c
+0x00322b38	LGTprojectedlight	LGTprojectedlight.c
+0x002edaa0	tevStageID,texCoordID,texMapID,texMatrixID	LIGHT: tevStageID=%d texMatrixID=%d texMapID=%d texCoordID=%d
+0x002e8174	LISTS_COL	LISTS_COL
+0x00305f30	LOADFLAGS	LOADFLAGS %s %d	
+0x002cd184	LOCKEDON	LOCKEDON
+0x002cd198	LOSLOCK	LOSLOCK
+0x002e4f50	Land_CRF	Land_CRF
+0x002e4f44	Land_HOL	Land_HOL
+0x0030ac2c	Landscape	Landscape      :
+0x00321db4	Recharging	Laser: Recharging
+0x00309dc8	Last2	Last2: %d,%d
+0x002e772f	Couldn,LdvdLoadFile	LdvdLoadFile: Couldn't open file '%s'
+0x002def30	Leaving	Leaving sndInit().
+0x0030488c	Detail	Level of Detail
+0x0030a00c	Editor	Line Editor
+0x00309f94	Linehits,deleted	Linehits deleted
+0x0031b357	Lladders	Lladders.c
+0x00305bc8	Database	Load Game From Database
+0x00305618	LoadRange	LoadRange
+0x003232f0	MAGENTA	MAGENTA
+0x0030f4c8	modelno	MAGICPLANT: modelno error
+0x002f6048	MAX_CHECKPOINTS	MAX_CHECKPOINTS overflow!!
+0x00303ae8	MFX_SH_AboveGroundFullTune	MFX_SH_AboveGroundFullTune
+0x00303b44	MFX_SH_AboveGroundLowTune	MFX_SH_AboveGroundLowTune
+0x00303b30	MFX_SH_AmbienceDay	MFX_SH_AmbienceDay
+0x00303b18	MFX_SH_AmbienceNight	MFX_SH_AmbienceNight
+0x00303b04	MFX_SH_InHollowTune	MFX_SH_InHollowTune
+0x00303ad4	MFX_SH_MushroomTune	MFX_SH_MushroomTune
+0x00303ab8	MFX_SH_TalkSwapstoneTune	MFX_SH_TalkSwapstoneTune
+0x0030dae4	MMP_cratercritter	MMP_cratercritter.c
+0x00313280	MMP_gyservent	MMP_gyservent.c
+0x003130f8	MMP_levelcontrol	MMP_levelcontrol.c
+0x00313200	MMP_moonrock	MMP_moonrock.c
+0x003042dc	MMount_Shrine	MMount_Shrine
+0x002e8ac4	MODELNUM	MODEL OFFSET %x  MODELNUM %d
+0x002e81c4	MODELS_COL	MODELS_COL
+0x002e820c	MODGFX_COL	MODGFX_COL
+0x002ecf44	MODTAB	MODTAB %4d 0x%x 
+0x0032187c	MOONBLOCK	MOONBLOCK: invalid grid position
+0x002dfa50	properly	MRAM address is not aligned properly
+0x00319bb0	MUSIC_ALIENWORLD	MUSIC_ALIENWORLD
+0x00319ba0	MUSIC_ONDINO	MUSIC_ONDINO
+0x003218e0	MUSIC_WALLEDCITY_CLOCK	MUSIC_WALLEDCITY_CLOCK
+0x003218f8	MUSIC_WALLEDCITY_MAIN	MUSIC_WALLEDCITY_MAIN
+0x0030ac18	MainCharacter	MainCharacter  :
+0x00309f18	Editor	Map Editor
+0x002dac4c	MatrixIndex0	MatrixIndex0.Geometry matrix values must be loaded, however...
+0x002f66ac	MAX_WALKCORNERS,increase	Maximum walk group error (increase MAX_WALKCORNERS)
+0x002f65c0	MAX_WALKGROUPS,increase	Maximum walk group error (increase MAX_WALKGROUPS)
+0x00321fcc	ROLLBANK	Mode: ANGLE LIMIT ROLLBANK
+0x00322068	ROLLBANK	Mode: ANGLE SCALE ROLLBANK
+0x003222c8	RAMPUP	Mode: BANK RAMPUP LIMIT
+0x003222f0	RAMPUP	Mode: BANK RAMPUP SPEED
+0x0032211c	RECHARGE	Mode: BOMB RECHARGE
+0x00322348	CLICK	Mode: DOUBLE CLICK TIME
+0x003222ac	RAMPUP	Mode: IDLE RAMPUP SPEED
+0x003220a8	RECHARGE	Mode: LASER RECHARGE
+0x00304524	Viewer	Model Viewer
+0x002d1280	MtxIdentity	MtxIdentity():  NULL Mtx 'm' 
+0x002ef040	Multiple	Multiple texture fail!!
+0x002cd224	NEWSTATE	NEWSTATE
+0x00304318	NWastes_Shrine	NWastes_Shrine
+0x00317538	NWmammoth	NWmammoth.c
+0x003175b8	NWtricky	NWtricky.c
+0x00309db8	Next2	Next2: %d,%d
+0x00305edc	tasks	No tasks have been done
+0x00309b24	siblings	Non-siblings only
+0x0030827c	reasons	Normal reasons
+0x00304224	Northern	Northern Wastes
+0x002e81e8	OBJECTS_COL	OBJECTS_COL
+0x002ea494	hitmodel	OBJHITS: hitmodel overflow
+0x0030e560	INVHIT_TYPE_FULL,OBJ_InvHit,deleted	OBJ_InvHit: warning INVHIT_TYPE_FULL, t0 deleted
+0x002cd120	OKBACK	OKBACK
+0x002ce088	OSAddress	OSAddress.c
+0x002d0b24	CheckThreadQueue	OSCheckActiveThreads: Failed CheckThreadQueue(&RunQueue[prio]) in %d
+0x002d0e68	CheckThreadQueue	OSCheckActiveThreads: Failed CheckThreadQueue(&thread->queueJoin) in %d
+0x002d1074	CheckThreadQueue	OSCheckActiveThreads: Failed CheckThreadQueue(thread->queue) in %d
+0x002d0f08	IsMember	OSCheckActiveThreads: Failed IsMember(&RunQueue[thread->priority], thread) in %d
+0x002d10b8	IsMember	OSCheckActiveThreads: Failed IsMember(thread->queue, thread) in %d
+0x002d11e0	unkown	OSCheckActiveThreads: Failed. unkown thread state (%d) of thread %p
+0x002cec94	HEADERSIZE	OSCheckHeap: Failed HEADERSIZE + cell->requested <= cell->size in %d
+0x002ce7e8	heaps	OSInitAlloc(): invalid number of heaps.
+0x0030a4ac	Editor	ObjSeq Editor
+0x0030487c	Copier	Object Copier
+0x00304858	Editor	Object Editor
+0x0030a808	Viewer	Object Viewer
+0x00304e18	Objtime	Objtime Table
+0x003122f0	ELEVATOR	Out of ELEVATOR
+0x002f3d24	Outline	Outline z buffer mode
+0x002f4114	DEFINITION	PART DEFINITION
+0x002e7f94	PARTDEV	PARTDEV
+0x002f53a1	badning	PARTFX badning NULL no longer allowed for object...returning type %d
+0x002f5414	badning	PARTFX badning type < %d > not found.. returning
+0x002f5211	bayning	PARTFX bayning NULL no longer allowed for object...returning type %d
+0x002f5284	bayning	PARTFX bayning type < %d > not found.. returning
+0x002f5081	clfning	PARTFX clfning NULL no longer allowed for object...returning type %d
+0x002f50f4	clfning	PARTFX clfning type < %d > not found.. returning
+0x002f58d1	dakning	PARTFX dakning NULL no longer allowed for object...returning type %d
+0x002f5b81	dfning	PARTFX dfning NULL no longer allowed for object...returning type %d
+0x002f47e9	dimning	PARTFX dimning NULL no longer allowed for object...returning type %d
+0x002f5529	icening	PARTFX icening NULL no longer allowed for object...returning type %d
+0x002f5da1	mmpning	PARTFX mmpning NULL no longer allowed for object...returning type %d
+0x002f4bb1	nwaning	PARTFX nwaning NULL no longer allowed for object...returning type %d
+0x002f4c24	nwaning	PARTFX nwaning type < %d > not found.. returning
+0x002f5649	rexning	PARTFX rexning NULL no longer allowed for object...returning type %d
+0x002f4ea1	shpning	PARTFX shpning NULL no longer allowed for object...returning type %d
+0x002f4f14	shpning	PARTFX shpning type < %d > not found.. returning
+0x002f4d21	swcning	PARTFX swcning NULL no longer allowed for object...returning type %d
+0x002f4d94	swcning	PARTFX swcning type < %d > not found.. returning
+0x002f5c81	wcning	PARTFX wcning NULL no longer allowed for object...returning type %d
+0x002f5cf4	wcning	PARTFX wcning type < %d > not found.. returning
+0x002dc6cc	AUTOSAMPLE	PERF : AUTOSAMPLE < 0!!!! SHOULD NEVER HAPPEN!
+0x002f0c6b	PGXGeometry	PGXGeometry.h
+0x003023a4	maxitems	PICMENU: maxitems exceeded
+0x002ec69c	PIFREE	PIFREE buffer  addr 0x%x
+0x002ec90c	PIFREE,pitable	PIFREE pitable[%d]  addr %d
+0x002ecf70	GAMNO,PIFREE,gamno,pitable	PIFREE pitable[%d]  addr 0x%x  --- gamno %d size %d the file GAMNO %d
+0x002ecbd8	PIFREE,pitable	PIFREE pitable[%d]ANIM  addr %d
+0x002ec9a4	ANIMCURVE,PIFREE,pitable	PIFREE pitable[%d]ANIMCURVE/TAB  addr %d
+0x002ecc24	ANIMTAB,PIFREE,pitable	PIFREE pitable[%d]ANIMTAB  addr %d
+0x002eca1c	PIFREE,pitable	PIFREE pitable[%d]BLOCKS  addr %d
+0x002eca84	BLOCKSTAB,PIFREE,pitable	PIFREE pitable[%d]BLOCKSTAB  addr %d
+0x002ecb34	PIFREE,pitable	PIFREE pitable[%d]MODELS  addr %d
+0x002ecb88	MODTAB,PIFREE,pitable	PIFREE pitable[%d]MODTAB  addr %d
+0x002ece08	PIFREE,pitable	PIFREE pitable[%d]TEXTAB  addr %d
+0x002ecd20	PIFREE,TEXTAB2,pitable	PIFREE pitable[%d]TEXTAB2  addr %d
+0x002ecdb8	PIFREE,pitable	PIFREE pitable[%d]TEXTURES  addr %d
+0x002ecc7c	PIFREE,TEXTURES2,pitable	PIFREE pitable[%d]TEXTURES2  addr %d
+0x002f0594	PLindex	PLindex overflow!!
+0x002f05c0	PLindex	PLindex overflow!! - %d
+0x002f0630	PLlist	PLlist overflow!!
+0x002f05a8	PLlist	PLlist overflow!! - %d
+0x0030aa74	animpos	POST: animpos=%f max=%f
+0x0030e908	modelno	PRESSURESWITCH.c: modelno out of range romdefno=%d
+0x002e8218	PROJGFX_COL	PROJGFX_COL
+0x002e52a0	audioModifySong	Parameter error in audioModifySong()
+0x002e51c4	PS_StopOtherSongs,assuming,audioPlaySong	Parameter error in audioPlaySong(), assuming PS_StopOtherSongs
+0x00309b74	Baddy	Per Baddy
+0x00304abc	Profiler	Performance Profiler
+0x003080c4	trespass	Player trespass
+0x002efe04	Gload,Processed	Processed all maps, Re-Gload you may now commit!
+0x00304f74	Profiler	Profiler:
+0x00309b48	Projectiles	Projectiles only
+0x00323ab0	Props	Props
+0x0030a270	Shove	Push Shove
+0x00323fc4	RGBA16	RGBA16
+0x00323fbc	RGBA32	RGBA32
+0x002f0484	Cannot,ROMLISTSIZE	ROMLISTSIZE exceeded!!! Cannot add romdef
+0x002ec8e4	ROMLOAD,fileno,gamno	ROMLOAD gamno=%d  level %s  fileno %d
+0x002ed120	ROMLOADTAB	ROMLOADTAB file=%s
+0x00304f5c	Recording	Recording:
+0x00307f0c	Retrigger	Retrigger delay
+0x00307ee0	Retriggerable	Retriggerable
+0x0030c77c	quicker	Reverse direction is quicker
+0x0030c79c	Reversing	Reversing direction
+0x0030abf4	RomDataStart	RomDataStart	= %x		Size = %x
+0x0030abd4	RomTableStart	RomTableStart	= %x		Size = %x
+0x00305650	Romdef	Romdef Info Menu
+0x00305670	Romdef	Romdef details
+0x00304dd4	Romdef	Romdef info
+0x00304e08	Rompos	Rompos Table
+0x003082d4	reasons	Rout reasons
+0x00323d24	Routed	Routed
+0x002e8180	SCREEN_COL	SCREEN_COL
+0x003189a8	SCanimobj	SCanimobj.c
+0x003187d0	SCbirchtree	SCbirchtree.c
+0x00318784	SCchieflightfoot	SCchieflightfoot.c
+0x00318950	SCcollectables	SCcollectables.c
+0x00318908	SClantern	SClantern.c
+0x003184a8	SClevelcontrol	SClevelcontrol.c
+0x003186a4	SClightfoot	SClightfoot.c
+0x00318a88	SCtotembondpuz	SCtotembondpuz.c
+0x003189f0	SCtotemlogpuz	SCtotemlogpuz.c
+0x00318818	SCtotempole	SCtotempole.c
+0x00318ad8	SCtotemstrength	SCtotemstrength.c
+0x00318a38	SCtumbleweedmeter	SCtumbleweedmeter.c
+0x002cd1ac	SEELOCK	SEELOCK
+0x0030eae0	modelno	SEQOBJ.c: modelno out of range romdefno=%d
+0x00303e70	ERRROR,SERIOUS	SERIOUS ERRROR in meter.c, and I mean SERIOUS
+0x0032329c	SFX_COL	SFX_COL
+0x002e8224	SHAD_COL	SHAD_COL
+0x002cd1e8	SHOOTINGME	SHOOTINGME
+0x003195d4	Cannot	SHOP KEEPER: Cannot find valid attach node
+0x00317844	SHkillermushroom	SHkillermushroom.c
+0x00317754	SHmushroom	SHmushroom.c
+0x003178fc	SHrocketmushroom	SHrocketmushroom.c
+0x00318028	SHroot	SHroot.c
+0x00317954	SHspore	SHspore.c
+0x002e9988	SKNControl	SKNControl.c
+0x002e81b4	SPRITETEX_COL	SPRITETEX_COL
+0x003196b8	SPdrape	SPdrape.c
+0x00319670	SPscarab	SPscarab.c
+0x003194f8	SPshop	SPshop.c
+0x003195c4	SPshopkeeper	SPshopkeeper.c
+0x002f6450	SUBTITLES,sentence	SUBTITLES error: sentence delay is not valid
+0x00321828	SUNBLOCK	SUNBLOCK: invalid grid position
+0x002dd8b4	inserted	Sample ID to be inserted could not be found in any sample directory.m
+0x00305eb8	Details	Save Game Details
+0x00304540	Manager	Save Game Manager
+0x00305be0	Database	Save Game to Database
+0x003086c8	Scenery	Scenery
+0x00311334	Subscript	Script [%d], Subscript [%d]
+0x0031fbf0	Sending,Thief	Sending Out A Sand Thief  %i 
+0x002dd850	Sequenzer	Sequenzer ID is not valid.
+0x0030ca90	SharpclawDLL	SharpclawDLL
+0x00304168	Sharpclaws	Sharpclaws
+0x0030853c	Inaccuracy	Shot Inaccuracy
+0x00309b14	Siblings	Siblings only
+0x00304158	Baddies	Simple Baddies
+0x003081cc	survivor	Sole survivor
+0x002f05dc	Background,Sorry	Sorry Background Block list has been exceeded
+0x00303db4	Sorry	Sorry No DI memory left to store profile.
+0x002dea30	Soundstack	Soundstack is empty.
+0x0030ac54	Sprites	Sprites        :
+0x00311140	Storyboard	Storyboard disabled, please remove trigger
+0x0030a1ec	Straigten	Straigten
+0x002f64d8	unable	Subtitles error: unable to find special character: %d
+0x0030a198	SwapDir	SwapDir 
+0x00304240	SwapStone	SwapStone Circle
+0x00304254	SwapStone	SwapStone-Hollow
+0x00324217	Szbomb	Szbomb.c
+0x002e823c	TEST_COL	TEST_COL
+0x002eda40	tevStageID,texCoordID,texMapID,texMatrixID	TEX: tevStageID=%d texMatrixID=%d texMapID=%d texCoordID=%d
+0x0032328c	TEX_COL	TEX_COL
+0x003229bf	TLGTdirectionallight	TLGTdirectionallight.c
+0x002e4f38	TOff_HOL	TOff_HOL
+0x002efc74	TRACKINIT,smap_number	TRACKINIT smap_number %d
+0x002e81a4	TRACKTEX_COL	TRACKTEX_COL
+0x002e8198	TRACK_COL	TRACK_COL
+0x00320608	TREX_Lazerwall	TREX_Lazerwall.c
+0x003202e8	TREX_levelcontrol	TREX_levelcontrol.c
+0x00320408	TREX_trex	TREX_trex.c
+0x0030987c	TRICKYAI	TRICKYAI CURVES
+0x0031b547	Tdraghead	Tdraghead.c
+0x0030ab80	TextStart	TextStart	= %x	Size = %x
+0x002dab1c	MATRIXINDEX0_REG	Texture %d is a regular texture, which requires that the matrix values pointed to by MATRIXINDEX0_REG.tex%d (%d) must be loaded, however...
+0x00304514	Viewer	Texture Viewer
+0x0030a098	Editor	The Hits Editor
+0x00301718	honchos	The head honchos at Nintendo
+0x003019c8	dangerous,gonna	This is gonna be a dangerous
+0x00317f60	deadend	Thorntail %d, is on a network with a deadend
+0x00317fa0	deadend	Thorntail deadend
+0x003048c0	Viewer	Track Viewer
+0x002f06f4	TrackGetHeight	TrackGetHeight()-Overflow!!!
+0x002efcbc	Trackdraw	Trackdraw
+0x0030ac7c	Transparencies	Transparencies :
+0x0030c93c	dotrickyhits	Tricky coords are %f %f %f in dotrickyhits
+0x0030bf44	objcontrol	Tricky coords are %f %f %f in objcontrol
+0x0030c028	objdraw	Tricky coords are %f %f %f in objdraw
+0x002f66e4	Incorrecly	Tricky walk group error: Incorrecly number of corner nodes
+0x0030bfb0	STATE_ONLY_MOVEMENT,unloaded	Tricky's target object has been unloaded while STATE_ONLY_MOVEMENT
+0x00311058	SequenceID	Trigger [%d], Anim Sequence,      SequenceID [%d], Activate
+0x003110d0	SequenceID	Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 0
+0x00311094	SequenceID	Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 1
+0x00310d6c	PassDir	Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]
+0x00310c3c	Dangerous	Trigger [%d], Dangerous Water
+0x00311244	gamno	Trigger [%d], LEV FREE  gamno %d
+0x00311008	PassDir	Trigger [%d], Lighting,           Action      [%d], Range [%d], PassDir [%d]
+0x00310ee4	MrSheen	Trigger [%d], Track MrSheen Off
+0x00310ec0	MrSheen	Trigger [%d], Track MrSheen On %d
+0x00311514	Unloading	Trigger [%d], Unloading Sidekick
+0x00310f04	footstepsTurnOn	Trigger [%d], footstepsTurnOn %d
+0x00310f60	newlightInside	Trigger [%d], newlightInside(0)
+0x00310f40	newlightInside	Trigger [%d], newlightInside(1)
+0x003111ec	toggleBits	Trigger [%d], toggleBits (%d)
+0x00310fa4	trackSetSunGlareOn	Trigger [%d], trackSetSunGlareOn(0)
+0x00310f80	trackSetSunGlareOn	Trigger [%d], trackSetSunGlareOn(1)
+0x003114c8	Dazed	Trigger [%d],Restart Set Dazed [%d]
+0x00311444	trackIncMapLayer	Trigger [%d],trackIncMapLayer
+0x00308930	Troop	Troop Type
+0x0030df00	Trying,Would,someone	Trying to strike baddie, but it doesn't work! Would someone please fix this.
+0x00323b28	Tunes	Tunes:
+0x0031e080	Turning	Turning %i 
+0x0030ea78	USEOBJ,modelno	USEOBJ.c: modelno out of range romdefno=%d
+0x0030b300	UnCached	UnCached Memory	%x
+0x00309b9c	Unconstrained	Unconstrained
+0x002cd044	Unused5	Unused5
+0x002dfa1c	Uploading	Uploading %d bytes to ARAM from %08x to %08x...
+0x0031b1d4	VFlevcontrol	VFlevcontrol.c
+0x00304348	VForce_Point	VForce_Point
+0x00305f44	VIEWFLAGS	VIEWFLAGS %s %d	
+0x003232ac	VOX_COL	VOX_COL
+0x0030489c	Editor	Vdf Editor
+0x0030a050	Editor	Vertex Editor
+0x0030554c	Tasks	View Tasks Done
+0x00304b48	texCache	View texCache Usage:
+0x0030a0b4	ViewHits	ViewHits
+0x00305630	ViewRange	ViewRange
+0x00323f90	Viewer	Viewer
+0x002e9894	createModelInstance	WARNING :: createModelInstance called with NULL pointer
+0x002ea090	Cannot	WARNING Cannot set priority Level to WORLD if not world object  
+0x002eff88	gamno,max_gam	WARNING track.c() ---- entry->gamno >= max_gam
+0x002e7114	JISCharCodes	WARNING: %x not found in JISCharCodes[]
+0x00302154	CREATED	WARNING: ENERGY BAR ALREADY CREATED and need killed 
+0x002ff954	createpoitn	WARNING: Error Could not find createpoitn node 
+0x002eab90	MAX_TOUCH_CALLBACKS	WARNING: MAX_TOUCH_CALLBACKS too small
+0x002ff92c	CreatePoint	WARNING: Max CreatePoint is Exceeded 
+0x003102fc	UnKnown	WARNING: UnKnown Texture Animation Command Input 
+0x002f0310	trackGetLoaded	WARNING: trackGetLoaded bit overflow
+0x002f02e8	trackSetLoaded	WARNING: trackSetLoaded bit overflow
+0x002e50ac	GetActiveFromVoiceID,VARIABLE_VOICE_ID	WARNING:Can't pass VARIABLE_VOICE_ID to GetActiveFromVoiceID()
+0x002e52f8	SfxNumber	WARNING:Illegal SfxNumber (%d) from file=%s, line=%d
+0x002e5268	audioModifySong	WARNING:audioModifySong(%d, ...):Song is not playing!
+0x002e53c0	audioPrepareStream	WARNING:audioPrepareStream() not called yet
+0x002e52c8	audioStopSong	WARNING:audioStopSong(%d):Song not playing!
+0x00310480	colours	WAVEANIM: colours
+0x00321c00	WCdial	WCdial.c
+0x003218d0	WClevcontrol	WClevcontrol.c
+0x00321a44	WCpressureswitch	WCpressureswitch.c
+0x00321650	WCpushblock	WCpushblock.c
+0x00304338	WGrove_Shrine	WGrove_Shrine
+0x0031a950	WMgeneralscales	WMgeneralscales.c
+0x0031a908	WMlevcontrol	WMlevcontrol.c
+0x0031ffc0	WORLDMAP_planet	WORLDMAP_planet.c
+0x002f65f4	enterd	Walk group number %d enterd twice at %f %f %f
+0x00318884	SClevelcontroler,SCtotempole	Warning SCtotempole.o [%d] could not find SClevelcontroler pointer!
+0x002ecfb8	piRomFreeLevel	Warning in piRomFreeLevel file || %s || not found !
+0x002e91d4	Tiltlist	Warning! Tiltlist overflow!!
+0x002d3938	although	Warning: VIFlush() was not called for 60 frames although VI settings were changed
+0x002f02a8	actno	Warning: act number is not valid (actno: %d)
+0x002f5ff0	calcPosition	Warning: calcPosition: Stack overflow!!
+0x00304038	diPrintf	Warning: di-gfx-list overflow! (diPrintf)
+0x00304064	diPrintf	Warning: di-mtx-list overflow! (diPrintf)
+0x003040bc	diPrintf	Warning: di-pol-list overflow! (diPrintf)
+0x00304090	diPrintf	Warning: di-vtx-list overflow! (diPrintf)
+0x002f0248	mapno,trackCheckObjectLoad	Warning: object being checked doesn't have a valid mapno in trackCheckObjectLoad(mapno: %d)
+0x00323a70	Weapons	Weapons
+0x002e75e5	Proportional	Width      :: Proportional
+0x0031572f	XDIMexplosion	XDIMexplosion.c
+0x0030ffb7	XPFX_PREVIEW	XPFX_PREVIEW %d
+0x0030134b	n_pausemenu	[n_pausemenu.c
+0x0031371f	mapno	\obj mapno is %d
+0x002ffa6e	_Tn_POST	_Tn_POST.c
+0x002d43f4	SDRAM	__ARChecksize(): Initializing for RevB+ SDRAM controller...
+0x002d3d28	__VISetAdjustValues	__VISetAdjustValues(): y offset should be an even number
+0x00328a26	BA733B	`BA733B
+0x00301a6c	feeling	a feeling that they may hold
+0x00324427	aNWsfx	aNWsfx.c
+0x002f36c0	halflife	after halflife reverse velocity
+0x00320550	aiChargeCircuit	aiChargeCircuit
+0x0031f8e4	aiDormant	aiDormant
+0x00320540	aiElectrocuted	aiElectrocuted
+0x00320534	aiExhale	aiExhale
+0x003247a0	aiGetUp	aiGetUp
+0x00315ff8	aiHangMode	aiHangMode
+0x0031f8d8	aiIamDead	aiIamDead
+0x0031f8cc	aiIamDying	aiIamDying
+0x003204e4	aiInactiveWalk	aiInactiveWalk
+0x00316004	aiIveBeenHit	aiIveBeenHit
+0x0031f8f0	aiL2_MainEngageControl	aiL2_MainEngageControl
+0x0031f908	aiL2_MainEngageStackControl	aiL2_MainEngageStackControl
+0x0032051c	aiMediumChargeAtPlayer	aiMediumChargeAtPlayer
+0x00320504	aiMediumRoarAtPlayer	aiMediumRoarAtPlayer
+0x003246e8	aiTop	aiTop
+0x00320560	aiTurnAround	aiTurnAround
+0x003204f4	aiTurnCorner	aiTurnCorner
+0x002ecaf8	allloaded	allloaded 1
+0x002ecb08	allloaded	allloaded 2
+0x0030195c	CloudRunners	and save the CloudRunners.
+0x002f3d9a	towards	and then moves back towards owner
+0x002f0e58	acbuff	anim:acbuff
+0x0030aa60	animpos	animpos=%f max=%f
+0x00323070	area6	area6
+0x002f00a8	gamno	asking load smap %d gamno %d 
+0x002ff088	attentioncam	attentioncam
+0x002e5344	audioStopSfx	audioStopSfx failed: hdl=%d @ %x, file=%s, line=%d
+0x00310168	autotransporter	autotransporter.c
+0x0030d3c8	baby_snowworm	baby_snowworm.c
+0x002ff7d0	fightlockbreakmusic	baddie->fightlockbreakmusic
+0x002ff7ec	fightlockmusic	baddie->fightlockmusic
+0x0030cbd4	balloon_baddie	balloon_baddie.c
+0x002ed8b0	kyteai	bit test on kyteai node failed
+0x002f400c	daylight	blends 30% daylight into particle color
+0x0032314c	bs_di	bs_di
+0x00323154	bs_trex	bs_trex
+0x0031f6f8	burstIntoGround	burstIntoGround
+0x00318f48	cagekyte	cagekyte.c
+0x00324797	caiDazed	caiDazed
+0x002ff108	cam1stperson	cam1stperson
+0x002ff4b8	camcannon	camcannon
+0x002ff328	camclimb	camclimb
+0x002fef2c	camcontrol2	camcontrol2
+0x002fef6c	camcontrol3	camcontrol3
+0x00323860	camdev	camdev
+0x002ff550	camdrakor	camdrakor
+0x00323898	camdrop	camdrop
+0x002ff2b0	camlockon	camlockon
+0x002ff008	camnormal	camnormal
+0x00323868	campath	campath
+0x002ff438	camshipbattle	camshipbattle
+0x002ff188	camstatic	camstatic
+0x00323870	camtalk	camtalk
+0x00313828	cannontargetControl	cannontargetControl.c
+0x002f412a	EXA_EDIT	case EXA_EDIT:
+0x00311d58	cfbaby	cfbaby.c
+0x00311cfc	cfcrystal	cfcrystal.c
+0x0030c490	targetxyz	char's x coord %f, targetxyz coord %f
+0x0030b8e4	weapondata	chara:weapondata
+0x002e1d28	chorus_fx	chorus_fx.c
+0x00309cd8	classtype	classtype=%d
+0x002e49f8	cld_back	cld_back
+0x002e4a04	cld_dung	cld_dung
+0x00323078	cld_t1	cld_t1
+0x00323080	cld_t1m	cld_t1m
+0x002e4a10	cld_walk	cld_walk
+0x00318ec8	cloudball	cloudball.c
+0x002f60c0	clrscrWhiteCrossDraw	clrscrWhiteCrossDraw the width is odd
+0x0030218c	cmdmenu	cmdmenu : Bar
+0x0030d26c	core_snowworm	core_snowworm.c
+0x003105c0	crackanim	crackanim
+0x003105e0	crackanim	crackanim.c
+0x003105cc	crackanimfx,light1	crackanimfx:light1
+0x0030e1a0	crate2	crate2.c
+0x0030a958	csize	csize %i cend %i ambient %i intensity %i
+0x003082a7	dAttack,reasons	dAttack reasons
+0x0032049c	dazedMode	dazedMode
+0x0031a3c0	deaddino	deaddino.c
+0x002efce8	MAX_VISIBLE_OBJECTS,depthSortObjects	depthSortObjects: MAX_VISIBLE_OBJECTS exceeded
+0x0030570c	devSaveGame	devSaveGame
+0x002f628f	dgametext	dgametext:info
+0x00303f40	Increase,MAX_MENU_DEPTH,diMenu	diMenu: Menu stack full! Increase MAX_MENU_DEPTH
+0x00303f74	diMenuStringInit	diMenuStringInit: Run out of string structures!
+0x00303f00	diMeter	diMeter - CPU meter stack full
+0x00303c74	diProfEnd,diProfReset	diProfEnd: before diProfReset!
+0x00303c94	diProfEnd	diProfEnd: prof overflow (%d)
+0x00303cb4	diProfPrint,diProfReset	diProfPrint: before diProfReset!
+0x00303c10	diProfReset	diProfReset: stack not empty
+0x00303c30	diProfReset,diProfStart	diProfStart: before diProfReset!
+0x00303c54	diProfStart	diProfStart: stack overflow
+0x0030c4b8	stoppingDistSq	distSq from target %f, stoppingDistSq is %f
+0x003231d8	dllTab	dllTab
+0x002f1824	doDayAction	doDayAction
+0x00323134	drako1	drako1
+0x0032313c	drako2	drako2
+0x00323144	drako3	drako3
+0x002d4688	dsp_task	dsp_task.c
+0x00303aa7	dswaphollow	dswaphollow.c
+0x002e5a44	dtype	dtype:di-stack
+0x002e5a70	dtype,sparseArray	dtype:sparseArray
+0x002e5a38	dtype	dtype:stack
+0x002e77fc	dvdLoadFile	dvdLoadFile: '%s' (%d bytes @ 0x%x)
+0x002e77c4	dvdLoadFile	dvdLoadFile: DVDClose failed on '%s', error code %d
+0x002e7790	dvdLoadFile	dvdLoadFile: DVDRead failed on '%s', error code %d
+0x002e7758	Filesize,dvdLoadFile	dvdLoadFile: Out of RAM loading '%s'.  Filesize = %d
+0x002d1f58	dvdlow	dvdlow.c
+0x002d3740	dvdqueue	dvdqueue.c
+0x002f38ac	noowner	effect has noowner or will lose the given owner
+0x0032048c	electrocuteMode	electrocuteMode
+0x002e49e8	action1	envfx:action1
+0x00320480	exhaleMode	exhaleMode
+0x00323588	expgfx1	expgfx1
+0x002f25f4	tile_entry	expgfx:tile_entry
+0x00321d57	fFFM3	fFFM3
+0x00323090	fanfare	fanfare
+0x00301a08	deadly	fight the huge and deadly
+0x0031b438	fireblock	fireblock.c
+0x00313454	firecrystal	firecrystal:light
+0x002ff118	firstperson	firstperson.c
+0x00315928	flameburst,light1	flameburst:light1
+0x0031593c	flameburst,light2	flameburst:light2
+0x00316b98	flybaddie	flybaddie.c
+0x002f3e04	polys,shaded	for small particles just use flat shaded polys
+0x002f3e58	widex	for widex particles
+0x002f3e6c	widez	for widez particles
+0x002ecaec	forceload	forceload
+0x002e976c	Trying,freeAnimation	freeAnimation() ---- Trying to free NULL anim 
+0x002f3f8d	ROUGHLY	from last point to present(ROUGHLY)
+0x00323720	fsaTick	fsaTick
+0x00323098	ga_cred	ga_cred
+0x002f00c8	gamNumber	gamNumber=%d
+0x002f1560	couldn,seqno,startObjSequence	game/anim.c: startObjSequence() couldn't find seqno free (ABORTED)!!
+0x002f1520	seqno,startObjSequence	game/anim.c: startObjSequence() seqno out of range [%d][%d]
+0x0030ae58	gameon	gameon:: stream overflow!!
+0x0030ae48	gameon	gameon:stream
+0x002f6fe4	gplayGetCurrentPlayerEnvactions,playerno	gameplay.c: gplayGetCurrentPlayerEnvactions: playerno overflow
+0x002f6fa4	gplayGetCurrentPlayerLactions,playerno	gameplay.c: gplayGetCurrentPlayerLactions: playerno overflow
+0x002f632c	textGroup	gametext:textGroup
+0x002f62d8	textTable	gametext:textTable
+0x002f62ec	gametextLoadLanguage	gametextLoadLanguage: error language specified doesn't exist!!
+0x002f6340	gamtextLoadTextGroupString	gamtextLoadTextGroupString error: the text identifier is too large
+0x00313878	gasventControl	gasventControl.c
+0x002f6cc0	generalHits	generalHits
+0x002f6cac	generatePolyList	generatePolyList
+0x003204a8	getupMode	getupMode
+0x0030ffc8	gfxemit	gfxemit.c
+0x00301900	diamonds	gold and diamonds. With this
+0x002f7024	MAX_TIMESAVES	gplayAddTime: MAX_TIMESAVES reached
+0x002f6ef8	gplayLoadOptions,saveoptions	gplayLoadOptions error: saveoptions failed to load.
+0x002f7058	mapno	gplaySetAct error: mapno (%d) number too high!
+0x002f7088	mapno	gplaySetAct error: negative mapno (%d)
+0x002f70b0	bitflags,mapno	gplaySetAct: mapno(%d) doesn't have an entry in the bitflags
+0x00310540	groundanim	groundanim
+0x0031055c	groundanim	groundanim group overflow
+0x0031054c	groundanim	groundanim.c
+0x00310817	maximumm	h WARNING 3D Tex WALL: exceeded maximumm no of vertices 
+0x003228ef	hLGTpointlight	hLGTpointlight.c
+0x00315fc8	hangMode	hangMode
+0x002df980	hw_aramdma	hw_aramdma.c
+0x002dfb24	hw_dolphin	hw_dolphin.c
+0x003230a8	ice_seq	ice_seq
+0x00301898	ideal	ideal base from which he could
+0x00313a80	imspaceship	imspaceship:light
+0x002f3668	sleected	in alpha from 0 to sleected value then back to 0
+0x002f3eac	perframe	increment vel by 2% of vel perframe
+0x002f3ed0	perframe	increment vel by 4% of vel perframe
+0x002f3ef4	perframe	increment vel by 6% of vel perframe
+0x002f3f18	perframe	increment vel by 8% of vel perframe
+0x002f37fc	prerotates	increments and prerotates the effect..
+0x002ea138	infonum	infonum out of range
+0x002f0584	lastlines	int:lastlines
+0x002f0574	lineindex	int:lineindex
+0x002f0554	linelist	int:linelist
+0x002f0548	pllist	int:pllist
+0x002f0564	pointlist	int:pointlist
+0x002f0810	wobjlist	int:wobjlist
+0x0030f430	interactobj	interactobj warning: host doesn't have the same load values as the interactobj
+0x002ed9a8	isEndNode	isEndNode for tricky failed!
+0x0030bb1c	objGetAnimChange	krystal.c: objGetAnimChange Error
+0x002e4a58	krz_door	krz_door
+0x002e4a64	krz_tun1	krz_tun1
+0x002e4a70	krz_tun2	krz_tun2
+0x003200e7	lFailed	lFailed assertion obj
+0x0031b640	lavaflow	lavaflow.c
+0x002f4048	mainchar	leaves fired on mainchar distance
+0x002e2830	action1	lfx:action1
+0x00310080	lfxemit,light1	lfxemit:light1
+0x002edd18	lightMapRegisterShader	lightMapRegisterShader: diffuse=%x specular=%x
+0x002edc5c	lightMapRegisterShader	lightMapRegisterShader: owner=%d mapType=%x
+0x002edd48	lightMapUnRegisterShader	lightMapUnRegisterShader: diffuse=%x specular=%x
+0x002f3644	horizontally	like flipping texture horizontally
+0x002ef2b0	linehits	linehits
+0x0030402c	listcode	listcode.c
+0x0030fc37	llandedArwing	llandedArwing.c
+0x002ea120	locknum	locknum out of range
+0x002ec5c3	lpreloaded,tablesize	lpreloaded ... %s tablesize=%d table=%x
+0x00323160	ma_pepr	ma_pepr
+0x00323178	ma_pepy	ma_pepy
+0x00323168	ma_rob	ma_rob
+0x00323170	ma_slip	ma_slip
+0x0030e3bc	magicdust	magicdust.c
+0x002e8000	dipol	main:dipol
+0x002e800c	divtx	main:divtx
+0x002e7fb4	mainChangeMap	mainChangeMap(%d,%d,%d)
+0x002e7f4c	main_dt	main_dt has been changed!
+0x002e7f68	main_fdt	main_fdt has been changed!
+0x002e9910	makeModelAnimation	makeModelAnimation() size mismatch!! (%d,%d)
+0x002f3dbc	towards	makes the particle move towards the character
+0x002f08f0	circularrippletex	maketex:circularrippletex
+0x002f08a8	envztex	maketex:envztex
+0x002f08b8	hazetex	maketex:hazetex
+0x002f0894	rippletex	maketex:rippletex
+0x002f086c	shadDisplayList	maketex:shadDisplayList
+0x002f0858	shadowtex	maketex:shadowtex
+0x002f08c8	shadtex	maketex:shadtex
+0x002f08d8	zattenuatetex	maketex:zattenuatetex
+0x003230bc	map_crf	map_crf
+0x003230c4	map_dim	map_dim
+0x003230d4	map_wc	map_wc
+0x002efd44	mapno	mapno not found
+0x0030f6c8	mediumbasket	mediumbasket.c
+0x003175d0	cbuttons	menu cbuttons %d
+0x002e4a7c	menupage	menupage
+0x00303d58	actimes	meter:actimes
+0x00303d78	cmdbuf	meter:cmdbuf
+0x00303d1c	cpustack	meter:cpustack
+0x00303d48	cputimes	meter:cputimes
+0x00303d0c	distack	meter:distack
+0x00303d94	perfdata1	meter:perfdata1
+0x00303da4	perfdata2	meter:perfdata2
+0x00303de0	perfdata3	meter:perfdata3
+0x00303df0	perfdata4	meter:perfdata4
+0x00303d38	rcptimes	meter:rcptimes
+0x00303d68	sctimes	meter:sctimes
+0x0030d04c	mikadalon	mikadalon.c
+0x002e83d4	mmAllocDi	mmAllocDi(%s,%d): Size==0 : RA:0x%08x
+0x002e83fc	mmAllocDi	mmAllocDi(%s,%d): failed : RA:0x%08x
+0x002e83b0	mmRealloc	mmRealloc(0x%08x,%d), RA:0x%08x
+0x002e8318	mm_dolphin	mm_dolphin.c
+0x00313098	lightSetup	mmp_barrel:lightSetup
+0x002e9290	freezemodel	mod:freezemodel
+0x002e86ec	globalAnimBuffer	mod:globalAnimBuffer
+0x002f7560	modanimeflash1	modanimeflash1.c
+0x002fa498	modcloudrunner2	modcloudrunner2.c
+0x002e9844	animOffsetTable,modelLoadOffsetTables	modelLoadOffsetTables() --- animOffsetTable is NULL
+0x002e97e4	modelLoadOffsetTables,modelOffsetTable	modelLoadOffsetTables() --- modelOffsetTable is NULL
+0x002f3200	modelfx	modelfx.c
+0x002e8690	models_dolphin	models_dolphin.c
+0x002f2730	TEXMIX,framesize	modgfx can't TEXMIX framesize %d
+0x002f26cc	event2	modgfx:event2
+0x002f2700	light1	modgfx:light1
+0x002f2678	mempos	modgfx:mempos
+0x00324010	modv1	modv1
+0x002d1d70	mtxvec	mtxvec.c
+0x0030d128	mutatedeba	mutatedeba.c
+0x002f1834	tzones2	nday:tzones2
+0x002ed914	net_route	net_route: No support for this type of node %d x=%f y=%f z=%f
+0x002f185c	newday	newday.c
+0x002f1844	newday	newday:NTri
+0x002f1850	newday	newday:Vtx
+0x00323578	newfog	newfog
+0x0030eb70	seqno	newseqobj %d error: seqno is required
+0x00310c78	newtrigger	newtrigger.c
+0x002e7f84	no_diprintf	no_diprintf %d
+0x002f36e0	availiable	not availiable in editor mode
+0x002eb9c8	numMatrices	numMatrices=%d
+0x002e9e30	fileno	ob %d fileno %d
+0x002eb534	circlepols	obj:circlepols
+0x002e9ad4	contnobuf	obj:contnobuf
+0x002e9af4	deflist	obj:deflist
+0x002e9ab8	dellist	obj:dellist
+0x002e9ac4	locklist	obj:locklist
+0x002e9ae4	objtypes	obj:objtypes
+0x002e9e80	tempindex	obj:tempindex
+0x002e9e90	templine	obj:templine
+0x002ea7ec	objDistObj2Def	objDistObj2Def: check your pointers
+0x002ea8b0	objDistObj2DefXZ	objDistObj2DefXZ: check your pointers
+0x002ea748	objDistObj2Obj	objDistObj2Obj: check your pointers
+0x002ea798	objDistObj2ObjXZ	objDistObj2ObjXZ: check your pointers
+0x002ea888	objDistSqObj2Def	objDistSqObj2Def: check your pointers 
+0x002ea814	objDistSqObj2DefXZ	objDistSqObj2DefXZ: check your pointers
+0x002ea864	objDistSqObj2DefXZ	objDistSqObj2DefXZ: def 2 type %d
+0x002ea840	objDistSqObj2DefXZ	objDistSqObj2DefXZ: obj 1 type %d
+0x002ea770	objDistSqObj2Obj	objDistSqObj2Obj: check your pointers
+0x002ea7c0	objDistSqObj2ObjXZ	objDistSqObj2ObjXZ: check your pointers
+0x002ea100	objFreeEffectBox	objFreeEffectBox: Not found
+0x002e9d58	objFreeTick	objFreeTick %08x locked %d,already on list
+0x002e9ea0	objGetControlNo	objGetControlNo objtype out of range %d/%d
+0x002e9b18	objGetSequence	objGetSequence objtype out of range %d/%d
+0x002e9f4c	objGetTypeNo	objGetTypeNo objtype out of range %d/%d
+0x002e9b98	objSetupObjectActual	objSetupObjectActual objtype out of range %d/%d
+0x002e9ef8	objTypeGetClass	objTypeGetClass objtype out of range %d/%d
+0x002e9ecc	objTypeGetFlags	objTypeGetFlags objtype out of range %d/%d
+0x002e9f24	objTypeName	objTypeName objtype out of range %d/%d
+0x002efc90	objdef_store	objdef_store
+0x00309e04	delromdef,objed	objed:delromdef
+0x00309df4	lookat,objed	objed:lookat
+0x0030981c	MAX_OBJ_DISABLED,objedit	objedit.c: MAX_OBJ_DISABLED exceeded
+0x002ea580	MAX_HITSTORE	objhits.c: MAX_HITSTORE overflow
+0x002ea444	keysize	objhits.c: keysize overflow error
+0x002ea344	hitmods,ohits	ohits:hitmods
+0x002ea374	hitspheres,ohits	ohits:hitspheres
+0x002ea388	hitspheres2,ohits	ohits:hitspheres2
+0x002ea39c	hitspheres3,ohits	ohits:hitspheres3
+0x002ea3b0	hitspheres4,ohits	ohits:hitspheres4
+0x002ea364	hitvols,ohits	ohits:hitvols
+0x002ea354	lasthits,ohits	ohits:lasthits
+0x003215bf	pERROR	pERROR: end of curve reached
+0x002ff2e7	pcamshipbattle	pcamshipbattle
+0x0030ae14	perform_viewer	perform_viewer.c
+0x002f2a40	mempos	pgfx:mempos
+0x002f2a88	mlight1	pgfx:mlight1
+0x002ed264	piDVDCallbackAnim	piDVDCallbackAnim %x
+0x002ed750	piDVDCallbackAnimCurve	piDVDCallbackAnimCurve %x
+0x002ed76c	AnimCurveTab,piDVDCallbackAnimCurveTab	piDVDCallbackAnimCurveTab  error on AnimCurveTab
+0x002ed7a0	piDVDCallbackAnimCurveTab	piDVDCallbackAnimCurveTab %x
+0x002ed720	piDVDCallbackAnimCurveb	piDVDCallbackAnimCurveb  error on AnimCurve
+0x002ed23c	ANIMBIN,piDVDCallbackAnimbin	piDVDCallbackAnimbin  error on ANIMBIN
+0x002ed1b8	ANIMTAB,piDVDCallbackAnimtab	piDVDCallbackAnimtab  error on ANIMTAB
+0x002ed1e0	piDVDCallbackAnimtab	piDVDCallbackAnimtab %x
+0x002ed690	BLOCKBIN,piDVDCallbackBlockbin	piDVDCallbackBlockbin  error on BLOCKBIN
+0x002ed6d8	BLOCKSTAB,piDVDCallbackBlockstab	piDVDCallbackBlockstab  error on BLOCKSTAB
+0x002ed1fc	MODBIN,piDVDCallbackModbin	piDVDCallbackModbin  error on MODBIN
+0x002ed19b	piDVDCallbackModtab	piDVDCallbackModtab  %x
+0x002ed170	MODTAB,piDVDCallbackModtab	piDVDCallbackModtab  error on MODTAB
+0x002ed224	piDVDCallbackModtab	piDVDCallbackModtab %x
+0x002ed2a4	piDVDCallbackTEXTURES	piDVDCallbackTEXTURES %x
+0x002ed27c	TEX2BIN,piDVDCallbackTex2bin	piDVDCallbackTex2bin  error on TEX2BIN
+0x002ed548	INCORRECT,REALSUM,piDVDCallbackTex2tab33	piDVDCallbackTex2tab33 ------ CHECKSUM IS INCORRECT   0x%x  REALSUM 0x%x
+0x002ed594	READING,piDVDCallbackTex2tab33	piDVDCallbackTex2tab33 ------ RE-READING
+0x002ed304	REALSUM,piDVDCallbackTex2tab36	piDVDCallbackTex2tab36 ------ CHECKSUM  0x%x  REALSUM 0x%x
+0x002ed340	INCORRECT,REALSUM,piDVDCallbackTex2tab36	piDVDCallbackTex2tab36 ------ CHECKSUM IS INCORRECT   0x%x  REALSUM 0x%x
+0x002ed38c	READING,piDVDCallbackTex2tab36	piDVDCallbackTex2tab36 ------ RE-READING
+0x002ed3d4	REALSUM,piDVDCallbackTex2tab78	piDVDCallbackTex2tab78 ------ CHECKSUM  0x%x  REALSUM 0x%x
+0x002ed410	INCORRECT,REALSUM,piDVDCallbackTex2tab78	piDVDCallbackTex2tab78 ------ CHECKSUM IS INCORRECT   0x%x  REALSUM 0x%x
+0x002ed45c	READING,piDVDCallbackTex2tab78	piDVDCallbackTex2tab78 ------ RE-READING
+0x002ed488	TEXBIN,piDVDCallbackTexbin	piDVDCallbackTexbin  error on TEXBIN
+0x002ed2c0	TEX2TAB,piDVDCallbackTextab	piDVDCallbackTextab  error on TEX2TAB
+0x002ed4c8	piDVDCallbackTextab	piDVDCallbackTextab  error on TEXTAB
+0x002ed50c	REALSUM,piDVDCallbackTextab33	piDVDCallbackTextab33 ------ CHECKSUM  0x%x  REALSUM 0x%x
+0x002ed5dc	REALSUM,piDVDCallbackTextab76	piDVDCallbackTextab76 ------ CHECKSUM  0x%x  REALSUM 0x%x
+0x002ed618	INCORRECT,REALSUM,piDVDCallbackTextab76	piDVDCallbackTextab76 ------ CHECKSUM IS INCORRECT   0x%x  REALSUM 0x%x
+0x002ed664	READING,piDVDCallbackTextab76	piDVDCallbackTextab76 ------ RE-READING
+0x002ed6bc	piDVDCallbackblockbin	piDVDCallbackblockbin %x
+0x002ed704	piDVDCallbackblocktab	piDVDCallbackblocktab %x
+0x002ed2e8	piDVDCallbacktex2tab36	piDVDCallbacktex2tab36 %x
+0x002ed3b8	piDVDCallbacktex2tab78	piDVDCallbacktex2tab78 %x
+0x002ed4b0	piDVDCallbacktexbin	piDVDCallbacktexbin %x
+0x002ed4f0	piDVDCallbacktextab33	piDVDCallbacktextab33 %x
+0x002ed5c0	piDVDCallbacktextab76	piDVDCallbacktextab76 %x
+0x002ec6b8	DB_MAPINDEX,DB_MAPS,piGetMapInfo	piGetMapInfo() ----- table DB_MAPS or DB_MAPINDEX not loaded
+0x002ec6f8	DB_MODELS,piGetModelInfo	piGetModelInfo() ----- table DB_MODELS not loaded
+0x002ec764	DB_TEXTURES,piGetTEXTUREInfo	piGetTEXTUREInfo() ----- table DB_TEXTURES not loaded
+0x002ec72c	DB_TEXTURES,piGetTExtureInfo	piGetTExtureInfo() ----- table DB_TEXTURES not loaded
+0x002ecf08	piMergeIndex,tabfiles	piMergeIndex  one or other tabfiles is not loaded %x %x
+0x002ecff0	flist,piRomFreeLevel	piRomFreeLevel(): flist array overflow
+0x002ec808	mapNumber,piRomGetGamNumber	piRomGetGamNumber() ----- mapNumber <%d> too high
+0x002ec7ac	DB_MAPS	piRomLoadSection(): DB_MAPS Bin Not Loaded
+0x002f0108	plMusicactions	plMusicactions->actions[i]
+0x002f6f8c	playerno	playerno set to %d!
+0x002f15d8	preemptSequenceTime	preemptSequenceTime() Overflow!!
+0x0030ee28	prempting	prempting the sequence
+0x002f396c	prerotates	prerotates the effect..yaw rot is independent 
+0x0030e888	projswitch	projswitch.c
+0x0031a460	pswitch	pswitch.c
+0x002e7dd8	ptossell	ptossell
+0x0030e49c	pushpull	pushpull.c
+0x00302110	qInfoShow	qInfoShow
+0x0030211c	qInfoShowTex	qInfoShowTex
+0x002ed828	queue_top	queue_top: queue empty
+0x002f601c	racePostion	racePostion: Error! (romdefno: %d) %d %i  
+0x002e4a88	racelose	racelose
+0x003230dc	racewin	racewin
+0x002f3a44	cinders	randomly sways the effect like the cinders
+0x002ed7d4	rcpScreenWrite	rcpScreenWrite: Texture too big
+0x002ed7c0	GfxFifo	rcp_dolphin:GfxFifo
+0x00303fe0	rcplists1	rcplists1
+0x00303fec	rcplists2	rcplists2
+0x00303ff8	rcplists3	rcplists3
+0x00304004	rcplists4	rcplists4
+0x002e14e0	reverb_fx	reverb_fx.c
+0x00320474	roarMode	roarMode
+0x0030d02c	robotPatrol	robotPatrol.c
+0x00312028	robotpatrol	robotpatrol.c
+0x002f0444	Mapno,romdefMove_Restore	romdefMove_Restore: Mapno overflow!!
+0x002f03f4	Mapno,romdefMove_Set	romdefMove_Set: Mapno overflow!!
+0x0030d6d0	rope_baddie	rope_baddie.c
+0x002e59b4	routepoints	route: routepoints overflow
+0x002de960	s_data	s_data.c
+0x003136ac	sandwormBoss	sandwormBoss.c
+0x003102bc	screenoverlay	screenoverlay.c
+0x002e4a94	seq_big1	seq_big1
+0x002e4aa0	seq_cam1	seq_cam1
+0x002e4aac	seq_cav2	seq_cav2
+0x002e4ab8	seq_cdr2	seq_cdr2
+0x002e4ac4	seq_cld1	seq_cld1
+0x002e4ad0	seq_clr1	seq_clr1
+0x002e4adc	seq_cry2	seq_cry2
+0x002e4ae8	seq_cry3	seq_cry3
+0x002e4af4	seq_cry5	seq_cry5
+0x002e4b00	seq_dimu	seq_dimu.son
+0x002e4b10	seq_disc	seq_disc.son
+0x002e4b20	seq_diwi	seq_diwi.son
+0x002e4b30	seq_dun4	seq_dun4
+0x002e4b3c	seq_forc	seq_forc.son
+0x002e4b4c	seq_gin	seq_gin.son
+0x002e4b58	seq_gout	seq_gout.son
+0x002e4b68	seq_gsto	seq_gsto.son
+0x002e4b78	seq_gwin	seq_gwin.son
+0x002e4b88	seq_holl	seq_holl.son
+0x002e4b98	seq_ice3	seq_ice3.son
+0x002e4ba8	seq_lava	seq_lava.son
+0x002e4bb8	seq_mmp	seq_mmp.son
+0x002e4bc4	seq_nwfo	seq_nwfo.son
+0x003230ec	seq_ra1	seq_ra1
+0x003230f4	seq_ra2	seq_ra2
+0x003230fc	seq_sh	seq_sh
+0x002e4bd4	seq_shw1	seq_shw1
+0x002e4be0	seq_shw2	seq_shw2
+0x002e4bec	seq_spir	seq_spir.son
+0x002e4bfc	seq_spoo	seq_spoo.son
+0x002e4c0c	seq_sprg	seq_sprg.son
+0x002e4c1c	seq_stor	seq_stor.son
+0x002e4c2c	seq_trea	seq_trea.son
+0x002e4c3c	seq_wind	seq_wind.son
+0x002e4c4c	seq_wtrt	seq_wtrt.son
+0x002f04e0	memptr	shad:memptr
+0x00318e00	shipgun	shipgun.c
+0x00318d60	shiphead	shiphead.c
+0x0030c0c4	sideFind	sideFind 1
+0x0030c0d0	sideFind	sideFind 2
+0x0030e6d4	sidekicktoy	sidekicktoy.c
+0x0030f668	smallbasket	smallbasket.c
+0x002def48	snd_init	snd_init.c
+0x002defd8	snd_midictrl	snd_midictrl.c
+0x002dd870	snd_synthapi	snd_synthapi.c
+0x002e5a84	sparsearray	sparsearray.c
+0x0031b6d8	spellplace	spellplace.c
+0x0030fc98	staffaction	staffaction.c
+0x00320424	standMode	standMode
+0x002f1a04	membase,stars	stars:membase
+0x002f19c0	sfield,stars	stars:sfield
+0x002f3fb4	halflife	start alpha after halflife is passed
+0x002f63f4	sentence	subtitles error: sentence has a delay less than %d ms
+0x0030cc20	swarmBaddieDLL	swarmBaddieDLL
+0x0030cc68	swarm_baddie	swarm_baddie.c
+0x0030fba8	modelno,switching	switching to modelno %d
+0x002ddd48	synthmacros	synthmacros.c
+0x0030f3b0	talkobj	talkobj warning: host doesn't have the same load values as the talkobj
+0x002f7300	tasktextGetTaskName	tasktextGetTaskName: index must be from 0-4
+0x0030d4af	tchukachuck	tchukachuck.c
+0x00301850	terrorised	terrorised by General Scales and
+0x002eefa4	frametable	tex:frametable
+0x002eef38	textab	tex:textab
+0x002ef05c	texFreeTexture	texFreeTexture: NULL tex!!
+0x002eef74	texInitTextures	texInitTextures() ---- Can't init TEXTAB !!!
+0x002eef44	TEXTAB2,texInitTextures	texInitTextures() ---- Can't init TEXTAB2 !!!
+0x002e7e58	texcache	texcache: %d %d/%d
+0x002f42f8	texnum	texnum %d 
+0x00301a8c	defeating,secret	the secret to defeating the
+0x002effec	TEMP_BUFFER_SIZE,getdim	track.c: getdim(): TEMP_BUFFER_SIZE overflow
+0x002efe38	trackFreeMap	trackFreeMap: Error no map!!
+0x002f07ac	MAX_LINEPOINTS	trackIntersect() MAX_LINEPOINTS overflow!!!
+0x002f0764	MAX_LINES	trackIntersect() MAX_LINES overflow!!!
+0x002f0738	linefunctable	trackIntersect: linefunctable overflow!!!
+0x002ef230	trackLoadBlockActual	trackLoadBlockActual blockNum %d not found !!
+0x002effd0	trackMapResize	trackMapResize
+0x002f01d8	trackObjectControl	trackObjectControl: map overflow
+0x002efc4c	blkmaps	trk:blkmaps
+0x002efc18	blknos	trk:blknos
+0x002efc24	blkusage	trk:blkusage
+0x002efc0c	cblocks	trk:cblocks
+0x002efc58	entrymaps	trk:entrymaps
+0x002effe0	glmap	trk:glmap
+0x002efc34	mapinfo	trk:mapinfo
+0x002efc40	tempbuf	trk:tempbuf
+0x002efc68	vismap	trk:vismap
+0x002e4c74	tst_comb	tst_comb
+0x002e4c80	tst_fear	tst_fear
+0x0032310c	tst_mag	tst_mag
+0x00323114	tst_sac	tst_sac
+0x002e4c8c	tst_skil	tst_skil
+0x0032311c	tst_str	tst_str
+0x00320464	turnAroundMode	turnAroundMode
+0x0032043c	turnCornerMode	turnCornerMode
+0x00301938	unstoppable	unstoppable. Find the SpellStone
+0x002e5858	voxmem	vox:voxmem
+0x0030d5b0	wall_crawler	wall_crawler.c
+0x003106a8	wallanim	wallanim
+0x0031a810	walltorch	walltorch.c
+0x00323124	war_in	war_in
+0x002f2764	dolight	warning in modgfx dolight dll no spare memory for light available
+0x002f18f4	newfog	warning in newfog dll no spare memory for available
+0x002f19d0	newstars	warning in newstars dll no spare memory available
+0x002ea0d4	objAddEffectBox	warning: objAddEffectBox max effect boxes
+0x0030fa40	waterfallcontrol	waterfallcontrol.c
+0x00301920	wealth	wealth, Scales would be
+0x0030dce0	weapons1	weapons1
+0x002f3f3c	dandelion	what happens when you blow a dandelion
+0x0030ccb0	wispBaddieDLL	wispBaddieDLL
+0x0030ccf8	wisp_baddie	wisp_baddie.c
+0x0031aff4	wmcrystal	wmcrystal.c
+0x0031afe8	alist	wmsun:alist
+0x0031214f	xCFtoggleswitch	xCFtoggleswitch.c
+0x00320edf	xDRicefire	xDRicefire.c
+0x002f0edb	xSETTIME	xSETTIME: time=%d
+0x00324268	xyzanim	xyzanim
+0x0030c904	recalculate,yawOfVector	yawOfVector: need to recalculate the vector with length
+0x002ff0cf	camslide	|camslide

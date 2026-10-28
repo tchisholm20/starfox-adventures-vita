@@ -1,0 +1,9 @@
+{
+ "va": "US10",
+ "vb": "US11",
+ "section": ".rodata",
+ "norm": "data",
+ "addr_a": 2150373568,
+ "addr_b": 2150375488,
+ "regions": []
+}

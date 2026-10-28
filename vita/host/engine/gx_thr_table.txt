@@ -1,0 +1,162 @@
+# gx_thr_table.txt -- THE THREADED DISPOSITION of every GX boundary symbol (RT_THREAD.md section 4).  INPUT of host/engine/gen_gx_rec.py (module gen); written by the planner, not by a module.
+# thr:  S = state setter (R2, R2_STATE.md): while R2 is active G runs gxh_g_X (the HAL body on G's instance) and marks dirty groups; the legacy path (R2 off) records by value like R
+#       R = record by value on G, replay __real_X on R (generated both sides)      L = run __real_X on G, nothing recorded (G-M1 proves the body touches no R-owned static)
+#       X = custom: G side gxts_G_X(params), R side gxts_R_X(payload) -- both in src/gx_rt_special.c      P = pipe byte (gx_rt.h inline writers)
+#       E = "R-drop": on R the wrapper returns at once (the replayed real body reaches it across objects), on G it runs the real function      T = viewer-only trap: counts, then real
+# edge: 1 = a HAL object itself references this symbol across objects, so on R the wrapper must call __real_X (generated: if (gxt_on_R()) return __real_X(...))
+# FORMAT  name|thr|edge|why         (one row per row of gen_gx_rec.py TABLE_TEXT + the 7 pipe rows, then [extra] rows with the full prototype)
+GXBegin|X|0|record BEGIN; in DL-recording mode it writes the 3 header bytes into the game list
+GXBeginDisplayList|X|0|G-local DL recording (docs/53 2.3); emits OP_ABANDON
+GXCallDisplayList|R|0|list pointer by value (immutable lists R-2; the memory is kept by the retire list)
+GXClearVtxDesc|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXCopyDisp|L|0|no-op / weak stub
+GXCopyTex|X|0|record; the B8 (0x2A) copy is BLOCKING (sync record)
+GXDisableBreakPt|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+GXDrawTorus|L|0|no-op / weak stub
+GXEnableBreakPt|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+GXEnableTexOffsets|L|0|no-op / weak stub
+GXEndDisplayList|X|0|G-local DL recording
+GXFlush|L|0|no-op / weak stub
+GXFlush_|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+GXGetFifoPtrs|L|0|getter on game memory / constant
+GXGetGPStatus|L|0|getter on game memory / constant
+GXGetLightAttnK|L|0|getter on game memory / constant
+GXGetScissor|X|0|served from the G shadow
+GXGetTexBufferSize|L|0|getter on game memory / constant
+GXGetTexObjData|L|0|getter on game memory / constant
+GXGetTexObjFmt|L|0|getter on game memory / constant
+GXGetTexObjHeight|L|0|getter on game memory / constant
+GXGetTexObjUserData|L|0|getter on game memory / constant
+GXGetTexObjWidth|L|0|getter on game memory / constant
+GXInit|L|0|no-op / weak stub
+GXInitFifoBase|L|0|no-op / weak stub
+GXInitFifoLimits|L|0|no-op / weak stub
+GXInitLightAttn|L|0|object fill on the game memory only
+GXInitLightAttnA|L|0|object fill on the game memory only
+GXInitLightAttnK|L|0|object fill on the game memory only
+GXInitLightColor|L|0|object fill on the game memory only
+GXInitLightDir|L|0|object fill on the game memory only
+GXInitLightDistAttn|L|0|object fill on the game memory only
+GXInitLightPos|L|0|object fill on the game memory only
+GXInitLightSpot|L|0|object fill on the game memory only
+GXInitSpecularDir|L|0|object fill on the game memory only
+GXInitTexObj|L|0|object fill on the game memory only
+GXInitTexObjLOD|X|0|G half (object mutation) + R half (TEXLOD_NOTE on a scratch copy of the entry object)
+GXInitTexObjUserData|L|0|object fill on the game memory only
+GXInvalidateTexAll|L|0|no-op / weak stub
+GXInvalidateVtxCache|L|0|no-op / weak stub
+GXLoadLightObjImm|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXLoadNrmMtxImm|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXLoadPosMtxImm|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXLoadTexMtxImm|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXLoadTexObj|X|0|real os_ext_poll on G; dirty-image snapshot; record on a 32-byte object copy
+GXLoadTexObjPreLoaded|X|0|same record as GXLoadTexObj
+GXPeekZ|X|0|far plane on G (the GXM backend answers peekZ with 0 = far; threaded start is guarded by efbZMode == 0)
+GXPixModeSync|L|0|no-op / weak stub
+GXPreLoadEntireTexture|L|0|no-op / weak stub
+GXReadDrawSync|X|0|single-stepped: served+1 only once R executed it (docs/53 4.1)
+GXReadXfRasMetric|L|0|getter on game memory / constant
+GXResetWriteGatherPipe|L|0|no-op / weak stub
+GXSetAlphaCompare|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetAlphaUpdate|L|0|no-op / weak stub
+GXSetArray|X|0|P2-prime: base inside the written set => ping-pong shadow copy + DLK_WRITE
+GXSetBlendMode|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetBreakPtCallback|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+GXSetCPUFifo|L|0|no-op / weak stub
+GXSetChanAmbColor|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetChanCtrl|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetChanMatColor|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetColorUpdate|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetCopyClear|X|0|record + G-side __real_vi_set_clear_color (the replayed one is dropped on R)
+GXSetCopyFilter|L|0|no-op / weak stub
+GXSetCullMode|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetCurrentMtx|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetDispCopyDst|L|0|no-op / weak stub
+GXSetDispCopyGamma|L|0|no-op / weak stub
+GXSetDispCopySrc|L|0|no-op / weak stub
+GXSetDispCopyYScale|L|0|no-op / weak stub
+GXSetDither|L|0|no-op / weak stub
+GXSetDrawSync|X|0|record DRAWSYNC + publish
+GXSetFieldMode|L|0|no-op / weak stub
+GXSetFog|X|0|record by value; G ALSO mirrors the colour into the game's gFogColor (direct mode writes it; the game reads it back: intersect_render.c:149) -- N1 keeps R off it
+GXSetGPFifo|L|0|no-op / weak stub
+GXSetGPMetric|L|0|no-op / weak stub
+GXSetIndTexCoordScale|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetIndTexMtx|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetIndTexOrder|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetLineWidth|L|0|no-op / weak stub
+GXSetMisc|L|0|no-op / weak stub
+GXSetNumChans|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetNumIndStages|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetNumTevStages|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetNumTexGens|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetPixelFmt|L|0|no-op / weak stub
+GXSetPointSize|L|0|no-op / weak stub
+GXSetProjection|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetScissor|X|0|record + G shadow (GXGetScissor)
+GXSetTevAlphaIn|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevAlphaOp|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevColor|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevColorIn|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevColorOp|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevColorS10|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevDirect|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevIndRepeat|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevIndirect|S|1|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevKAlphaSel|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevKColor|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevKColorSel|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevOp|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevOrder|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevSwapMode|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTevSwapModeTable|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTexCoordGen2|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetTexCopyDst|X|0|record + G tracks the dst format (B8 = 0x2A decides the blocking copy)
+GXSetTexCopySrc|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetViewport|R|0|state write: args by value
+GXSetViewportJitter|R|0|state write: args by value
+GXSetVtxAttrFmt|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetVtxDesc|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXSetZCompLoc|L|0|no-op / weak stub
+GXSetZMode|S|0|state write: G runs the HAL body on its own instance (R2_STATE.md); legacy: args by value
+GXStfxSkinBind|R|0|R8 GPU skin: the bound skin table pointer by value (tables are immutable) + the palette bytes (nb*48) copied into the record; replayed into the HAL on R in order with the draws
+GXTexModeSync|L|0|no-op / weak stub
+VIConfigure|L|0|no-op / weak stub
+VIFlush|L|0|no-op / weak stub
+VIGetDTVStatus|L|0|getter on game memory / constant
+VIGetNextField|L|0|getter on game memory / constant
+VIGetTvFormat|L|0|getter on game memory / constant
+VIInit|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+VISetBlack|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+VISetNextFrameBuffer|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+VISetPostRetraceCallback|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+VISetPreRetraceCallback|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+VIWaitForRetrace|L|0|G state (break-point trio, VI callbacks, GXFlush_, VIWaitForRetrace); the RHI calls inside VIWaitForRetrace are wrapped instead
+gxfifo_push_f32|P|0|inline pipe writer (gxt_push_*)
+gxfifo_push_s16|P|0|inline pipe writer (gxt_push_*)
+gxfifo_push_s32|P|0|inline pipe writer (gxt_push_*)
+gxfifo_push_s8|P|0|inline pipe writer (gxt_push_*)
+gxfifo_push_u16|P|0|inline pipe writer (gxt_push_*)
+gxfifo_push_u32|P|0|inline pipe writer (gxt_push_*)
+gxfifo_push_u8|P|0|inline pipe writer (gxt_push_*)
+
+[extra]   # not part of the 133-symbol T0-a table: separate wrappers that act ONLY in threaded mode.  cls|rec|ret|name|params|inline|thr|edge|why
+H|0|int|gx_breakpoint_deliver|void||X|0|G-resident; delivery gated on R having executed the head flip token (docs/53 4.2; no probe records on GXM)
+H|1|void|gx_dlk_event|const void* p, size_t n, int isWrite||X|0|ordered event record; writes feed the G written set (P2-prime)
+V|0|void|gx_draw_setAlphaMode|int mode||T|0|viewer/bridge only
+V|0|void|gx_draw_setForceLayout|int stride, int posOff, int posSz||T|0|viewer/bridge only
+V|0|void|gx_draw_setJointMatrices|const float m[][3][4], int n||T|0|viewer/bridge only
+V|0|void|gx_draw_setJointOffsets|const float off[][3], int n||T|0|viewer/bridge only
+V|0|void|gx_draw_setRealSkin|int on||T|0|viewer/bridge only (the boot call from VIInit happens in direct mode)
+H|1|void|gx_draw_setShadowRecv|int on||R|0|backend state, ordered
+V|0|void|gx_draw_setSourceBounds|const void* lo, const void* hi||T|0|viewer/bridge only
+V|0|void|gx_draw_setTexture|RhiTexture* tex||T|0|viewer/bridge only
+H|1|void|gx_tex_invalidate|const void* addr, u32 n||X|0|ordered event record; feeds the G dirty-image set
+H|1|void|gx_tex_release|const void* addr, u32 n||X|0|ordered event record; G forgets the images; the free itself goes through the retire list
+H|1|void|gx_tex_yuv_register|const void* y, const void* u, const void* v, int w, int h||X|0|G remembers the plane pointers (never snapshot a registered movie plane: the HAL identifies planes by pointer equality); record by value
+H|1|void|gx_tex_yuv_register_x|const void* y, const void* u, const void* v, int w, int h, uint8_t* ey, uint8_t* eu, uint8_t* ev||X|0|as gx_tex_yuv_register; the worker expanded buffers: ownership passes to R
+H|0|void|os_ext_poll|void||E|0|called by the replayed GXLoadTexObj across objects; a baton operation, never on R
+I|1|void|rhi_beginFrame|RhiInstance* rhi||R|0|VIWaitForRetrace stays on G unmodified; its RHI frame calls are what is recorded
+I|1|void|rhi_clear|RhiInstance* rhi, float r, float g, float b, float a||R|0|idem
+I|1|void|rhi_endFrame|RhiInstance* rhi||R|0|idem
+H|0|void|vi_set_clear_color|float r, float g, float b||E|0|called by the replayed GXSetCopyClear across objects; G calls the real one itself

@@ -1,0 +1,11 @@
+# US10 (.text @ 800066E0+0x2bb1a0) vs JP10 (800066E0+0x2bb2a0)  norm=code K=8
+# section size delta +0x100
+INSERT   A:8002CD78-8002CD78 (    0x0)  B:8002CD78-8002CD98 (   0x20)  main/object.c  Obj_FreeObject+0x1b4
+INSERT   A:80145450-80145450 (    0x0)  B:80145470-80145510 (   0xa0)  dlls/objects/196_Tricky/tricky.c  tricky_SeqFn+0x14c
+RESIZE   A:801A1708-801A173C (   0x34)  B:801A17C8-801A1800 (   0x38)  dlls/objects/344/344.c  gunpowderBarrel_updatePhysics+0x214
+RESIZE   A:801A186C-801A187C (   0x10)  B:801A1930-801A196C (   0x3c)  dlls/objects/344/344.c  gunpowderBarrel_updatePhysics+0x378
+REPLACE  A:801A1E8C-801A1E90 (    0x4)  B:801A1F7C-801A1F80 (    0x4)  dlls/objects/344/344.c  gunpowderBarrel_update+0x144
+REPLACE  A:801A22EC-801A22F0 (    0x4)  B:801A23DC-801A23E0 (    0x4)  dlls/objects/344/344.c  gunpowderBarrel_update+0x5a4
+REPLACE  A:801A2794-801A2798 (    0x4)  B:801A2884-801A2888 (    0x4)  dlls/objects/344/344.c  gunpowderBarrel_init+0x1ac
+INSERT   A:802C1880-802C1880 (    0x0)  B:802C1970-802C1980 (   0x10)  ?  DR_CloudRunner_initialise+0x7c
+# regions=8  net delta from regions +0x100 (section delta +0x100) OK

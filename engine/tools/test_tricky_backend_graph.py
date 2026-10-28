@@ -1,0 +1,459 @@
+import copy
+import struct
+import unittest
+
+from tricky_backend_graph import (capture_coalescing_policy, capture_color_policy, capture_graph, capture_register_objects, capture_simplification_policy, capture_symbol_objects, capture_storage_modes, capture_section_records, coloring_order, describe_node,
+                                 replay_coloring, replay_simplification, validate_graph, validate_rewrite)
+
+
+def fixture():
+    nodes = [{"address": 0x1000 + 64 * i, "prefix": [0, 0, 0, 0, i, 0, i, 0, 0], "neighbors": []}
+             for i in range(32)]
+    nodes += [
+        {"address": 0x1800, "prefix": [0x1840, 0, 0, 10, 32, 1, 29, 2, 1], "neighbors": [33]},
+        {"address": 0x1840, "prefix": [0, 0, 0, 5, 33, 1, 28, 2, 1], "neighbors": [32]},
+    ]
+    return nodes
+
+
+def simplification_fixture(removal_order, weights=(10, 5)):
+    before = fixture()
+    for node in before[32:]:
+        node["prefix"][0] = 0
+        node["prefix"][3] = 0
+        node["prefix"][6] = -1
+        node["prefix"][7] = 0
+    after = copy.deepcopy(before)
+    previous = 0
+    for register in removal_order:
+        node = after[register]
+        node["prefix"][0] = previous
+        node["prefix"][3] = weights[register - 32]
+        node["prefix"][6] = register - 4
+        node["prefix"][7] = 2
+        previous = node["address"]
+        for neighbor in node["neighbors"]:
+            after[neighbor]["prefix"][5] -= 1
+    return before, after
+
+
+class BackendGraphTests(unittest.TestCase):
+    def test_register_objects_preserve_aliases_and_distinct_same_named_objects(self):
+        memory = bytearray(1024)
+        struct.pack_into("<II", memory, 110, 300, 0x1234)
+        struct.pack_into("<II", memory, 210, 300, 0x5678)
+        memory[310:315] = b"item\0"
+        graph = [{"prefix": [0, address]} for address in [0, 100, 100, 200]]
+        read = lambda address, size: memory[address:address + size]
+        self.assertEqual(capture_register_objects(read, graph), {
+            "100": {"name": "item", "type": 0x1234, "registers": [1, 2]},
+            "200": {"name": "item", "type": 0x5678, "registers": [3]},
+        })
+        struct.pack_into("<I", memory, 110, 0)
+        self.assertEqual(capture_register_objects(read, graph)["100"]["name"], "")
+        with self.assertRaisesRegex(ValueError, "short register object read"):
+            capture_register_objects(lambda address, size: b"", graph)
+        struct.pack_into("<I", memory, 110, 300)
+        memory[310:566] = b"x" * 256
+        with self.assertRaisesRegex(ValueError, "unterminated register object name"):
+            capture_register_objects(read, graph)
+        with self.assertRaisesRegex(ValueError, "short register object name read"):
+            capture_register_objects(lambda address, size: read(address, size) if size == 8 else b"", graph)
+
+    def test_section_records_keep_both_categories_and_read_owner_base(self):
+        records = {0x1e6a9c: struct.pack("<I", 0x100), 0x1e7102: b"\x01",
+                   0x314: struct.pack("<I", 0x400), 0x400: struct.pack("<I", 0x500),
+                   0x408: struct.pack("<I", 0x600)}
+        for address, next_address, category in [(0x100, 0x180, 0x102), (0x180, 0, 0x103)]:
+            raw = bytearray(50)
+            struct.pack_into("<II", raw, 0, 0x700, 0x300)
+            struct.pack_into("<II", raw, 12, 12, 0x800)
+            raw[20] = 0x10
+            struct.pack_into("<I", raw, 24, next_address)
+            struct.pack_into("<H", raw, 44, category)
+            records[address] = raw
+        read = lambda address, size: records[address][:size]
+        objects = {"1": {"kind": 0, "cached_name38": 0x700}}
+        result = capture_section_records(read, 0, objects)
+        self.assertEqual(result["records_scanned"], 2)
+        self.assertEqual(result["context_enabled"], 1)
+        self.assertEqual([r["category"] for r in result["records"]], [0x102, 0x103])
+        self.assertEqual(result["records"][0], {"address": 0x100, "key": 0x700, "owner": 0x300,
+                         "offset": 12, "size": 0x800, "flags": 0x10, "category": 0x102,
+                         "owner_base": 0x400, "base_object": 0x500, "base_enabled": 0x600})
+        self.assertEqual(capture_section_records(read, 0, {})["records"], [])
+        struct.pack_into("<I", records[0x180], 24, 0x100)
+        with self.assertRaisesRegex(ValueError, "invalid section record list"):
+            capture_section_records(read, 0, objects)
+        with self.assertRaisesRegex(ValueError, "short section record read"):
+            capture_section_records(lambda a, n: b"", 0, objects)
+
+    def test_storage_mode_lists_preserve_alias_order_and_signed_ids(self):
+        records = {
+            0x1e72ba: struct.pack("<I", 0x100),
+            0x1e6c88: struct.pack("<I", 0x200),
+            0x100: struct.pack("<IIhBB", 0, 0, 12, 6, 9),
+            0x200: struct.pack("<IBBhh", 0x220, 1, 0, 12, -1),
+            0x220: struct.pack("<IBBhh", 0, 2, 0, 13, -1),
+        }
+        read = lambda address, size: records[address][:size]
+        self.assertEqual(capture_storage_modes(read, 0), {
+            "sections": [{"id": 12, "data_mode": 6, "function_mode": 9}],
+            "aliases": [{"id": -1, "kind": 1, "section": 12},
+                        {"id": -1, "kind": 2, "section": 13}],
+        })
+        records[0x220] = struct.pack("<IBBhh", 0x200, 2, 0, 13, -1)
+        with self.assertRaisesRegex(ValueError, "invalid storage mode list"):
+            capture_storage_modes(read, 0)
+        with self.assertRaisesRegex(ValueError, "short storage mode read"):
+            capture_storage_modes(lambda a, n: b"", 0)
+
+    def test_symbol_metadata_uses_object_and_name_record_offsets(self):
+        memory = bytearray(0x400)
+        memory[0x102] = 0
+        struct.pack_into("<h", memory, 0x104, -3)
+        struct.pack_into("<I", memory, 0x10a, 0x200)
+        struct.pack_into("<IH", memory, 0x112, 0x20010, 0x103)
+        struct.pack_into("<I", memory, 0x11e, 0x300)
+        memory[0x137] = 1
+        struct.pack_into("<I", memory, 0x138, 0x220)
+        memory[0x20a:0x217] = b"gShaderSlots\0"
+        symbolic = bytes([3, 8, 0, 0, 0, 0]) + struct.pack("<I", 0x100) + bytes(2)
+        instruction = {"address": 1, "words": [0] * 8 + [0x1008a] + list(struct.unpack("<3I", symbolic))}
+        snapshot = {"blocks": [{"instructions": [instruction, instruction]}]}
+        self.assertEqual(capture_symbol_objects(lambda a, n: memory[a:a + n], snapshot), {
+            "256": {"name": "gShaderSlots", "kind": 0, "section": -3, "flags": 0x20010, "category": 0x103,
+                    "context": 0x300, "field37": 1, "cached_name38": 0x220},
+        })
+        with self.assertRaisesRegex(ValueError, "short symbolic object read"):
+            capture_symbol_objects(lambda a, n: b"", snapshot)
+
+    def test_allocator_objects_include_register_only_locals(self):
+        memory = bytearray(0x300)
+        memory[0x102] = 1
+        struct.pack_into("<I", memory, 0x10a, 0x200)
+        memory[0x20a:0x210] = b"count\0"
+        nodes = [{"prefix": [0, address]} for address in (0, 0x100, 0x100)]
+        snapshot = {"blocks": [], "coloring_graph": nodes}
+        result = capture_symbol_objects(lambda a, n: memory[a:a + n], snapshot)
+        self.assertEqual(result, {"256": {"name": "count", "kind": 1,
+                                         "section": 0, "flags": 0, "category": 0}})
+
+    def test_coalescing_policy_preserves_named_and_inline_register_boundary(self):
+        parents = list(range(80))
+        parents[70] = 64
+        values = {
+            0x1E6A8C: struct.pack("<i", 80), 0x1E6788: struct.pack("<i", 32),
+            0x1E7260: struct.pack("<h", 46), 0x1E66B8: struct.pack("<i", 79),
+            0x1E6CFA: struct.pack("<h", -1), 0x1E01C8: struct.pack("<I", 0x600000),
+            0x200000: struct.pack("<80h", *parents),
+        }
+
+        def memory(address, size):
+            return values[address - 0x400000][:size]
+
+        policy = capture_coalescing_policy(memory, 0x400000)
+        self.assertEqual(policy, {"physical_count": 32, "first_eligible": 46,
+                                 "last_eligible": 79, "protected_gpr": -1, "parents": parents})
+        parents[42] = 70
+        values[0x200000] = struct.pack("<80h", *parents)
+        with self.assertRaisesRegex(ValueError, "minimum-number root"):
+            capture_coalescing_policy(memory, 0x400000)
+        values[0x200000] = b""
+        with self.assertRaisesRegex(ValueError, "short copy-coalescing parent map"):
+            capture_coalescing_policy(memory, 0x400000)
+
+    def test_simplification_uses_class_mask_and_shared_cutoff(self):
+        values = {
+            0x1E6784: struct.pack("<i", 32), 0x1E6788: struct.pack("<i", 32),
+            0x1E2C50: bytes([0] * 31 + [1]), 0x1E2C70: bytes([1] + [0] * 31),
+            0x1DD948: struct.pack("<h", 150),
+        }
+        def memory(address, size):
+            return values[address - 0x400000][:size]
+        for register_class, available in [(3, list(range(31))), (4, list(range(1, 32)))]:
+            with self.subTest(register_class=register_class):
+                self.assertEqual(capture_simplification_policy(memory, 0x400000, register_class),
+                                 {"available": available, "temporary_cutoff": 150})
+        values[0x1E6784] = struct.pack("<i", 31)
+        with self.assertRaisesRegex(ValueError, "physical register count"):
+            capture_simplification_policy(memory, 0x400000, 3)
+        values[0x1E6784] = b""
+        with self.assertRaisesRegex(ValueError, "short simplification policy"):
+            capture_simplification_policy(memory, 0x400000, 3)
+
+    def test_fpr_capture_uses_its_own_banks_and_shared_saved_state(self):
+        values = {
+            0x1E6580: struct.pack("<i", 2), 0x1E0D70: struct.pack("<2i", 0, 1),
+            0x1E67A0: struct.pack("<i", 2), 0x1E1070: struct.pack("<2i", 31, 30),
+            0x1DCA90: struct.pack("<h", 0), 0x1DCA70: bytes(32),
+        }
+        reads = []
+        def memory(address, size):
+            reads.append(address - 0x400000)
+            return values[address - 0x400000][:size]
+        policy = capture_color_policy(memory, 0x400000, register_class=3)
+        self.assertEqual(policy, {"initial": [0, 1], "reserve": [31, 30], "reserve_cursor": 0, "blocked": []})
+        self.assertNotIn(0x1E6584, reads)
+        with self.assertRaisesRegex(ValueError, "only GC/1.3"):
+            capture_color_policy(memory, 0x400000, register_class=2)
+
+    def test_capture_color_banks_and_saved_reset_state(self):
+        values = {
+            0x1E6584: struct.pack("<i", 3), 0x1E0DF0: struct.pack("<3i", 0, 3, 4),
+            0x1E67A4: struct.pack("<i", 2), 0x1E10F0: struct.pack("<2i", 31, 30),
+            0x1DCA90: struct.pack("<h", 1), 0x1DCA70: bytes([0, 1] + [0] * 30),
+        }
+        def memory(address, size):
+            return values[address - 0x400000][:size]
+        self.assertEqual(capture_color_policy(memory, 0x400000), {
+            "initial": [0, 3, 4], "reserve": [31, 30], "reserve_cursor": 1, "blocked": [1],
+        })
+        values[0x1E6584] = struct.pack("<i", 33)
+        with self.assertRaisesRegex(ValueError, "bank size"):
+            capture_color_policy(memory, 0x400000)
+        values[0x1E6584] = b""
+        with self.assertRaisesRegex(ValueError, "short GPR color policy"):
+            capture_color_policy(memory, 0x400000)
+
+    def test_color_replay_expands_bank_in_declared_order(self):
+        before, after = simplification_fixture([32, 33])
+        policy = {"initial": [], "reserve": [29, 28], "reserve_cursor": 0, "blocked": []}
+        decisions = replay_coloring(before, after, policy)
+        self.assertEqual([(d["register"], d["color"], d["expanded_bank"]) for d in decisions],
+                         [(33, 29, True), (32, 28, True)])
+        self.assertEqual(decisions[1]["blockers"], {29: [33]})
+        self.assertEqual(before[32]["prefix"][6], -1)
+        self.assertEqual(policy["reserve_cursor"], 0)
+
+    def test_color_replay_uses_lowest_enabled_color_not_bank_order(self):
+        before, after = simplification_fixture([32, 33])
+        after[33]["prefix"][6], after[32]["prefix"][6] = 28, 29
+        policy = {"initial": [29, 28], "reserve": [], "reserve_cursor": 0, "blocked": []}
+        self.assertFalse(any(d["expanded_bank"] for d in replay_coloring(before, after, policy)))
+
+    def test_color_replay_skips_blocked_registers_and_consumed_reserve(self):
+        before, after = simplification_fixture([32, 33])
+        policy = {"initial": [0], "reserve": [31, 30, 29, 28], "reserve_cursor": 1, "blocked": [0, 30]}
+        self.assertEqual([d["color"] for d in replay_coloring(before, after, policy)], [29, 28])
+
+    def test_excluded_color_slots_still_block_when_physical(self):
+        before, after = simplification_fixture([32, 33])
+        for graph in (before, after):
+            graph.append({"address": 0x1880, "prefix": [0, 0, 0, 0, 34, 1, 28, 4, 1], "neighbors": [33]})
+            graph[33]["neighbors"].append(34)
+            graph[33]["prefix"][8] += 1
+        policy = {"initial": [28, 29], "reserve": [], "reserve_cursor": 0, "blocked": []}
+        self.assertEqual(replay_coloring(before, after, policy)[0]["blockers"], {28: [34]})
+        before[34]["prefix"][6] = after[34]["prefix"][6] = 300
+        after[33]["prefix"][6], after[32]["prefix"][6] = 28, 29
+        self.assertEqual(replay_coloring(before, after, policy)[0]["blockers"], {})
+
+    def test_color_replay_rejects_a_legal_but_unreproduced_assignment(self):
+        before, after = simplification_fixture([32, 33])
+        after[32]["prefix"][6] = 30
+        policy = {"initial": [29], "reserve": [28], "reserve_cursor": 0, "blocked": []}
+        validate_graph(after)
+        with self.assertRaisesRegex(ValueError, "disagrees.*GPR 32"):
+            replay_coloring(before, after, policy)
+
+    def test_color_replay_does_not_invent_spill_behavior(self):
+        before, after = simplification_fixture([32, 33])
+        policy = {"initial": [29], "reserve": [], "reserve_cursor": 0, "blocked": []}
+        with self.assertRaisesRegex(ValueError, "uncaptured spill/retry"):
+            replay_coloring(before, after, policy)
+
+    def test_color_replay_rejects_negative_slots_other_than_unassigned(self):
+        before, after = simplification_fixture([32, 33])
+        for graph in (before, after):
+            graph.append({"address": 0x1880, "prefix": [0, 0, 0, 0, 34, 1, -2, 4, 1], "neighbors": [33]})
+            graph[33]["neighbors"].append(34)
+            graph[33]["prefix"][8] += 1
+        policy = {"initial": [29], "reserve": [28], "reserve_cursor": 0, "blocked": []}
+        with self.assertRaisesRegex(ValueError, "unsupported negative GPR color slot"):
+            replay_coloring(before, after, policy)
+
+    def test_color_replay_rejects_invalid_policy(self):
+        before, after = simplification_fixture([32, 33])
+        policy = {"initial": [29], "reserve": [28], "reserve_cursor": 0, "blocked": []}
+        for key, value in [("initial", [32]), ("reserve", [28, 28]), ("blocked", [-1]), ("reserve_cursor", 2)]:
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "invalid GPR"):
+                replay_coloring(before, after, dict(policy, **{key: value}))
+
+    def test_uncolored_graph_accepts_unassigned_colors(self):
+        before, _ = simplification_fixture([32, 33])
+        validate_graph(before, colored=False)
+        with self.assertRaisesRegex(ValueError, "physical GPR color"):
+            validate_graph(before)
+
+    def test_low_degree_sweep_reverses_removal_order(self):
+        before, after = simplification_fixture([32, 33])
+        self.assertEqual(replay_simplification(before, after, [28, 29], 34), [])
+        self.assertEqual(coloring_order(after), [33, 32])
+
+    def test_removal_steps_preserve_fixed_alias_pressure(self):
+        before, after = simplification_fixture([32, 33])
+        # Both aliases occupy r3 but contribute separately to the degree.
+        for graph in (before, after):
+            for register in (34, 35):
+                graph.append({"address": 0x1000 + 64 * register,
+                              "prefix": [0, 0, 0, 0, register, 1, 3, 4, 1], "neighbors": [32]})
+                graph[32]["neighbors"].append(register)
+                graph[32]["prefix"][5] += 1
+                graph[32]["prefix"][8] += 1
+        after[34]["prefix"][5] = after[35]["prefix"][5] = 0
+        original = copy.deepcopy(before)
+        steps = []
+        self.assertEqual(replay_simplification(before, after, [3, 28, 29, 30], 36, steps=steps), [])
+        self.assertEqual(steps[0], {"register": 32, "kind": "low-degree", "degree": 3,
+                                   "threshold": 4, "weight": 10, "active_neighbors": [33],
+                                   "fixed_colors": {3: [34, 35]}})
+        self.assertEqual(steps[1]["active_neighbors"], [])
+        self.assertEqual(before, original)
+
+    def test_removal_steps_include_high_degree_choice_and_reject_partial_replay(self):
+        before, after = simplification_fixture([33, 32])
+        steps = []
+        replay_simplification(before, after, [28], 34, steps=steps)
+        self.assertEqual([(s["register"], s["kind"], s["degree"]) for s in steps],
+                         [(33, "high-degree", 1), (32, "low-degree", 0)])
+        steps = []
+        with self.assertRaisesRegex(ValueError, "disagrees"):
+            replay_simplification(before, after, [28, 29], 34, steps=steps)
+        self.assertEqual(steps, [])
+
+    def test_high_degree_cost_and_descending_id_tie(self):
+        for weights, selected in [((10, 5), 33), ((5, 10), 32), ((5, 5), 33)]:
+            before, after = simplification_fixture([selected, 65 - selected], weights)
+            with self.subTest(weights=weights):
+                self.assertEqual(replay_simplification(before, after, [28], 34),
+                                 [{"register": selected, "degree": 1, "weight": weights[selected - 32]}])
+
+    def test_new_temporaries_have_lower_removal_priority(self):
+        before, after = simplification_fixture([32, 33], (100, 0))
+        self.assertEqual(replay_simplification(before, after, [28], 33),
+                         [{"register": 32, "degree": 1, "weight": 100}])
+
+    def test_replay_rejects_wrong_order_and_final_degrees(self):
+        before, after = simplification_fixture([33, 32])
+        with self.assertRaisesRegex(ValueError, "disagrees"):
+            replay_simplification(before, after, [28, 29], 34)
+        before, after = simplification_fixture([32, 33])
+        after[32]["prefix"][5] += 1
+        with self.assertRaisesRegex(ValueError, "disagrees"):
+            replay_simplification(before, after, [28, 29], 34)
+
+    def test_replay_rejects_invalid_available_set_and_count(self):
+        before, after = simplification_fixture([32, 33])
+        for available in ([], [28, 28], [-1], [32]):
+            with self.subTest(available=available), self.assertRaisesRegex(ValueError, "available register"):
+                replay_simplification(before, after, available, 34)
+        for cutoff in (-1, 31, 35):
+            with self.subTest(cutoff=cutoff), self.assertRaisesRegex(ValueError, "incompatible"):
+                replay_simplification(before, after, [28, 29], cutoff)
+
+    def rewrite_fixture(self, register):
+        return {"blocks": [{"instructions": [{"address": 1, "words": [0, 0, 2, 0, 0, 0, 0, 3,
+                    (1 << 16) | 0x89, 0x00020400, register, 0]}]}]}
+
+    def test_colors_must_agree_with_rewritten_operands(self):
+        before = self.rewrite_fixture(32)
+        before["coloring_graph"] = fixture()
+        self.assertEqual(validate_rewrite(before, self.rewrite_fixture(29)), 1)
+        with self.assertRaisesRegex(ValueError, "disagrees"):
+            validate_rewrite(before, self.rewrite_fixture(27))
+
+    def test_fpr_rewrite_checks_fprs_and_rejects_a_gpr_operand(self):
+        before, final = self.rewrite_fixture(32), self.rewrite_fixture(29)
+        for snapshot in (before, final):
+            snapshot["blocks"][0]["instructions"][0]["words"][9] = 0x00020300
+        before["coloring_graph"] = fixture()
+        before["register_class"] = 3
+        self.assertEqual(validate_rewrite(before, final), 1)
+        self.assertIn("FPR 32 -> f29", describe_node(fixture(), 32, register_class=3))
+        with self.assertRaisesRegex(ValueError, "rewritten FPR"):
+            validate_rewrite(before, self.rewrite_fixture(29))
+
+    def test_rewrite_cannot_claim_absent_or_reused_record(self):
+        before = self.rewrite_fixture(32)
+        before["coloring_graph"] = fixture()
+        final = self.rewrite_fixture(29)
+        final["blocks"][0]["instructions"][0]["words"][7] = 4
+        with self.assertRaisesRegex(ValueError, "no surviving"):
+            validate_rewrite(before, final)
+
+    def test_linked_coloring_order_not_numeric_order(self):
+        nodes = fixture()
+        self.assertEqual(coloring_order(nodes), [32, 33])
+        nodes[32]["prefix"][0], nodes[33]["prefix"][0] = 0, 0x1800
+        self.assertEqual(coloring_order(nodes), [33, 32])
+        self.assertIn("color order=1", describe_node(nodes, 32))
+
+    def test_excluded_node_color_is_not_a_physical_gpr(self):
+        nodes = fixture()
+        nodes[32]["prefix"][7] = 4
+        nodes[32]["prefix"][6] = 300
+        self.assertEqual(coloring_order(nodes), [33])
+        self.assertIn("excluded node; raw color slot=300", describe_node(nodes, 32))
+
+    def test_interference_conflicts_are_rejected(self):
+        nodes = fixture()
+        nodes[32]["prefix"][6] = 28
+        with self.assertRaisesRegex(ValueError, "same physical GPR"):
+            validate_graph(nodes)
+
+    def test_asymmetry_and_edge_bounds_are_rejected(self):
+        for neighbor, error in [(31, "asymmetric"), (34, "outside graph"), (32, "self interference")]:
+            nodes = fixture()
+            nodes[32]["neighbors"] = [neighbor]
+            with self.subTest(neighbor=neighbor), self.assertRaisesRegex(ValueError, error):
+                validate_graph(nodes)
+
+    def test_corrupt_node_fields(self):
+        for position, value in [(4, 5), (6, 32), (8, 2)]:
+            nodes = fixture()
+            nodes[32]["prefix"][position] = value
+            with self.subTest(position=position), self.assertRaises(ValueError):
+                validate_graph(nodes)
+        nodes = fixture()
+        nodes[33]["address"] = nodes[32]["address"]
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            validate_graph(nodes)
+
+    def test_coloring_chain_rejects_cycles_and_external_links(self):
+        nodes = fixture()
+        nodes[33]["prefix"][0] = nodes[32]["address"]
+        with self.assertRaisesRegex(ValueError, "one chain"):
+            coloring_order(nodes)
+        nodes[33]["prefix"][0] = 1234
+        with self.assertRaisesRegex(ValueError, "outside active nodes"):
+            coloring_order(nodes)
+
+    def test_no_active_nodes(self):
+        self.assertEqual(coloring_order(fixture()[:32]), [])
+        with self.assertRaisesRegex(ValueError, "out of range"):
+            describe_node(fixture(), 34)
+
+    def test_live_capture_reads_exact_record_widths(self):
+        nodes = fixture()
+        memory = {}
+        def put(address, data):
+            memory.update({address + i: value for i, value in enumerate(data)})
+        put(0x1E67D0, struct.pack("<I", 0x200))
+        put(0x1E6A8C, struct.pack("<I", len(nodes)))
+        for index, node in enumerate(nodes):
+            put(0x200 + 4 * index, struct.pack("<I", node["address"]))
+            put(node["address"], struct.pack("<3Ii3hHh", *node["prefix"]) + struct.pack("<" + "h" * len(node["neighbors"]), *node["neighbors"]))
+        self.assertEqual(capture_graph(lambda a, n: bytes(memory[a + i] for i in range(n)), 0), nodes)
+        put(0x1E6A88, struct.pack("<I", len(nodes)))
+        put(0x1E6A8C, struct.pack("<I", 4097))
+        self.assertEqual(capture_graph(lambda a, n: bytes(memory[a + i] for i in range(n)), 0,
+                                       register_class=3), nodes)
+
+    def test_capture_rejects_short_global_read(self):
+        with self.assertRaisesRegex(ValueError, "short GPR graph read"):
+            capture_graph(lambda a, n: bytes(n - 1), 0)
+
+
+if __name__ == "__main__":
+    unittest.main()

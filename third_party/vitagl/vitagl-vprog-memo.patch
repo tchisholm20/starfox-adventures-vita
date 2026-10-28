@@ -1,0 +1,68 @@
+diff --git a/source/custom_shaders.c b/source/custom_shaders.c
+index f84d9c6..beaf6ca 100644
+--- a/source/custom_shaders.c
++++ b/source/custom_shaders.c
+@@ -369,8 +369,21 @@ typedef struct {
+ 	attr_mapping *glsl_attr_map;
+ 	void *unif_fbuffer;
+ 	void *unif_vbuffer;
++	// OUR FORK (vprog memo, Stairfax 2026-10-14): the last layout this program was patched for in glDrawElements, and its result.
++	SceGxmVertexAttribute memo_attr[VERTEX_ATTRIBS_NUM];
++	SceGxmVertexStream memo_stream[VERTEX_ATTRIBS_NUM];
++	SceGxmShaderPatcherId memo_id;
++	SceGxmVertexProgram *memo_vprog;
++	GLuint memo_n;
+ } program;
+ 
++/* OUR FORK: vprog memo. Upstream calls sceGxmShaderPatcherCreateVertexProgram on EVERY glDrawElements, even when the layout
++ * is the one the program was patched for last time. vitaGL never releases a patched vertex program (each create only adds a
++ * reference), so a remembered pointer stays valid; the key is the shader id + the exact attribute and stream arrays.
++ * vgl_vprog_memo = 0 is upstream behaviour (the A/B control); the counters say how often the memo hit. */
++int vgl_vprog_memo = 0;
++unsigned int vgl_vprog_memo_hits = 0, vgl_vprog_memo_misses = 0;
++
+ // Internal shaders and array
+ static shader shaders[MAX_CUSTOM_SHADERS];
+ static program progs[MAX_CUSTOM_PROGRAMS];
+@@ -1394,8 +1407,23 @@ GLboolean _glDrawElements_CustomShadersIMPL(uint16_t *idx_buf, GLsizei count, ui
+ 	}
+ #endif
+ 
+-	// Uploading new vertex program
+-	patch_vertex_program(gxm_shader_patcher, p->vshader->id, attributes, p->attr_num, streams, p->attr_num, &p->vprog);
++	// Uploading new vertex program (OUR FORK: vprog memo, see vgl_vprog_memo)
++	if (vgl_vprog_memo && p->memo_vprog && p->memo_n == p->attr_num && p->memo_id == p->vshader->id &&
++		!memcmp(p->memo_attr, attributes, p->attr_num * sizeof(SceGxmVertexAttribute)) &&
++		!memcmp(p->memo_stream, streams, p->attr_num * sizeof(SceGxmVertexStream))) {
++		p->vprog = p->memo_vprog;
++		vgl_vprog_memo_hits++;
++	} else {
++		patch_vertex_program(gxm_shader_patcher, p->vshader->id, attributes, p->attr_num, streams, p->attr_num, &p->vprog);
++		if (vgl_vprog_memo) {
++			memcpy(p->memo_attr, attributes, p->attr_num * sizeof(SceGxmVertexAttribute));
++			memcpy(p->memo_stream, streams, p->attr_num * sizeof(SceGxmVertexStream));
++			p->memo_n = p->attr_num;
++			p->memo_id = p->vshader->id;
++			p->memo_vprog = p->vprog;
++			vgl_vprog_memo_misses++;
++		}
++	}
+ 	sceGxmSetVertexProgram(gxm_context, p->vprog);
+ 
+ 	// Uploading both fragment and vertex uniforms data
+@@ -1989,6 +2017,7 @@ void glDeleteProgram(GLuint prog) {
+ 
+ 	// Grabbing passed program
+ 	program *p = &progs[prog - 1];
++	p->memo_vprog = NULL; // OUR FORK: vprog memo, never carried across a relink or a reused slot
+ 
+ 	// Releasing both vertex and fragment programs from sceGxmShaderPatcher
+ 	if (p->status) {
+@@ -2115,6 +2144,7 @@ void glLinkProgram(GLuint progr) {
+ 
+ 	// Grabbing passed program
+ 	program *p = &progs[progr - 1];
++	p->memo_vprog = NULL; // OUR FORK: vprog memo, never carried across a relink or a reused slot
+ #ifndef SKIP_ERROR_HANDLING
+ 	if (glsl_sema_mode == VGL_MODE_POSTPONED) {
+ 		if (!(p->fshader->prog || (p->fshader->is_glsl && p->fshader->source)) || !(p->vshader->prog || (p->vshader->is_glsl && p->vshader->source))) {

@@ -1,0 +1,404 @@
+0x002cdd60	Failed assertion BootInfo
+0x002ce334	Failed assertion alarm->handler == 0
+0x002ce35c	Failed assertion next == 0
+0x002ce3cc	Failed assertion OSCheckAlarmQueue()
+0x002ce5f8	Failed assertion MINOBJSIZE <= (char*) cellEnd - (char*) end
+0x002ce638	Failed assertion MINOBJSIZE <= (char*) start - (char*) cell
+0x002ce674	Failed assertion 0 <= hd->size
+0x002ce694	Failed assertion OFFSET(start, ALIGNMENT) == 0
+0x002ce6c4	Failed assertion OFFSET(end, ALIGNMENT) == 0
+0x002ce6f4	Failed assertion start < end
+0x002cf950	Failed assertion 0 <= chan && chan < MAX_CHAN
+0x002cf980	Failed assertion exi->state & STATE_SELECTED
+0x002cf9b0	Failed assertion 0 < len && len <= MAX_IMM
+0x002cf9dc	Failed assertion type < MAX_TYPE
+0x002cfa00	Failed assertion OFFSET(buf, 32) == 0
+0x002cfa28	Failed assertion 0 < len && OFFSET(len, 32) == 0
+0x002cfa5c	Failed assertion ((u32) len & ~EXI_0LENGTH_EXILENGTH_MASK) == 0
+0x002cfa9c	Failed assertion type == EXI_READ || type == EXI_WRITE
+0x002cfad4	Failed assertion !(exi->state & STATE_BUSY)
+0x002cfb00	Failed assertion 0 <= chan && chan < 2
+0x002cfb28	Failed assertion chan == 0 && dev < MAX_DEV || dev == 0
+0x002cfb60	Failed assertion freq < MAX_FREQ
+0x002cfb84	Failed assertion !(exi->state & STATE_SELECTED)
+0x002cfbb4	Failed assertion chan == 0 && exi->items < (MAX_DEV - 1)|| exi->items == 0
+0x002cfc00	Failed assertion exi->items == 0
+0x002d0084	Failed assertion mutex->thread == thread
+0x002d00bc	Failed assertion info->func
+0x002d00d8	Failed assertion !Scb.locked
+0x002d00f8	Failed assertion Scb.sync
+0x002d0114	Failed assertion Scb.locked
+0x002d0150	Failed assertion Si.chan != CHAN_NONE
+0x002d0218	Failed assertion (__SIRegs[SI_COMCSR_IDX] & (SI_COMCSR_TSTART_MASK | SI_COMCSR_TCINT_MASK)) == 0
+0x002d034c	Failed assertion en
+0x002d038c	Failed assertion poll
+0x002d03c8	Failed assertion 0 <= chan && chan < SI_MAX_CHAN
+0x002d03fc	Failed assertion packet->time <= OSGetTime()
+0x002d043c	Failed assertion PPCMfmsr() & MSR_FP
+0x002d0464	Failed assertion !IsSuspended(thread->suspend)
+0x002d0494	Failed assertion thread->state == OS_THREAD_STATE_READY
+0x002d04cc	Failed assertion OS_PRIORITY_MIN <= thread->priority && thread->priority <= OS_PRIORITY_MAX
+0x002d0528	Failed assertion thread->queue == &RunQueue[thread->priority]
+0x002d0568	Failed assertion thread->mutex->thread
+0x002d0590	Failed assertion OS_PRIORITY_MIN <= priority && priority <= OS_PRIORITY_MAX
+0x002d05dc	Failed assertion nextThread->priority == priority
+0x002d07ec	Failed assertion thread->queue
+0x002d0930	Failed assertion __OSIsThreadActive(thread)
+0x002d095c	Failed assertion thread->state != OS_THREAD_STATE_MORIBUND
+0x002d0998	Failed assertion thread->queue == queue
+0x002d20a4	Failed assertion bufSize < 16
+0x002d20c4	Failed assertion trigger <= 2
+0x002d26fc	Failed assertion (void*) &fileInfo->cb == (void*) block
+0x002d2c4c	Failed assertion FALSE
+0x002d2cb4	Failed assertion ((u32)(bootInfo->FSTLocation) & (32 - 1)) == 0
+0x002d2cf4	Failed assertion (intType & DVD_INTTYPE_CVR) == 0
+0x002d2d28	Failed assertion (intType & DVD_INTTYPE_DE) == 0
+0x002d2d5c	Failed assertion intType == DVD_INTTYPE_DE
+0x002d2d88	Failed assertion FALSE
+0x002d2da0	Failed assertion intType == DVD_INTTYPE_TC
+0x002d2dcc	Failed assertion (CurrCommand == DVD_COMMAND_READ) || (CurrCommand == DVD_COMMAND_SEEK) || (CurrCommand == DVD_COMMAND_CHANGE_DISK)
+0x002d2e50	Failed assertion intType == DVD_INTTYPE_CVR
+0x002d3698	Failed assertion old == cbForStateMotorStopped
+0x002d374c	Failed assertion q->next != q
+0x002d3920	Failed assertion FALSE
+0x002d39b4	Failed assertion sram
+0x002d3da0	Failed assertion !(Type[chan] & RES_WIRELESS_LITE)
+0x002d3dd4	Failed assertion 0 <= ResettingChan && ResettingChan < SI_MAX_CHAN
+0x002d3e18	Failed assertion chan == ResettingChan
+0x002d3e40	Failed assertion 0 <= chan && chan < SI_MAX_CHAN
+0x002d3f68	Failed assertion line * (count - 1) + LATENCY < 263
+0x002d3f9c	Failed assertion 636 * line < msec * 10000
+0x002d3fc8	Failed assertion 636 * (263 - line * (count - 1)) < msec * 10000
+0x002d400c	Failed assertion line * (count - 1) + LATENCY < 313
+0x002d4040	Failed assertion 640 * line < msec * 10000
+0x002d406c	Failed assertion 640 * (313 - line * (count - 1)) < msec * 10000
+0x002d40fc	Failed assertion !Initialized
+0x002d4490	Failed assertion request
+0x002d44ac	Failed assertion (type == ARQ_TYPE_MRAM_TO_ARAM) || (type == ARQ_TYPE_ARAM_TO_MRAM)
+0x002d4500	Failed assertion (priority == ARQ_PRIORITY_LOW) || (priority == ARQ_PRIORITY_HIGH)
+0x002d4554	Failed assertion (length % ARQ_DMA_ALIGNMENT) == 0
+0x002d49d8	Failed assertion !GXOverflowSuspendInProgress
+0x002d4a40	Failed assertion GXOverflowSuspendInProgress
+0x002d4eec	Failed assertion OFFSET(ptr, 32) == 0
+0x002d4f14	Failed assertion !IsWGPipeRedirected
+0x002d4f3c	Failed assertion IsWGPipeRedirected
+0x002dc598	Failed assertion CurrAutoSample >= 0
+0x002dc5c0	Failed assertion sample < PERFCurrSample
+0x002dc5ec	Failed assertion CurrToken == TOKEN_MAX
+0x002dc614	Failed assertion CurrAutoSample < 0
+0x002dc7dc	Failed assertion 0 <= chan && chan < 2
+0x002dc804	Failed assertion card->txCallback == 0
+0x002dc82c	Failed assertion card->addr % CARD_SEG_SIZE == 0
+0x002dc860	Failed assertion card->addr < (u32) card->size * 1024 * 1024 / 8
+0x002dc8a4	Failed assertion card->addr % CARD_PAGE_SIZE == 0
+0x002dc8d8	Failed assertion addr % card->sectorSize == 0
+0x002dc908	Failed assertion addr < (u32) card->size * 1024 * 1024 / 8
+0x002dc944	Failed assertion result != CARD_RESULT_BUSY
+0x002dc970	Failed assertion card->result == CARD_RESULT_NOCARD
+0x002dcb30	Failed assertion 0 <= chan && chan < 2
+0x002dcb64	Failed assertion 0 < length && length % CARD_SEG_SIZE == 0
+0x002dcba0	Failed assertion 0 <= chan && chan < 2
+0x002dcbc8	Failed assertion 0 < length && length % CARD_PAGE_SIZE == 0
+0x002dcc14	Failed assertion card->currentFat
+0x002dcc38	Failed assertion card->currentFat == fat1
+0x002dcc64	Failed assertion 0 < cBlock
+0x002dcc80	Failed assertion 0 <= chan && chan < 2
+0x002dccb4	Failed assertion card->currentDir
+0x002dccd8	Failed assertion card->currentDir == dir1
+0x002dcd04	Failed assertion 0 <= chan && chan < 2
+0x002dcd3c	Failed assertion length % sizeof(u16) == 0
+0x002dcd68	Failed assertion card->currentDir
+0x002dcd8c	Failed assertion card->currentFat
+0x002dcdb0	Failed assertion 0 <= chan && chan < 2
+0x002dcdd8	Failed assertion errors == 0 || errors == 1
+0x002dce04	Failed assertion !card->currentFat
+0x002dce74	Failed assertion 0 <= chan && chan < 2
+0x002dce9c	Failed assertion callback
+0x002dceb8	Failed assertion workArea && ((u32) workArea % 32 == 0)
+0x002dcf00	Failed assertion callback
+0x002dcf1c	Failed assertion 0 <= chan && chan < 2
+0x002dcf54	Failed assertion 0 <= fileNo && fileNo < CARD_MAX_FILE
+0x002dcf8c	Failed assertion 0 <= chan && chan < 2
+0x002dcfb4	Failed assertion 0 <= fileInfo->chan && fileInfo->chan < 2
+0x002dcff0	Failed assertion 0 <= fileInfo->fileNo && fileInfo->fileNo < CARD_MAX_FILE
+0x002dd050	Failed assertion CARDIsValidBlockNo(card, card->startBlock)
+0x002dd08c	Failed assertion 0 <= chan && chan < 2
+0x002dd0b4	Failed assertion strlen(fileName) <= CARD_FILENAME_MAX
+0x002dd0ec	Failed assertion 0 < size && (size % card->sectorSize) == 0
+0x002dd134	Failed assertion 0 <= fileInfo->chan && fileInfo->chan < 2
+0x002dd170	Failed assertion 0 <= fileInfo->fileNo && fileInfo->fileNo < CARD_MAX_FILE
+0x002dd1bc	Failed assertion CARDIsValidBlockNo(card, fileInfo->iBlock)
+0x002dd1f8	Failed assertion fileInfo->offset < card->cBlock * card->sectorSize
+0x002dd23c	Failed assertion ent->gameName[0] != 0xff
+0x002dd268	Failed assertion OFFSET(fileInfo->length, CARD_SEG_SIZE) == 0
+0x002dd2a8	Failed assertion OFFSET(fileInfo->offset, card->sectorSize) == 0
+0x002dd2ec	Failed assertion callback
+0x002dd308	Failed assertion buf && OFFSET(buf, 32) == 0
+0x002dd338	Failed assertion OFFSET(offset, CARD_SEG_SIZE) == 0
+0x002dd36c	Failed assertion 0 < length && OFFSET(length, CARD_SEG_SIZE) == 0
+0x002dd3bc	Failed assertion callback
+0x002dd3d8	Failed assertion OFFSET(fileInfo->offset, card->sectorSize) == 0
+0x002dd41c	Failed assertion buf && ((u32) buf % 32) == 0
+0x002dd44c	Failed assertion 0 < length
+0x002dd468	Failed assertion OFFSET(offset, card->sectorSize) == 0
+0x002dd4a0	Failed assertion OFFSET(length, card->sectorSize) == 0
+0x002dd4e8	Failed assertion 0 <= fileNo && fileNo < CARD_MAX_FILE
+0x002dd520	Failed assertion 0 <= chan && chan < 2
+0x002dd554	Failed assertion 0 <= chan && chan < 2
+0x002dd57c	Failed assertion 0 <= fileNo && fileNo < CARD_MAX_FILE
+0x002dd5c8	Failed assertion 0 <= chan && chan < 2
+0x002dd5f0	Failed assertion *old != 0xff && *new != 0xff
+0x002dd620	Failed assertion *old != 0x00 && *new != 0x00
+0x002ddd58	Failed assertion sv->addr!=NULL
+0x002ddd78	Failed assertion svoice->addr!=NULL
+0x002dddb0	Failed assertion svoice->id!=0xFFFFFFFF
+0x002dec28	Failed assertion FALSE
+0x002dec40	Failed assertion (pptr+2)<=pend
+0x002dec60	Failed assertion (pptr+4)<=pend
+0x002defe8	Failed assertion midiSet!=SYNTH_FX_MIDISET
+0x002df954	Failed assertion baseAddr==0x00000000
+0x002dfb34	Failed assertion ((u32)cmdList & 0x1F)==0
+0x002e14ec	Failed assertion FALSE
+0x002e1d34	Failed assertion FALSE
+0x002e1d5c	Failed assertion exi->state & STATE_SELECTED
+0x002e1d8c	Failed assertion 0 < len && len <= MAX_IMM
+0x002e1db8	Failed assertion type < MAX_TYPE
+0x002e1ddc	Failed assertion OFFSET(buf, 32) == 0
+0x002e1e04	Failed assertion 0 < len && OFFSET(len, 32) == 0
+0x002e1e38	Failed assertion ((u32) len & ~EXI_0LENGTH_EXILENGTH_MASK) == 0
+0x002e1e78	Failed assertion type == EXI_READ || type == EXI_WRITE
+0x002e1eb0	Failed assertion !(exi->state & STATE_BUSY)
+0x002e1edc	Failed assertion freq < MAX_FREQ
+0x002e1f00	Failed assertion !(exi->state & STATE_SELECTED)
+0x002e1f30	Failed assertion chan == 2
+0x002e5a94	Failed assertion sparseArray
+0x002e5ab4	Failed assertion newElement
+0x002e5ad0	Failed assertion keyPtr<sparseArray->endPtr
+0x002e5afc	Failed assertion keyPtr!=sparseArray->highPtr
+0x002e5b2c	Failed assertion element
+0x002e5b48	Failed assertion key
+0x002e7828	Failed assertion numLightsInList<MAX_LIGHTS_IN_LIST
+0x002e785c	Failed assertion i<numLightsInList
+0x002e7880	Failed assertion light->parent
+0x002e78d4	Failed assertion maxLights<=MAX_LIGHTS_PER_OBJECT
+0x002e7908	Failed assertion numContributingLights<MAX_LIGHTS_CONTRIBUTING
+0x002e7978	Failed assertion mask&channelOneMask
+0x002e79a0	Failed assertion channelID>=GX_COLOR0 && channelID<=GX_COLOR1A1
+0x002e79e0	Failed assertion !channelInfo[channelID].set
+0x002e7a10	Failed assertion !channelInfo[GX_COLOR0A0].set
+0x002e7a40	Failed assertion !channelInfo[GX_COLOR1A1].set
+0x002e7a70	Failed assertion !channelInfo[GX_COLOR0].set
+0x002e7aa0	Failed assertion !channelInfo[GX_ALPHA0].set
+0x002e7ad0	Failed assertion !channelInfo[GX_COLOR1].set
+0x002e7b00	Failed assertion !channelInfo[GX_ALPHA1].set
+0x002e7b30	Failed assertion lightID<=GX_LIGHT7
+0x002e7b54	Failed assertion channelInfo[channelID].set
+0x002e7b80	Failed assertion object
+0x002e7bac	Failed assertion light
+0x002e7bc4	Failed assertion referenceDistance>=0
+0x002e7bec	Failed assertion referenceBrightness>=0 && referenceBrightness<=1.0F
+0x002e7c34	Failed assertion lightType<LIGHT_TYPE_MAX
+0x002e7c60	Failed assertion angleCutOff>=0 && angleCutOff<=90.0F
+0x002e7c98	Failed assertion eccentricity>=1.0F && eccentricity<=256.0F
+0x002e7cd4	Failed assertion rollOff>=0.0F && rollOff<=255.0F
+0x002e7d08	Failed assertion texture
+0x002e7d24	Failed assertion fovY>0 && fovY<=90.0F
+0x002e7d4c	Failed assertion aspect>0.0F && aspect<10.0F
+0x002e7d7c	Failed assertion animType<LIGHT_ANIM_MAX
+0x002e86a4	Failed assertion modelsLoadedTable
+0x002e86c8	Failed assertion animsLoadedTable
+0x002e8704	Failed assertion mem
+0x002e871c	Failed assertion modelNum>=0 && modelNum<maxModelNum
+0x002e8754	Failed assertion model
+0x002e876c	Failed assertion model->usage<UCHAR_MAX
+0x002e8794	Failed assertion modelInstance
+0x002e8b1c	Failed assertion model->GCtextures[i]
+0x002e8b44	Failed assertion model->sphereHits>=modelBase && model->sphereHits<modelEnd
+0x002e8b90	Failed assertion model->joints>=modelBase && model->joints<modelEnd
+0x002e8bd4	Failed assertion model->radi>=modelBase && model->radi<modelEnd
+0x002e8c14	Failed assertion model->exT>=modelBase && model->exT<modelEnd
+0x002e8c54	Failed assertion model->GCtextures>=modelBase && model->GCtextures<modelEnd
+0x002e8ca0	Failed assertion model->vertexPositions>=modelBase && model->vertexPositions<modelEnd
+0x002e8cf8	Failed assertion model->vertexNormals>=modelBase && model->vertexNormals<modelEnd
+0x002e8d4c	Failed assertion model->vertexColours>=modelBase && model->vertexColours<modelEnd
+0x002e8da0	Failed assertion model->vertexTexCoords>=modelBase && model->vertexTexCoords<modelEnd
+0x002e8df8	Failed assertion model->renderStream>=modelBase && model->renderStream<modelEnd
+0x002e8e48	Failed assertion model->displayLists>=modelBase && model->displayLists<modelEnd
+0x002e8e98	Failed assertion model->vertexAnims>=modelBase && model->vertexAnims<modelEnd
+0x002e8ee8	Failed assertion model->skin2Matrices>=modelBase && model->skin2Matrices<modelEnd
+0x002e8f3c	Failed assertion model->skinWeights>=modelBase && model->skinWeights<modelEnd
+0x002e8f8c	Failed assertion model->shaders>=modelBase && model->shaders<modelEnd
+0x002e8fd4	Failed assertion model->displayLists[i].displayList>=modelBase && model->displayLists[i].displayList<modelEnd
+0x002e9044	Failed assertion ((int)model->displayLists[i].displayList&0x1f)==0
+0x002e9088	Failed assertion model->vertexAnims[i]>=modelBase && model->vertexAnims[i]<modelEnd
+0x002e90dc	Failed assertion model->GCpolygons>=modelBase && model->GCpolygons<modelEnd
+0x002e9128	Failed assertion model->polygonGroups>=modelBase && model->polygonGroups<modelEnd
+0x002e917c	Failed assertion modelMatrix
+0x002e919c	Failed assertion object
+0x002e91b4	Failed assertion animInstance
+0x002e91f4	Failed assertion shaderNum>=0 && shaderNum<modelInstance->mod->numShaders
+0x002e9240	Failed assertion positionNum>=0 && positionNum<modelInstance->mod->numPositions
+0x002e92a0	Failed assertion shaderNum>=0 && shaderNum<model->numShaders
+0x002e92e0	Failed assertion positionNum>=0 && positionNum<model->numPositions
+0x002e9324	Failed assertion normalNum>=0 && normalNum<model->numNormals
+0x002e9364	Failed assertion colourNum>=0 && colourNum<model->numColours
+0x002e93a4	Failed assertion coordNum>=0 && coordNum<model->numColours
+0x002e93e0	Failed assertion textureNum>=0 && textureNum<model->numTextures
+0x002e9420	Failed assertion jointNum>=0 && jointNum<model->numJoints
+0x002e945c	Failed assertion listNum>=0 && listNum<model->numDisplayLists
+0x002e949c	Failed assertion model->displayLists[listNum].displayListSize>0 && !(model->displayLists[listNum].displayListSize&0x1f)
+0x002e9514	Failed assertion animNum>=0 && animNum<model->numVertexAnims
+0x002e9554	Failed assertion animNum>=0 && animNum<model->numAnims
+0x002e958c	Failed assertion groupNum>=0 && groupNum<model->numGroups
+0x002e95c8	Failed assertion polygonNum>=0 && polygonNum<model->numPolygons
+0x002e9608	Failed assertion x>=SHRT_MIN && x<=SHRT_MAX
+0x002e9634	Failed assertion y>=SHRT_MIN && y<=SHRT_MAX
+0x002e9660	Failed assertion z>=SHRT_MIN && z<=SHRT_MAX
+0x002e968c	Failed assertion s>=SHRT_MIN && s<=SHRT_MAX
+0x002e96b8	Failed assertion t>=SHRT_MIN && t<=SHRT_MAX
+0x002e96e4	Failed assertion animSize<model->animCacheSize-ANIMMAP_SIZE
+0x002e9720	Failed assertion anim
+0x002e9744	Failed assertion anim->usage<UCHAR_MAX
+0x002e979c	Failed assertion success
+0x002e981c	Failed assertion maxModelNum<=SHRT_MAX
+0x002e987c	Failed assertion posVec
+0x002e9998	Failed assertion hdr->posNrmShift > 0
+0x002e99c0	Failed assertion hdr->posNrmShift < GQR_SCALE_MAX
+0x002e99f4	Failed assertion hdr->sk2ListArray
+0x002e9a18	Failed assertion hdr->sk2ListArray[0].count
+0x002e9a44	Failed assertion hdr->sk2ListArray[0].vertSrc
+0x002e9a74	Failed assertion curr2->count > 2
+0x002e9cf0	Failed assertion ObjListSize<MAX_OBJECTS
+0x002e9d1c	Failed assertion obj
+0x002e9f78	Failed assertion obj->objdata
+0x002ea150	Failed assertion object->modelno>=0 && object->modelno<object->objdata->noframes
+0x002ea1a4	Failed assertion object
+0x002ea1bc	Failed assertion instanceNum>=0 && instanceNum<object->objdata->noframes
+0x002ea208	Failed assertion modelMatrix
+0x002ea228	Failed assertion !(object->stateFlags&OBJ_STATE_ISFROZEN)
+0x002ea318	Failed assertion anim
+0x002ea410	Failed assertion ht
+0x002ea424	Failed assertion object->hits
+0x002ea5a4	Failed assertion mod
+0x002ea5bc	Failed assertion rad1
+0x002ea684	Failed assertion jMtx
+0x002ea8d8	Failed assertion obj1 && obj2
+0x002ea8f8	Failed assertion placeNum>=0 && placeNum<object->objdata->noplacements
+0x002ea940	Failed assertion jointNum >= 0 && jointNum < modelInstance->mod->numJoints
+0x002ea98c	Failed assertion placeNum>=0 && placeNum < obj->objdata->noplacements
+0x002ea9d4	Failed assertion jointNum >= 0 && jointNum < modelIns->mod->numJoints
+0x002eaa1c	Failed assertion nofeet > 0 && nofeet < 16
+0x002eaa48	Failed assertion obj->objdata->noplacements > placeno+nofeet
+0x002eaa88	Failed assertion obj
+0x002eaaa0	Failed assertion mdist
+0x002eaab8	Failed assertion *mdist > 0.0F
+0x002eaad8	Failed assertion ObjList
+0x002eaaf4	Failed assertion obj->objdata
+0x002eab14	Failed assertion obj->objdata->lockdata
+0x002eabd0	Failed assertion childPosition>=0 && childPosition<parentObject->objdata->noplacements
+0x002eac28	Failed assertion parentObject->numChildren<MAX_CHILDREN
+0x002eac60	Failed assertion childObject->parentobj==NULL
+0x002eac90	Failed assertion childPosition<=OBJ2_CHILDPLACE
+0x002eacc0	Failed assertion parentObject->numChildren
+0x002eacec	Failed assertion i<parentObject->numChildren
+0x002eb3c4	Failed assertion obj->frames
+0x002eb3e4	Failed assertion jMtx
+0x002eb3fc	Failed assertion pMtx
+0x002eb45c	Failed assertion jointmtx
+0x002eb5a4	Failed assertion modelInstance->checkSum==(int)modelInstance->matrices[0]
+0x002eb648	Failed assertion childPosition>=0 && childPosition<parentObject->objdata->noplacements
+0x002eb750	Failed assertion object
+0x002eb768	Failed assertion model
+0x002eb780	Failed assertion modelInstance
+0x002eb7bc	Failed assertion renderStream
+0x002eb7dc	Failed assertion shader->inputFormat&GC_VERTEXFORMAT_NORMAL
+0x002eb818	Failed assertion texture
+0x002eb854	Failed assertion !(shader->inputFormat&GC_VERTEXFORMAT_COLOUR)
+0x002eb894	Failed assertion shader->numMaterialLayers==1
+0x002eb8f4	Failed assertion displayList->displayListSize>0 && !(displayList->displayListSize&0x1f)
+0x002eb9f8	Failed assertion numLights<=MAX_LIGHTS_PER_OBJECT
+0x002eba2c	Failed assertion numProjectedTextureLights<=2
+0x002eba5c	Failed assertion *textureFrame
+0x002eda08	Failed assertion numTevStages<16
+0x002eda80	Failed assertion numTexGens<8
+0x002edae0	Failed assertion numTexGens<=8
+0x002edb00	Failed assertion numTevStages<15
+0x002edb24	Failed assertion numTexGens<7
+0x002edb84	Failed assertion shader
+0x002edb9c	Failed assertion layerNum>=0 && layerNum<MAX_SHADER_MATERIAL_LAYERS
+0x002edc1c	Failed assertion lightMaps[i].texture
+0x002edc44	Failed assertion shader
+0x002edcc8	Failed assertion lightMap
+0x002edce4	Failed assertion lightMap->texture->usage<USHRT_MAX
+0x002edd7c	Failed assertion i<MAX_LIGHTMAPS
+0x002edda0	Failed assertion numLights<=MAX_LIGHTS_PER_OBJECT
+0x002eefc4	Failed assertion allocSize
+0x002eefec	Failed assertion texture
+0x002ef218	Failed assertion block
+0x002ef260	Failed assertion blockSize==block->size
+0x002ef288	Failed assertion block->GCtextures[i]
+0x002ef2bc	Failed assertion block->GCtextures>=blockBase && block->GCtextures<blockEnd
+0x002ef308	Failed assertion block->GCpolygons>=blockBase && block->GCpolygons<blockEnd
+0x002ef354	Failed assertion block->polygonGroups>=blockBase && block->polygonGroups<blockEnd
+0x002ef3a8	Failed assertion block->vertexPositions>=blockBase && block->vertexPositions<blockEnd
+0x002ef400	Failed assertion block->vertexColours>=blockBase && block->vertexColours<blockEnd
+0x002ef454	Failed assertion block->vertexTexCoords>=blockBase && block->vertexTexCoords<blockEnd
+0x002ef4ac	Failed assertion block->renderStream>=blockBase && block->renderStream<blockEnd
+0x002ef4fc	Failed assertion block->transparentRenderStream>=blockBase && block->transparentRenderStream<blockEnd
+0x002ef564	Failed assertion block->waterRenderStream>=blockBase && block->waterRenderStream<blockEnd
+0x002ef5c0	Failed assertion block->displayLists>=blockBase && block->displayLists<blockEnd
+0x002ef610	Failed assertion block->shaders>=blockBase && block->shaders<blockEnd
+0x002ef658	Failed assertion block->displayLists[i].displayList>=blockBase && block->displayLists[i].displayList<blockEnd
+0x002ef6c8	Failed assertion ((int)block->displayLists[i].displayList&0x1f)==0
+0x002ef70c	Failed assertion shaderNum>=0 && shaderNum<block->numShaders
+0x002ef74c	Failed assertion listNum>=0 && listNum<block->numDisplayLists
+0x002ef78c	Failed assertion block->displayLists[listNum].displayListSize>0 && !(block->displayLists[listNum].displayListSize&0x1f)
+0x002ef804	Failed assertion positionNum>=0 && positionNum<block->numPositions
+0x002ef848	Failed assertion colourNum>=0 && colourNum<block->numColours
+0x002ef888	Failed assertion coordNum>=0 && coordNum<block->numColours
+0x002ef8c4	Failed assertion textureNum>=0 && textureNum<block->numTextures
+0x002ef904	Failed assertion groupNum>=0 && groupNum<block->numGroups
+0x002ef940	Failed assertion polygonNum>=0 && polygonNum<block->numPolygons
+0x002ef980	Failed assertion x>=SHRT_MIN && x<=SHRT_MAX
+0x002ef9ac	Failed assertion y>=SHRT_MIN && y<=SHRT_MAX
+0x002ef9d8	Failed assertion z>=SHRT_MIN && z<=SHRT_MAX
+0x002efa04	Failed assertion s>=SHRT_MIN && s<=SHRT_MAX
+0x002efa30	Failed assertion t>=SHRT_MIN && t<=SHRT_MAX
+0x002efae0	Failed assertion renderStream
+0x002efb00	Failed assertion !(shader->attributes&GC_SHADERATTRIBUTE_WATER)
+0x002f0918	Failed assertion !is32bMipmap
+0x002f0938	Failed assertion GCShadowDPPtr - GCShadowDP < MAX_SHADOW_GFX * sizeof(Gfx)
+0x002f0d30	Failed assertion timer
+0x002f0d48	Failed assertion *timer >= 0
+0x002f0d68	Failed assertion initialVal > 0
+0x002f0d88	Failed assertion *timer == 0
+0x002f0da8	Failed assertion chance > 0
+0x00302094	Failed assertion shader->numMaterialLayers==1
+0x003020c4	Failed assertion animGroup>=0
+0x0030212c	Failed assertion minenergy < maxenergy
+0x003021b4	Failed assertion enbar->Fullbartex[0].texture
+0x003021e4	Failed assertion enbar->Emptybartex[0].texture
+0x0030ae79	Assertion failed: '%s' in file %s, line %d
+0x0030bd38	Failed assertion weaponObject
+0x0030c9a8	Failed assertion !( !nearestLowObj && command != SIDECMD_GUARD )
+0x0030fab4	Failed assertion back->type != BP_NUMTYPES
+0x0030fae0	Failed assertion !krystalIsClaw(objGetMain())
+0x0030fb10	Failed assertion *obj
+0x0030fc48	Failed assertion seqObj
+0x0030fca8	Failed assertion def->actionType==STAFFACTION_LEVER
+0x00315740	Failed assertion obj
+0x003200e8	Failed assertion obj
+0x00320100	Failed assertion type>=0 && type < DROP_MAX
+0x00320294	Failed assertion obj
+0x00321428	Failed assertion obj
+0x00321440	Failed assertion genobj
+0x00321458	Failed assertion barrelobj
+0x00322618	Failed assertion object->romdefno==OBJ_ARWArwingBooster
+0x00322650	Failed assertion object->romdefno==OBJ_ARWArwingGunFlashLeft || object->romdefno==OBJ_ARWArwingGunFlashRight
+0x003226c0	Failed assertion object->romdefno==OBJ_ARWArwingRoll
+0x00322900	Failed assertion lightData->light
+0x00322924	Failed assertion object
+0x0032293c	Failed assertion lightData
+0x003229d8	Failed assertion lightData->light
+0x00322b4c	Failed assertion lightData->light
+0x00322bec	Failed assertion objCheckType( lightObject, OBTYPE_LIGHTEMIT)

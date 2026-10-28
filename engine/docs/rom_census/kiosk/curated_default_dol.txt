@@ -1,0 +1,91 @@
+# files/default.dol (inside zz_StarFox051702_e3.tgc) - curated findings
+# A SECOND, MUCH OLDER build left in the demo's FST. NOT the boot DOL (boot.bin boots sys/main.dol).
+
+[identity]
+- 3,336,256 B; 12 sections (no .bss2); entry 0x80003100 with CW-runtime __start/__copy_rom_section/__init_bss_section
+  (not the Dolphin OS __start of sys/main.dol and retail); .text 0x2C7D28 @ 0x80006CC0 (bigger than retail).
+- SDK: 'Dolphin OS $Revision: 36 $.' kernel built May 22 2001 01:47:06; DSP build May 23 2001;
+  'MetroTRK for Dolphin v0.5'. (sys/main.dol: Rev 49 / Dec 17 2001; retail: Rev 54 / Jun 5 2002.)
+- Copyright string: 'TM & ^ 2001 NINTENDO' + 'RARE' (near 9slcommandmenu.c).
+- Old lib banner x2: 'Version 2.8 14/12/98 15.30 L.Schuneman'; '03/01/01 16:09'.
+- Asserts compiled IN: "Assertion failed: '%s' in file %s, line %d" + 404 'Failed assertion <expr>' strings.
+- Structural: normalized-window alignment vs retail US10 matches only ~1.4% of retail .text
+  (vs 73.6% for sys/main.dol) -> different build generation; do NOT use it for per-TU drift metrics.
+
+[strings totals]
+- 6,202 strings (5,370 unique) vs ~3,050 in the other DOLs. 4,523 unique absent from retail US10
+  (byte-verified); 4,450 of those also absent from sys/main.dol.
+- Full: DEFAULT.strings.tsv ; absence matrix: default_absent_matrix.tsv ;
+  asserts: default_asserts.txt ; new identifiers: default_new_identifiers.tsv (1,473 ids not in repo symbols/src).
+
+[source filenames - ~300 real TU names in asserts/errors; full list via default_absent_matrix.tsv]
+engine: objects.c ('objects/objects.c'), objhits.c objlib.c objprint.c objprint_dolphin.c objfsa.c
+  pi_dolphin.c rcp_dolphin.c shader.c lightmap.c tex_dolphin.c track_dolphin.c track.c ('track/intersect.c')
+  intersect.c maketex.c newday.c newshadows.c mm_dolphin.c models_dolphin.c SKNControl.c sparsearray.c
+  audio.c gameplay.c game/anim.c expgfx.c modgfx.c modelfx.c dim_partfx.c df_partfx.c pickup.c main.c
+  front.c light.c expr.c timer.c dino.c
+UI/menus/tools: 9slcommandmenu.c n_options.c n_pausemenu.c _Tn_POST.c picmenu.c meter.c listcode.c
+  objedit.c perform_viewer.c screenoverlay.c attention.c firstperson.c baddieControl.c
+objects (200+): tricky.c krystal.c sharpClaw.c template.c balloon_baddie.c swarm_baddie.c wisp_baddie.c
+  robotPatrol.c mikadalon.c mutatedeba.c core_snowworm.c baby_snowworm.c tchukachuck.c wall_crawler.c
+  rope_baddie.c tumbleweed(bush).c skeetla.c MMP_cratercritter.c MMP_critterspit.c animobj.c weapons.c
+  cannon(ball).c projball.c grenade.c flamethrower.c crate2.c collectable.c magicdust.c pushpull.c
+  flameblast.c sidekicktoy.c projswitch.c pressureswitch.c PRESSURESWITCH.c USEOBJ.c SEQOBJ.c EXPLODER.c
+  foodbag.c magicplant.c duster.c smallbasket.c mediumbasket.c scarab.c lanternfirefly.c barrel.c ladders.c
+  waterfallcontrol.c backpack.c landedArwing.c staffaction.c treasurechest.c campfire.c genprops.c gfxemit.c
+  transporter.c autotransporter.c alphaanim.c groundanim.c crackanim.c newtrigger.c deaddino.c pswitch.c
+  colrise.c walltorch.c boulder.c shrine.c creator.c symbol.c flybaddie.c hightop.c sandwormBoss.c
+  gasvent(Control).c cannontargetControl.c dswaphollow.c
+per-level prefixes: CF* MMP_* IM* DIM* DIM2* DF* NW* SH* SC* SP* CR* DR* DB* WC* WM* VF* TREX_* ARW*
+  LGT* BW* WORLDMAP_planet.c BOSSdrakor_laser.c cloudrunner.c propeller.c shiphead.c shipgun.c cloudball.c
+  cagekyte.c IMsnowbike.c CRsnowbike.c DRcloudrunner.c DRearthwalk.c wmcrystal.c ...
+SDK TUs (asserts on): OS*.c GX*.c CARD*.c dvd(low/queue/fs).c mtx*.c vec.c Pad.c arq.c dsp*.c perf.c
+MusyX: seq_api.c snd_synthapi.c synthdata.c synthmacros.c synthvoice.c s_data.c hw_dspctrl.c snd_init.c
+  snd_midictrl.c hardware.c hw_aramdma.c hw_dolphin.c reverb_fx.c chorus_fx.c seq.c synth.c AmcExi.c
+
+[function names in assert/error strings]
+game: audioInit audioPlaySong audioModifySong audioPrepareStream audioPlayStream GetFreeActiveSound
+  checkMap getdim hwInit freeAnimation makeModelAnimation modelLoadOffsetTables objGetMain
+  piGetMapInfo piGetModelInfo piGetTEXTUREInfo piRomFreeLevel piRomGetGamNumber piRomLoadAddr
+  piRomLoadLevel piRomLoadSection(L) preemptSequenceTime startObjSequence texInitTextures
+  trackIntersect TrackGetHeight objSetupObject objDistObj2DefXZ
+  gplayGetCurrentPlayerLactions gplayGetCurrentPlayerEnvactions gplaySetObjGroupStatus
+  salInitAi salInitDsp salInitDspCtrl sndInit + full SDK set (see default_asserts.txt)
+
+[struct/field names from assert expressions - naming gold]
+object->stateFlags&OBJ_STATE_ISFROZEN ; obj->objdata->noplacements ; obj->objdata->lockdata ;
+modelInstance->mod->numJoints ; model->numAnims / numVertexAnims / animCacheSize / ANIMMAP_SIZE ;
+anim->usage<UCHAR_MAX ; shader->attributes&GC_SHADERATTRIBUTE_WATER ;
+shader->inputFormat&GC_VERTEXFORMAT_COLOUR ; shader->numMaterialLayers ;
+map block: block->GCpolygons/GCtextures/displayLists[i].displayList/.displayListSize/polygonGroups/
+  renderStream/transparentRenderStream/waterRenderStream/vertexColours/vertexPositions/vertexTexCoords/
+  shaders (all bounds-checked against blockBase/blockEnd) ;
+enbar->Fullbartex[0].texture / enbar->Emptybartex[0].texture (9slcommandmenu energy bar) ;
+placeNum/placeno/nofeet/jointNum params ; MAX_HITSTORE, BADDIE_HITTAB_SIZE, MAX_OBJ_DISABLED, MAX_SPEEDS
+
+[debug frontend / tools - all stripped from later builds]
+- Boot/file menu: 'Filename:' 'Select Card' 'Load Game' 'Delete Game' 'Format Card' 'Load Settings'
+  'Save Settings' 'Load Game From Database' 'Save Game to Database' ; 'Select Map to Play'
+  'Select savepoint' ; 'Code Version %s %s %s'
+- Map select list (DP-era names): Anim-Test, CapeClaw, CR-Fortress, 'CR - Race ', Dark-Ice-Mines(-2),
+  Dark Ice Boss, Moon Mountain Pass, Ice-Mountain, Northern Wastes, Ship-Battle, SwapStone Circle,
+  SwapStone-Hollow, Warlock-Mountain, Diamond Bay, Drakor Dragon Boss, T-Rex Boss, Dragon Rock,
+  Walled City, Front-End, DFalls/MMount/ECaves/GPlains/DBay/NWastes/CClaw/WGrove _Shrine,
+  VForce_Point, DForce_Point, Intro_Sequence, Krazoa Palace, World Map
+- Object Editor (objedit.c): load modes ALL ACTS / CURVES ONLY / TRICKYAI CURVES / BADDIE CURVE OBJS /
+  CAMERA CURVE OBJS / NO (SIDE) CURVE OBJS / ALL OBJS / ACCURATE; category list Core Gameplay,
+  Staff Gameplay, GamePlay, Container, Collectables, Triggers, GraphicEffect, Characters,
+  Simple Baddies, Sharpclaws, Animation objects, Sidekick objects
+- Perf viewer (perform_viewer.c 'PERF_VIEWER', 'METER TIME'), display-list debugger (listcode.c,
+  rcplists1-4, diPrintf overflow warnings), baddie debug pause pages (Behaviour/Children alive/
+  Print Debug/Troop Type/Squadron/Yaw/Pitch/Roll/Scale), 'CHEAT OUT OF RANGE'/'CINEMA OUT OF RANGE'
+  (gameplay.c cheat/cinema dispatch)
+
+[Dinosaur Planet-era content]
+- Full cut dialogue block near wmcrystal.c (Warlock Mountain): Krystal<->Randorn conversation
+  mentioning Sabre, King EarthWalker's message, wormhole travel to Dinosaur Planet, Randorn dying:
+  'Randorn...  Are You There ??' / 'Krystal! How Is My Son?' / 'Sabre Is Just Glad Your Alive' /
+  'And Then I Entered A Wormhole' / 'And Arrived On Dinosaur Planet' / 'You Followed Later With Sabre' /
+  'Either You Or Sabre Must Find It' etc. (offset 0x31a9c0-0x31b060)
+- 'WARNING : Krystal Has No Carry Object to Drop' (krystal.c: playable Krystal build)
+- MFX_SH_* music actions, AMMUSICACTION_* ids, AMB_WINDLIFT etc.

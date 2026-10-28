@@ -1,0 +1,129 @@
+{
+  "key": "textblock",
+  "labels": [
+    "textblock.c"
+  ],
+  "categories": [
+    "source"
+  ],
+  "direct_xref_count": 6,
+  "direct_function_count": 6,
+  "source_string_count": 2,
+  "orig": {
+    "root_file_count": 0,
+    "root_files": [],
+    "nested_file_count": 0,
+    "nested_files": [],
+    "named_directory_count": 0,
+    "named_directories": [],
+    "root_romlist_count": 0,
+    "root_romlists": []
+  },
+  "family_hint": null,
+  "map_hints": [],
+  "functions": [
+    {
+      "function_start": "0x80208FEC",
+      "function_name": "laser_freeUnsupported",
+      "xrefs": [
+        {
+          "xref_address": "0x80208FF8",
+          "pair_address": "0x80208FFC",
+          "target_address": "0x80329BF8",
+          "target_text": "<textblock.c Init>No Longer supported ",
+          "pair_kind": "lis/addi",
+          "function_name": "laser_freeUnsupported"
+        }
+      ]
+    },
+    {
+      "function_start": "0x80209018",
+      "function_name": "laser_renderUnsupported",
+      "xrefs": [
+        {
+          "xref_address": "0x80209024",
+          "pair_address": "0x80209028",
+          "target_address": "0x80329BF8",
+          "target_text": "<textblock.c Init>No Longer supported ",
+          "pair_kind": "lis/addi",
+          "function_name": "laser_renderUnsupported"
+        }
+      ]
+    },
+    {
+      "function_start": "0x80209048",
+      "function_name": "laser_updateUnsupported",
+      "xrefs": [
+        {
+          "xref_address": "0x80209054",
+          "pair_address": "0x80209058",
+          "target_address": "0x80329BF8",
+          "target_text": "<textblock.c Init>No Longer supported ",
+          "pair_kind": "lis/addi",
+          "function_name": "laser_updateUnsupported"
+        }
+      ]
+    },
+    {
+      "function_start": "0x80209820",
+      "function_name": "textblockObj_freeUnsupported",
+      "xrefs": [
+        {
+          "xref_address": "0x8020982C",
+          "pair_address": "0x80209830",
+          "target_address": "0x80329CF0",
+          "target_text": "<textblock.c Init>No Longer supported ",
+          "pair_kind": "lis/addi",
+          "function_name": "textblockObj_freeUnsupported"
+        }
+      ]
+    },
+    {
+      "function_start": "0x80209854",
+      "function_name": "textblockObj_updateUnsupported",
+      "xrefs": [
+        {
+          "xref_address": "0x80209860",
+          "pair_address": "0x80209864",
+          "target_address": "0x80329CF0",
+          "target_text": "<textblock.c Init>No Longer supported ",
+          "pair_kind": "lis/addi",
+          "function_name": "textblockObj_updateUnsupported"
+        }
+      ]
+    },
+    {
+      "function_start": "0x80209880",
+      "function_name": "textblockObj_init",
+      "xrefs": [
+        {
+          "xref_address": "0x8020988C",
+          "pair_address": "0x80209890",
+          "target_address": "0x80329CF0",
+          "target_text": "<textblock.c Init>No Longer supported ",
+          "pair_kind": "lis/addi",
+          "function_name": "textblockObj_init"
+        }
+      ]
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x80329BF8",
+      "text": "<textblock.c Init>No Longer supported ",
+      "tags": [
+        "source",
+        "warning"
+      ]
+    },
+    {
+      "address": "0x80329CF0",
+      "text": "<textblock.c Init>No Longer supported ",
+      "tags": [
+        "source",
+        "warning"
+      ]
+    }
+  ],
+  "neighbor_strings": []
+}

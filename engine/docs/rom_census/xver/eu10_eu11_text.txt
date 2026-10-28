@@ -1,0 +1,43 @@
+# EU10 (.text @ 800066E0+0x2bb9e0) vs EU11 (800066E0+0x2bbb20)  norm=code K=8
+# section size delta +0x140
+REPLACE  A:800DC754-800DC85C (  0x108)  B:800DC754-800DC85C (  0x108)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x50
+REPLACE  A:800DC898-800DC8B0 (   0x18)  B:800DC898-800DC8B0 (   0x18)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x194
+REPLACE  A:800DC94C-800DC9FC (   0xb0)  B:800DC94C-800DC9FC (   0xb0)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x248
+REPLACE  A:800DCA54-800DCAF4 (   0xa0)  B:800DCA54-800DCAF4 (   0xa0)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x350
+REPLACE  A:800DCB34-800DCBD4 (   0xa0)  B:800DCB34-800DCBD4 (   0xa0)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x430
+REPLACE  A:800DCC14-800DCCB8 (   0xa4)  B:800DCC14-800DCCB8 (   0xa4)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x510
+REPLACE  A:800DCCF4-800DCE04 (  0x110)  B:800DCCF4-800DCE04 (  0x110)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x5f0
+REPLACE  A:800DCE24-800DCE28 (    0x4)  B:800DCE24-800DCE28 (    0x4)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x720
+REPLACE  A:800DCE4C-800DCF60 (  0x114)  B:800DCE4C-800DCF60 (  0x114)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x748
+REPLACE  A:800DCF94-800DD18C (  0x1f8)  B:800DCF94-800DD18C (  0x1f8)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x890
+REPLACE  A:800DD1B0-800DD2CC (  0x11c)  B:800DD1B0-800DD2CC (  0x11c)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0xaac
+REPLACE  A:800DD308-800DD3AC (   0xa4)  B:800DD308-800DD3AC (   0xa4)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0xc04
+REPLACE  A:800DD3CC-800DD444 (   0x78)  B:800DD3CC-800DD444 (   0x78)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0xcc8
+RESIZE   A:800DD464-800DD704 (  0x2a0)  B:800DD464-800DD700 (  0x29c)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0xd60
+RESIZE   A:800DD748-800DD958 (  0x210)  B:800DD744-800DD950 (  0x20c)  dlls/engine/20_Hcurves/Hcurves.c  Objfsa_UpdateWalkGroupPatches+0x1040
+INSERT   A:800EABA4-800EABA4 (    0x0)  B:800EAB9C-800EABA8 (    0xc)  dlls/engine/47/47.c  Carryable_putDownAndSavePos+0x14
+INSERT   A:800EB0E8-800EB0E8 (    0x0)  B:800EB0EC-800EB0F8 (    0xc)  dlls/engine/47/47.c  Carryable_updateHeld+0x310
+INSERT   A:80116B40-80116B40 (    0x0)  B:80116B50-80116B5C (    0xc)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0x5c
+INSERT   A:80116B90-80116B90 (    0x0)  B:80116BAC-80116BB8 (    0xc)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0xb8
+INSERT   A:80116E3C-80116E3C (    0x0)  B:80116E64-80116E70 (    0xc)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0x370
+REPLACE  A:80149268-80149270 (    0x8)  B:8014929C-801492A4 (    0x8)  dlls/objects/201_Baddie/Baddie.c  Tricky_resumeAfterCommand+0x1c
+RESIZE   A:801492A0-801492C0 (   0x20)  B:801492D4-80149314 (   0x40)  dlls/objects/201_Baddie/Baddie.c  Tricky_resumeAfterCommand+0x54
+RESIZE   A:80149470-80149488 (   0x18)  B:801494C4-801494F4 (   0x30)  dlls/objects/201_Baddie/Baddie.c  tricky_handleDefeat+0xb0
+RESIZE   A:8014B660-8014B678 (   0x18)  B:8014B6CC-8014B6FC (   0x30)  dlls/objects/201_Baddie/Baddie.c  enemyObjAnimUpdate+0x63c
+RESIZE   A:8014D6D4-8014D6EC (   0x18)  B:8014D758-8014D78C (   0x34)  dlls/objects/201_Baddie/Baddie.c  baddieSetMove+0x14
+INSERT   A:80179C14-80179C14 (    0x0)  B:80179CB4-80179CD0 (   0x1c)  dlls/objects/245_SidekickBal/SidekickBal.c  sidekickBall_handlePlayerInteraction+0x210
+INSERT   A:80179D6C-80179D6C (    0x0)  B:80179E28-80179E44 (   0x1c)  dlls/objects/245_SidekickBal/SidekickBal.c  sidekickBall_launch+0x64
+INSERT   A:8017C6BC-8017C6BC (    0x0)  B:8017C794-8017C7A4 (   0x10)  dlls/objects/273/273.c  DoorLock_update+0x1d4
+RESIZE   A:801D0F24-801D0F2C (    0x8)  B:801D100C-801D1034 (   0x28)  dlls/objects/422_SH_tricky/SH_tricky.c  shTricky_init+0x2c
+DELETE   A:801F1FDC-801F1FE8 (    0xc)  B:801F20E4-801F20E4 (    0x0)  dlls/objects/510/510.c  PressureSwitch_update+0x1f0
+RESIZE   A:8021A20C-8021A228 (   0x1c)  B:8021A308-8021A328 (   0x20)  dlls/objects/613_DR_Creator/DR_Creator.c  DR_Creator_SeqFn+0x14
+RESIZE   A:8021A248-8021A254 (    0xc)  B:8021A348-8021A380 (   0x38)  dlls/objects/613_DR_Creator/DR_Creator.c  DR_Creator_SeqFn+0x54
+REPLACE  A:8021A274-8021A2A8 (   0x34)  B:8021A3A0-8021A3D4 (   0x34)  dlls/objects/613_DR_Creator/DR_Creator.c  DR_Creator_SeqFn+0xac
+REPLACE  A:8021A2E0-8021A310 (   0x30)  B:8021A40C-8021A43C (   0x30)  dlls/objects/613_DR_Creator/DR_Creator.c  DR_Creator_SeqFn+0x118
+REPLACE  A:8021A33C-8021A3A4 (   0x68)  B:8021A468-8021A4D0 (   0x68)  dlls/objects/613_DR_Creator/DR_Creator.c  DR_Creator_SeqFn+0x174
+INSERT   A:8021F350-8021F350 (    0x0)  B:8021F47C-8021F488 (    0xc)  dlls/objects/626/626.c  HighTop_hitDetect+0xfc
+INSERT   A:8028D19C-8028D19C (    0x0)  B:8028D2D4-8028D2DC (    0x8)  dolphin/TRK_MINNOW_DOLPHIN/targimpl.c  TRKValidMemory32+0x124
+REPLACE  A:802BBF8C-802BBF90 (    0x4)  B:802BC0CC-802BC0D0 (    0x4)  dlls/objects/598_DIMSnowHorn/DIMSnowHorn.c  DIMSnowHorn1_update+0x3c
+INSERT   A:802BC014-802BC014 (    0x0)  B:802BC154-802BC164 (   0x10)  dlls/objects/598_DIMSnowHorn/DIMSnowHorn.c  DIMSnowHorn1_update+0xc4
+DELETE   A:802C20B0-802C20C0 (   0x10)  B:802C2200-802C2200 (    0x0)  ?  DR_CloudRunner_initialise+0x7c
+# regions=40  net delta from regions +0x140 (section delta +0x140) OK

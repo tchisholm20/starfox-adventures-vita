@@ -1,0 +1,18 @@
+# overlay_gate.py OPEN list: known overlays over INITIALISED (.data) globals. They need
+# their retail initial bytes, so gen_retail_blocks.py (zero .bss blocks) cannot fix them.
+# Each is printed as OPEN on every run, never silently passed. Remove a line only by
+# fixing the site (as pi_dolphin.c's MldfNames was: name the neighbours directly).
+# Format: TU  type  symbol   (all object/effect DLLs, none on the boot path as of run 9)
+# 2026-09-27, merged tree: expgfx fixed upstream; 417 and 599 (and audio_stream.c) now pass as
+# CONTIGUOUS (-fno-toplevel-reorder + upstream per-TU retail data order). Their lines are kept
+# only while the pre-merge tree still builds; remove them with it.
+src/dlls/objects/275/275.c SeqObj2DataLayout gSeqObj2ObjDescriptor
+src/dlls/objects/399_ECSH_Shrine/ECSH_Shrine.c ECSHShrinePuzzleScratch gECSHShrineCupPositions
+src/dlls/objects/429_SH_thorntai/SHthorntail.c SHthorntailDataTables gSHthorntailDataTables
+# upstream 2026-09 renamed the base of the same overlay (the pre-merge tree keeps the line above):
+src/dlls/objects/429_SH_thorntai/SHthorntail.c SHthorntailDataTables gSHthorntailLinkedIdents
+src/dlls/objects/437/437.c LightfootButtonTimingTables gPlayerLightfootAnimTable
+# pre-merge tree only (see the 2026-09-27 note above):
+src/dlls/engine/10_expgfx/expgfx.c ExpgfxStaticDataLayout gExpgfxStaticData
+src/dlls/objects/417/417.c NwMammothTables gNwMammothHitReactEntriesData
+src/dlls/objects/599_DR_EarthWar/DR_EarthWar.c DREarthWarriorInitData gDREarthWarriorInitData

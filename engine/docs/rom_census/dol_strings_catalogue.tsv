@@ -1,0 +1,170 @@
+tags	string	versions	US10_off_or_first	known	camel_ids
+ERROR+camelfmt	'<renderOpMatrix> ERROR CASE numMatrices = %d'	US10,US11,EU10,EU11,JP10	0x002c7f18	NEW-ids(numMatrices); known:renderOpMatrix	renderOpMatrix,numMatrices
+ERROR	'ERROR : No buffer available'	US10,US11,EU10,EU11,JP10	0x002bf958	exact-in-src	
+ERROR+overflow	'ERROR: asset index overflow '	US10,JP10	0x002c9110	exact-in-src	
+ERROR	'ERROR<alloc> memory usage value corrupted '	US10,US11,EU10,EU11,JP10	0x002c7afe	NEW-ids(corrupted); known:memory	
+ERROR	'ERROR<free> memory usage value corrupted '	US10,US11,EU10,EU11,JP10	0x002c79ce	NEW-ids(corrupted); known:memory	
+ERROR+overflow	'TRACK ERROR: Global texanim overflow'	US10,US11,EU10,EU11,JP10	0x0030b740	exact-in-src	
+Failed	'*C FAIL ON NOT ON GROUND'	US10	0x00331c45	ids-known(GROUND)	
+Failed	'*KPFAIL ON NOT ON GROUND'	EU10	EU10:0x003333e5	NEW-ids(KPFAIL); known:GROUND	
+Failed+file.c	'/D<camcontrol.c>  failed to load triggered camaction actionno %d'	US10	0x00316b12	ids-known(actionno,camaction,camcontrol,failed)	
+Failed+file.c	'/d<camcontrol.c>  failed to load triggered camaction actionno %d'	JP10	JP10:0x00316c32	ids-known(actionno,camaction,camcontrol,failed)	
+Failed+file.c	'3p<camcontrol.c>  failed to load triggered camaction actionno %d'	EU11	EU11:0x00318372	ids-known(actionno,camaction,camcontrol,failed)	
+Failed+file.c	'<camcontrol.c>  failed to load triggered camaction actionno %d'	US11	US11:0x00317764	exact-in-src	
+Failed+camel	'<mmAllocateFromFBMemoryStore> failed to find store with requested handle in MMSTORE_ARRAY'	US10,US11,EU10,EU11,JP10	0x002c76d8	ids-known(MMSTORE_ARRAY,failed,handle,mmAllocateFromFBMemoryStore)	mmAllocateFromFBMemoryStore
+Failed+camelfmt	'<mmCreateMemoryStore> failed as size %d was greater than MM_MAX_MEM_STORE_SIZE %d'	US10,US11,EU10,EU11,JP10	0x002c7808	exact-in-src	mmCreateMemoryStore
+Failed+camelfmt	'<mmCreateMemoryStore> failed as size was %d'	US10,US11,EU10,EU11,JP10	0x002c77d8	exact-in-src	mmCreateMemoryStore
+Failed+camel	'<mmCreateMemoryStore> failed to allocate mmStore Object'	US10,US11,EU10,EU11,JP10	0x002c785c	exact-in-src	mmCreateMemoryStore
+Failed+camel	'<mmCreateMemoryStore> failed to allocate mmStore->ptrStore'	US10,US11,EU10,EU11,JP10	0x002c78ac	exact-in-src	mmCreateMemoryStore,ptrStore
+Failed+camel	'<mmCreateMemoryStore> failed to find slot in MMSTORE_ARRAY'	US10,US11,EU10,EU11,JP10	0x002c78e8	exact-in-src	mmCreateMemoryStore
+Failed+camel	'<mmDestroyMemoryStore> failed to find store with requested handle in MMSTORE_ARRAY'	US10,US11,EU10,EU11,JP10	0x002c7784	exact-in-src	mmDestroyMemoryStore
+Failed+camel	'<mmShowInfoFBMemoryStore> failed to find store with requested handle in MMSTORE_ARRAY'	US10,US11,EU10,EU11,JP10	0x002c75f0	NEW-ids(mmShowInfoFBMemoryStore); known:MMSTORE_ARRAY,failed,handle	mmShowInfoFBMemoryStore
+Failed	'^^^^^^^^^^^^^^^^  malloc for movie failed'	US10,US11,EU10,EU11,JP10	0x00317338	exact-in-src	
+Failed	'FAIL ON NOT ON GROUND'	US11,EU11,JP10	US11:0x003328a8	exact-in-src	
+Failed	'Fail to prepare'	US10,US11,EU10,EU11,JP10	0x0031739c	exact-in-src	
+Failed	'Failed to allocate memory->forcing texture free'	US10,US11,EU10,EU11,JP10	0x0030b188	exact-in-src	
+Failed	'LOAD FAIL: Manual load'	US10,US11,EU10,EU11,JP10	0x0030b698	exact-in-src	
+Failed	'LOAD FAIL: No block'	US10,US11,EU10,EU11,JP10	0x0030b6d8	exact-in-src	
+Failed	'LOAD FAIL: Out of range'	US10,US11,EU10,EU11,JP10	0x0030b724	exact-in-src	
+Failed	'LOAD FAIL: Outside map x=%f y=%f z=%f'	US10,US11,EU10,EU11,JP10	0x0030b6b0	exact-in-src	
+Failed+camelfmt	'sndPushGroup failed on group %d'	US10,US11,EU10,EU11,JP10	0x002c21d0	exact-in-src	sndPushGroup
+WARNING	' WARNING: Voxmap has no mem available '	US10,US11,EU10,EU11,JP10	0x002c32d4	ids-known(Voxmap,WARNING,available)	
+WARNING+camel	'(sideCommandEnable warning: need to increase MAX_COMM_PRESENT'	US10	0x0031ab3b	NEW-ids(MAX_COMM_PRESENT,increase); known:sideCommandEnable,warning	sideCommandEnable
+WARNING+camelfmt+file.c	'<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d'	US10,US11,EU10,EU11,JP10	0x002c7d50	exact-in-src	setBlendMove
+WARNING+camel	'<objLoadAnimdata>  Warning ACRomTab is NULL'	US10,US11,EU10,EU11,JP10	0x0030bf28	exact-in-src	objLoadAnimdata
+WARNING+camel	'<voxLoadVoxMapActual>  Warning uncompressedSize is 0'	US10,US11,EU10,EU11,JP10	0x002c329c	exact-in-src	voxLoadVoxMapActual,uncompressedSize
+WARNING+camel	'<voxLoadVoxMapActual>  Warning voxRomTab is NULL'	US10,US11,EU10,EU11,JP10	0x002c3230	ids-known(Warning,voxLoadVoxMapActual,voxRomTab)	voxLoadVoxMapActual,voxRomTab
+WARNING	'HsideCommandEnable warning: need to increase MAX_COMM_PRESENT'	JP10	JP10:0x0031ac5b	NEW-ids(HsideCommandEnable,MAX_COMM_PRESENT,increase); known:warning	
+WARNING+camel	'sideCommandEnable warning: need to increase MAX_COMM_PRESENT'	US11,EU10,EU11	US11:0x0031b78c	NEW-ids(MAX_COMM_PRESENT,increase); known:sideCommandEnable,warning	sideCommandEnable
+WARNING+camelfmt	"WARNING in mainSetBits: Bit %d can't be set to %d while a savegame is loading"	US10,EU10,EU11,JP10	0x002c74e0	ids-known(WARNING,loading,mainSetBits,savegame)	mainSetBits
+WARNING	'warning in newcloud dll no spare memory for light available'	US10,US11,EU10,EU11,JP10	0x0030c6b0	ids-known(available,memory,newcloud,warning)	
+WARNING	'warning in newclouds dll no spare memory for clouds available'	US10,US11,EU10,EU11,JP10	0x0030c6f0	ids-known(available,clouds,memory,newclouds)	
+WARNING	'WARNING Water Spike [%d] as invalid xyzAnim ID'	US10,EU10,EU11	0x003231d8	exact-in-src	
+WARNING+pct_s	"Warning: DVDOpen(): file '%s' was not found under %s."	US10,US11,EU10,EU11,JP10	0x0032a8f8	exact-in-src	
+WARNING+pct_s	"Warning: DVDOpenDir(): file '%s' was not found under %s."	US10,US11,EU10,EU11,JP10	0x0032a9bc	exact-in-src	
+WARNING+overflow	'Warning: Model animation buffer overflow!! size=%d'	US10,US11,EU10,EU11,JP10	0x002c7bc4	exact-in-src	
+WARNING	"Warning: Unknown object type '%d/%d romdefno %d', using DummyObject (128)"	US10,US11,EU10,EU11,JP10	0x002c7d04	exact-in-src	
+WARNING	'WARNING:DVDCancelStreamAsync returned FALSE'	US10,US11,EU10,EU11,JP10	0x002c2dc4	exact-in-src	
+WARNING+camelfmt	"XWARNING in mainSetBits: Bit %d can't be set to %d while a savegame is loading"	US11	US11:0x002c809b	NEW-ids(XWARNING); known:loading,mainSetBits,savegame	mainSetBits
+WARNING	'X|WARNING Water Spike [%d] as invalid xyzAnim ID'	JP10	JP10:0x003232f6	ids-known(WARNING,invalid,xyzAnim)	
+camel+overflow	'[lPUSHPULL OBJECT: hitpoint overflow'	EU10	EU10:0x0031f54e	NEW-ids(lPUSHPULL); known:OBJECT,hitpoint,overflow	lPUSHPULL
+camel	'audioInit: sndIsInstalled() returned FALSE!'	US10,US11,EU10,EU11,JP10	0x002c2100	ids-known(audioInit,returned,sndIsInstalled)	audioInit,sndIsInstalled
+camel	'audioQuit passed'	US10,US11,EU10,EU11,JP10	0x002c7564	ids-known(audioQuit,passed)	audioQuit
+camel	'biteAttack    '	US10,US11,EU10,EU11,JP10	0x00326562	exact-in-src	biteAttack
+camel	'burstIntoGroun'	US10,US11,EU10,EU11,JP10	0x00326553	exact-in-src	burstIntoGroun
+camel	'curvesMove: There must be a multiple of four control points for bezier or hermite curves'	US10,US11,EU10,EU11,JP10	0x002c3100	exact-in-src	curvesMove
+camel	'curvesMove: There must be at least four control points'	US10,US11,EU10,EU11,JP10	0x002c30c8	exact-in-src	curvesMove
+camel	'curvesSetupMoveNetworkCurve: There must be a multiple of four control points for bezier or hermite curves'	US10,US11,EU10,EU11,JP10	0x002c305c	exact-in-src	curvesSetupMoveNetworkCurve
+camel	'curvesSetupMoveNetworkCurve: There must be at least four control points'	US10,US11,EU10,EU11,JP10	0x002c3010	exact-in-src	curvesSetupMoveNetworkCurve
+camel	'endObjSequence: max number of obj frees'	US10,JP10	0x0030bed4	exact-in-src	endObjSequence
+camel	'Error in isPointWithinPatchGroup'	US10,US11,EU10,EU11,JP10	0x0030e548	exact-in-src	isPointWithinPatchGroup
+camel+file.c+overflow	'expgfx.c: addToTable usage overflow'	US10,US11,EU10,EU11,JP10	0x0030cc28	exact-in-src	addToTable
+camel	'hitFightMain  '	US10,US11,EU10,EU11,JP10	0x0032658f	exact-in-src	hitFightMain
+camel	'hXstarfox.thp'	US11	US11:0x00317f7a	NEW-ids(hXstarfox)	hXstarfox
+camel	'mmStore->ptrStore'	US10,US11,EU10,EU11,JP10	0x002c7898	exact-in-src	ptrStore
+camel	'mmUniqueIdent'	US10,US11,EU10,EU11,JP10	0x002c7b2c	NEW-ids(mmUniqueIdent)	mmUniqueIdent
+camel	'moveTricky: out of water'	US10,US11,EU10,EU11,JP10	0x0031a488	ids-known(moveTricky)	moveTricky
+camel	'musicTriggersLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c2094	ids-known(musicTriggersLoadedCallback)	musicTriggersLoadedCallback
+camel	'objAddObjectType: Reached MAXTYPES!!'	US10,US11,EU10,EU11,JP10	0x002c7e20	exact-in-src	objAddObjectType
+camel+overflow	"overflow in 'genVoxelCircle'"	US10,US11,EU10,EU11,JP10	0x002c3194	exact-in-src	genVoxelCircle
+camel	'poolDataMLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c2024	exact-in-src	poolDataMLoadedCallback
+camel	'poolDataSLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c1f84	exact-in-src	poolDataSLoadedCallback
+camel	'popOutOfGround'	US10,US11,EU10,EU11,JP10	0x00326544	exact-in-src	popOutOfGround
+camel	'projectDataMLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c1ffc	exact-in-src	projectDataMLoadedCallback
+camel	'projectDataSLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c1f5c	exact-in-src	projectDataSLoadedCallback
+camel	'sampleBufferMLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c1fa8	exact-in-src	sampleBufferMLoadedCallback
+camel	'sampleBufferSLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c1f08	exact-in-src	sampleBufferSLoadedCallback
+camel	'sampleDirectoryMLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c1fd0	exact-in-src	sampleDirectoryMLoadedCallback
+camel	'sampleDirectorySLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c1f30	exact-in-src	sampleDirectorySLoadedCallback
+camel	'sfxTriggersLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c206c	exact-in-src	sfxTriggersLoadedCallback
+camel	'standAndSpit  '	US10,US11,EU10,EU11,JP10	0x00326580	exact-in-src	standAndSpit
+camel	'standStill    '	US10,US11,EU10,EU11,JP10	0x00326571	exact-in-src	standStill
+camel	'streamsLoadedCallback load error'	US10,US11,EU10,EU11,JP10	0x002c2048	exact-in-src	streamsLoadedCallback
+camel	'target is not within a walkGroup or any patches'	US10,US11,EU10,EU11,JP10	0x0031a598	ids-known(patches,target,walkGroup,within)	walkGroup
+camel	'target is within a walkGroup or its patch'	US10,US11,EU10,EU11,JP10	0x0031a56c	ids-known(target,walkGroup,within)	walkGroup
+camel	'trackLoadBlockEnd: track block overrun'	US10,US11,EU10,EU11,JP10	0x0030b768	exact-in-src	trackLoadBlockEnd
+camel	'xendObjSequence: max number of obj frees'	US11	US11:0x0030ca93	NEW-ids(xendObjSequence); known:number	xendObjSequence
+camel	'xLadevorgang...'	EU11	EU11:0x002c76bb	NEW-ids(xLadevorgang)	xLadevorgang
+camel+overflow	'xPICMENU: tex overflow'	US10	0x00319233	NEW-ids(xPICMENU); known:overflow	xPICMENU
+camelfmt	'\terrorThreadFunc %x'	US10,US11,EU10,EU11,JP10	0x0031a1a0	ids-known(errorThreadFunc)	errorThreadFunc
+camelfmt	'!!! Error non-existant cloud id - %i - in snowFreeSnowCloud'	US11,EU10,EU11,JP10	US11:0x0030d1b0	exact-in-src	snowFreeSnowCloud
+camelfmt	'!!! Error non-existant cloud id - %i - in snowKillSnowCloud'	US10,US11,EU10,EU11,JP10	0x0030c730	exact-in-src	snowKillSnowCloud
+camelfmt	'!!! Error non-existant cloud id - %i - in snowPrintSnowCloud'	US10,US11,EU10,EU11,JP10	0x0030c630	exact-in-src	snowPrintSnowCloud
+camelfmt	'!!! Error non-existant cloud id - %i - in snowReposSnowCloud'	US10,US11,EU10,EU11,JP10	0x0030c670	ids-known(existant,snowReposSnowCloud)	snowReposSnowCloud
+camelfmt	'<mmAllocateFromFBMemoryStore> available space in this store %d size wanted %d'	US10,US11,EU10,EU11,JP10	0x002c7734	exact-in-src	mmAllocateFromFBMemoryStore
+camelfmt	"<objSetupObject>  loading is locked can't setup objno %d"	US10,US11,EU10,EU11,JP10	0x002c7c18	exact-in-src	objSetupObject
+camelfmt	'numBloops %d'	US10,US11,EU10,EU11,JP10	0x00324754	exact-in-src	numBloops
+camelfmt	'objFreeObjdef: Error!! (%d)'	US10,US11,EU10,EU11,JP10	0x002c7cc0	exact-in-src	objFreeObjdef
+camelfmt+file.c+overflow	'objHitReact.c: sphere overflow! %d'	US10,US11,EU10,EU11,JP10	0x002c7dfc	exact-in-src	objHitReact
+camelfmt	'p!!! Error non-existant cloud id - %i - in snowFreeSnowCloud'	US10	0x0030c5ef	ids-known(existant,snowFreeSnowCloud)	snowFreeSnowCloud
+camelfmt	'texRestructRefs   Optimal ReRegion from 0x%x to 0x%x size %d!!!!'	US10,US11,EU10,EU11,JP10	0x0030b24c	exact-in-src	texRestructRefs
+camelfmt	'texRestructRefs   Optimal Restructure from 0x%x to 0x%x size %d!!!!'	US10,US11,EU10,EU11,JP10	0x0030b378	exact-in-src	texRestructRefs
+camelfmt	'texRestructRefs   ReRegioned alloc Optimal Restructure from 0x%x to 0x%x size %d!!!!'	US10,US11,EU10,EU11,JP10	0x0030b420	exact-in-src	texRestructRefs
+camelfmt	'texRestructRefs   SubOptimal Restructure from 0x%x to 0x%x size %d!!!!'	US10,US11,EU10,EU11,JP10	0x0030b330	exact-in-src	texRestructRefs
+camelfmt	'texRestructRefs  No Space to ReRegion from 0x%x size %d!!!!'	US10,US11,EU10,EU11,JP10	0x0030b20c	exact-in-src	texRestructRefs
+camelfmt	'texRestructRefs  No Space to Restructure from 0x%x size %d!!!!'	US10,US11,EU10,EU11,JP10	0x0030b2b4	exact-in-src	texRestructRefs
+camelfmt	"texRestructRefs ReRegioned alloc can't get back into region 0 from 0x%x to 0x%x size %d!!!!"	US10,US11,EU10,EU11,JP10	0x0030b3c0	exact-in-src	texRestructRefs
+camelfmt	'texRestructRefs Wrong region from 0x%x to 0x%x size %d!!!!'	US10,US11,EU10,EU11,JP10	0x0030b2f4	exact-in-src	texRestructRefs
+camelfmt	'thisStore 0x%8x thisStore->handle %d thisStore->size %d thisStore->ptrStore 0x%8x thisStore->ptrCurrent 0x%8x  end of this store array 0x%8x'	US10,US11,EU10,EU11,JP10	0x002c7648	NEW-ids(thisStore); known:handle,ptrCurrent,ptrStore	thisStore,thisStore,thisStore,thisStore,ptrStore,thisStore,ptrCurrent
+camelfmt	'track piLocked %x'	US10,US11,EU10,EU11,JP10	0x0030b790	exact-in-src	piLocked
+camelfmt+overflow	'trackIntersect: FUNC OVERFLOW %d'	US10,US11,EU10,EU11,JP10	0x0030b87c	exact-in-src	trackIntersect
+camelfmt	'tricky error, target patch %d, targetWalkGroup %d, trickyWalkGroup %d, tricky last walkGroup %d, tricky in patch %d'	US10,US11,EU10,EU11,JP10	0x0031a65c	NEW-ids(trickyWalkGroup); known:target,targetWalkGroup,tricky	targetWalkGroup,trickyWalkGroup,walkGroup
+file.c	'<DIMBoss.c> freeing assets for DIMBoss'	US11	US11:0x00323784	exact-in-src	
+file.c	'<DIMBoss.c> loading assets for DIMTop'	US10,US11,EU10,EU11,JP10	0x00322b6c	exact-in-src	
+file.c	'<laser.c Init>No Longer supported '	US10,US11,EU10,EU11,JP10	0x00326c20	exact-in-src	
+file.c	'<textblock.c Init>No Longer supported '	US10,US11,EU10,EU11,JP10	0x00326bf8	exact-in-src	
+file.c	'@<DIMBoss.c> freeing assets for DIMBoss'	US10	0x00322b43	ids-known(DIMBoss,assets,freeing)	
+file.c	'@expgfx.c: mismatch in add/remove in exptab'	US10	0x0030cbef	ids-known(expgfx,exptab,mismatch,remove)	
+file.c	'curves.c: MAX_ROMCURVES exceeded!!'	US11,EU10,EU11	US11:0x0030f30c	exact-in-src	
+file.c	'D<DIMBoss.c> freeing assets for DIMBoss'	EU11	EU11:0x003244c3	ids-known(DIMBoss,assets,freeing)	
+file.c	'dvdfs.c'	US10,US11,EU10,EU11,JP10	0x00333bc0	exact-in-src	
+file.c	'expgfx.c: exptab is FULL'	US10,US11,EU10,EU11,JP10	0x0030cc50	exact-in-src	
+file.c	'expgfx.c: invalid tabindex'	US10,US11,EU10,EU11,JP10	0x0030cc6c	exact-in-src	
+file.c	'expgfx.c: mismatch in add/remove in exptab'	US11,EU10,EU11	US11:0x0030d7b0	exact-in-src	
+file.c+overflow	'expgfx.c: scale overflow'	US10,US11,EU10,EU11,JP10	0x0030cc88	exact-in-src	
+file.c	'H<textblock.c Init>No Longer supported '	US11	US11:0x0032792f	ids-known(Longer,supported,textblock)	
+file.c	'Hcurves.c: MAX_ROMCURVES exceeded!!'	US10	0x0030e6bb	ids-known(Hcurves,MAX_ROMCURVES,exceeded)	
+file.c	'hcurves.c: MAX_ROMCURVES exceeded!!'	JP10	JP10:0x0030e7db	NEW-ids(hcurves); known:MAX_ROMCURVES,exceeded	
+file.c	'n_attractmode.c'	US10,US11,EU10,EU11,JP10	0x0031738c	exact-in-src	
+file.c	'SHthorntail.c'	US10,US11,EU10,EU11,JP10	0x00324488	exact-in-src	
+file.c	'X<textblock.c Init>No Longer supported '	EU11	EU11:0x00328577	ids-known(Longer,supported,textblock)	
+overflow	'\t- DMA queue overflowed'	US10,US11,EU10,EU11,JP10	0x00329730	ids-known(overflowed)	
+overflow	'DOWNLINK overflow=%d'	US10,US11,EU10,EU11,JP10	0x00319260	NEW-ids(DOWNLINK); known:overflow	
+overflow	'HIT OVERFLOW'	US10,US11,EU10,EU11,JP10	0x0030b8a0	exact-in-src	
+overflow	'LEFTLINK overflow=%d'	US10,US11,EU10,EU11,JP10	0x00319278	NEW-ids(LEFTLINK); known:overflow	
+overflow	'objmsg (%x): overflow in object %d defno=%d FROM: defno %d'	US10,US11,EU10,EU11,JP10	0x002c7e48	exact-in-src	
+overflow	'PICMENU: tex overflow'	US11,JP10	US11:0x00319e84	NEW-ids(PICMENU); known:overflow	
+overflow	'PUSHPULL OBJECT: hitpoint overflow'	US11,EU11,JP10	US11:0x0031e9e0	exact-in-src	
+overflow	'RIGHTLINK overflow=%d'	US10,US11,EU10,EU11,JP10	0x00319290	NEW-ids(RIGHTLINK); known:overflow	
+overflow	'U PUSHPULL OBJECT: hitpoint overflow'	US10	0x0031dd8e	ids-known(OBJECT,PUSHPULL,hitpoint,overflow)	
+overflow	'UPLINK overflow=%d'	US10,US11,EU10,EU11,JP10	0x0031924c	NEW-ids(UPLINK); known:overflow	
+overflow	'VOXMAP: Size overflow on load->Ignoring defined voxmap'	US10,US11,EU10,EU11,JP10	0x002c3264	ids-known(Ignoring,VOXMAP,defined,overflow)	
+overflow	'VOXMAP: Size overflow on object voxmap load->Ignoring defined voxmap'	US10,US11,EU10,EU11,JP10	0x002c31e8	exact-in-src	
+overflow	'VOXMAPS: route nodes list overflow'	US10,US11,EU10,EU11,JP10	0x002c3160	exact-in-src	
+overflow	'XPICMENU: tex overflow'	EU11	EU11:0x0031abc3	NEW-ids(XPICMENU); known:overflow	
+pct_s	'  Streaming ... %s'	US10,US11,EU10,EU11,JP10	0x0032addc	exact-in-src	
+pct_s	' in "%s" on line %d.'	US10,US11,EU10,EU11,JP10	0x003299a8	-	
+pct_s	'%s.romlist.zlb'	US10,US11,EU10,EU11,JP10	0x002c9524	exact-in-src	
+pct_s	'%s/animcurv.bin'	US10,EU10,EU11,JP10	0x002c9378	exact-in-src	
+pct_s	'%s/animcurv.tab'	US10,US11,EU10,EU11,JP10	0x002c9388	exact-in-src	
+pct_s	'%s/mod%d.tab'	US10,US11,EU10,EU11,JP10	0x002c93e0	exact-in-src	
+pct_s	'%s/mod%d.zlb.bin'	US10,US11,EU10,EU11,JP10	0x002c93cc	exact-in-src	
+pct_s	'%s/voxmap.bin'	US10,US11,EU10,EU11,JP10	0x002c9398	exact-in-src	
+pct_s	'%s/voxmap.tab'	US10,US11,EU10,EU11,JP10	0x002c93bc	exact-in-src	
+pct_s	'(gametext/Sequences/%d_%s.bin'	US10,JP10	0x002c6ec3	ids-known(Sequences,gametext)	
+pct_s	"1: *** mm Error *** ---> '%s' No more slots available.  region %d used %d avail %d"	US10,US11,EU10,EU11,JP10	0x002c7aa8	ids-known(available,region)	
+pct_s	"2: *** mm Error *** --->  '%s' region=%d col=%x wantsize=%d largestsize=%d...No suitble block found for allocation."	US10,US11,EU10,EU11,JP10	0x002c7b3d	NEW-ids(largestsize,suitble,wantsize); known:allocation,region	
+pct_s	'< %s/animcurv.bin'	US11	US11:0x002c9f2e	ids-known(animcurv)	
+pct_s	"<%d's not in %s>"	US10,US11,EU10,EU11,JP10	0x002c6e3c	exact-in-src	
+pct_s	'`gametext/Sequences/%d_%s.bin'	US11	US11:0x002c7a47	ids-known(Sequences,gametext)	
+pct_s	'DSPInit(): Build Date: %s %s'	US10,US11,EU10,EU11,JP10	0x0032b0c8	exact-in-src	
+pct_s	"DVDConvertEntrynumToPath(possibly DVDOpen or DVDChangeDir or DVDOpenDir): specified directory or file (%s) doesn't match standard 8.3 format. This is a temporary restriction and will be removed soon"	US10,US11,EU10,EU11,JP10	0x0032a830	ids-known(DVDChangeDir,DVDConvertEntrynumToPath,DVDOpen,DVDOpenDir)	
+pct_s	'FREED OBJECT %s'	US11,EU10,EU11,JP10	US11:0x002c88c4	ids-known(OBJECT)	
+pct_s	'G@HALT\t%s'	US10	0x002c9516	-	
+pct_s	'G`HALT\t%s'	JP10	JP10:0x002c962e	-	
+pct_s	'gametext/%s/%s.bin'	US10,US11,EU10,EU11,JP10	0x002c6e70	exact-in-src	
+pct_s	'gametext/Sequences/%d_%s.bin'	EU10,EU11	EU10:0x002c8540	exact-in-src	
+pct_s	'HALT\t%s'	US11	US11:0x002ca0d0	-	
+pct_s	'IXHALT\t%s'	EU10,EU11	EU10:0x002cabc6	NEW-ids(IXHALT)	
+pct_s	'Kernel built : %s %s'	US10,US11,EU10,EU11,JP10	0x00329380	exact-in-src	
+pct_s	'LOADED OBJECT %s'	US10,US11,EU10,EU11,JP10	0x002c7c54	ids-known(LOADED,OBJECT)	

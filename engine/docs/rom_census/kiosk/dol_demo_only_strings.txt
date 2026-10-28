@@ -1,0 +1,100 @@
+# KIOSK (E3 2002-05-17 demo) main.dol strings BYTE-VERIFIED absent from retail US10 main.dol
+# format: demo_vaddr  string   (categories; see kiosk_not_in_us10.tsv for full raw list incl. junk)
+[build metadata]
+0x802bb0c8  dino_np_internalUTD_090502_1900        # internal build tag, May 9 2002 19:00, project id "dino_np"; printed at boot among 'passed'/'reset default'/'finished init'
+0x8031be11  Dolphin OS $Revision: 49 $. / Kernel built Dec 17 2001 18:46:45   # retail uses Revision 54, Jun 5 2002 02:09:12
+0x802b3fc8  MetroTRK for GAMECUBE v0.10            # retail carries v0.9
+0x802b4090  MetroTRK : Set to GDEV hardware
+0x802b40b4  MetroTRK : Set to AMC DDH hardware
+[filenames]
+0x80315378  <objControl> mmshrineshrine.c WARNING switch statement hit default   # NEW filename: mmshrineshrine.c (MM shrine object control)
+0x8031a6f0  <holeControl> failed to create object %d                             # NEW module tag holeControl
+[function/array/struct-field names in debug prints]
+0x802b7440  ERROR in GetFreeActiveSound(), ActiveSounds[] is full!    # audio.c fn + array
+0x802bb064  audioStreamPlaying passed
+0x803008b0  gplaySaveGame
+0x803008c0  gplayNewGame: name %s
+0x803008d8  gplaySetObjGroupStatus: mapno %d groupno %d status %d
+0x80300910  gplaySetAct: mapno %d actno %d
+0x80300930  gplayAddTime: MAX_TIMESAVES reached
+0x80300958  gplaySetPlayerno: playerno %d
+0x80300978  gplayClearRestartpoint
+0x803009b0  gplayGotoRestartpoint
+0x803009c8  gplayRestartpoint: x %f, y %f, z %f
+0x803009f0  gplayGotoSavegame: x %d y %d z %d, playerno %d
+0x80300a20  gplaySavepoint: x %d, y %d, z %d
+0x80300990  Restart Game Alreadly Cleared              # (sic)
+0x802fd6a0  trackIntersect: linefunctable overflow!!!
+0x802fd6cc  trackIntersect() MAX_LINES overflow!!!
+0x802fd6f4  trackIntersect() MAX_LINEPOINTS overflow!!!
+0x802fd724  TrackGetHeight()-Overflow!!!               # fn was capitalized TrackGetHeight in 2002/05
+0x802fd744  PLlist overflow!!
+0x802fd624  insertPoint array overrun %d/%d
+0x802fd648  intersectModLineBuild point list overflow, %d/%d
+0x802fcfac  texRestructRefs  No Space to Restructure !!!!
+0x802fcfdc  texRestructRefs   NonOptimal Restructure from 0x%x to 0x%x !!!!
+0x803005ae  WpError findBounds obj romdefno %d  lastpolyworld %f %f %f   # WarpPoint error; fields romdefno, lastpolyworld
+0x80308a5a  QTyawOffset=%f
+0x802fdd14  ANIM ERROR: Sequence audio stream was never prepared.
+0x802fdd4c  endObjSequence: too many obj frees          # retail says 'max number of obj frees'
+0x802b6408  **********action=%d********
+0x802b6428  &&ARAM ** just uploaded %x %d
+0x802fe6ac  cloudaction %d
+0x80317b7e  mammoth foot surface is %d
+0x80319418  RANDOM IS %d %d %d %d %d %d
+0x80312250  Player dist %f
+0x8030f488  mod: %08x mod2: %08x
+0x80317def  ' Water too high'
+0x8031a428  ' Only the One '
+0x80315fdb  Northern Wastes Act is not 1!!!!!!
+0x8031b5c5  cTMode: YAW
+[mm (memory manager) debug dump - demo-only heap browser]
+0x802bb198  SLOTS USED %d
+0x802bb1a8  REGION %d
+0x802bb1b4  0 %d  Free  addr 0x%x
+0x802bb1cc  %d  addr 0x%x
+0x802bb1dc  REGION %d TOTAL SIZE %d
+0x802bb1f8  NUM %d currloc 0x%x loc 0x%x flags %d size %d from %d to %d stack %d  History %d Id %d
+0x802bb2d8  LARGE FREE %d col %d  ADDRESS  0x%x
+0x802bb300  WARNING <freeNow> freeing from Static region size %d
+0x802bb3b4  M %2.1f%%
+0x802bb438  playerno=%d
+0x802bc514  LD %d %d
+[object free/streaming decision trace (objfree/mapstream)]
+0x802fd1fc..0x802fd33c  FREE FAIL/PASS family: 'Manual or level object','checkact','Lev CheckAct','Group','In active sequence','Child object','Outside map','No block','Block object','In range','Out of range %f'
+0x802fd268  FREEING: Group %d mapno %d status %d
+0x802fd46c  &&&&&RESET&&&&&&& SMAPNO %d &&&&&&&&&&&&&   (x3 variants)
+0x802fd50c  asking load smap %d gamno %d
+0x802fd52c  gamNumber=%d
+0x802fd53c  DEF START mapno=%d
+[savegame - demo-era memory card layout]
+0x802fd964  SaveGameData: %d / SaveOptions: %d / game data padding: %d / Block 1: %d / Block 2: %d
+0x802fd9c4  Copyright 2002 Rare Ltd.
+0x802fda-   card/foxicon1..4.img, card/foxicon.pal      # retail: card/memcardicon0..3.img/.pal + 'STARFOX ADVENTURES'/'Dinosaur Planet' comment strings
+[DVD error screen - demo wording (with (TM))]
+0x802ba618  Turn the power OFF and check the NINTENDO GAMECUBE(TM) Instruction Booklet ...  # retail drops (TM)
+0x802ba68c  The disc could not be read.                 # retail: 'The Game Disc could not be read.'
+0x802ba764  'This disc is not' / 'Star Fox Adventures.' # retail: 'This is not the' ...
+0x8030bcc0  'Please power off and on' / 'to restart the GameCube'  # demo fatal screen; retail replaced with errorThreadFunc register-dump crash screen
+[DVD-queue debug dump (SDK/Rare stream code, stripped from retail)]
+0x8031d7e8  CHANGE_DISK INITSTREAM CANCELSTREAM STOP_STREAM_AT_END REQUEST_AUDIO_ERROR REQUEST_PLAY_ADDR REQUEST_START_ADDR REQUEST_LENGTH AUDIO_BUFFER_CONFIG BS_CHANGE_DISK
+0x8031d8d4  ==== DVD Waiting Queue Status ==== / < Queue #%d > / 0x%08x: Command: %s / Disk offset: %d, Length: %d, Addr: 0x%08x
+.sdata      BSREAD READID INQUIRY CANNON
+[AI/behavior state names]
+0x8030c4ac  DISTRACT_SPOTFINDING/SPOTDISTRACTING/SPOTTOSPOT/SPOTRETURING (1)/(2)
+0x8030c5f8  Couldn't find a distract node
+[SidekickBall/Tricky hint text]
+0x80310a60  'Hit Krystal' / 'MoonSeed Mound' / 'The Player Guesses that a Seed goes here!' / 'NoPass Vine' / 'The Player Burns it away!'
+0x80310db4  ' DRAWING THE THING ' / ' Anim %i '        # inside demo-only anim debug function at 0x8018A274
+[mmshrine totem prompts]
+0x80315728  Put the TOTEM/TOOTH/DIMHORN/SEED/CLOHORN/ASTEROID here
+[music tracks removed before retail]
+asteroids cldrnr_tune1m fox_arwing galleon_credits ice_race ice_sequence1 krazoa_doors_open krazoa_tunnel_1 krazoa_tunnel_2 lose_ice_race win_ice_race starfox_fanfare starfox_theme surround_test trex_boss_1 wind_ambi
+[audio banks]
+io/starfoxs.sam                                     # retail: /audio/starfox{m,s}.{poo,pro,sdi,sam}
+[per-map named file loads]
+0x802bc40a  %s/animcurv.bin  %s/animcurv.tab  %s/voxmap.bin  warlock/voxmap.bin   # 'warlock' = Krazoa Palace's old name; retail loads via index tabs + %s.romlist.zlb
+[misc]
+0x802fd020  blah blah
+0x802feb9c  warning in modgfx dll no spare memory available
+0x802fec68  <projgfx init Do>No Longer supported / <projgfx initialise Do>No Longer supported

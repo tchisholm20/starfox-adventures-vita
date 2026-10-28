@@ -1,0 +1,561 @@
+{
+  "artifacts": {
+    "reported": [
+      {
+        "contains_machine_generated_notice": false,
+        "contains_rare_copyright_notice": false,
+        "kind": "backup-header",
+        "recommended_export_path": "audio/starfox.h",
+        "sha256": "e12056578cae0213938eead1453a1e223422cfd6178a544a7b51e1d8f4b523e6",
+        "size_bytes": 31359,
+        "source_path": "files/audio/starfox.h.bak",
+        "source_tokens": [],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "binary/Boot/English.c",
+        "sha256": "eecc0ca6bbee335e1acb7e114d07e9ee9f231efda83d976baf5e3ee8493478c4",
+        "size_bytes": 10127,
+        "source_path": "files/Boot/English.c.new",
+        "source_tokens": [
+          "binary/Boot/English.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "binary/Boot/French.c",
+        "sha256": "f9a5836e5fa50b367138e951e2da199d79f7b52218fd44fff9f28fbcfb4f7dc5",
+        "size_bytes": 10483,
+        "source_path": "files/Boot/French.c.new",
+        "source_tokens": [
+          "binary/Boot/French.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "binary/Boot/German.c",
+        "sha256": "fc86c9c4bf65b9950370af57bb96390967d02b4da4221104f273c8d10b449560",
+        "size_bytes": 10528,
+        "source_path": "files/Boot/German.c.new",
+        "source_tokens": [
+          "binary/Boot/German.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "binary/Boot/Italian.c",
+        "sha256": "c8e46b6a7b0e94cd7e4ba63ffc562a9f1a3a91ec1f65fd5b304c178a57fb5ebd",
+        "size_bytes": 10407,
+        "source_path": "files/Boot/Italian.c.new",
+        "source_tokens": [
+          "binary/Boot/Italian.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "binary/Boot/Spanish.c",
+        "sha256": "5d6fa44c3cb813f1d1d498a1d0969ee6609c02519672627c7434d8a3af7bb7a2",
+        "size_bytes": 10320,
+        "source_path": "files/Boot/Spanish.c.new",
+        "source_tokens": [
+          "binary/Boot/Spanish.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "gametext/Boot/English.c",
+        "sha256": "700b803f4230c11e8c0437d8cc7ce2f1ecb01fd3618ae61da8433fe096d0381e",
+        "size_bytes": 10136,
+        "source_path": "files/gametext/Boot/English.c.new",
+        "source_tokens": [
+          "gametext/Boot/English.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "gametext/Boot/French.c",
+        "sha256": "e6815c8d5f17c9af852c7efcaa7d6cde8c28112217b6f31daf9b995703f5a027",
+        "size_bytes": 10512,
+        "source_path": "files/gametext/Boot/French.c.new",
+        "source_tokens": [
+          "gametext/Boot/French.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "gametext/Boot/German.c",
+        "sha256": "2f1a750c566ac51ae0fb923b20d30ca2fe13d88e89abdfedf16664b5838dba6e",
+        "size_bytes": 10404,
+        "source_path": "files/gametext/Boot/German.c.new",
+        "source_tokens": [
+          "gametext/Boot/German.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "gametext/Boot/Italian.c",
+        "sha256": "0c0966c7cea0897253d70917a8f3cf1bfd6255f31c8872aa323b4f8660c87b04",
+        "size_bytes": 10351,
+        "source_path": "files/gametext/Boot/Italian.c.new",
+        "source_tokens": [
+          "gametext/Boot/Italian.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "gametext/Boot/Japanese.c",
+        "sha256": "33cbb10636df501a10e9e8af3c95153c13d6d3372fa00fc3835fa9cd5686c8c7",
+        "size_bytes": 15774,
+        "source_path": "files/gametext/Boot/Japanese.c.new",
+        "source_tokens": [
+          "gametext/Boot/Japanese.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      },
+      {
+        "contains_machine_generated_notice": true,
+        "contains_rare_copyright_notice": true,
+        "kind": "generated-source",
+        "recommended_export_path": "gametext/Boot/Spanish.c",
+        "sha256": "1e971fec41044a87c57bc1aaee0e0d2b5b621f7f43f2c46b54fb5c623a93c48d",
+        "size_bytes": 9888,
+        "source_path": "files/gametext/Boot/Spanish.c.new",
+        "source_tokens": [
+          "gametext/Boot/Spanish.c",
+          "GameTextData.h"
+        ],
+        "type": "artifact"
+      }
+    ],
+    "unchanged": [],
+    "written": []
+  },
+  "stubs": {
+    "skipped": [
+      {
+        "existing_paths": [
+          "dvd/dvdfs.c"
+        ],
+        "retail_source_name": "dvdfs.c",
+        "status": "skipped-existing",
+        "type": "stub"
+      }
+    ],
+    "unchanged": [
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "exact",
+        "debug_paths": [
+          "main/objanim.c"
+        ],
+        "en_xrefs": [
+          "fn_8002EC4C+0xAC",
+          "fn_8002F334+0x174",
+          "fn_8003042C+0x1DC"
+        ],
+        "function_hints": [
+          "setBlendMove",
+          "Object_ObjAnimSetMove"
+        ],
+        "output_path": "main/objanim.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x802CB928"
+        ],
+        "retail_labels": [
+          "setBlendMove"
+        ],
+        "retail_messages": [
+          "WARNING tried to load anim -1 from cache modno %d"
+        ],
+        "retail_source_name": "objanim.c",
+        "score": 35,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "exact",
+        "debug_paths": [
+          "dll/CF/laser.c"
+        ],
+        "en_xrefs": [
+          "fn_802096AC+0xC"
+        ],
+        "function_hints": [
+          "Init",
+          "laser_initialise",
+          "laser_release",
+          "laser_init",
+          "laser_update",
+          "laser_hitDetect",
+          "laser_render",
+          "laser_free"
+        ],
+        "output_path": "dll/CF/laser.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x8032A860"
+        ],
+        "retail_labels": [
+          "Init"
+        ],
+        "retail_messages": [
+          "No Longer supported"
+        ],
+        "retail_source_name": "laser.c",
+        "score": 33,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [
+          "hcurves.c"
+        ],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAP01",
+          "GSAJ01"
+        ],
+        "confidence": "exact",
+        "debug_paths": [
+          "dll/curves.c"
+        ],
+        "en_xrefs": [
+          "fn_800E556C+0x18"
+        ],
+        "function_hints": [
+          "curves_initialise",
+          "curves_release",
+          "curves_clear",
+          "curves_addCurveDef",
+          "curves_remove",
+          "curves_getCurves",
+          "curves_find",
+          "RomCurve_getById",
+          "curves_getRandomPoint",
+          "curves_getIds_18"
+        ],
+        "output_path": "dll/curves.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x8031230C"
+        ],
+        "retail_labels": [],
+        "retail_messages": [
+          "MAX_ROMCURVES exceeded!!"
+        ],
+        "retail_source_name": "curves.c",
+        "score": 32,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "exact",
+        "debug_paths": [
+          "dll/DIM/DIMboss.c"
+        ],
+        "en_xrefs": [
+          "fn_801BD0E8+0x374",
+          "fn_801BD0E8+0x3C4"
+        ],
+        "function_hints": [
+          "DIMboss_initialise",
+          "DIMboss_release",
+          "DIMboss_init",
+          "DIMboss_update",
+          "DIMboss_hitDetect",
+          "DIMboss_render",
+          "DIMboss_free",
+          "DIMboss_getExtraSize",
+          "DIMboss_setScale"
+        ],
+        "output_path": "dll/DIM/DIMboss.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x80326784",
+          "0x803267AC"
+        ],
+        "retail_labels": [],
+        "retail_messages": [
+          "freeing assets for DIMBoss",
+          "loading assets for DIMTop"
+        ],
+        "retail_source_name": "DIMBoss.c",
+        "score": 32,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "exact",
+        "debug_paths": [
+          "dll/CAM/camcontrol.c"
+        ],
+        "en_xrefs": [
+          "fn_80102D3C+0x288"
+        ],
+        "function_hints": [
+          "camcontrol_initialise",
+          "camcontrol_release",
+          "Camera_moveBy"
+        ],
+        "output_path": "dll/CAM/camcontrol.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x8031A764"
+        ],
+        "retail_labels": [],
+        "retail_messages": [
+          "failed to load triggered camaction actionno %d"
+        ],
+        "retail_source_name": "camcontrol.c",
+        "score": 31,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "exact",
+        "debug_paths": [
+          "dll/SH/SHthorntail.c"
+        ],
+        "en_xrefs": [
+          "fn_801D5764+0x364"
+        ],
+        "function_hints": [
+          "SHthorntail_initialise",
+          "SHthorntail_release",
+          "SHthorntail_init",
+          "SHthorntail_update",
+          "SHthorntail_hitDetect",
+          "SHthorntail_render",
+          "SHthorntail_free"
+        ],
+        "output_path": "dll/SH/SHthorntail.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x803280C8"
+        ],
+        "retail_labels": [],
+        "retail_messages": [],
+        "retail_source_name": "SHthorntail.c",
+        "score": 31,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "xref-symbol",
+        "debug_paths": [],
+        "en_xrefs": [
+          "fn_8009B36C+0xE4",
+          "fn_8009B4E0+0xE0",
+          "fn_8009E078+0x74",
+          "fn_8009E078+0xFC",
+          "fn_8009F558+0x374",
+          "fn_8009F558+0x434"
+        ],
+        "function_hints": [
+          "expgfx_initialise",
+          "expgfx_release"
+        ],
+        "output_path": "expgfx.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x803107B0",
+          "0x803107E8",
+          "0x80310810",
+          "0x8031082C",
+          "0x80310848"
+        ],
+        "retail_labels": [],
+        "retail_messages": [
+          "mismatch in add/remove in exptab",
+          "addToTable usage overflow",
+          "exptab is FULL",
+          "invalid tabindex",
+          "scale overflow"
+        ],
+        "retail_source_name": "expgfx.c",
+        "score": 26,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "xref-only",
+        "debug_paths": [],
+        "en_xrefs": [
+          "fn_80209624+0xC",
+          "fn_80209650+0xC",
+          "fn_80209680+0xC"
+        ],
+        "function_hints": [
+          "Init"
+        ],
+        "output_path": "textblock.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x8032A838",
+          "0x8032A92F"
+        ],
+        "retail_labels": [
+          "Init"
+        ],
+        "retail_messages": [
+          "No Longer supported"
+        ],
+        "retail_source_name": "textblock.c",
+        "score": 21,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "xref-symbol",
+        "debug_paths": [],
+        "en_xrefs": [
+          "fn_8003549C+0x140"
+        ],
+        "function_hints": [],
+        "output_path": "objHitReact.c",
+        "reason": "retail-xref-backed",
+        "retail_addresses": [
+          "0x802CB9D4"
+        ],
+        "retail_labels": [],
+        "retail_messages": [
+          "sphere overflow! %d"
+        ],
+        "retail_source_name": "objHitReact.c",
+        "score": 20,
+        "status": "unchanged",
+        "type": "stub"
+      },
+      {
+        "bundle_aliases": [],
+        "bundle_ids": [
+          "GSAE01",
+          "GSAE01_rev1",
+          "GSAJ01",
+          "GSAP01"
+        ],
+        "confidence": "weak",
+        "debug_paths": [],
+        "en_xrefs": [],
+        "function_hints": [],
+        "output_path": "n_attractmode.c",
+        "reason": "cross-version-source-tag",
+        "retail_addresses": [
+          "0x8031AFDC"
+        ],
+        "retail_labels": [],
+        "retail_messages": [],
+        "retail_source_name": "n_attractmode.c",
+        "score": 6,
+        "status": "unchanged",
+        "type": "stub"
+      }
+    ],
+    "written": []
+  },
+  "summary": {
+    "artifact_reported": 12,
+    "artifact_unchanged": 0,
+    "artifact_written": 0,
+    "stub_skipped": 1,
+    "stub_unchanged": 10,
+    "stub_written": 0
+  }
+}

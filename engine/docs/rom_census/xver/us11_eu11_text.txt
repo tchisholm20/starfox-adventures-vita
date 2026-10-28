@@ -1,0 +1,59 @@
+# US11 (.text @ 800066E0+0x2bb920) vs EU11 (800066E0+0x2bbb20)  norm=code K=8
+# section size delta +0x200
+INSERT   A:80019C2C-80019C2C (    0x0)  B:80019C2C-80019DA8 (  0x17c)  main/textrender_run.c  getCurGameText+0x4
+RESIZE   A:8001A984-8001AA60 (   0xdc)  B:8001AB00-8001AC30 (  0x130)  main/textrender_run.c  gameTextBuildSystemFontAtlas+0x34
+RESIZE   A:8001AAC0-8001AC04 (  0x144)  B:8001AC90-8001ACB4 (   0x24)  main/textrender_run.c  gameTextBuildSystemFontAtlas+0x170
+REPLACE  A:8001AC3C-8001AC50 (   0x14)  B:8001ACEC-8001AD00 (   0x14)  main/textrender_run.c  gameTextBuildSystemFontAtlas+0x2ec
+REPLACE  A:8001ACAC-8001AD14 (   0x68)  B:8001AD5C-8001ADC4 (   0x68)  main/textrender_run.c  gameTextBuildSystemFontAtlas+0x35c
+REPLACE  A:8001ADB0-8001ADF4 (   0x44)  B:8001AE60-8001AEA4 (   0x44)  main/textrender_run.c  gameTextBuildSystemFontAtlas+0x460
+RESIZE   A:8001FB1C-8001FC20 (  0x104)  B:8001FBCC-8001FCF0 (  0x124)  main/gameloop.c  askProgressiveScanMode+0xc
+REPLACE  A:8001FC60-8001FCB4 (   0x54)  B:8001FD30-8001FD84 (   0x54)  main/gameloop.c  askProgressiveScanMode+0x150
+RESIZE   A:8001FCF0-8001FD88 (   0x98)  B:8001FDC0-8001FEA0 (   0xe0)  main/gameloop.c  askProgressiveScanMode+0x1e0
+RESIZE   A:8001FDB0-8001FE3C (   0x8c)  B:8001FEC8-8001FF78 (   0xb0)  main/gameloop.c  askProgressiveScanMode+0x2a0
+RESIZE   A:80020E5C-80020E64 (    0x8)  B:80020F98-80020FA8 (   0x10)  main/gameloop_main.c  init+0xc
+DELETE   A:80020EC0-80020F04 (   0x44)  B:80021004-80021004 (    0x0)  main/gameloop_main.c  init+0x70
+RESIZE   A:80020FFC-80021084 (   0x88)  B:800210FC-8002112C (   0x30)  main/gameloop_main.c  init+0x1ac
+RESIZE   A:80021378-80021390 (   0x18)  B:80021420-8002142C (    0xc)  main/gameloop_main.c  init+0x528
+RESIZE   A:800213E8-800213F0 (    0x8)  B:80021484-80021494 (   0x10)  main/gameloop_main.c  init+0x598
+DELETE   A:800240D0-800240D8 (    0x8)  B:80024174-80024174 (    0x0)  main/mm.c  mmInit+0x70
+RESIZE   A:8004A55C-8004A59C (   0x40)  B:8004A5F8-8004A604 (    0xc)  main/pi_videoinit.c  setDisplayCopyFilter+0xc
+INSERT   A:8007DCA4-8007DCA4 (    0x0)  B:8007DD0C-8007DDA8 (   0x9c)  track/intersect_memcard.c  _saveGame+0x4
+INSERT   A:8007E91C-8007E91C (    0x0)  B:8007EA20-8007EA68 (   0x48)  track/intersect_memcard.c  cardShowLoadingMsg+0x17c
+REPLACE  A:8007EDAC-8007EDC4 (   0x18)  B:8007EEF8-8007EF10 (   0x18)  dlls/engine/2/maketex.c  fn_8007ED98+0x14
+REPLACE  A:8007EDF0-8007EDF4 (    0x4)  B:8007EF3C-8007EF40 (    0x4)  dlls/engine/2/maketex.c  fn_8007ED98+0x58
+INSERT   A:8007F274-8007F274 (    0x0)  B:8007F3C0-8007F3D0 (   0x10)  dlls/engine/2/maketex.c  fn_8007ED98+0x4dc
+REPLACE  A:8007F3A4-8007F3A8 (    0x4)  B:8007F500-8007F504 (    0x4)  dlls/engine/2/maketex.c  fn_8007ED98+0x60c
+REPLACE  A:8007F43C-8007F440 (    0x4)  B:8007F598-8007F59C (    0x4)  dlls/engine/2/maketex.c  fn_8007ED98+0x6a4
+REPLACE  A:8007F470-8007F48C (   0x1c)  B:8007F5CC-8007F5E8 (   0x1c)  dlls/engine/2/maketex.c  fn_8007ED98+0x6d8
+RESIZE   A:8007F924-8007FAB8 (  0x194)  B:8007FA80-8007FB98 (  0x118)  dlls/engine/2/maketex.c  fn_8007F918+0xc
+INSERT   A:800E81B8-800E81B8 (    0x0)  B:800E8298-800E8374 (   0xdc)  dlls/engine/21/21.c  saveFileStruct_resetVolumes+0x18
+INSERT   A:800E82B4-800E82B4 (    0x0)  B:800E8470-800E8488 (   0x18)  dlls/engine/21/21.c  loadSaveSettings+0xec
+INSERT   A:800E878C-800E878C (    0x0)  B:800E8960-800E8988 (   0x28)  dlls/engine/23/23.c  loadGameOptions+0x0
+RESIZE   A:800E87C8-800E880C (   0x44)  B:800E89C4-800E89C8 (    0x4)  dlls/engine/23/23.c  loadGameOptions+0x3c
+RESIZE   A:800EA308-800EA318 (   0x10)  B:800EA4C4-800EA4CC (    0x8)  dlls/engine/23/23.c  SaveGame_initialise+0xc
+RESIZE   A:800EA358-800EA3E8 (   0x90)  B:800EA50C-800EA578 (   0x6c)  dlls/engine/23/23.c  SaveGame_initialise+0x5c
+RESIZE   A:80116970-80116984 (   0x14)  B:80116B00-80116B84 (   0x84)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0xc
+INSERT   A:801169AC-801169AC (    0x0)  B:80116BAC-80116BB8 (    0xc)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0x48
+RESIZE   A:80116C2C-80116C3C (   0x10)  B:80116E38-80116E70 (   0x38)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0x2c8
+INSERT   A:80116E4C-80116E4C (    0x0)  B:80117080-80117094 (   0x14)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0x4e8
+RESIZE   A:80117184-801171AC (   0x28)  B:801173CC-80117400 (   0x34)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_run+0x820
+INSERT   A:8011725C-8011725C (    0x0)  B:801174B0-801174C4 (   0x14)  dlls/engine/52_n_attractmode/n_attractmode.c  TitleMenu_initialise+0x30
+INSERT   A:8011C2B4-8011C2B4 (    0x0)  B:8011C51C-8011C698 (  0x17c)  dlls/engine/55/55.c  optionsMenu_applyAudioSetting+0x8
+RESIZE   A:8011C930-8011C9D8 (   0xa8)  B:8011CD14-8011CD1C (    0x8)  dlls/engine/55/55.c  languageMenuInit+0x80
+RESIZE   A:8011CA10-8011CA1C (    0xc)  B:8011CD54-8011CD58 (    0x4)  dlls/engine/55/55.c  languageMenuInit+0x160
+REPLACE  A:8011D368-8011D398 (   0x30)  B:8011D6A4-8011D6D4 (   0x30)  dlls/engine/55/55.c  OptionsScreen_frameStart+0x108
+RESIZE   A:8011D5D4-8011D6C0 (   0xec)  B:8011D910-8011D918 (    0x8)  dlls/engine/55/55.c  OptionsScreen_frameStart+0x374
+DELETE   A:80136D14-80136D2C (   0x18)  B:80136F6C-80136F6C (    0x0)  dlls/objects/704/704.c  TitleScreen_initialise+0x30
+INSERT   A:8017C554-8017C554 (    0x0)  B:8017C794-8017C7A4 (   0x10)  dlls/objects/273/273.c  DoorLock_update+0x1d4
+DELETE   A:801F1E94-801F1EA0 (    0xc)  B:801F20E4-801F20E4 (    0x0)  dlls/objects/510/510.c  PressureSwitch_update+0x1f0
+INSERT   A:8020B9BC-8020B9BC (    0x0)  B:8020BC00-8020BC24 (   0x24)  dlls/objects/589_BossDrakor/BossDrakor.c  bossdrakor_update+0x26c
+DELETE   A:802193C0-802193CC (    0xc)  B:80219628-80219628 (    0x0)  dlls/objects/611_GM_MazeWell/GM_MazeWell.c  GM_MazeWell_update+0x120
+DELETE   A:80219414-8021947C (   0x68)  B:80219670-80219670 (    0x0)  dlls/objects/611_GM_MazeWell/GM_MazeWell.c  GM_MazeWell_update+0x174
+INSERT   A:8021D1E4-8021D1E4 (    0x0)  B:8021D3D8-8021D408 (   0x30)  dlls/objects/625/625.c  drakorhoverpad_updateMain+0x2fc
+RESIZE   A:8021F3E8-8021F40C (   0x24)  B:8021F60C-8021F654 (   0x48)  dlls/objects/626/626.c  HighTop_update+0x70
+DELETE   A:80245F08-8024601C (  0x114)  B:80246150-80246150 (    0x0)  dolphin/os/OSRtc.c  OSGetProgressiveMode+0x28 .. fn_80245FF4+0x24
+INSERT   A:80246064-80246064 (    0x0)  B:80246198-802462AC (  0x114)  dolphin/os/OSRtc.c  OSGetWirelessID+0x4
+DELETE   A:8024E0CC-8024E108 (   0x3c)  B:8024E314-8024E314 (    0x0)  dolphin/vi/vi.c  VIGetTvFormat+0x68 .. VIGetDTVStatus+0x24
+INSERT   A:8028D0C8-8028D0C8 (    0x0)  B:8028D2D4-8028D2D8 (    0x4)  dolphin/TRK_MINNOW_DOLPHIN/targimpl.c  TRKValidMemory32+0x124
+DELETE   A:802C1FF0-802C2000 (   0x10)  B:802C2200-802C2200 (    0x0)  ?  DR_CloudRunner_initialise+0x7c
+# regions=56  net delta from regions +0x200 (section delta +0x200) OK

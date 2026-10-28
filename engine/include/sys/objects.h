@@ -1,0 +1,36 @@
+#ifndef SYS_OBJECTS_H_
+#define SYS_OBJECTS_H_
+
+#include "game/objects/object.h"
+#include "game/objects/object_setup.h"
+
+typedef struct ObjModel ObjModel;
+
+GameObject* Obj_GetPlayerObject(void);
+GameObject* loadCharacter(ObjPlacement* data, int flags, int mapLayer, int objectIndex, GameObject* parent, int unused);
+void Obj_InitObjectSystem(void);
+void Obj_ResetObjectSystem(void);
+void Obj_ApplyPendingParentLinks(void);
+void Obj_FlushDeferredFreeList(void);
+void Obj_UpdateAllObjects(u8 flags);
+int objMove(GameObject* obj, f32 dx, f32 dy, f32 dz);
+int objIsFrozen(GameObject* obj);
+GameObject* ObjList_FindObjectById(u32 objectId);
+int Obj_CanSetupObject(void);
+ObjModel* Obj_GetActiveModel(GameObject* obj);
+void Obj_BuildInverseWorldTransformMatrix(GameObject* obj, f32* out);
+void Obj_BuildWorldTransformMatrix(GameObject* obj, f32* mtx, int flags);
+void Obj_SetModelColorFadeRecursive(GameObject* obj, int frames, u8 red, u8 green, u8 blue, u8 startAtHalf);
+void Obj_SetModelColorOverrideRecursive(GameObject* obj, u8 red, u8 green, u8 blue, u8 alpha, u8 enabled);
+void Obj_SetModelRenderOpAlpha(void* obj, u8 alpha);
+void Obj_Shatter(GameObject* obj);
+void Obj_StartModelFadeIn(GameObject* obj, int frames);
+void Obj_SetActiveModelIndex(GameObject* obj, int idx);
+void Obj_SetActiveHitVolumeBounds(GameObject* obj, int xBound, int zBound, int yBound, u8 radiusOrHeight, u8 flags);
+void Obj_ResetActiveHitVolumeBounds(GameObject* obj);
+void objSetHintTextIdx(GameObject* obj, u16 idx);
+void objSetSlot(GameObject* obj, s8 slot);
+void doNothing_beforeRenderObject(int a);
+void doNothing_afterRenderObject(void);
+
+#endif /* SYS_OBJECTS_H_ */

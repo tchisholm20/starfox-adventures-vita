@@ -1,0 +1,90 @@
+{
+  "key": "gametext",
+  "labels": [
+    "gametext"
+  ],
+  "categories": [
+    "file"
+  ],
+  "direct_xref_count": 3,
+  "direct_function_count": 3,
+  "source_string_count": 0,
+  "orig": {
+    "root_file_count": 2,
+    "root_files": [
+      "GAMETEXT.bin",
+      "GAMETEXT.tab"
+    ],
+    "nested_file_count": 0,
+    "nested_files": [],
+    "named_directory_count": 1,
+    "named_directories": [
+      "gametext"
+    ],
+    "root_romlist_count": 0,
+    "root_romlists": []
+  },
+  "family_hint": null,
+  "map_hints": [],
+  "functions": [
+    {
+      "function_start": "0x80019C24",
+      "function_name": "gameTextRun",
+      "xrefs": [
+        {
+          "xref_address": "0x80019D68",
+          "pair_address": "0x80019D6C",
+          "target_address": "0x802C9E70",
+          "target_text": "gametext/%s/%s.bin",
+          "pair_kind": "lis/addi",
+          "function_name": "gameTextRun"
+        }
+      ]
+    },
+    {
+      "function_start": "0x8001A420",
+      "function_name": "loadGameTextSequence",
+      "xrefs": [
+        {
+          "xref_address": "0x8001A608",
+          "pair_address": "0x8001A60C",
+          "target_address": "0x802C9EC4",
+          "target_text": "gametext/Sequences/%d_%s.bin",
+          "pair_kind": "lis/addi",
+          "function_name": "loadGameTextSequence"
+        }
+      ]
+    },
+    {
+      "function_start": "0x8001A66C",
+      "function_name": "gameTextLoadForCurMap",
+      "xrefs": [
+        {
+          "xref_address": "0x8001A88C",
+          "pair_address": "0x8001A890",
+          "target_address": "0x802C9E70",
+          "target_text": "gametext/%s/%s.bin",
+          "pair_kind": "lis/addi",
+          "function_name": "gameTextLoadForCurMap"
+        }
+      ]
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x802C9E70",
+      "text": "gametext/%s/%s.bin",
+      "tags": [
+        "file"
+      ]
+    },
+    {
+      "address": "0x802C9EC4",
+      "text": "gametext/Sequences/%d_%s.bin",
+      "tags": [
+        "file"
+      ]
+    }
+  ],
+  "neighbor_strings": []
+}

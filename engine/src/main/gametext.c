@@ -1,0 +1,3614 @@
+#include "main/gametext_api.h"
+#include "main/gametext_data.h"
+#include "main/gametext_internal.h"
+#include "main/gametext_shared_internal.h"
+#include "main/textrender_api.h"
+#include "main/audio/sfx.h"
+#include "main/camera.h"
+#include "main/frame_timing.h"
+#include "main/gametext_box_api.h"
+#include "main/gametext_color_api.h"
+#include "main/gametext_command_api.h"
+#include "main/gametext_show_api.h"
+#include "main/gametext_show_str_api.h"
+#include "main/gametext_task_api.h"
+#include "main/mm.h"
+#include "main/rcp_dolphin_api.h"
+#include "main/textrender_internal.h"
+#include "main/audio/sfx_trigger_ids.h"
+#include "track/intersect_hud_api.h"
+#include "main/texture.h"
+#include "dolphin/os/OSCache.h"
+#include "dolphin/os/OSRtc.h"
+#include "main/fileio.h"
+#include "main/lightmap_text_color_api.h"
+#include "main/dll/dll_0000_gameui_api.h"
+#include "main/dll/dll_0015_save_settings.h"
+#include "track/intersect_api.h"
+#include "string.h"
+#include "main/lightmap.h"
+#include "track/intersect_render_setup_api.h"
+#include "dolphin/gx/GXCull.h"
+#include "dolphin/gx/GXGet.h"
+#include "PowerPC_EABI_Support/Msl/MSL_C/MSL_Common/printf.h"
+#include "types.h"
+#include "main/gameloop_api.h"
+#include "main/gametext_charset_api.h"
+#include "main/gx_scissor_api.h"
+#include "dolphin/os/OSFont.h"
+#include "main/dll/savedata_struct.h"
+#include "main/audio/sfx_stop_object_api.h"
+
+static inline int gameTextIdExists(int id);
+static inline int textCountChars(char* lineStr);
+
+int isSpace(u32 c);
+
+static char* gameStrcpy(char* dst, char* src);
+
+/* In-string formatting control codes (Unicode PUA). */
+#define TEXT_CTRL_SCALE 0xf8f4
+#define TEXT_CTRL_FONT  0xf8f7
+
+int isSpace(u32 c);
+
+static inline int gameTextCtrlCharLen(u32 c);
+
+static inline int gameTextCountChars(char* str);
+
+static inline TextGlyph* gameTextFindGlyph(u32 ch, int langIdx);
+
+static void translateToDinoLanguage(u8* str);
+
+/*
+ * The disc-error/loading screens' resident resources: the built-in font
+ * metrics and the Japanese and English disc-status message text.
+ * These screens must be able to draw without
+ * loading anything from disc, so the whole resource lives in the executable.
+ */
+
+#if !defined(VERSION_GSAE01) && !defined(VERSION_GSAJ01)
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+TextGlyph sDiscStatusGlyphs[43] = {
+    {0x41, 0x01, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0}, {0x6e, 0x0f, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x20, 0x19, 0x1, 6, 0, 15, 6, 0x00, 0x00, 4, 0}, {0x65, 0x1a, 0x1, 0, 1, 6, 4, 0x0a, 0x0b, 4, 0},
+    {0x72, 0x25, 0x1, 0, 1, 7, 4, 0x08, 0x0a, 4, 0}, {0x6f, 0x2e, 0x1, 0, 1, 7, 4, 0x0a, 0x0a, 4, 0},
+    {0x68, 0x39, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x61, 0x43, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x73, 0x4d, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x63, 0x57, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x75, 0x61, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x64, 0x6b, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x2e, 0x75, 0x1, 0, 1, 14, 4, 0x03, 0x03, 4, 0}, {0x54, 0x79, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0},
+    {0x74, 0x85, 0x1, 0, 1, 4, 4, 0x07, 0x0d, 4, 0}, {0x70, 0x8d, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x77, 0x97, 0x1, 0, 1, 7, 4, 0x0e, 0x0a, 4, 0}, {0x4f, 0xa6, 0x1, 0, 1, 2, 3, 0x0c, 0x0f, 4, 0},
+    {0x46, 0xb3, 0x1, 0, 1, 2, 4, 0x0a, 0x0f, 4, 0}, {0x6b, 0xbe, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x4e, 0xc8, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0}, {0x49, 0xd6, 0x1, 0, 1, 2, 4, 0x03, 0x0f, 4, 0},
+    {0x45, 0xda, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0}, {0x44, 0xe4, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x47, 0xf1, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x4d, 0xfe, 0x1, 0, 1, 2, 4, 0x10, 0x0f, 4, 0},
+    {0x43, 0x10f, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x55, 0x11c, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x42, 0x129, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x69, 0x136, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x6c, 0x13a, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0}, {0x66, 0x13e, 0x1, 0, 1, 3, 4, 0x06, 0x0e, 4, 0},
+    {0x6d, 0x145, 0x1, 0, 1, 6, 4, 0x0f, 0x0b, 4, 0}, {0x62, 0x155, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x50, 0x15f, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x52, 0x16b, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0},
+    {0x67, 0x177, 0x1, 0, 1, 6, 0, 0x09, 0x0f, 4, 0}, {0x76, 0x181, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x79, 0x18b, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0}, {0x2c, 0x195, 0x1, 0, 1, 14, 2, 0x03, 0x05, 4, 0},
+    {0x53, 0x199, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x78, 0x1a5, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x4c, 0x1af, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0},
+};
+#else
+TextGlyph sDiscStatusGlyphs[43] = {
+    {0x41, 0x01, 0x1, 0, 1, 3, 4, 0x0d, 0x0e, 4, 0},  {0x6e, 0x0f, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x20, 0x19, 0x1, 6, 0, 15, 6, 0x00, 0x00, 4, 0}, {0x65, 0x1a, 0x1, 0, 1, 6, 4, 0x0a, 0x0b, 4, 0},
+    {0x72, 0x25, 0x1, 0, 1, 7, 4, 0x08, 0x0a, 4, 0},  {0x6f, 0x2e, 0x1, 0, 1, 7, 4, 0x0a, 0x0a, 4, 0},
+    {0x68, 0x39, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},  {0x61, 0x43, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x73, 0x4d, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},  {0x63, 0x57, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x75, 0x61, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},  {0x64, 0x6b, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x2e, 0x75, 0x1, 0, 1, 14, 4, 0x03, 0x03, 4, 0}, {0x54, 0x79, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0},
+    {0x74, 0x85, 0x1, 0, 1, 4, 4, 0x07, 0x0d, 4, 0},  {0x70, 0x8d, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x77, 0x97, 0x1, 0, 1, 7, 4, 0x0e, 0x0a, 4, 0},  {0x4f, 0xa6, 0x1, 0, 1, 3, 3, 0x0c, 0x0f, 4, 0},
+    {0x46, 0xb3, 0x1, 0, 1, 3, 4, 0x0a, 0x0e, 4, 0},  {0x6b, 0xbe, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x4e, 0xc8, 0x1, 0, 1, 3, 4, 0x0d, 0x0e, 4, 0},  {0x49, 0xd6, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x45, 0xda, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},  {0x44, 0xe4, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0},
+    {0x47, 0xf1, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0},  {0x4d, 0xfe, 0x1, 0, 1, 3, 4, 0x10, 0x0e, 4, 0},
+    {0x43, 0x10f, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0}, {0x55, 0x11c, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0},
+    {0x42, 0x129, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0}, {0x69, 0x136, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x6c, 0x13a, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0}, {0x66, 0x13e, 0x1, 0, 1, 3, 4, 0x06, 0x0e, 4, 0},
+    {0x6d, 0x145, 0x1, 0, 1, 6, 4, 0x0f, 0x0b, 4, 0}, {0x62, 0x155, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x50, 0x15f, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0}, {0x52, 0x16b, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0},
+    {0x67, 0x177, 0x1, 0, 1, 6, 0, 0x09, 0x0f, 4, 0}, {0x76, 0x181, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x79, 0x18b, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0}, {0x2c, 0x195, 0x1, 0, 1, 14, 2, 0x03, 0x05, 4, 0},
+    {0x53, 0x199, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0}, {0x78, 0x1a5, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x4c, 0x1af, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+};
+#endif
+
+/* English disc-status message lines. */
+char sDiscErrorOccurredLine[] = "An error has occurred.";
+char sDiscErrorInstructionBookletLine[] =
+    "Turn the power OFF and check the NINTENDO GAMECUBE Instruction Booklet for further instructions.";
+
+char* sDiscErrorOccurredMessageLines[] = {
+    sDiscErrorOccurredLine,
+    sDiscErrorSpacerLine,
+    sDiscErrorInstructionBookletLine,
+};
+
+char sDiscReadErrorLine[] = "The Game Disc could not be read.";
+char sDiscReadErrorInstructionBookletLine[] =
+    "Please read the NINTENDO GAMECUBE Instruction Booklet for more information.";
+
+char* sDiscReadErrorMessageLines[] = {
+    sDiscReadErrorLine,
+    sDiscReadErrorSpacerLine,
+    sDiscReadErrorInstructionBookletLine,
+};
+
+char sDiscReadingMessage[] = "Reading disc...";
+
+char sDiscCoverOpenLine[] = "The Disc Cover is open.";
+char sDiscCoverContinuePromptLine[] = "If you want to continue the game,";
+char sDiscCoverClosePromptLine[] = "please close the Disc Cover.";
+
+char* sDiscCoverOpenMessageLines[] = {
+    sDiscCoverOpenLine,
+    sDiscCoverOpenSpacerLine,
+    sDiscCoverContinuePromptLine,
+    sDiscCoverClosePromptLine,
+};
+
+char sDiscInsertPromptLine[] = "Please insert a";
+char sDiscInsertGameDiscLine[] = "Star Fox Adventures Game Disc.";
+
+char sWrongDiscThisIsNotLine[] = "This is not the";
+char sWrongDiscGameNameLine[] = "Star Fox Adventures";
+char sWrongDiscGameDiscLine[] = "Game Disc.";
+char sWrongDiscInsertPromptLine[] = "Please insert a";
+char sWrongDiscInsertGameDiscLine[] = "Star Fox Adventures Game Disc.";
+
+char* sWrongDiscMessageLines[] = {
+    sWrongDiscThisIsNotLine, sWrongDiscGameNameLine,     sWrongDiscGameDiscLine,
+    sWrongDiscSpacerLine,    sWrongDiscInsertPromptLine, sWrongDiscInsertGameDiscLine,
+};
+
+/* The English disc-status resource ("Loading..." plus the seven messages). */
+char sDiscLoadingMessage[] = "Loading...";
+
+GameTextDef sDiscStatusMessageTable[7] = {
+    {0x339, 3, 0x81, 0, 0, 0, sDiscErrorOccurredMessageLines}, {0x33a, 3, 0x81, 0, 0, 0, sDiscReadErrorMessageLines},
+    {0x33b, 1, 0x81, 0, 0, 0, sDiscReadingMessageLines},       {0x33c, 4, 0x81, 0, 0, 0, sDiscCoverOpenMessageLines},
+    {0x33d, 2, 0x81, 0, 0, 0, sDiscInsertMessageLines},        {0x33e, 6, 0x81, 0, 0, 0, sWrongDiscMessageLines},
+    {0x565, 1, 0x93, 0, 0, 0, sDiscLoadingMessageLines},
+};
+#endif
+
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+TextGlyph sFrDiscStatusGlyphs[46] = {
+    {0x55, 0x01, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x6e, 0x0e, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x65, 0x18, 0x1, 0, 1, 6, 4, 0x0a, 0x0b, 4, 0}, {0x20, 0x23, 0x1, 6, 0, 15, 6, 0x00, 0x00, 4, 0},
+    {0x72, 0x24, 0x1, 0, 1, 7, 4, 0x08, 0x0a, 4, 0}, {0x75, 0x2d, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x73, 0x37, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x74, 0x41, 0x1, 0, 1, 4, 4, 0x07, 0x0d, 4, 0},
+    {0x76, 0x49, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0x2e, 0x53, 0x1, 0, 1, 14, 4, 0x03, 0x03, 4, 0},
+    {0xc9, 0x57, 0x1, 0, 1, 0, 4, 0x0a, 0x11, 4, 0}, {0x69, 0x62, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x67, 0x66, 0x1, 0, 1, 6, 0, 0x09, 0x0f, 4, 0}, {0x7a, 0x70, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x6c, 0x7a, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0}, {0x61, 0x7e, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x63, 0x88, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0x6f, 0x92, 0x1, 0, 1, 7, 4, 0x0a, 0x0a, 4, 0},
+    {0xe9, 0x9d, 0x1, 0, 1, 3, 4, 0x0a, 0x0e, 4, 0}, {0x66, 0xa8, 0x1, 0, 1, 3, 4, 0x06, 0x0e, 4, 0},
+    {0x2d, 0xaf, 0x1, 0, 1, 10, 8, 0x05, 0x03, 4, 0}, {0x6d, 0xb5, 0x1, 0, 1, 6, 4, 0x0f, 0x0b, 4, 0},
+    {0x64, 0xc5, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x27, 0xcf, 0x1, 0, 1, 3, 12, 0x02, 0x06, 4, 0},
+    {0x4e, 0xd2, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0}, {0x49, 0xe0, 0x1, 0, 1, 2, 4, 0x03, 0x0f, 4, 0},
+    {0x54, 0xe4, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x45, 0xf0, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0},
+    {0x44, 0xfa, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x4f, 0x107, 0x1, 0, 1, 2, 3, 0x0c, 0x0f, 4, 0},
+    {0x47, 0x114, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x41, 0x121, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0},
+    {0x4d, 0x12f, 0x1, 0, 1, 2, 4, 0x10, 0x0f, 4, 0}, {0x43, 0x140, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x42, 0x14d, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x70, 0x15a, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x4c, 0x164, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0}, {0x71, 0x16e, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x68, 0x178, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x56, 0x182, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x50, 0x18f, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x6a, 0x19b, 0x1, 0, 1, 3, 1, 0x04, 0x11, 4, 0},
+    {0x2c, 0x1a0, 0x1, 0, 1, 14, 2, 0x03, 0x05, 4, 0}, {0x53, 0x1a4, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0},
+    {0x46, 0x1b0, 0x1, 0, 1, 2, 4, 0x0a, 0x0f, 4, 0}, {0x78, 0x1bb, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+};
+
+char sFrDiscErrorOccurredLine[] = "Une erreur est survenue.";
+
+char sFrDiscErrorInstructionBookletLine[] = "\xC3\x89teignez la console et r\xC3\xA9" "f\xC3\xA9rez-vous au manuel d'instructions NINTENDO GAMECUBE pour de plus amples informations.";
+
+char* sFrDiscErrorOccurredMessageLines[3] = {
+    sFrDiscErrorOccurredLine,
+    sFrDiscErrorSpacerLine,
+    sFrDiscErrorInstructionBookletLine,
+};
+
+char sFrDiscReadErrorLine[] = "La lecture du disque a \xC3\xA9" "chou\xC3\xA9.";
+
+char sFrDiscReadErrorInstructionBookletLine[] = "Veuillez vous r\xC3\xA9" "f\xC3\xA9rer au manuel d'instructions NINTENDO GAMECUBE pour de plus amples informations.";
+
+char* sFrDiscReadErrorMessageLines[3] = {
+    sFrDiscReadErrorLine,
+    sFrDiscReadErrorSpacerLine,
+    sFrDiscReadErrorInstructionBookletLine,
+};
+
+char sFrDiscReadingMessage[] = "Lecture du disque...";
+
+char sFrDiscCoverOpenLine[] = "Le couvercle est ouvert.";
+
+char sFrDiscCoverContinuePromptLine[] = "Pour continuer le jeu,";
+
+char sFrDiscCoverClosePromptLine[] = "veuillez fermer le couvercle.";
+
+char* sFrDiscCoverOpenMessageLines[4] = {
+    sFrDiscCoverOpenLine,
+    sFrDiscCoverOpenSpacerLine,
+    sFrDiscCoverContinuePromptLine,
+    sFrDiscCoverClosePromptLine,
+};
+
+char sFrDiscInsertPromptLine[] = "Veuillez ins\xC3\xA9rer le disque";
+
+char sFrDiscInsertGameDiscLine[] = "Star Fox Adventures.";
+
+char sFrWrongDiscThisIsNotLine[] = "Ceci n'est pas le disque";
+
+char sFrWrongDiscGameNameLine[] = "Star Fox Adventures.";
+
+char sFrWrongDiscInsertPromptLine[] = "Veuillez ins\xC3\xA9rer le disque";
+
+char sFrWrongDiscInsertGameDiscLine[] = "Star Fox Adventures.";
+
+char* sFrWrongDiscMessageLines[5] = {
+    sFrWrongDiscThisIsNotLine,
+    sFrWrongDiscGameNameLine,
+    sFrWrongDiscSpacerLine,
+    sFrWrongDiscInsertPromptLine,
+    sFrWrongDiscInsertGameDiscLine,
+};
+
+char sFrDiscLoadingMessage[] = "T\xC3\xA9l\xC3\xA9" "chargement...";
+
+GameTextDef sFrDiscStatusMessageTable[7] = {
+    {0x339, 3, 0x81, 0, 0, 1, sFrDiscErrorOccurredMessageLines},
+    {0x33a, 3, 0x81, 0, 0, 1, sFrDiscReadErrorMessageLines},
+    {0x33b, 1, 0x81, 0, 0, 1, sFrDiscReadingMessageLines},
+    {0x33c, 4, 0x81, 0, 0, 1, sFrDiscCoverOpenMessageLines},
+    {0x33d, 2, 0x81, 0, 0, 1, sFrDiscInsertMessageLines},
+    {0x33e, 5, 0x81, 0, 0, 1, sFrWrongDiscMessageLines},
+    {0x565, 1, 0x93, 0, 0, 1, sFrDiscLoadingMessageLines},
+};
+
+TextGlyph sDeDiscStatusGlyphs[44] = {
+    {0x45, 0x01, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0}, {0x69, 0x0b, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x6e, 0x0f, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x20, 0x19, 0x1, 6, 0, 15, 6, 0x00, 0x00, 4, 0},
+    {0x46, 0x1a, 0x1, 0, 1, 2, 4, 0x0a, 0x0f, 4, 0}, {0x65, 0x25, 0x1, 0, 1, 6, 4, 0x0a, 0x0b, 4, 0},
+    {0x68, 0x30, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x6c, 0x3a, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x72, 0x3e, 0x1, 0, 1, 7, 4, 0x08, 0x0a, 4, 0}, {0x73, 0x47, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x74, 0x51, 0x1, 0, 1, 4, 4, 0x07, 0x0d, 4, 0}, {0x61, 0x59, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x75, 0x63, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x66, 0x6d, 0x1, 0, 1, 3, 4, 0x06, 0x0e, 4, 0},
+    {0x67, 0x74, 0x1, 0, 1, 6, 0, 0x09, 0x0f, 4, 0}, {0x2e, 0x7e, 0x1, 0, 1, 14, 4, 0x03, 0x03, 4, 0},
+    {0x42, 0x82, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x64, 0x8f, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x4e, 0x99, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0}, {0x49, 0xa7, 0x1, 0, 1, 2, 4, 0x03, 0x0f, 4, 0},
+    {0x54, 0xab, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x44, 0xb7, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x4f, 0xc4, 0x1, 0, 1, 2, 3, 0x0c, 0x0f, 4, 0}, {0x47, 0xd1, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x41, 0xde, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0}, {0x4d, 0xec, 0x1, 0, 1, 2, 4, 0x10, 0x0f, 4, 0},
+    {0x43, 0xfd, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x55, 0x10a, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x63, 0x117, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0x2c, 0x121, 0x1, 0, 1, 14, 2, 0x03, 0x05, 4, 0},
+    {0x6d, 0x125, 0x1, 0, 1, 6, 4, 0x0f, 0x0b, 4, 0}, {0x77, 0x135, 0x1, 0, 1, 7, 4, 0x0e, 0x0a, 4, 0},
+    {0x6f, 0x144, 0x1, 0, 1, 7, 4, 0x0a, 0x0a, 4, 0}, {0x7a, 0x14f, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x6b, 0x159, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x2d, 0x163, 0x1, 0, 1, 10, 8, 0x05, 0x03, 4, 0},
+    {0xf6, 0x169, 0x1, 0, 1, 4, 4, 0x09, 0x0d, 4, 0}, {0xdf, 0x173, 0x1, 0, 1, 3, 3, 0x0b, 0x0f, 4, 0},
+    {0x53, 0x17f, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x70, 0x18b, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x78, 0x195, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x76, 0x19f, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0xe4, 0x1a9, 0x1, 0, 1, 4, 4, 0x09, 0x0d, 4, 0}, {0x4c, 0x1b3, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0},
+};
+
+char sDeDiscErrorOccurredLine[] = "Ein Fehler ist aufgetreten.";
+
+char sDeDiscErrorInstructionBookletLine[] = "Bitte den NINTENDO GAMECUBE ausschalten und die Bedienungsanleitung lesen, um weitere Informationen zu erhalten.";
+
+char* sDeDiscErrorOccurredMessageLines[3] = {
+    sDeDiscErrorOccurredLine,
+    sDeDiscErrorSpacerLine,
+    sDeDiscErrorInstructionBookletLine,
+};
+
+char sDeDiscReadErrorLine[] = "Diese Game Disc kann nicht gelesen werden.";
+
+char sDeDiscReadErrorInstructionBookletLine[] = "Bitte die Bedienungsanleitung lesen, um weitere Informationen zu erhalten.";
+
+char* sDeDiscReadErrorMessageLines[3] = {
+    sDeDiscReadErrorLine,
+    sDeDiscReadErrorSpacerLine,
+    sDeDiscReadErrorInstructionBookletLine,
+};
+
+char sDeDiscReadingMessage[] = "Disc wird gelesen...";
+
+char sDeDiscCoverOpenLine[] = "Der Disc-Deckel ist ge\xC3\xB6" "ffnet.";
+
+char sDeDiscCoverClosePromptLine[] = "Bitte den Disc-Deckel schlie\xC3\x9F" "en,";
+
+char sDeDiscCoverContinuePromptLine[] = "um mit dem Spiel fortzufahren.";
+
+char* sDeDiscCoverOpenMessageLines[4] = {
+    sDeDiscCoverOpenLine,
+    sDeDiscCoverOpenSpacerLine,
+    sDeDiscCoverClosePromptLine,
+    sDeDiscCoverContinuePromptLine,
+};
+
+char sDeDiscInsertPromptLine[] = "Bitte die ";
+
+char sDeDiscInsertGameDiscLine[] = "Star Fox Adventures-Game Disc einlegen.";
+
+char sDeWrongDiscThisIsNotLine[] = "Diese Game Disc enth\xC3\xA4lt nicht";
+
+char sDeWrongDiscGameNameLine[] = "Star Fox Adventures.";
+
+char sDeWrongDiscInsertGameDiscLine[] = "Bitte die Star Fox Adventures-Game Disc einlegen.";
+
+char* sDeWrongDiscMessageLines[4] = {
+    sDeWrongDiscThisIsNotLine,
+    sDeWrongDiscGameNameLine,
+    sDeWrongDiscSpacerLine,
+    sDeWrongDiscInsertGameDiscLine,
+};
+
+char sDeDiscLoadingMessage[] = "Ladevorgang...";
+
+GameTextDef sDeDiscStatusMessageTable[7] = {
+    {0x339, 3, 0x81, 0, 0, 2, sDeDiscErrorOccurredMessageLines},
+    {0x33a, 3, 0x81, 0, 0, 2, sDeDiscReadErrorMessageLines},
+    {0x33b, 1, 0x81, 0, 0, 2, sDeDiscReadingMessageLines},
+    {0x33c, 4, 0x81, 0, 0, 2, sDeDiscCoverOpenMessageLines},
+    {0x33d, 2, 0x81, 0, 0, 2, sDeDiscInsertMessageLines},
+    {0x33e, 4, 0x81, 0, 0, 2, sDeWrongDiscMessageLines},
+    {0x565, 1, 0x93, 0, 0, 2, sDeDiscLoadingMessageLines},
+};
+
+TextGlyph sItDiscStatusGlyphs[43] = {
+    {0x53, 0x01, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x69, 0x0d, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x20, 0x11, 0x1, 6, 0, 15, 6, 0x00, 0x00, 4, 0}, {0xe8, 0x12, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x76, 0x1c, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0x65, 0x26, 0x1, 0, 1, 6, 4, 0x0a, 0x0b, 4, 0},
+    {0x72, 0x31, 0x1, 0, 1, 7, 4, 0x08, 0x0a, 4, 0}, {0x66, 0x3a, 0x1, 0, 1, 3, 4, 0x06, 0x0e, 4, 0},
+    {0x63, 0x41, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0x61, 0x4b, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x74, 0x55, 0x1, 0, 1, 4, 4, 0x07, 0x0d, 4, 0}, {0x6f, 0x5d, 0x1, 0, 1, 7, 4, 0x0a, 0x0a, 4, 0},
+    {0x75, 0x68, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x6e, 0x72, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x2e, 0x7c, 0x1, 0, 1, 14, 4, 0x03, 0x03, 4, 0}, {0x70, 0x80, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x67, 0x8a, 0x1, 0, 1, 6, 0, 0x09, 0x0f, 4, 0}, {0x28, 0x94, 0x1, 0, 1, 2, 0, 0x05, 0x13, 4, 0},
+    {0x4f, 0x9a, 0x1, 0, 1, 2, 3, 0x0c, 0x0f, 4, 0}, {0x46, 0xa7, 0x1, 0, 1, 2, 4, 0x0a, 0x0f, 4, 0},
+    {0x29, 0xb2, 0x1, 0, 1, 2, 0, 0x05, 0x13, 4, 0}, {0x6c, 0xb8, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x6d, 0xbc, 0x1, 0, 1, 6, 4, 0x0f, 0x0b, 4, 0}, {0x64, 0xcc, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x27, 0xd6, 0x1, 0, 1, 3, 12, 0x02, 0x06, 4, 0}, {0x73, 0xd9, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x7a, 0xe3, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x4e, 0xed, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0},
+    {0x49, 0xfb, 0x1, 0, 1, 2, 4, 0x03, 0x0f, 4, 0}, {0x54, 0xff, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0},
+    {0x45, 0x10b, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0}, {0x44, 0x115, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x47, 0x122, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x41, 0x12f, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0},
+    {0x4d, 0x13d, 0x1, 0, 1, 2, 4, 0x10, 0x0f, 4, 0}, {0x43, 0x14e, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x55, 0x15b, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x42, 0x168, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x62, 0x175, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x4c, 0x17f, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0},
+    {0x68, 0x189, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x2c, 0x193, 0x1, 0, 1, 14, 2, 0x03, 0x05, 4, 0},
+    {0x78, 0x197, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+};
+
+char sItDiscErrorOccurredLine[] = "Si \xC3\xA8 verificato un errore.";
+
+char sItDiscErrorInstructionBookletLine[] = "Spegni (OFF) e controlla il manuale d'istruzioni del NINTENDO GAMECUBE per ulteriori indicazioni.";
+
+char sItDiscReadErrorLine[] = "Impossibile leggere il disco di gioco.";
+
+char sItDiscReadErrorInstructionBookletLine[] = "Consulta il manuale d'istruzioni del NINTENDO GAMECUBE per ulteriori indicazioni.";
+
+char* sItDiscReadErrorMessageLines[3] = {
+    sItDiscReadErrorLine,
+    sItDiscReadErrorInstructionBookletLine,
+    sItDiscReadErrorSpacerLine,
+};
+
+char sItDiscReadingMessage[] = "Lettura del disco in corso...";
+
+char sItDiscCoverOpenLine[] = "Il coperchio del disco";
+
+char sItDiscCoverOpenSecondLine[] = "\xC3\xA8 aperto.";
+
+char sItDiscCoverContinuePromptLine[] = "Se vuoi proseguire nel gioco,";
+
+char sItDiscCoverClosePromptLine[] = "chiudi il coperchio del disco.";
+
+char* sItDiscCoverOpenMessageLines[4] = {
+    sItDiscCoverOpenLine,
+    sItDiscCoverOpenSecondLine,
+    sItDiscCoverContinuePromptLine,
+    sItDiscCoverClosePromptLine,
+};
+
+char sItDiscInsertPromptLine[] = "Inserisci il disco di gioco";
+
+char sItDiscInsertGameDiscLine[] = "Star Fox Adventures.";
+
+char sItWrongDiscThisIsNotLine[] = "Il disco di gioco";
+
+char sItWrongDiscGameNameLine[] = "Star Fox Adventures.";
+
+char sItWrongDiscInsertPromptLine[] = "Inserisci il disco di gioco";
+
+char sItWrongDiscInsertGameDiscLine[] = "Star Fox Adventures.";
+
+char* sItWrongDiscMessageLines[5] = {
+    sItWrongDiscThisIsNotLine,
+    sItWrongDiscIsNotLine,
+    sItWrongDiscGameNameLine,
+    sItWrongDiscInsertPromptLine,
+    sItWrongDiscInsertGameDiscLine,
+};
+
+char sItDiscLoadingMessage[] = "Caricamento in corso...";
+
+GameTextDef sItDiscStatusMessageTable[7] = {
+    {0x339, 2, 0x81, 0, 0, 3, sItDiscErrorOccurredMessageLines},
+    {0x33a, 3, 0x81, 0, 0, 3, sItDiscReadErrorMessageLines},
+    {0x33b, 1, 0x81, 0, 0, 3, sItDiscReadingMessageLines},
+    {0x33c, 4, 0x81, 0, 0, 3, sItDiscCoverOpenMessageLines},
+    {0x33d, 2, 0x81, 0, 0, 3, sItDiscInsertMessageLines},
+    {0x33e, 5, 0x81, 0, 0, 3, sItWrongDiscMessageLines},
+    {0x565, 1, 0x93, 0, 0, 3, sItDiscLoadingMessageLines},
+};
+
+TextGlyph sEsDiscStatusGlyphs[44] = {
+    {0x53, 0x01, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0}, {0x65, 0x0d, 0x1, 0, 1, 6, 4, 0x0a, 0x0b, 4, 0},
+    {0x20, 0x18, 0x1, 6, 0, 15, 6, 0x00, 0x00, 4, 0}, {0x68, 0x19, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x61, 0x23, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0x70, 0x2d, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x72, 0x37, 0x1, 0, 1, 7, 4, 0x08, 0x0a, 4, 0}, {0x6f, 0x40, 0x1, 0, 1, 7, 4, 0x0a, 0x0a, 4, 0},
+    {0x64, 0x4b, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0x75, 0x55, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x63, 0x5f, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0x69, 0x69, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x6e, 0x6d, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0}, {0x2e, 0x77, 0x1, 0, 1, 14, 4, 0x03, 0x03, 4, 0},
+    {0x41, 0x7b, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0}, {0x67, 0x89, 0x1, 0, 1, 6, 0, 0x09, 0x0f, 4, 0},
+    {0x6c, 0x93, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0}, {0x73, 0x97, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x79, 0xa1, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0}, {0x74, 0xab, 0x1, 0, 1, 4, 4, 0x07, 0x0d, 4, 0},
+    {0x6d, 0xb3, 0x1, 0, 1, 6, 4, 0x0f, 0x0b, 4, 0}, {0x4e, 0xc3, 0x1, 0, 1, 2, 4, 0x0d, 0x0f, 4, 0},
+    {0x49, 0xd1, 0x1, 0, 1, 2, 4, 0x03, 0x0f, 4, 0}, {0x54, 0xd5, 0x1, 0, 1, 2, 4, 0x0b, 0x0f, 4, 0},
+    {0x45, 0xe1, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0}, {0x44, 0xeb, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x4f, 0xf8, 0x1, 0, 1, 2, 3, 0x0c, 0x0f, 4, 0}, {0x47, 0x105, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x4d, 0x112, 0x1, 0, 1, 2, 4, 0x10, 0x0f, 4, 0}, {0x43, 0x123, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x55, 0x130, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0}, {0x42, 0x13d, 0x1, 0, 1, 2, 4, 0x0c, 0x0f, 4, 0},
+    {0x62, 0x14a, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0}, {0xe1, 0x154, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x66, 0x15e, 0x1, 0, 1, 3, 4, 0x06, 0x0e, 4, 0}, {0xf3, 0x165, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x4c, 0x16f, 0x1, 0, 1, 2, 4, 0x09, 0x0f, 4, 0}, {0x71, 0x179, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x6a, 0x183, 0x1, 0, 1, 3, 1, 0x04, 0x11, 4, 0}, {0x2c, 0x188, 0x1, 0, 1, 14, 2, 0x03, 0x05, 4, 0},
+    {0x46, 0x18c, 0x1, 0, 1, 2, 4, 0x0a, 0x0f, 4, 0}, {0x78, 0x197, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x76, 0x1a1, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0}, {0xc9, 0x1ab, 0x1, 0, 1, 0, 4, 0x0a, 0x11, 4, 0},
+};
+
+char sEsDiscErrorOccurredLine[] = "Se ha producido un error.";
+
+char sEsDiscErrorInstructionBookletLine[] = "Apaga la consola y consulta el manual de instrucciones de NINTENDO GAMECUBE para obtener m\xC3\xA1s informaci\xC3\xB3n.";
+
+char* sEsDiscErrorOccurredMessageLines[3] = {
+    sEsDiscErrorOccurredLine,
+    sEsDiscErrorSpacerLine,
+    sEsDiscErrorInstructionBookletLine,
+};
+
+char sEsDiscReadErrorLine[] = "No se puede leer el disco.";
+
+char sEsDiscReadErrorInstructionBookletLine[] = "Consulta el manual de instrucciones de NINTENDO GAMECUBE para obtener m\xC3\xA1s informaci\xC3\xB3n.";
+
+char* sEsDiscReadErrorMessageLines[3] = {
+    sEsDiscReadErrorLine,
+    sEsDiscReadErrorSpacerLine,
+    sEsDiscReadErrorInstructionBookletLine,
+};
+
+char sEsDiscReadingMessage[] = "Leyendo el disco...";
+
+char sEsDiscCoverOpenLine[] = "La tapa est\xC3\xA1 abierta.";
+
+char sEsDiscCoverContinuePromptLine[] = "Si quieres seguir jugando,";
+
+char sEsDiscCoverClosePromptLine[] = "debes cerrar la tapa.";
+
+char* sEsDiscCoverOpenMessageLines[4] = {
+    sEsDiscCoverOpenLine,
+    sEsDiscCoverOpenSpacerLine,
+    sEsDiscCoverContinuePromptLine,
+    sEsDiscCoverClosePromptLine,
+};
+
+char sEsDiscInsertPromptLine[] = "Coloca el disco de";
+
+char sEsDiscInsertGameDiscLine[] = "Star Fox Adventures.";
+
+char sEsWrongDiscThisIsNotLine[] = "\xC3\x89ste no es el disco de";
+
+char sEsWrongDiscGameNameLine[] = "Star Fox Adventures.";
+
+char sEsWrongDiscInsertPromptLine[] = "Coloca el disco de";
+
+char sEsWrongDiscInsertGameDiscLine[] = "Star Fox Adventures.";
+
+char* sEsWrongDiscMessageLines[5] = {
+    sEsWrongDiscThisIsNotLine,
+    sEsWrongDiscGameNameLine,
+    sEsWrongDiscSpacerLine,
+    sEsWrongDiscInsertPromptLine,
+    sEsWrongDiscInsertGameDiscLine,
+};
+
+char sEsDiscLoadingMessage[] = "Cargando...";
+
+GameTextDef sEsDiscStatusMessageTable[7] = {
+    {0x339, 3, 0x81, 0, 0, 5, sEsDiscErrorOccurredMessageLines},
+    {0x33a, 3, 0x81, 0, 0, 5, sEsDiscReadErrorMessageLines},
+    {0x33b, 1, 0x81, 0, 0, 5, sEsDiscReadingMessageLines},
+    {0x33c, 4, 0x81, 0, 0, 5, sEsDiscCoverOpenMessageLines},
+    {0x33d, 2, 0x81, 0, 0, 5, sEsDiscInsertMessageLines},
+    {0x33e, 5, 0x81, 0, 0, 5, sEsWrongDiscMessageLines},
+    {0x565, 1, 0x93, 0, 0, 5, sEsDiscLoadingMessageLines},
+};
+
+TextGlyph sGameTextEuroExtraGlyphs[59] = {
+    {0x20, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x27, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x28, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x29, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x2c, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x2d, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x2e, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x41, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x42, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x43, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x44, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x45, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x46, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x47, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x49, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x4c, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x4d, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x4e, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x4f, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x50, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x52, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x53, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x54, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x55, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x56, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x61, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x62, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x63, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x64, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x65, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x66, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x67, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x68, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x69, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x6a, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x6b, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x6c, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x6d, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x6e, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x6f, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x70, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x71, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x72, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x73, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x74, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x75, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x76, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x77, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x78, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0x79, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0x7a, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0xc9, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0xdf, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0xe1, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0xe4, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0xe8, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0xe9, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0}, {0xf3, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+    {0xf6, 0x00, 0x0, 0, 0, 0, 0, 0x00, 0x00, 4, 0},
+};
+#endif
+
+#if !defined(VERSION_GSAP01) && !defined(VERSION_GSAP01_rev1)
+TextGlyph sJpDiscStatusGlyphs[85] = {
+    {0x30A8, 1, 1, 0, 1, 3, 2, 20, 16, 0, 0},    {0x30E9, 22, 1, 1, 1, 2, 1, 19, 18, 0, 0},
+    {0x30FC, 42, 1, 0, 1, 8, 10, 20, 3, 0, 0},   {0x304C, 63, 1, 0, 0, 0, 1, 21, 20, 0, 0},
+    {0x767A, 85, 1, 0, 1, 0, 1, 20, 20, 0, 0},   {0x751F, 106, 1, 0, 1, 0, 2, 20, 19, 0, 0},
+    {0x3057, 127, 1, 3, 2, 1, 1, 16, 19, 0, 0},  {0x307E, 144, 1, 1, 2, 1, 1, 18, 19, 0, 0},
+    {0x305F, 163, 1, 0, 2, 1, 1, 19, 19, 0, 0},  {0x3002, 183, 1, 0, 13, 13, 1, 8, 7, 0, 0},
+    {0x0020, 192, 1, 12, 0, 21, 0, 0, 0, 0, 0},  {0x672C, 193, 1, 0, 1, 0, 1, 20, 20, 0, 0},
+    {0x4F53, 214, 1, 0, 1, 0, 0, 20, 21, 0, 0},  {0x306E, 235, 1, 1, 1, 1, 2, 19, 18, 0, 0},
+    {0x30D1, 255, 1, 0, 0, 0, 1, 21, 20, 0, 0},  {0x30EF, 277, 1, 1, 2, 2, 1, 18, 18, 0, 0},
+    {0x30DC, 296, 1, 0, 0, 0, 1, 21, 20, 0, 0},  {0x30BF, 318, 1, 0, 2, 2, 1, 19, 18, 0, 0},
+    {0x30F3, 338, 1, 1, 2, 2, 1, 18, 18, 0, 0},  {0x3092, 357, 1, 0, 2, 1, 1, 19, 19, 0, 0},
+    {0x62BC, 377, 1, 0, 1, 0, 0, 20, 21, 0, 0},  {0x3066, 398, 1, 1, 1, 2, 1, 19, 18, 0, 0},
+    {0x96FB, 418, 1, 0, 1, 1, 1, 20, 19, 0, 0},  {0x6E90, 439, 1, 0, 1, 0, 1, 20, 20, 0, 0},
+    {0x004F, 460, 1, 0, 1, 1, 2, 11, 18, 0, 0},  {0x0046, 472, 1, 1, 1, 1, 2, 10, 18, 0, 0},
+    {0x306B, 483, 1, 1, 2, 1, 1, 18, 19, 0, 0},  {0x53D6, 1, 23, 0, 1, 1, 0, 20, 20, 0, 0},
+    {0x6271, 22, 23, 0, 1, 0, 1, 20, 20, 0, 0},  {0x8AAC, 43, 23, 0, 1, 0, 1, 20, 20, 0, 0},
+    {0x660E, 64, 23, 1, 2, 1, 1, 18, 19, 0, 0},  {0x66F8, 83, 23, 0, 1, 0, 0, 20, 21, 0, 0},
+    {0x6307, 104, 23, 0, 1, 0, 0, 20, 21, 0, 0}, {0x793A, 125, 23, 0, 1, 1, 1, 20, 19, 0, 0},
+    {0x5F93, 146, 23, 0, 1, 0, 1, 20, 20, 0, 0}, {0x3063, 167, 23, 1, 3, 5, 2, 17, 14, 0, 0},
+    {0x4E0B, 185, 23, 0, 1, 1, 1, 20, 19, 0, 0}, {0x3055, 206, 23, 1, 1, 1, 1, 19, 19, 0, 0},
+    {0x3044, 226, 23, 1, 2, 2, 2, 18, 17, 0, 0}, {0x30C7, 245, 23, 0, 0, 0, 1, 21, 20, 0, 0},
+    {0x30A3, 267, 23, 2, 3, 3, 0, 16, 18, 0, 0}, {0x30B9, 284, 23, 1, 1, 2, 1, 19, 18, 0, 0},
+    {0x30AF, 304, 23, 0, 2, 2, 1, 19, 18, 0, 0}, {0x8AAD, 324, 23, 0, 1, 0, 1, 20, 20, 0, 0},
+    {0x3081, 345, 23, 0, 1, 1, 1, 20, 19, 0, 0}, {0x305B, 366, 23, 0, 1, 1, 1, 20, 19, 0, 0},
+    {0x3093, 387, 23, 0, 1, 1, 1, 20, 19, 0, 0}, {0x3067, 408, 23, 1, 0, 2, 1, 20, 18, 0, 0},
+    {0x304F, 429, 23, 2, 3, 1, 1, 16, 19, 0, 0}, {0x308F, 446, 23, 0, 1, 1, 1, 20, 19, 0, 0},
+    {0x306F, 467, 23, 1, 1, 1, 1, 19, 19, 0, 0}, {0x304A, 487, 23, 0, 1, 1, 1, 20, 19, 0, 0},
+    {0x307F, 1, 45, 0, 1, 1, 1, 20, 19, 0, 0},   {0x8FBC, 22, 45, 0, 1, 1, 1, 20, 19, 0, 0},
+    {0x3059, 43, 45, 0, 1, 0, 1, 20, 20, 0, 0},  {0x30AB, 64, 45, 0, 2, 1, 2, 19, 18, 0, 0},
+    {0x30D0, 84, 45, 0, 1, 1, 1, 20, 19, 0, 0},  {0x958B, 105, 45, 1, 2, 1, 0, 18, 20, 0, 0},
+    {0x30B2, 124, 45, 0, 0, 0, 1, 21, 20, 0, 0}, {0x30E0, 146, 45, 0, 1, 1, 2, 20, 18, 0, 0},
+    {0x7D9A, 167, 45, 0, 1, 0, 1, 20, 20, 0, 0}, {0x3051, 188, 45, 2, 1, 1, 1, 18, 19, 0, 0},
+    {0x308B, 207, 45, 1, 2, 2, 1, 18, 18, 0, 0}, {0x5834, 226, 45, 0, 1, 1, 0, 20, 20, 0, 0},
+    {0x5408, 247, 45, 0, 1, 0, 0, 20, 21, 0, 0}, {0x9589, 268, 45, 1, 2, 1, 0, 18, 20, 0, 0},
+    {0x300C, 287, 45, 12, 1, 0, 4, 8, 17, 0, 0}, {0x30D5, 296, 45, 1, 2, 2, 1, 18, 18, 0, 0},
+    {0x30A9, 315, 45, 2, 2, 3, 1, 17, 17, 0, 0}, {0x30C3, 333, 45, 2, 3, 4, 1, 16, 16, 0, 0},
+    {0x30A2, 350, 45, 1, 1, 2, 1, 19, 18, 0, 0}, {0x30C9, 370, 45, 3, 1, 1, 1, 17, 19, 0, 0},
+    {0x30D9, 388, 45, 0, 0, 1, 2, 21, 18, 0, 0}, {0x30C1, 410, 45, 0, 1, 1, 1, 20, 19, 0, 0},
+    {0x30E3, 431, 45, 1, 2, 3, 1, 18, 17, 0, 0}, {0x300D, 450, 45, 0, 13, 3, 0, 8, 18, 0, 0},
+    {0x30BB, 459, 45, 0, 2, 1, 2, 19, 18, 0, 0}, {0x30C8, 479, 45, 3, 2, 1, 1, 16, 19, 0, 0},
+    {0x3053, 1, 67, 1, 2, 3, 2, 18, 16, 0, 0},   {0x3042, 20, 67, 1, 2, 0, 1, 18, 20, 0, 0},
+    {0x308A, 39, 67, 3, 3, 1, 1, 15, 19, 0, 0},  {0x3000, 55, 67, 21, 0, 21, 0, 0, 0, 0, 0},
+    {0x30ED, 56, 67, 1, 2, 2, 2, 18, 17, 0, 0},  {0x4E2D, 75, 67, 1, 2, 0, 0, 18, 21, 0, 0},
+    {0x2026, 94, 67, 1, 2, 8, 9, 18, 4, 0, 0},
+};
+
+/* Japanese disc-status message lines (UTF-8 encoded). */
+/* "An error has occurred." */
+char sJpDiscErrorOccurredLine[0x24] =
+    "\xe3\x82\xa8\xe3\x83\xa9\xe3\x83\xbc\xe3\x81\x8c\xe7\x99\xba\xe7\x94\x9f\xe3\x81\x97\xe3\x81"
+    "\xbe\xe3\x81\x97\xe3\x81\x9f\xe3\x80\x82\x20";
+/* "(press) the unit's POWER Button" */
+char sJpDiscErrorPowerButtonLine[0x20] =
+    "\xe6\x9c\xac\xe4\xbd\x93\xe3\x81\xae\xe3\x83\x91\xe3\x83\xaf\xe3\x83\xbc\xe3\x83\x9c\xe3\x82"
+    "\xbf\xe3\x83\xb3\xe3\x82\x92";
+/* "to turn the power OFF, and" */
+char sJpDiscErrorPowerOffLine[0x1c] =
+    "\xe6\x8a\xbc\xe3\x81\x97\xe3\x81\xa6\xe9\x9b\xbb\xe6\xba\x90\xe3\x82\x92\x4f\x46\x46\xe3\x81\xab\xe3\x81\x97";
+/* "(refer to) the unit's Instruction Booklet" */
+char sJpDiscErrorInstructionBookletLine[0x1c] =
+    "\xe6\x9c\xac\xe4\xbd\x93\xe3\x81\xae\xe5\x8f\x96\xe6\x89\xb1\xe8\xaa\xac\xe6\x98\x8e\xe6\x9b\xb8\xe3\x81\xae";
+/* "and follow its instructions." */
+char sJpDiscErrorFollowInstructionsLine[0x20] =
+    "\xe6\x8c\x87\xe7\xa4\xba\xe3\x81\xab\xe5\xbe\x93\xe3\x81\xa3\xe3\x81\xa6\xe4\xb8\x8b\xe3\x81"
+    "\x95\xe3\x81\x84\xe3\x80\x82";
+
+char* sJpDiscErrorOccurredMessageLines[] = {
+    sJpDiscErrorTopSpacerLine,    sJpDiscErrorOccurredLine,           sJpDiscErrorPowerButtonLine,
+    sJpDiscErrorPowerOffLine,     sJpDiscErrorInstructionBookletLine, sJpDiscErrorFollowInstructionsLine,
+    sJpDiscErrorBottomSpacerLine,
+};
+
+/* "The Game Disc could not be read." */
+char sJpDiscReadErrorLine[0x2c] =
+    "\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x82\x92\xe8\xaa\xad\xe3\x82\x81\xe3\x81"
+    "\xbe\xe3\x81\x9b\xe3\x82\x93\xe3\x81\xa7\xe3\x81\x97\xe3\x81\x9f\xe3\x80\x82";
+/* "For details, (see) the unit's Instruction Booklet" */
+char sJpDiscReadErrorInstructionBookletLine[0x2c] =
+    "\xe3\x81\x8f\xe3\x82\x8f\xe3\x81\x97\xe3\x81\x8f\xe3\x81\xaf\xe6\x9c\xac\xe4\xbd\x93\xe3\x81"
+    "\xae\xe5\x8f\x96\xe6\x89\xb1\xe8\xaa\xac\xe6\x98\x8e\xe6\x9b\xb8\xe3\x82\x92";
+/* "please read it." */
+char sJpDiscReadErrorPleaseReadLine[0x18] =
+    "\xe3\x81\x8a\xe8\xaa\xad\xe3\x81\xbf\xe4\xb8\x8b\xe3\x81\x95\xe3\x81\x84\xe3\x80\x82";
+
+char* sJpDiscReadErrorMessageLines[] = {
+    sJpDiscReadErrorTopSpacerLine,
+    sJpDiscReadErrorLine,
+    sJpDiscReadErrorInstructionBookletLine,
+    sJpDiscReadErrorPleaseReadLine,
+};
+
+/* "The disc" */
+char sJpDiscReadingDiscLine[0x10] = "\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x82\x92";
+/* "is being read." */
+char sJpDiscReadingInProgressLine[0x1c] =
+    "\xe8\xaa\xad\xe3\x81\xbf\xe8\xbe\xbc\xe3\x82\x93\xe3\x81\xa7\xe3\x81\x84\xe3\x81\xbe\xe3\x81\x99\xe3\x80\x82";
+
+char* sJpDiscReadingMessageLines[] = {
+    sJpDiscReadingTopSpacerLine,
+    sJpDiscReadingDiscLine,
+    sJpDiscReadingInProgressLine,
+};
+
+/* "The Disc Cover" */
+char sJpDiscCoverLine[0x1c] =
+    "\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x82\xab\xe3\x83\x90\xe3\x83\xbc\xe3\x81\x8c";
+/* "is open." */
+char sJpDiscCoverIsOpenLine[0x18] =
+    "\xe9\x96\x8b\xe3\x81\x84\xe3\x81\xa6\xe3\x81\x84\xe3\x81\xbe\xe3\x81\x99\xe3\x80\x82";
+/* "To continue the game," */
+char sJpDiscCoverContinuePromptLine[0x20] =
+    "\xe3\x82\xb2\xe3\x83\xbc\xe3\x83\xa0\xe3\x82\x92\xe7\xb6\x9a\xe3\x81\x91\xe3\x82\x8b\xe5\xa0"
+    "\xb4\xe5\x90\x88\xe3\x81\xaf";
+/* "the Disc Cover" */
+char sJpDiscCoverCloseTargetLine[0x1c] =
+    "\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x82\xab\xe3\x83\x90\xe3\x83\xbc\xe3\x82\x92";
+/* "please close." */
+char sJpDiscCoverClosePromptLine[0x18] =
+    "\xe9\x96\x89\xe3\x82\x81\xe3\x81\xa6\xe4\xb8\x8b\xe3\x81\x95\xe3\x81\x84\xe3\x80\x82";
+
+char* sJpDiscCoverOpenMessageLines[] = {
+    sJpDiscCoverOpenTopSpacerLine, sJpDiscCoverLine,
+    sJpDiscCoverIsOpenLine,        sJpDiscCoverContinuePromptLine,
+    sJpDiscCoverCloseTargetLine,   sJpDiscCoverClosePromptLine,
+};
+
+/* ""Star Fox" */
+char sJpDiscInsertGameNameLine[0x1c] =
+    "\xe3\x80\x8c\xe3\x82\xb9\xe3\x82\xbf\xe3\x83\xbc\xe3\x83\x95\xe3\x82\xa9\xe3\x83\x83\xe3\x82\xaf\xe3\x82\xb9";
+/* "Adventure"'s" */
+char sJpDiscInsertGameSubtitleLine[0x1c] =
+    "\xe3\x82\xa2\xe3\x83\x89\xe3\x83\x99\xe3\x83\xb3\xe3\x83\x81\xe3\x83\xa3\xe3\x83\xbc\xe3\x80\x8d\xe3\x81\xae";
+/* "disc" */
+char sJpDiscInsertGameDiscLine[0x10] = "\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x82\x92";
+/* "please insert." */
+char sJpDiscInsertPromptLine[0x1c] =
+    "\xe3\x82\xbb\xe3\x83\x83\xe3\x83\x88\xe3\x81\x97\xe3\x81\xa6\xe4\xb8\x8b\xe3\x81\x95\xe3\x81\x84\xe3\x80\x82";
+
+char* sJpDiscInsertMessageLines[] = {
+    sJpDiscInsertTopSpacerLine, sJpDiscInsertGameNameLine, sJpDiscInsertGameSubtitleLine,
+    sJpDiscInsertGameDiscLine,  sJpDiscInsertPromptLine,   sJpDiscInsertBottomSpacerLine,
+};
+
+/* "This disc is" */
+char sJpWrongDiscThisIsNotLine[0x18] =
+    "\xe3\x81\x93\xe3\x81\xae\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x81\xaf";
+/* "Star Fox" */
+char sJpWrongDiscGameNameLine[0x1c] =
+    "\xe3\x82\xb9\xe3\x82\xbf\xe3\x83\xbc\xe3\x83\x95\xe3\x82\xa9\xe3\x83\x83\xe3\x82\xaf\xe3\x82\xb9";
+/* "Adventure's" */
+char sJpWrongDiscGameSubtitleLine[0x1c] =
+    "\xe3\x82\xa2\xe3\x83\x89\xe3\x83\x99\xe3\x83\xb3\xe3\x83\x81\xe3\x83\xa3\xe3\x83\xbc\xe3\x81\xae";
+/* "not the disc." */
+char sJpWrongDiscNotGameDiscLine[0x28] =
+    "\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x81\xa7\xe3\x81\xaf\xe3\x81\x82\xe3\x82"
+    "\x8a\xe3\x81\xbe\xe3\x81\x9b\xe3\x82\x93\xe3\x80\x82";
+/* "Star Fox" */
+char sJpWrongDiscInsertGameNameLine[0x1c] =
+    "\xe3\x82\xb9\xe3\x82\xbf\xe3\x83\xbc\xe3\x83\x95\xe3\x82\xa9\xe3\x83\x83\xe3\x82\xaf\xe3\x82\xb9";
+/* "Adventure's" */
+char sJpWrongDiscInsertGameSubtitleLine[0x1c] =
+    "\xe3\x82\xa2\xe3\x83\x89\xe3\x83\x99\xe3\x83\xb3\xe3\x83\x81\xe3\x83\xa3\xe3\x83\xbc\xe3\x81\xae";
+/* "please insert the disc." */
+char sJpWrongDiscInsertPromptLine[0x2c] =
+    "\xe3\x83\x87\xe3\x82\xa3\xe3\x82\xb9\xe3\x82\xaf\xe3\x82\x92\xe3\x82\xbb\xe3\x83\x83\xe3\x83"
+    "\x88\xe3\x81\x97\xe3\x81\xa6\xe4\xb8\x8b\xe3\x81\x95\xe3\x81\x84\xe3\x80\x82";
+
+char* sJpWrongDiscMessageLines[] = {
+    sJpWrongDiscTopSpacerLine,      sJpWrongDiscThisIsNotLine,          sJpWrongDiscGameNameLine,
+    sJpWrongDiscGameSubtitleLine,   sJpWrongDiscNotGameDiscLine,        sJpWrongDiscMiddleSpacerLine,
+    sJpWrongDiscInsertGameNameLine, sJpWrongDiscInsertGameSubtitleLine, sJpWrongDiscInsertPromptLine,
+};
+
+/* Japanese disc-status messages, followed by the English glyph table. */
+char sJpDiscLoadingMessage[] = "\xe3\x83\xad\xe3\x83\xbc\xe3\x83\x89\xe4\xb8\xad\xe2\x80\xa6";
+
+GameTextDef sJpDiscStatusMessageTable[7] = {
+    {0x339, 7, 0x81, 0, 0, 4, sJpDiscErrorOccurredMessageLines},
+    {0x33a, 4, 0x81, 0, 0, 4, sJpDiscReadErrorMessageLines},
+    {0x33b, 3, 0x81, 0, 0, 4, sJpDiscReadingMessageLines},
+    {0x33c, 6, 0x81, 0, 0, 4, sJpDiscCoverOpenMessageLines},
+    {0x33d, 6, 0x81, 0, 0, 4, sJpDiscInsertMessageLines},
+    {0x33e, 9, 0x81, 0, 0, 4, sJpWrongDiscMessageLines},
+    {0x565, 1, 0x93, 0, 0, 4, sJpDiscLoadingMessageLines},
+};
+#endif
+
+#if defined(VERSION_GSAE01_rev1)
+u16 gGameTextUnicodeToSjis[770] = {
+    0x0020, 0x0020, 0x0020, 0x0020, 0x2026, 0x8163, 0x0028, 0x0028, 0x0029, 0x0029, 0x002E, 0x002E, 0x3000, 0x8140,
+    0x3002, 0x8142, 0x300C, 0x8175, 0x300D, 0x8176, 0x3042, 0x82A0, 0x3044, 0x82A2, 0x304A, 0x82A8, 0x304C, 0x82AA,
+    0x304F, 0x82AD, 0x3051, 0x82AF, 0x3053, 0x82B1, 0x3055, 0x82B3, 0x3057, 0x82B5, 0x3059, 0x82B7, 0x305B, 0x82B9,
+    0x305F, 0x82BD, 0x3063, 0x82C1, 0x3066, 0x82C4, 0x3067, 0x82C5, 0x306B, 0x82C9, 0x306E, 0x82CC, 0x306F, 0x82CD,
+    0x307E, 0x82DC, 0x307F, 0x82DD, 0x3081, 0x82DF, 0x308A, 0x82E8, 0x308B, 0x82E9, 0x308F, 0x82ED, 0x3092, 0x82F0,
+    0x3093, 0x82F1, 0x30A2, 0x8341, 0x30A3, 0x8342, 0x30A8, 0x8347, 0x30A9, 0x8348, 0x30AB, 0x834A, 0x30AF, 0x834E,
+    0x30B2, 0x8351, 0x30B9, 0x8358, 0x30BB, 0x835A, 0x30BF, 0x835E, 0x30C1, 0x8360, 0x30C3, 0x8362, 0x30C7, 0x8366,
+    0x30C8, 0x8367, 0x30C9, 0x8368, 0x30D0, 0x836F, 0x30D1, 0x8370, 0x30D5, 0x8374, 0x30D9, 0x8378, 0x30DC, 0x837B,
+    0x30E0, 0x8380, 0x30E3, 0x8383, 0x30E9, 0x8389, 0x30ED, 0x838D, 0x30EF, 0x838F, 0x30F3, 0x8393, 0x30FC, 0x815B,
+    0x0041, 0x0041, 0x0042, 0x0042, 0x0043, 0x0043, 0x0044, 0x0044, 0x0045, 0x0045, 0x0046, 0x0046, 0x0046, 0x0046,
+    0x0047, 0x0047, 0x0049, 0x0049, 0x004C, 0x004C, 0x004D, 0x004D, 0x004E, 0x004E, 0x4E0B, 0x89BA, 0x4E2D, 0x9286,
+    0x004F, 0x004F, 0x004F, 0x004F, 0x4F53, 0x91CC, 0x0053, 0x0053, 0x53D6, 0x8EE6, 0x0054, 0x0054, 0x5408, 0x8D87,
+    0x0055, 0x0055, 0x5834, 0x8FEA, 0x5F93, 0x8F5D, 0x0061, 0x0061, 0x0062, 0x0062, 0x6271, 0x88B5, 0x62BC, 0x899F,
+    0x0063, 0x0063, 0x6307, 0x8E77, 0x0064, 0x0064, 0x0065, 0x0065, 0x0066, 0x0066, 0x660E, 0x96BE, 0x66F8, 0x8F91,
+    0x0067, 0x0067, 0x672C, 0x967B, 0x0068, 0x0068, 0x0069, 0x0069, 0x006C, 0x006C, 0x006D, 0x006D, 0x006E, 0x006E,
+    0x6E90, 0x8CB9, 0x006F, 0x006F, 0x0070, 0x0070, 0x0072, 0x0072, 0x0073, 0x0073, 0x0074, 0x0074, 0x0075, 0x0075,
+    0x751F, 0x90B6, 0x0076, 0x0076, 0x767A, 0x94AD, 0x0078, 0x0078, 0x0079, 0x0079, 0x793A, 0x8EA6, 0x7D9A, 0x91B1,
+    0x8AAC, 0x90E0, 0x8AAD, 0x93C7, 0x8FBC, 0x8D9E, 0x9589, 0x95C2, 0x958B, 0x8A4A, 0x96FB, 0x9364, 0x00C9, 0x0000,
+    0x00E1, 0x0000, 0x00F3, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+};
+#endif
+
+#if defined(VERSION_GSAE01) || defined(VERSION_GSAJ01)
+TextGlyph sDiscStatusGlyphs[43] = {
+    {0x41, 0x01, 0x1, 0, 1, 3, 4, 0x0d, 0x0e, 4, 0},  {0x6e, 0x0f, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x20, 0x19, 0x1, 6, 0, 15, 6, 0x00, 0x00, 4, 0}, {0x65, 0x1a, 0x1, 0, 1, 6, 4, 0x0a, 0x0b, 4, 0},
+    {0x72, 0x25, 0x1, 0, 1, 7, 4, 0x08, 0x0a, 4, 0},  {0x6f, 0x2e, 0x1, 0, 1, 7, 4, 0x0a, 0x0a, 4, 0},
+    {0x68, 0x39, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},  {0x61, 0x43, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x73, 0x4d, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},  {0x63, 0x57, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x75, 0x61, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},  {0x64, 0x6b, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x2e, 0x75, 0x1, 0, 1, 14, 4, 0x03, 0x03, 4, 0}, {0x54, 0x79, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0},
+    {0x74, 0x85, 0x1, 0, 1, 4, 4, 0x07, 0x0d, 4, 0},  {0x70, 0x8d, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0},
+    {0x77, 0x97, 0x1, 0, 1, 7, 4, 0x0e, 0x0a, 4, 0},  {0x4f, 0xa6, 0x1, 0, 1, 3, 3, 0x0c, 0x0f, 4, 0},
+    {0x46, 0xb3, 0x1, 0, 1, 3, 4, 0x0a, 0x0e, 4, 0},  {0x6b, 0xbe, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x4e, 0xc8, 0x1, 0, 1, 3, 4, 0x0d, 0x0e, 4, 0},  {0x49, 0xd6, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x45, 0xda, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},  {0x44, 0xe4, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0},
+    {0x47, 0xf1, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0},  {0x4d, 0xfe, 0x1, 0, 1, 3, 4, 0x10, 0x0e, 4, 0},
+    {0x43, 0x10f, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0}, {0x55, 0x11c, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0},
+    {0x42, 0x129, 0x1, 0, 1, 3, 4, 0x0c, 0x0e, 4, 0}, {0x69, 0x136, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0},
+    {0x6c, 0x13a, 0x1, 0, 1, 3, 4, 0x03, 0x0e, 4, 0}, {0x66, 0x13e, 0x1, 0, 1, 3, 4, 0x06, 0x0e, 4, 0},
+    {0x6d, 0x145, 0x1, 0, 1, 6, 4, 0x0f, 0x0b, 4, 0}, {0x62, 0x155, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+    {0x50, 0x15f, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0}, {0x52, 0x16b, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0},
+    {0x67, 0x177, 0x1, 0, 1, 6, 0, 0x09, 0x0f, 4, 0}, {0x76, 0x181, 0x1, 0, 1, 6, 4, 0x09, 0x0b, 4, 0},
+    {0x79, 0x18b, 0x1, 0, 1, 7, 0, 0x09, 0x0e, 4, 0}, {0x2c, 0x195, 0x1, 0, 1, 14, 2, 0x03, 0x05, 4, 0},
+    {0x53, 0x199, 0x1, 0, 1, 3, 4, 0x0b, 0x0e, 4, 0}, {0x78, 0x1a5, 0x1, 0, 1, 7, 4, 0x09, 0x0a, 4, 0},
+    {0x4c, 0x1af, 0x1, 0, 1, 3, 4, 0x09, 0x0e, 4, 0},
+};
+
+/* English disc-status message lines. */
+char sDiscErrorOccurredLine[] = "An error has occurred.";
+char sDiscErrorInstructionBookletLine[] =
+    "Turn the power OFF and check the NINTENDO GAMECUBE Instruction Booklet for further instructions.";
+
+char* sDiscErrorOccurredMessageLines[] = {
+    sDiscErrorOccurredLine,
+    sDiscErrorSpacerLine,
+    sDiscErrorInstructionBookletLine,
+};
+
+char sDiscReadErrorLine[] = "The Game Disc could not be read.";
+char sDiscReadErrorInstructionBookletLine[] =
+    "Please read the NINTENDO GAMECUBE Instruction Booklet for more information.";
+
+char* sDiscReadErrorMessageLines[] = {
+    sDiscReadErrorLine,
+    sDiscReadErrorSpacerLine,
+    sDiscReadErrorInstructionBookletLine,
+};
+
+char sDiscReadingMessage[] = "Reading disc...";
+
+char sDiscCoverOpenLine[] = "The Disc Cover is open.";
+char sDiscCoverContinuePromptLine[] = "If you want to continue the game,";
+char sDiscCoverClosePromptLine[] = "please close the Disc Cover.";
+
+char* sDiscCoverOpenMessageLines[] = {
+    sDiscCoverOpenLine,
+    sDiscCoverOpenSpacerLine,
+    sDiscCoverContinuePromptLine,
+    sDiscCoverClosePromptLine,
+};
+
+char sDiscInsertPromptLine[] = "Please insert a";
+char sDiscInsertGameDiscLine[] = "Star Fox Adventures Game Disc.";
+
+char sWrongDiscThisIsNotLine[] = "This is not the";
+char sWrongDiscGameNameLine[] = "Star Fox Adventures";
+char sWrongDiscGameDiscLine[] = "Game Disc.";
+char sWrongDiscInsertPromptLine[] = "Please insert a";
+char sWrongDiscInsertGameDiscLine[] = "Star Fox Adventures Game Disc.";
+
+char* sWrongDiscMessageLines[] = {
+    sWrongDiscThisIsNotLine, sWrongDiscGameNameLine,     sWrongDiscGameDiscLine,
+    sWrongDiscSpacerLine,    sWrongDiscInsertPromptLine, sWrongDiscInsertGameDiscLine,
+};
+
+/* The English disc-status resource ("Loading..." plus the seven messages). */
+char sDiscLoadingMessage[] = "Loading...";
+
+GameTextDef sDiscStatusMessageTable[7] = {
+    {0x339, 3, 0x81, 0, 0, 0, sDiscErrorOccurredMessageLines}, {0x33a, 3, 0x81, 0, 0, 0, sDiscReadErrorMessageLines},
+    {0x33b, 1, 0x81, 0, 0, 0, sDiscReadingMessageLines},       {0x33c, 4, 0x81, 0, 0, 0, sDiscCoverOpenMessageLines},
+    {0x33d, 2, 0x81, 0, 0, 0, sDiscInsertMessageLines},        {0x33e, 6, 0x81, 0, 0, 0, sWrongDiscMessageLines},
+    {0x565, 1, 0x93, 0, 0, 0, sDiscLoadingMessageLines},
+};
+#endif
+
+/* Dino-language glyph substitution order (see translateToDinoLanguage). */
+u8 sGameTextGlyphOrder[0x1b] = "urstovwxazbcmdefghtkilnpoq";
+
+static inline int ctrlCharLen(u32 c);
+
+static inline TextGlyph* findGlyph(u32 ch, int glyphLang);
+
+static inline void gameTextSelectFallbackBuffer(void);
+
+TextFont* gameTextFonts;
+int gameTextCharset;
+int curLanguage;
+int gGameTextLastLanguage;
+int curGameTextDir;
+int gGameTextLastDir;
+int lbl_803DC9D4;
+int lbl_803DC9D0;
+GameTextBox* gCurTextBox;
+int lbl_803DC9C8;
+char* gGameTextCommandStringCursor;
+int gGameTextRenderingById;
+int gGameTextMeasureOnly;
+int gGameTextBoundsMinY;
+int gGameTextBoundsMaxY;
+int gGameTextBoundsMinX;
+int gGameTextBoundsMaxX;
+u16 gGameTextCursorX;
+u16 gGameTextCursorY;
+u8 gGameTextColorR;
+u8 gGameTextColorG;
+u8 gGameTextColorB;
+u8 gGameTextColorA;
+f32 gGameTextScale;
+int gGameTextRevealActive;
+int gGameTextDrawnCharIndex;
+f32 gGameTextRevealProgress;
+u8 gGameTextShadowColorR;
+u8 gGameTextShadowColorG;
+u8 gGameTextShadowColorB;
+int gGameTextShadowOffsetX;
+int gGameTextShadowOffsetY;
+int gGameTextShadowEnabled;
+u8 lbl_803DC980;
+int gGameTextBufferIndex;
+char* gCurTextBuffer;
+GameTextDef* gGameTextLastEntry;
+f32* gGameTextFallbackRequestDelta;
+GameTextDrawFunc gameTextDrawFunc;
+u8 gGameTextFontIsSjis;
+
+SubtitleCmd* subtitleParseControlCmds(char* str, int* count);
+
+typedef struct GameTextGlyphTable {
+    int count;
+    TextGlyph glyphs[];
+} GameTextGlyphTable;
+STATIC_ASSERT(sizeof(GameTextGlyphTable) == 4);
+STATIC_ASSERT(offsetof(GameTextGlyphTable, glyphs) == 4);
+
+typedef struct GameTextTableHeader {
+    u16 entryCount;
+    u16 stringDataSize;
+} GameTextTableHeader;
+STATIC_ASSERT(sizeof(GameTextTableHeader) == 4);
+STATIC_ASSERT(offsetof(GameTextTableHeader, stringDataSize) == 2);
+
+typedef struct GameTextStringTable {
+    int count;
+    int offsets[];
+} GameTextStringTable;
+STATIC_ASSERT(sizeof(GameTextStringTable) == 4);
+STATIC_ASSERT(offsetof(GameTextStringTable, offsets) == 4);
+
+typedef struct GameTextPaddingBlock {
+    s32 byteCount;
+    u8 bytes[];
+} GameTextPaddingBlock;
+STATIC_ASSERT(sizeof(GameTextPaddingBlock) == 4);
+STATIC_ASSERT(offsetof(GameTextPaddingBlock, bytes) == 4);
+
+typedef struct GameTextTextureHeader {
+    u16 format;
+    u16 bitsPerPixel;
+    u16 width;
+    u16 height;
+} GameTextTextureHeader;
+STATIC_ASSERT(sizeof(GameTextTextureHeader) == 8);
+STATIC_ASSERT(offsetof(GameTextTextureHeader, bitsPerPixel) == 2);
+STATIC_ASSERT(offsetof(GameTextTextureHeader, width) == 4);
+STATIC_ASSERT(offsetof(GameTextTextureHeader, height) == 6);
+
+typedef struct GameTextDiscDef {
+    u16 identifier;
+    u16 count;
+    u8 boxId;
+    u8 alignH;
+    u8 alignV;
+    u8 language;
+    s32 strings;
+} GameTextDiscDef;
+STATIC_ASSERT(sizeof(GameTextDiscDef) == 0xc);
+
+static void gameTextLoadCancelCallback(s32 result, DVDCommandBlock* block);
+static void gameTextLoadCompleteCallback(s32 status, DVDFileInfo* fileInfo);
+
+int gameTextGetState(int i);
+
+static inline GameTextLoadSlot* gameTextFindFreeLoadSlot(void);
+
+static inline u32 lookupSjisGlyph(int c);
+
+/* Install a completed language/charset load, upload its textures, and compact
+   the relocatable text tables. */
+void gameTextFinalizeLoad(GameTextLoadSlot* loadSlot);
+
+GameTextLoadSlot curGameTexts[GAMETEXT_LOAD_SLOT_COUNT];
+TextFont gGameTextCharsets[GAMETEXT_PENDING_SOURCE_COUNT];
+GameTextSlot gGameTextCommandSlots[0xA00 / sizeof(GameTextSlot)];
+char sGameTextCommandStringBuffer[0x800];
+char sGameTextPath[0x40];
+SubtitleCmd sSubtitleCtrlCmdScratch[SUBTITLE_CONTROL_COMMAND_COUNT];
+char sGameTextFallbackBuffers[GAMETEXT_FALLBACK_COUNT][GAMETEXT_FALLBACK_BUFFER_SIZE];
+char* sGameTextFallbackStrings[GAMETEXT_FALLBACK_COUNT];
+GameTextDef sGameTextFallbackDefs[GAMETEXT_FALLBACK_COUNT];
+f32 sGameTextFallbackRequestDelta[GAMETEXT_FALLBACK_COUNT];
+f32 sGameTextFallbackElapsedFrames[GAMETEXT_FALLBACK_COUNT];
+
+int gameTextSaveDir(int x) {
+    if (gGameTextSequenceMode == 0) {
+        gGameTextSavedDir = x;
+        return 1;
+    }
+    return 0;
+}
+
+void gameTextSetDrawFunc(void* fn) {
+    gameTextDrawFunc = fn;
+}
+
+static void gameTextLoadCompleteCallback(s32 status, DVDFileInfo* fileInfo) {
+    int i;
+    GameTextLoadSlot* slot = curGameTexts;
+    if (status != -1 && status != -3) {
+        for (i = 8; i != 0; i--) {
+            if (fileInfo == &slot->fileInfo) {
+                slot->state = 2;
+                return;
+            }
+            slot++;
+        }
+    } else {
+        slot = curGameTexts;
+        for (i = 8; i != 0; i--) {
+            if (fileInfo == &slot->fileInfo) {
+                slot->state = 5;
+                return;
+            }
+            slot++;
+        }
+    }
+}
+
+static void gameTextLoadCancelCallback(s32 result, DVDCommandBlock* block) {
+    int i;
+    GameTextLoadSlot* slot = curGameTexts;
+    (void)result;
+    for (i = 8; i != 0; i--) {
+        if (block == &slot->fileInfo.cb) {
+            slot->state = 5;
+            return;
+        }
+        slot++;
+    }
+}
+
+void gameTextFinalizeLoad(GameTextLoadSlot* loadSlot) {
+    u16* textureCursor;
+    int textureIndex;
+    u16* loadedResource;
+    u32 bitsPerPixel;
+    int stringDataSize;
+    GameTextStringTable* stringTable;
+    u32 width;
+    u32 height;
+    int i;
+    u8* stringData;
+    GameTextPaddingBlock* paddingBlock;
+    u16* headerFields;
+    u16* textureDataStart;
+    GameTextGlyphTable* resource;
+    u16 textureFormat;
+    GameTextDef* definitions;
+    int stringCount;
+    int* stringPointers;
+    TextFont* charset;
+    u32 tableBytes;
+    u16* compactedResource;
+    int relocationDelta;
+    int* relocatedStringPointers;
+    int stringIndex;
+    int relocatedPointer;
+    int remainingUnits;
+
+    DCStoreRange(loadSlot->loadHandle, loadSlot->loadedSize);
+#if defined(TARGET_PC) && !defined(_WIN32)
+    { extern int stfx_gametext_loaded(void* buf, u32 size); stfx_gametext_loaded(loadSlot->loadHandle, loadSlot->loadedSize); }
+#endif
+    if (loadSlot->sourceId == GAMETEXT_SLOT_CUTSCENE) {
+        charset = &gGameTextCharsets[GAMETEXT_SLOT_CUTSCENE];
+    } else if (loadSlot->sourceId == GAMETEXT_SLOT_HUD) {
+        charset = &gGameTextCharsets[GAMETEXT_SLOT_HUD];
+    } else {
+        charset = &gGameTextCharsets[GAMETEXT_SLOT_DIALOGUE];
+        curGameTextDir = loadSlot->dirId;
+        curLanguage = loadSlot->languageId;
+    }
+    resource = loadSlot->loadHandle;
+    charset->glyphCount = resource->count;
+    if (charset->glyphCount == 0) {
+        charset->status = 3;
+        loadSlot->state = 6;
+        return;
+    }
+    charset->glyphs = resource->glyphs;
+    headerFields = (u16*)((char*)(resource + 1) + charset->glyphCount * sizeof(TextGlyph));
+    charset->entryCount = *headerFields++;
+    stringDataSize = *headerFields++;
+    definitions = (GameTextDef*)headerFields;
+    charset->entries = definitions;
+    stringTable = (GameTextStringTable*)(definitions + charset->entryCount);
+    stringCount = stringTable->count;
+    stringPointers = stringTable->offsets;
+    for (i = 0; i < charset->entryCount; i++) {
+        charset->entries[i].strings = (char**)(stringPointers + (int)charset->entries[i].strings);
+    }
+    stringTable++;
+    stringData = (u8*)stringTable + stringCount * sizeof(*stringPointers);
+    {
+        int j;
+        for (j = 0; j < stringCount; j++) {
+            stringPointers[j] = stringPointers[j] + (int)stringData;
+        }
+    }
+    paddingBlock = (GameTextPaddingBlock*)(stringData + stringDataSize);
+    textureCursor = (u16*)((u8*)paddingBlock + paddingBlock->byteCount);
+    textureCursor += sizeof(*paddingBlock) / sizeof(*textureCursor);
+    textureDataStart = textureCursor;
+    textureIndex = 0;
+    while (1) {
+        GameTextTextureHeader* textureHeader = (GameTextTextureHeader*)textureCursor;
+        textureFormat = textureHeader->format;
+        bitsPerPixel = textureHeader->bitsPerPixel;
+        width = textureHeader->width;
+        height = textureHeader->height;
+        textureCursor = (u16*)(textureHeader + 1);
+        if (width == 0 && height == 0) {
+            break;
+        }
+        switch (textureFormat) {
+        case 1:
+            textureFormat = GX_TF_RGB5A3;
+            break;
+        case 2:
+            textureFormat = GX_TF_I4;
+            break;
+        }
+        if (charset->textures[textureIndex] != NULL) {
+            mmSetFreeDelay(0);
+            mm_free(charset->textures[textureIndex]);
+            mmSetFreeDelay(2);
+        }
+        charset->textures[textureIndex] = textureAlloc(width, height, textureFormat, 0, 0, 0, 0, 1, 1);
+        if (charset->textures[textureIndex] != NULL) {
+            if (bitsPerPixel == 4) {
+                u8* src8 = (u8*)textureCursor;
+                u8* dst8 = (u8*)(charset->textures[textureIndex] + 1);
+                remainingUnits = (int)(width * height) >> 1;
+                while (remainingUnits--) {
+                    *dst8++ = *src8++;
+                }
+                DCFlushRange(charset->textures[textureIndex] + 1, charset->textures[textureIndex]->dataSize);
+            } else {
+                u16* src16 = textureCursor;
+                u16* dst16 = (u16*)(charset->textures[textureIndex] + 1);
+                remainingUnits = width * height;
+                while (remainingUnits--) {
+                    *dst16++ = *src16++;
+                }
+                DCFlushRange(charset->textures[textureIndex] + 1, charset->textures[textureIndex]->dataSize);
+            }
+        }
+        {
+            u32 area = width * height;
+            textureCursor += (int)(area * bitsPerPixel) >> 4;
+        }
+        textureIndex++;
+    }
+    tableBytes = (u32)((u8*)textureDataStart - (u8*)loadSlot->loadHandle);
+    compactedResource = mmAlloc(tableBytes, 0x1a, 0);
+    remainingUnits = tableBytes >> 1;
+    {
+        u16* destination = compactedResource;
+        u16* source;
+        loadedResource = loadSlot->loadHandle;
+        source = loadedResource;
+        relocationDelta = (u8*)compactedResource - (u8*)loadedResource;
+        while (remainingUnits--) {
+            *destination++ = *source++;
+        }
+    }
+    charset->glyphs = (TextGlyph*)((u8*)charset->glyphs + relocationDelta);
+    charset->entries = (GameTextDef*)((u8*)charset->entries + relocationDelta);
+    for (i = 0; i < charset->entryCount; i++) {
+        int phrasePointers = (int)charset->entries[i].strings;
+        charset->entries[i].strings = (char**)(phrasePointers + relocationDelta);
+    }
+    relocatedStringPointers = (int*)((u8*)stringPointers + relocationDelta);
+    for (stringIndex = 0; stringIndex < stringCount; stringIndex++) {
+        relocatedPointer = relocatedStringPointers[stringIndex];
+        relocatedPointer += relocationDelta;
+        relocatedStringPointers[stringIndex] = relocatedPointer;
+    }
+    mmSetFreeDelay(0);
+    mm_free(loadSlot->loadHandle);
+    loadSlot->loadHandle = NULL;
+    mmSetFreeDelay(2);
+    loadSlot->loadHandle = compactedResource;
+    charset->status = 2;
+    loadSlot->state = 3;
+}
+
+static inline void gameTextCopySystemFontTile(u8* destination, int tileRow, u32** pixels) {
+    int wordIndex;
+    destination += tileRow * gGameTextFontTexRowPitch;
+    for (wordIndex = 0; wordIndex < 8; wordIndex += 2) {
+        *(u32*)(destination + sizeof(Texture) + wordIndex * 4) = *(*pixels)++;
+        *(u32*)(destination + sizeof(Texture) + wordIndex * 4 + 4) = *(*pixels)++;
+    }
+}
+
+void gameTextBuildSystemFontAtlas(void) {
+    int glyphCount;
+    FontMetrics* fontMetrics;
+    TextFont* charset;
+    u8* glyphImage;
+    int compressedFontSize;
+    int atlasY;
+    int fontDataSize;
+    int atlasX;
+    u8* compressedFont;
+    OSFontHeader* fontData;
+    int previousHeapOverride;
+    int glyphWidthTiles;
+    int remainingGlyphs;
+    TextGlyph* glyph;
+    u8 encodedChar[3];
+    s32 glyphWidth;
+
+    fontMetrics = gGameTextFontMetrics;
+    charset = &gGameTextCharsets[GAMETEXT_SLOT_ERROR];
+    previousHeapOverride = mmSetForceHeap3Only(0);
+    glyphImage = mmAlloc(0x120, 0x1a, 0);
+    switch (OSGetFontEncode()) {
+    case OS_FONT_ENCODE_ANSI:
+        compressedFontSize = OS_FONT_ROM_SIZE_ANSI;
+        fontDataSize = 0x10120;
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+        gGameTextFontIsSjis = 0;
+        charset->glyphs = sGameTextEuroExtraGlyphs;
+        charset->glyphCount = ARRAY_COUNT(sGameTextEuroExtraGlyphs);
+        switch (OSGetLanguage()) {
+        case OS_LANGUAGE_GERMAN:
+            curLanguage = LANGUAGE_GERMAN;
+            charset->entries = sDeDiscStatusMessageTable;
+            charset->entryCount = ARRAY_COUNT(sDeDiscStatusMessageTable);
+            break;
+        case OS_LANGUAGE_FRENCH:
+            curLanguage = LANGUAGE_FRENCH;
+            charset->entries = sFrDiscStatusMessageTable;
+            charset->entryCount = ARRAY_COUNT(sFrDiscStatusMessageTable);
+            break;
+        case OS_LANGUAGE_SPANISH:
+            curLanguage = LANGUAGE_SPANISH;
+            charset->entries = sEsDiscStatusMessageTable;
+            charset->entryCount = ARRAY_COUNT(sEsDiscStatusMessageTable);
+            break;
+        case OS_LANGUAGE_ITALIAN:
+            curLanguage = LANGUAGE_ITALIAN;
+            charset->entries = sItDiscStatusMessageTable;
+            charset->entryCount = ARRAY_COUNT(sItDiscStatusMessageTable);
+            break;
+        default:
+            curLanguage = LANGUAGE_ENGLISH;
+            charset->entries = sDiscStatusMessageTable;
+            charset->entryCount = ARRAY_COUNT(sDiscStatusMessageTable);
+            break;
+        }
+#elif defined(VERSION_GSAE01_rev1)
+        gGameTextFontIsSjis = 0;
+        charset->glyphs = sDiscStatusGlyphs;
+        charset->glyphCount = ARRAY_COUNT(sDiscStatusGlyphs);
+        curLanguage = LANGUAGE_ENGLISH;
+        charset->entries = sDiscStatusMessageTable;
+        charset->entryCount = ARRAY_COUNT(sDiscStatusMessageTable);
+#else
+        curLanguage = LANGUAGE_ENGLISH;
+        gGameTextFontIsSjis = 0;
+#endif
+        break;
+#if !defined(VERSION_GSAP01) && !defined(VERSION_GSAP01_rev1)
+    case OS_FONT_ENCODE_SJIS:
+        compressedFontSize = OS_FONT_ROM_SIZE_SJIS;
+        fontDataSize = 0x90ee4;
+        curLanguage = LANGUAGE_JAPANESE;
+        gGameTextFontIsSjis = 1;
+#if defined(VERSION_GSAE01_rev1)
+        charset->glyphs = sJpDiscStatusGlyphs;
+        charset->glyphCount = ARRAY_COUNT(sJpDiscStatusGlyphs);
+        charset->entries = sJpDiscStatusMessageTable;
+        charset->entryCount = ARRAY_COUNT(sJpDiscStatusMessageTable);
+#endif
+        break;
+#endif
+    }
+    compressedFont = mmAlloc(compressedFontSize, 0x1a, 0);
+    fontData = mmAlloc(fontDataSize, 0x1a, 0);
+    OSLoadFont(fontData, compressedFont);
+#if !defined(VERSION_GSAE01_rev1) && !defined(VERSION_GSAP01) && !defined(VERSION_GSAP01_rev1)
+    if (charset->glyphCount == 0) {
+#if !defined(VERSION_GSAP01) && !defined(VERSION_GSAP01_rev1)
+        if (gGameTextFontIsSjis) {
+            charset->glyphs = sJpDiscStatusGlyphs;
+            charset->glyphCount = ARRAY_COUNT(sJpDiscStatusGlyphs);
+            charset->entries = sJpDiscStatusMessageTable;
+            charset->entryCount = ARRAY_COUNT(sJpDiscStatusMessageTable);
+        } else
+#endif
+        {
+            charset->glyphs = sDiscStatusGlyphs;
+            charset->glyphCount = ARRAY_COUNT(sDiscStatusGlyphs);
+            charset->entries = sDiscStatusMessageTable;
+            charset->entryCount = ARRAY_COUNT(sDiscStatusMessageTable);
+        }
+    }
+#endif
+    charset->textures[0] = textureAlloc(0x200, 0x60, GX_TF_I4, 0, 0, 0, 0, 1, 1);
+    glyphCount = charset->glyphCount;
+    fontMetrics[GAMETEXT_FONT_SYSTEM].glyphCount = glyphCount;
+    fontMetrics[GAMETEXT_FONT_SYSTEM].unk04 = 0x30;
+    fontMetrics[GAMETEXT_FONT_SYSTEM].unk05 = 0x20;
+    fontMetrics[GAMETEXT_FONT_SYSTEM].maxWidth = 0;
+    fontMetrics[GAMETEXT_FONT_SYSTEM].lineHeight = 0x18;
+    remainingGlyphs = glyphCount;
+    glyph = charset->glyphs;
+    atlasX = 0;
+    atlasY = 0;
+    while (remainingGlyphs--) {
+#if defined(VERSION_GSAE01_rev1) || defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+        if (curLanguage == LANGUAGE_JAPANESE) {
+#else
+        if (gGameTextFontIsSjis) {
+#endif
+#if !defined(VERSION_GSAP01) && !defined(VERSION_GSAP01_rev1)
+            int codePoint;
+            u32 sjisCode;
+            int leadByte;
+            u8 trailByte;
+            codePoint = glyph->key;
+            sjisCode = lookupSjisGlyph(codePoint);
+            leadByte = (sjisCode >> 8) & 0xff;
+            trailByte = sjisCode;
+            if (leadByte == 0) {
+                encodedChar[0] = trailByte;
+                encodedChar[1] = 0;
+            } else {
+                encodedChar[0] = leadByte;
+                encodedChar[1] = trailByte;
+                encodedChar[2] = 0;
+            }
+#endif
+        } else {
+            encodedChar[0] = glyph->key;
+            encodedChar[1] = 0;
+        }
+        OSGetFontWidth((const char*)encodedChar, &glyphWidth);
+        if (glyphWidth > fontMetrics[GAMETEXT_FONT_SYSTEM].maxWidth) {
+            fontMetrics[GAMETEXT_FONT_SYSTEM].maxWidth = glyphWidth;
+        }
+        glyphWidthTiles = glyphWidth >> 3;
+        if ((glyphWidth & 7) != 0) {
+            glyphWidthTiles++;
+        }
+        {
+            int remainingWords;
+            u32* clearWord = (u32*)glyphImage;
+            remainingWords = 0x48;
+            while (remainingWords--) {
+                *clearWord++ = 0;
+            }
+        }
+        OSGetFontTexel((const char*)encodedChar, glyphImage, 0, 6, &glyphWidth);
+        if (atlasX + 0x18 > 0x200) {
+            atlasX = 0;
+            atlasY += 0x18;
+        }
+        glyph->u = atlasX;
+        glyph->v = atlasY;
+        glyph->offsetX = 0;
+        glyph->advanceX = 0;
+        glyph->offsetY = 0;
+        glyph->advanceY = 0;
+        glyph->width = glyphWidth;
+        glyph->height = 0x18;
+        glyph->font = GAMETEXT_FONT_SYSTEM;
+        glyph->page = 0;
+        {
+            int tileColumn;
+            int tileRow;
+            int firstTileColumn;
+            int firstTileRow;
+            u32* glyphPixels;
+
+            glyphPixels = (u32*)glyphImage;
+            firstTileColumn = glyph->u >> 3;
+            firstTileRow = glyph->v >> 3;
+            tileRow = firstTileRow;
+            for (; tileRow < firstTileRow + 3; tileRow++) {
+                for (tileColumn = firstTileColumn; tileColumn < firstTileColumn + 3; tileColumn++) {
+                    gameTextCopySystemFontTile((u8*)charset->textures[0] + (tileColumn << 5), tileRow, &glyphPixels);
+                }
+            }
+        }
+        atlasX += glyphWidthTiles << 3;
+        glyph++;
+    }
+    DCFlushRange(textureGetImageData(charset->textures[0]), 0x20000);
+    mm_free(compressedFont);
+    mm_free(fontData);
+    mm_free(glyphImage);
+    mmSetForceHeap3Only(previousHeapOverride);
+    charset->status = 2;
+}
+
+void gameTextLoadForCurMap(int sourceId) {
+    u8* dirPtr;
+    u8* langPtr;
+    int oldHeap;
+    int dirId;
+    int languageId;
+    GameTextLoadSlot* slot;
+    GameTextLoadSlot* freeSlot;
+    int i;
+
+    oldHeap = mmSetForceHeap3Only(0);
+    if (getGameState() != 0 && getGameState() != 1) {
+        mmSetForceHeap3Only(oldHeap);
+        return;
+    }
+
+    gGameTextLastDir = dirId = curGameTextDir;
+    gGameTextLastLanguage = languageId = curLanguage;
+    if (dirId < 0 || dirId >= GAMETEXT_MAP_DIR_COUNT || languageId < 0 || languageId >= GAMETEXT_LANGUAGE_COUNT) {
+        mmSetForceHeap3Only(oldHeap);
+        return;
+    }
+
+    slot = curGameTexts;
+    i = GAMETEXT_LOAD_SLOT_COUNT - 1;
+    do {
+        if (slot->sourceId == sourceId) {
+            if (slot->state == 1) {
+                slot->state = 4;
+                DVDCancelAsync(&slot->fileInfo.cb, gameTextLoadCancelCallback);
+            }
+            if (slot->state == 3 && slot->active != 0) {
+                mmSetFreeDelay(0);
+                if (slot->loadHandle != NULL) {
+                    mm_free(slot->loadHandle);
+                }
+                mmSetFreeDelay(2);
+                slot->loadHandle = NULL;
+                slot->loadedSize = 0;
+                slot->active = 0;
+            }
+        }
+        slot++;
+    } while (i-- != 0);
+
+    gGameTextCharsets[sourceId].status = 1;
+    *(dirPtr = (u8*)gGameTextCharsets + (sourceId * (int)sizeof(TextFont) + (int)offsetof(TextFont, dirId))) =
+        (u8)curGameTextDir;
+    *(langPtr = (u8*)gGameTextCharsets + (sourceId * (int)sizeof(TextFont) + (int)offsetof(TextFont, languageId))) =
+        curLanguage;
+
+    freeSlot = gameTextFindFreeLoadSlot();
+
+    if (freeSlot != NULL) {
+        int slotDir = *dirPtr;
+        int slotLang = *langPtr;
+        freeSlot->state = 1;
+        freeSlot->dirId = slotDir;
+        freeSlot->languageId = slotLang;
+        freeSlot->active = 1;
+        freeSlot->sourceId = sourceId;
+        sprintf(sGameTextPath, "gametext/%s/%s.bin", sMapDirectoryNameTable[slotDir],
+                sLanguageNameTable[slotLang].name);
+        setFileInfo(&freeSlot->fileInfo);
+        freeSlot->loadHandle =
+            loadFileByPathAsync(sGameTextPath, &freeSlot->loadedSize, 1, gameTextLoadCompleteCallback);
+        setFileInfo(NULL);
+        *dirPtr = GAMETEXT_INVALID_DIR;
+        *langPtr = GAMETEXT_INVALID_LANGUAGE;
+    }
+
+    mmSetForceHeap3Only(oldHeap);
+}
+
+void loadGameTextSequence(int sequenceSlotDir, int sequenceId) {
+    GameTextLoadSlot* slot;
+    int oldHeap;
+    LanguageName* language;
+    int i;
+
+    language = &sLanguageNameTable[curLanguage];
+    oldHeap = mmSetForceHeap3Only(0);
+    if (getGameState() != 0 && getGameState() != 1) {
+        mmSetForceHeap3Only(oldHeap);
+        return;
+    }
+
+    lbl_803DC9D0 = lbl_803DC9D4;
+    if (curLanguage < 0 || curLanguage >= 6) {
+        mmSetForceHeap3Only(oldHeap);
+        return;
+    }
+
+    slot = curGameTexts;
+    i = GAMETEXT_LOAD_SLOT_COUNT - 1;
+    do {
+        if (slot->sourceId == GAMETEXT_SEQUENCE_SOURCE_ID) {
+            if (slot->state == 1) {
+                slot->state = 4;
+                DVDCancelAsync(&slot->fileInfo.cb, gameTextLoadCancelCallback);
+            }
+            if (slot->state == 3 && slot->active != 0) {
+                mmSetFreeDelay(0);
+                mm_free(slot->loadHandle);
+                mmSetFreeDelay(2);
+                slot->loadHandle = NULL;
+                slot->loadedSize = 0;
+                slot->active = 0;
+            }
+        }
+        slot++;
+    } while (i-- != 0);
+
+    gGameTextCharsets[GAMETEXT_SLOT_CUTSCENE].status = 1;
+    slot = gameTextFindFreeLoadSlot();
+
+    slot->state = 1;
+    slot->dirId = sequenceSlotDir;
+    slot->languageId = curLanguage;
+    slot->active = 1;
+    slot->sourceId = GAMETEXT_SEQUENCE_SOURCE_ID;
+    sprintf(sGameTextPath, "gametext/Sequences/%d_%s.bin", sequenceId, language->name);
+    setFileInfo(&slot->fileInfo);
+    slot->loadHandle = loadFileByPathAsync(sGameTextPath, &slot->loadedSize, 1, gameTextLoadCompleteCallback);
+    setFileInfo(NULL);
+    mmSetForceHeap3Only(oldHeap);
+}
+
+static inline void gameTextResetFont(TextFont* font) {
+    int i;
+    font->glyphCount = 0;
+    font->entryCount = 0;
+    font->glyphs = NULL;
+    font->entries = NULL;
+    font->status = 0;
+    font->timer = 0.0f;
+    font->dirId = GAMETEXT_INVALID_DIR;
+    font->languageId = GAMETEXT_INVALID_LANGUAGE;
+    for (i = ARRAY_COUNT(font->textures); i-- != 0;) {
+        font->textures[i] = NULL;
+    }
+}
+
+void gameTextInitRendererState(void) {
+    int fallbackCount;
+    int i;
+    int j;
+
+    for (i = GAMETEXT_BOX_COUNT; i-- != 0;) {
+        gTextBoxes[i].width = gTextBoxes[i].maxWidth;
+        gTextBoxes[i].height = gTextBoxes[i].maxHeight;
+    }
+
+    for (fallbackCount = GAMETEXT_FALLBACK_COUNT; fallbackCount-- != 0;) {
+        sGameTextFallbackStrings[fallbackCount] = sGameTextFallbackBuffers[fallbackCount];
+        sGameTextFallbackDefs[fallbackCount].identifier = 0xffff;
+        sGameTextFallbackDefs[fallbackCount].count = 1;
+        sGameTextFallbackDefs[fallbackCount].boxId = 0xff;
+        sGameTextFallbackDefs[fallbackCount].alignH = 0;
+        sGameTextFallbackDefs[fallbackCount].alignV = 0;
+        sGameTextFallbackDefs[fallbackCount].language = 0;
+        sGameTextFallbackDefs[fallbackCount].strings = &sGameTextFallbackStrings[fallbackCount];
+    }
+
+    for (i = GAMETEXT_BOX_COUNT; i-- != 0;) {
+        gTextBoxes[i].alpha = 0xff;
+    }
+
+    for (j = GAMETEXT_PENDING_SOURCE_COUNT; j-- != 0;) {
+        gameTextResetFont(&gGameTextCharsets[j]);
+    }
+
+    gameTextFonts = &gGameTextCharsets[GAMETEXT_SLOT_ERROR];
+    gameTextCharset = 2;
+    curLanguage = -1;
+    curGameTextDir = -1;
+    gCurTextBox = NULL;
+    gGameTextLastLanguage = -1;
+    gGameTextLastDir = -1;
+    gGameTextMeasureOnly = 0;
+    gGameTextColorR = 0xff;
+    gGameTextColorG = 0xff;
+    gGameTextColorB = 0xff;
+    gGameTextColorA = 0xff;
+    gGameTextCommandCount = 0;
+    gGameTextCommandStringCursor = sGameTextCommandStringBuffer;
+    gGameTextBufferIndex = 0;
+    gGameTextLastEntry = sGameTextFallbackDefs;
+    gCurTextBuffer = *gGameTextLastEntry->strings;
+    gGameTextShadowColorR = 0;
+    gGameTextShadowColorG = 0;
+    gGameTextShadowColorB = 0;
+    gGameTextShadowOffsetX = 5;
+    gGameTextShadowOffsetY = 5;
+    gGameTextShadowEnabled = 1;
+    lbl_803DC980 = 0;
+    gameTextBuildSystemFontAtlas();
+    curGameTextDir = 3;
+    gGameTextStringStore = (void*)mmCreateMemoryStore(0x800);
+}
+
+void gameTextInit(void) {
+    gameTextInitBoxTextures();
+    lbl_803DC980 = 1;
+    gameTextLoadDir(0x1c);
+}
+
+static inline u32 lookupSjisGlyph(int c) {
+#if defined(VERSION_GSAE01_rev1)
+    int i = 0x302;
+    u16* p = gGameTextUnicodeToSjis;
+
+    while (i--) {
+        if (p[0] == c) {
+            return p[1];
+        }
+        p++;
+    }
+#else
+    int i = 0xfe;
+    u16* p = gGameTextSjisGlyphTable;
+
+    while (i--) {
+        if (p[0] == c) {
+            return p[1];
+        }
+        p++;
+    }
+#endif
+    return 0;
+}
+
+static inline void gameTextSelectCharset(int charset) {
+    gameTextFonts = &gGameTextCharsets[charset];
+    gameTextCharset = charset;
+    if (charset == 2) {
+        GXColor color = gGameTextClearColor;
+        hudDrawRect(0, 0, 0xa00, 0x780, color);
+        gGameTextRevealActive = 0;
+    }
+}
+
+static inline void gameTextApplyWindowPosition(int index, int x, int y) {
+    gTextBoxes[index].cursorX = x;
+    gTextBoxes[index].cursorY = y;
+}
+
+void gameTextRun(void) {
+    int i;
+    GameTextLoadSlot* loadSlot;
+    TextFont* pending;
+    int commandCount;
+    int sourceId;
+    GameTextSlot* cmd;
+    GameTextLoadSlot* freeSlot;
+    int dirId;
+    int languageId;
+    GameTextBox* textBox;
+    f32 fadeLimit;
+    f32 zero;
+
+    cmd = gGameTextCommandSlots;
+
+    loadSlot = curGameTexts;
+    i = GAMETEXT_LOAD_SLOT_COUNT - 1;
+    do {
+        if (loadSlot->state == 2) {
+            gameTextFinalizeLoad(loadSlot);
+        }
+        loadSlot++;
+    } while (i-- != 0);
+
+    sourceId = 0;
+    pending = gGameTextCharsets;
+    do {
+        if (pending->dirId != GAMETEXT_INVALID_DIR) {
+            freeSlot = gameTextFindFreeLoadSlot();
+
+            if (freeSlot != NULL) {
+                dirId = pending->dirId;
+                languageId = pending->languageId;
+                freeSlot->state = 1;
+                freeSlot->dirId = (u8)dirId;
+                freeSlot->languageId = languageId;
+                freeSlot->active = 1;
+                freeSlot->sourceId = sourceId;
+                sprintf(sGameTextPath, "gametext/%s/%s.bin", sMapDirectoryNameTable[dirId],
+                        sLanguageNameTable[languageId].name);
+                setFileInfo(&freeSlot->fileInfo);
+                freeSlot->loadHandle =
+                    loadFileByPathAsync(sGameTextPath, &freeSlot->loadedSize, 1, gameTextLoadCompleteCallback);
+                setFileInfo(NULL);
+                pending->dirId = GAMETEXT_INVALID_DIR;
+                pending->languageId = GAMETEXT_INVALID_LANGUAGE;
+            }
+        }
+        pending++;
+        sourceId++;
+    } while (sourceId < GAMETEXT_PENDING_SOURCE_COUNT);
+
+    loadSlot = curGameTexts;
+    for (i = GAMETEXT_LOAD_SLOT_COUNT; i-- != 0;) {
+        if ((loadSlot->state == 5 || loadSlot->state == 6) && loadSlot->loadHandle != NULL) {
+            mm_free(loadSlot->loadHandle);
+            loadSlot->loadHandle = NULL;
+            loadSlot->loadedSize = 0;
+            loadSlot->active = 0;
+        }
+        loadSlot++;
+    }
+
+    zero = 0.0f;
+    fadeLimit = 120.0f;
+    for (i = GAMETEXT_FALLBACK_COUNT; i-- != 0;) {
+        if (sGameTextFallbackRequestDelta[i] > zero) {
+            sGameTextFallbackElapsedFrames[i] += timeDelta;
+            if (sGameTextFallbackElapsedFrames[i] > fadeLimit) {
+                sGameTextFallbackRequestDelta[i] = zero;
+                sGameTextFallbackElapsedFrames[i] = zero;
+                sprintf(*sGameTextFallbackDefs[i].strings, sGameTextBlankFormat);
+            }
+        }
+    }
+
+    if (gameTextFonts->status == 1) {
+        gameTextFonts->timer += timeDelta;
+    } else {
+        gameTextFonts->timer = 0.0f;
+    }
+
+    textBox = gTextBoxes;
+    for (i = GAMETEXT_BOX_COUNT; i != 0; i--) {
+        textBox->flags &= ~1;
+        textBox++;
+    }
+
+    gGameTextRevealActive = 0;
+    gGameTextCursorX = 0;
+    gGameTextCursorY = 0;
+
+    commandCount = gGameTextCommandCount;
+    while (commandCount-- != 0) {
+        switch (cmd->opcode) {
+        case 3: {
+            u8 c1, c2, c3;
+            c3 = cmd->arg3;
+            c2 = cmd->arg2;
+            c1 = cmd->arg1;
+            gGameTextColorR = cmd->arg0;
+            gGameTextColorG = c1;
+            gGameTextColorB = c2;
+            gGameTextColorA = c3;
+            break;
+        }
+        case GAMETEXT_COMMAND_SET_WINDOW_POSITION: {
+            gameTextApplyWindowPosition(cmd->arg0, cmd->arg1, cmd->arg2);
+            break;
+        }
+        case GAMETEXT_COMMAND_TICK_REVEAL:
+            gameTextTickReveal(cmd->arg0, (struct TextDisplayState*)cmd->arg1);
+            break;
+        case GAMETEXT_COMMAND_RENDER_BY_ID:
+            gameTextRenderById(cmd->arg0, cmd->arg1, cmd->arg2);
+            break;
+        case GAMETEXT_COMMAND_SHOW_TIME_STRING: {
+            int strId = cmd->arg0;
+            if (gCurTextBox != NULL) {
+                gameTextRenderStrs((char*)strId, gCurTextBox - gTextBoxes);
+            }
+            break;
+        }
+        case GAMETEXT_COMMAND_APPEND_STRING:
+            gameTextRenderStrs((char*)cmd->arg0, cmd->arg1);
+            break;
+        case GAMETEXT_COMMAND_SHOW_STRING_AT: {
+            int t3 = cmd->arg3;
+            int t2 = cmd->arg1;
+            int t1 = cmd->arg0;
+            textBox = &gTextBoxes[t2];
+            textBox->cursorX = cmd->arg2;
+            textBox->cursorY = t3;
+            gameTextRenderStrs((char*)t1, t2);
+            break;
+        }
+        case GAMETEXT_COMMAND_SET_WINDOW:
+            if (cmd->arg0 == 0xff) {
+                gCurTextBox = NULL;
+            } else {
+                gCurTextBox = &gTextBoxes[cmd->arg0];
+            }
+            break;
+        case 9:
+            ((void (*)(void))cmd->arg0)();
+            break;
+        case 10: {
+            u16 b1 = cmd->arg1;
+            gGameTextCursorX = (u16)cmd->arg0;
+            gGameTextCursorY = b1;
+            break;
+        }
+        case 11:
+            gGameTextCursorX = 0;
+            gGameTextCursorY = 0;
+            break;
+        case 12:
+            gGameTextShadowEnabled = cmd->arg0;
+            break;
+        case 14: {
+            u8 e1, e2;
+            e2 = cmd->arg2;
+            e1 = cmd->arg1;
+            gGameTextShadowColorR = cmd->arg0;
+            gGameTextShadowColorG = e1;
+            gGameTextShadowColorB = e2;
+            break;
+        }
+        case GAMETEXT_COMMAND_SET_SHADOW_OFFSET: {
+            int sy = cmd->arg1;
+            gGameTextShadowOffsetX = cmd->arg0;
+            gGameTextShadowOffsetY = sy;
+            break;
+        }
+        case GAMETEXT_COMMAND_SET_CHARSET:
+            gameTextSelectCharset(cmd->arg0);
+            break;
+        }
+        cmd++;
+    }
+
+    if (gGameTextRevealActive == 0) {
+        Sfx_StopFromObject(0, SFXTRIG_clock_loop);
+    }
+    gGameTextCommandCount = 0;
+    gGameTextCommandStringCursor = sGameTextCommandStringBuffer;
+
+    for (i = GAMETEXT_BOX_COUNT; i-- != 0;) {
+        gTextBoxes[i].cursorX = 0;
+        gTextBoxes[i].cursorY = 0;
+    }
+    gCurTextBox = NULL;
+}
+
+static inline GameTextLoadSlot* gameTextFindFreeLoadSlot(void) {
+    GameTextLoadSlot* slot = curGameTexts;
+    int i;
+
+    for (i = GAMETEXT_LOAD_SLOT_COUNT; i-- != 0; slot++) {
+        if (slot->active == 0) {
+            return slot;
+        }
+    }
+    return NULL;
+}
+
+int gameTextGetState(int i) {
+    return gGameTextCharsets[i].status;
+}
+
+f32 gameTextGetTimer(void) {
+    return gameTextFonts->timer;
+}
+
+int getCurLanguage(void) {
+    return curLanguage;
+}
+
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+void gameTextSetLanguage(int language) {
+    GameTextSlot* cmd;
+    int slotIndex;
+    int dirId;
+    TextFont* charsets = gGameTextCharsets;
+
+    curLanguage = language;
+    if (language == gGameTextLastLanguage) {
+        return;
+    }
+
+    dirId = curGameTextDir;
+    switch (language) {
+    case LANGUAGE_ENGLISH:
+        charsets[GAMETEXT_SLOT_ERROR].entries = sDiscStatusMessageTable;
+        charsets[GAMETEXT_SLOT_ERROR].entryCount = 7;
+        break;
+    case LANGUAGE_FRENCH:
+        charsets[GAMETEXT_SLOT_ERROR].entries = sFrDiscStatusMessageTable;
+        charsets[GAMETEXT_SLOT_ERROR].entryCount = 7;
+        break;
+    case LANGUAGE_GERMAN:
+        charsets[GAMETEXT_SLOT_ERROR].entries = sDeDiscStatusMessageTable;
+        charsets[GAMETEXT_SLOT_ERROR].entryCount = 7;
+        break;
+    case LANGUAGE_ITALIAN:
+        charsets[GAMETEXT_SLOT_ERROR].entries = sItDiscStatusMessageTable;
+        charsets[GAMETEXT_SLOT_ERROR].entryCount = 7;
+        break;
+    case LANGUAGE_SPANISH:
+        charsets[GAMETEXT_SLOT_ERROR].entries = sEsDiscStatusMessageTable;
+        charsets[GAMETEXT_SLOT_ERROR].entryCount = 7;
+        break;
+    }
+
+    gameTextFonts = &gGameTextCharsets[GAMETEXT_SLOT_HUD];
+    gameTextCharset = GAMETEXT_SLOT_HUD;
+    if (gameTextDrawFunc == NULL) {
+        slotIndex = gGameTextCommandCount;
+        gGameTextCommandCount = slotIndex + 1;
+        cmd = &gGameTextCommandSlots[slotIndex];
+        cmd->opcode = GAMETEXT_COMMAND_SET_CHARSET;
+        cmd->arg0 = GAMETEXT_SLOT_HUD;
+    }
+    gameTextLoadDir(0x1c);
+    gameTextFonts = &gGameTextCharsets[GAMETEXT_SLOT_DIALOGUE];
+    gameTextCharset = GAMETEXT_SLOT_DIALOGUE;
+    if (gameTextDrawFunc == NULL) {
+        slotIndex = gGameTextCommandCount;
+        gGameTextCommandCount = slotIndex + 1;
+        cmd = &gGameTextCommandSlots[slotIndex];
+        cmd->opcode = GAMETEXT_COMMAND_SET_CHARSET;
+        cmd->arg0 = GAMETEXT_SLOT_DIALOGUE;
+    }
+    gameTextLoadDir(dirId);
+}
+#endif
+
+int getCurGameText(void) {
+    return curGameTextDir;
+}
+
+void gameTextSetCharset(int charset, int flags) {
+    if (gameTextDrawFunc != NULL || (flags & 1)) {
+        gameTextSelectCharset(charset);
+    }
+    if (gameTextDrawFunc == NULL || (flags & 2)) {
+        int i = gGameTextCommandCount;
+        GameTextSlot* cmd;
+        gGameTextCommandCount = i + 1;
+        cmd = &gGameTextCommandSlots[i];
+        cmd->opcode = 0xf;
+        cmd->arg0 = charset;
+    }
+}
+
+int gameTextGetCharset(void) {
+    return gameTextCharset;
+}
+
+void gameTextLoadDir(int dirId) {
+    GameTextSlot* cmd;
+    GXColor color;
+    int slotIndex;
+
+    gGameTextColorR = 0xff;
+    gGameTextColorG = 0xff;
+    gGameTextColorB = 0xff;
+    gGameTextColorA = 0xff;
+
+    if (dirId == 3) {
+        gameTextFonts = &gGameTextCharsets[GAMETEXT_SLOT_ERROR];
+        gameTextCharset = GAMETEXT_SLOT_ERROR;
+        color = gGameTextClearColor;
+        hudDrawRect(0, 0, 0xa00, 0x780, color);
+        gGameTextRevealActive = 0;
+        if (gameTextDrawFunc == NULL) {
+            slotIndex = gGameTextCommandCount;
+            gGameTextCommandCount = slotIndex + 1;
+            cmd = &gGameTextCommandSlots[slotIndex];
+            cmd->opcode = GAMETEXT_COMMAND_SET_CHARSET;
+            cmd->arg0 = GAMETEXT_SLOT_ERROR;
+        }
+    } else if (dirId == 0x1c) {
+        curGameTextDir = dirId;
+        gameTextFonts = &gGameTextCharsets[GAMETEXT_SLOT_HUD];
+        gameTextCharset = GAMETEXT_SLOT_HUD;
+        if (gameTextDrawFunc == NULL) {
+            slotIndex = gGameTextCommandCount;
+            gGameTextCommandCount = slotIndex + 1;
+            cmd = &gGameTextCommandSlots[slotIndex];
+            cmd->opcode = GAMETEXT_COMMAND_SET_CHARSET;
+            cmd->arg0 = GAMETEXT_SLOT_HUD;
+        }
+        gameTextLoadForCurMap(GAMETEXT_SLOT_HUD);
+    } else {
+        gameTextFonts = &gGameTextCharsets[GAMETEXT_SLOT_DIALOGUE];
+        gameTextCharset = GAMETEXT_SLOT_DIALOGUE;
+        if (gameTextDrawFunc == NULL) {
+            slotIndex = gGameTextCommandCount;
+            gGameTextCommandCount = slotIndex + 1;
+            cmd = &gGameTextCommandSlots[slotIndex];
+            cmd->opcode = GAMETEXT_COMMAND_SET_CHARSET;
+            cmd->arg0 = GAMETEXT_SLOT_DIALOGUE;
+        }
+        curGameTextDir = dirId;
+        if ((subtitleIsActive() == 0 || gameTextSaveDir(dirId) == 0) && curGameTextDir != gGameTextLastDir) {
+            gameTextLoadForCurMap(GAMETEXT_SLOT_DIALOGUE);
+        }
+    }
+}
+
+/* Byte parameters retain the public int prototype through default argument promotion. */
+void gameTextSetColor(r, g, b, a) u8 r, g, b, a;
+{
+    if (gameTextDrawFunc != NULL) {
+        gGameTextColorR = r;
+        gGameTextColorG = g;
+        gGameTextColorB = b;
+        gGameTextColorA = a;
+    } else {
+        int i = gGameTextCommandCount;
+        GameTextSlot* cmd;
+        gGameTextCommandCount = i + 1;
+        cmd = &gGameTextCommandSlots[i];
+        cmd->opcode = 3;
+        cmd->arg0 = (u8)r;
+        cmd->arg1 = (u8)g;
+        cmd->arg2 = (u8)b;
+        cmd->arg3 = (u8)a;
+    }
+}
+
+void gameTextSetWindowStrPos(int idx, int x, int y) {
+    if (gameTextDrawFunc != NULL) {
+        gameTextApplyWindowPosition(idx, x, y);
+    } else {
+        int i = gGameTextCommandCount;
+        GameTextSlot* cmd;
+        gGameTextCommandCount = i + 1;
+        cmd = &gGameTextCommandSlots[i];
+        cmd->opcode = GAMETEXT_COMMAND_SET_WINDOW_POSITION;
+        cmd->arg0 = idx;
+        cmd->arg1 = x;
+        cmd->arg2 = y;
+    }
+}
+
+void gameTextSetCursor(u16 x, u16 y, int flags) {
+    if (flags & 1) {
+        gGameTextCursorX = x;
+        gGameTextCursorY = y;
+    }
+    if (flags & 2) {
+        int i = gGameTextCommandCount;
+        GameTextSlot* cmd;
+        gGameTextCommandCount = i + 1;
+        cmd = &gGameTextCommandSlots[i];
+        cmd->opcode = 0xa;
+        cmd->arg0 = x;
+        cmd->arg1 = y;
+    }
+}
+
+void gameTextResetCursor(int flags) {
+    if (flags & 1) {
+        gGameTextCursorX = 0;
+        gGameTextCursorY = 0;
+    }
+    if (flags & 2) {
+        GameTextCommand* p = &gGameTextCommandSlots[gGameTextCommandCount++].opcode;
+        *p = GAMETEXT_COMMAND_RESET_CURSOR;
+    }
+}
+
+GameTextDef* gameTextGet(int textId) {
+    TextFont* fonts;
+    GameTextDef* entry;
+    int count;
+    int slotIndex;
+    GameTextDef* cachedEntry;
+    f32 zero;
+    f32* cachedRequestDelta;
+
+    fonts = gameTextFonts;
+
+    if (fonts->status != 2) {
+        gameTextSelectFallbackBuffer();
+
+        switch (gameTextFonts->status) {
+        case 0:
+            sprintf(gCurTextBuffer, "<uninitialised>");
+            break;
+        case 1:
+            sprintf(gCurTextBuffer, "<loading>");
+            break;
+        case 3:
+            sprintf(gCurTextBuffer, "<file empty!>");
+            break;
+        case 4:
+            sprintf(gCurTextBuffer, "<no file!>");
+            break;
+        }
+        return gGameTextLastEntry;
+    }
+
+    entry = fonts->entries;
+    count = fonts->entryCount;
+    while (count != 0) {
+        if (entry->identifier == textId) {
+            return entry;
+        }
+        entry++;
+        count--;
+    }
+
+    slotIndex = GAMETEXT_FALLBACK_COUNT;
+    cachedEntry = sGameTextFallbackDefs + GAMETEXT_FALLBACK_COUNT;
+    while (cachedEntry--, slotIndex-- != 0) {
+        if (cachedEntry->identifier == textId) {
+            zero = sGameTextFallbackElapsedFrames[slotIndex] = 0.0f;
+            cachedRequestDelta = &sGameTextFallbackRequestDelta[slotIndex];
+            if (zero < 120.0f) {
+                f32 requestDelta = zero + timeDelta;
+                *cachedRequestDelta = requestDelta;
+                if (requestDelta >= 120.0f) {
+                    sprintf(*cachedEntry->strings, "<%d's not in %s>", textId, sMapDirectoryNameTable[curGameTextDir]);
+                }
+            }
+            return cachedEntry;
+        }
+    }
+
+    gameTextSelectFallbackBuffer();
+    sprintf(gCurTextBuffer, sGameTextBlankFormat, textId, sMapDirectoryNameTable[curGameTextDir]);
+    gGameTextLastEntry->identifier = textId;
+    *gGameTextFallbackRequestDelta = 0.0f;
+    return gGameTextLastEntry;
+}
+
+void* gameTextGetStr(int textId) {
+    GameTextDef* textEntry;
+
+    if (gameTextFonts->status != 2) {
+        gameTextSelectFallbackBuffer();
+        switch (gameTextFonts->status) {
+        case 0:
+            sprintf(gCurTextBuffer, "<uninitialised>");
+            break;
+        case 1:
+            sprintf(gCurTextBuffer, "<loading>");
+            break;
+        case 3:
+            sprintf(gCurTextBuffer, "<file empty!>");
+            break;
+        case 4:
+            sprintf(gCurTextBuffer, "<no file!>");
+            break;
+        }
+        return gGameTextLastEntry;
+    }
+    textEntry = gameTextGet(textId);
+    return *textEntry->strings;
+}
+
+void* gameTextGetPhrase(int textId, int phraseIndex) {
+    GameTextDef* entry;
+
+    if (gameTextFonts->status != 2) {
+        gameTextSelectFallbackBuffer();
+        switch (gameTextFonts->status) {
+        case 0:
+            sprintf(gCurTextBuffer, "<uninitialised>");
+            break;
+        case 1:
+            sprintf(gCurTextBuffer, "<loading>");
+            break;
+        case 3:
+            sprintf(gCurTextBuffer, "<file empty!>");
+            break;
+        case 4:
+            sprintf(gCurTextBuffer, "<no file!>");
+            break;
+        }
+        return gGameTextLastEntry;
+    }
+
+    entry = gameTextGet(textId);
+    if (entry->identifier == 0xffff) {
+        gameTextSelectFallbackBuffer();
+        sprintf(gCurTextBuffer, "<%d's not in %s>", textId, sMapDirectoryNameTable[curGameTextDir]);
+        return gGameTextLastEntry;
+    }
+
+    if (phraseIndex >= entry->count) {
+        gameTextSelectFallbackBuffer();
+        sprintf(gCurTextBuffer, "<%d, doesn't have phrase %d>", textId, phraseIndex);
+        return gGameTextLastEntry;
+    }
+
+    return entry->strings[phraseIndex];
+}
+
+static inline void gameTextSelectFallbackBuffer(void) {
+    gGameTextBufferIndex++;
+    if (gGameTextBufferIndex >= GAMETEXT_FALLBACK_COUNT) {
+        gGameTextBufferIndex = 0;
+    }
+    gGameTextLastEntry = &sGameTextFallbackDefs[gGameTextBufferIndex];
+    gCurTextBuffer = *gGameTextLastEntry->strings;
+    gGameTextLastEntry->identifier = 0xffff;
+    gGameTextFallbackRequestDelta = &sGameTextFallbackRequestDelta[gGameTextBufferIndex];
+}
+
+int getControlCharLen(u32 c) {
+    CtrlCharEntry* p = gGameTextCtrlCodeArgCounts;
+    int i = 46;
+    while (i--) {
+        if (p->key == c) {
+            return p->len;
+        }
+        p++;
+    }
+    return 0;
+}
+
+int GameText_FindControlCodeArgs(u8* str, u32 target, int* out) {
+    int off;
+    int len;
+    u32 ch;
+    int n;
+    int i;
+
+    off = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while ((ch = utf8GetNextChar(str + off, &len)) != 0) {
+        off += len;
+        if (ch >= 0xE000 && ch <= 0xF8FF) {
+            n = ctrlCharLen(ch);
+            if (ch == target) {
+                for (i = 0; i < n; i++) {
+                    u32 hi = str[off++];
+                    u32 lo = str[off++];
+                    out[i] = (hi << 8) | lo;
+                }
+                return 1;
+            }
+            off += n * 2;
+        }
+    }
+    return 0;
+}
+
+SubtitleCmd* subtitleParseControlCmds(char* str, int* count) {
+    int off;
+    int n;
+    u8* tbl;
+    int len;
+    u32 ch;
+
+    off = 0;
+    n = 0;
+    /* Retail repeatedly overwrites the first record; the cursor never advances. */
+    tbl = (u8*)sSubtitleCtrlCmdScratch;
+    if ((u8*)str == NULL) {
+        return NULL;
+    }
+    while ((ch = utf8GetNextChar((u8*)(str + off), &len)) != 0) {
+        off += len;
+        if (ch >= 0xE000 && ch <= 0xF8FF) {
+            int i;
+            int n2;
+            u16* q;
+
+            n++;
+            if (n > SUBTITLE_CONTROL_COMMAND_COUNT) {
+                break;
+            }
+            *(u32*)tbl = ch;
+            q = (u16*)(tbl + 4);
+            n2 = ctrlCharLen(ch);
+            if (n2 > 4) {
+                n2 = 4;
+            }
+            for (i = 0; i < n2; i++) {
+                u32 hi = ((u8*)str)[off++];
+                u32 lo = ((u8*)str)[off++];
+                *q++ = (hi << 8) | lo;
+            }
+        }
+    }
+    if (n == 0) {
+        return NULL;
+    }
+    {
+        int size = n * sizeof(SubtitleCmd);
+        u8* buf = mmAlloc(size, 0x1a, 0);
+        /* The seventeenth command overreads 12 path-buffer bytes beyond scratch. */
+        memcpy(buf, (u8*)sSubtitleCtrlCmdScratch, size);
+        *count = n;
+        return (SubtitleCmd*)buf;
+    }
+}
+
+/* Scale commands encode 1.0 as 0x100. */
+static inline f32 gameTextDecodeScale(int scale256) {
+    return (f32)scale256 / 256.0f;
+}
+
+void gameTextMeasureString(u8* str, f32 scale, f32* outWidth, f32* outZero, f32* outMaxFontWidth, f32* outMaxLineHeight,
+                           int fontId) {
+    int byteOffset;
+    u32 codePoint;
+    int encodedLength;
+    int argumentCount;
+    int argumentIndex;
+    TextGlyph* glyph;
+    const FontMetrics* metrics;
+    f32 width;
+    f32 scaledFontWidth;
+    f32 scaledLineHeight;
+    int arguments[8];
+
+    byteOffset = 0;
+    width = 0.0f;
+    if (str == NULL) {
+        return;
+    }
+    if (fontId == -1) {
+        if (gameTextCharset == GAMETEXT_SLOT_ERROR) {
+            fontId = GAMETEXT_FONT_SYSTEM;
+        } else {
+            fontId = sLanguageNameTable[curLanguage].fontId;
+        }
+    }
+    metrics = &gGameTextFontMetrics[fontId];
+    if (fontId != GAMETEXT_FONT_FACE) {
+        if (outMaxFontWidth != NULL) {
+            *outMaxFontWidth = (f32)(u32)metrics->maxWidth * scale;
+        }
+        if (outMaxLineHeight != NULL) {
+            *outMaxLineHeight = (f32)(u32)metrics->lineHeight * scale;
+        }
+    }
+
+    while ((codePoint = utf8GetNextChar(str + byteOffset, &encodedLength)) != 0) {
+        byteOffset += encodedLength;
+        if (codePoint >= 0xe000 && codePoint <= 0xf8ff) {
+            argumentCount = ctrlCharLen(codePoint);
+            for (argumentIndex = 0; argumentIndex < argumentCount; argumentIndex++) {
+                int hi = str[byteOffset++];
+                int lo = str[byteOffset++];
+                arguments[argumentIndex] = (hi << 8) | lo;
+            }
+            switch (codePoint) {
+            case TEXT_CTRL_SCALE:
+                scale = gameTextDecodeScale(arguments[0]);
+                break;
+            case TEXT_CTRL_FONT:
+                fontId = arguments[0];
+                metrics = &gGameTextFontMetrics[fontId];
+                if (fontId != GAMETEXT_FONT_FACE) {
+                    scaledFontWidth = (f32)(u32)metrics->maxWidth * scale;
+                    if (outMaxFontWidth != NULL && scaledFontWidth > *outMaxFontWidth) {
+                        *outMaxFontWidth = scaledFontWidth;
+                    }
+                    scaledLineHeight = (f32)(u32)metrics->lineHeight * scale;
+                    if (outMaxLineHeight != NULL && scaledLineHeight > *outMaxLineHeight) {
+                        *outMaxLineHeight = scaledLineHeight;
+                    }
+                }
+                break;
+            }
+            continue;
+        }
+
+        glyph = findGlyph(codePoint, fontId);
+        if (glyph == NULL || fontId == GAMETEXT_FONT_FACE) {
+            continue;
+        }
+        width += scale * (f32)(glyph->advanceX + (glyph->width + glyph->offsetX));
+    }
+
+    if (outWidth != NULL) {
+        *outWidth = width;
+    }
+    if (outZero != NULL) {
+        *outZero = 0.0f;
+    }
+}
+
+int GameText_CountPrintableChars(u8* str) {
+    int count;
+    int off;
+    int len;
+    u32 ch;
+
+    count = 0;
+    off = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while ((ch = utf8GetNextChar(str + off, &len)) != 0) {
+        off += len;
+        if (ch >= 0xE000 && ch <= 0xF8FF) {
+            off += ctrlCharLen(ch) * 2;
+        } else {
+            count++;
+        }
+    }
+    return count;
+}
+
+static void translateToDinoLanguage(u8* str) {
+    int byteOff = 0;
+    u32 ch;
+    int charLen;
+    u8* p;
+
+    if (str == NULL) {
+        return;
+    }
+    while (p = str + byteOff, (ch = utf8GetNextChar(p, &charLen)) != 0) {
+        if (ch >= 0xe000 && ch <= 0xf8ff) {
+            byteOff += ctrlCharLen(ch) * 2;
+        } else {
+            int base;
+            if (ch >= 0x61 && ch <= 0x7a) {
+                base = 0x61;
+            } else if (ch >= 0x41 && ch <= 0x5a) {
+                base = 0x41;
+            } else {
+                base = 0;
+            }
+            if (base != 0) {
+                *p = sGameTextGlyphOrder[ch - base] - 0x61 + base;
+            }
+        }
+        byteOff += charLen;
+    }
+}
+
+static inline int gameTextCountSpaces(u8* text) {
+    int offset;
+    int spaceCount;
+    u32 codePoint;
+    int charLength;
+
+    offset = 0;
+    spaceCount = offset;
+    while ((codePoint = utf8GetNextChar(text + offset, &charLength)) != 0) {
+        offset += charLength;
+        if (codePoint == 0x20) {
+            spaceCount++;
+        }
+        if (codePoint >= 0xe000 && codePoint <= 0xf8ff) {
+            offset += ctrlCharLen(codePoint) * 2;
+        }
+    }
+    return spaceCount;
+}
+
+void textRenderStr(char* str, GameTextBox* win, f32 x, f32 y, f32 lineH, int mode) {
+    int realign;
+    f32 fx0, fy0, fx1, fy1;
+    int byteOff;
+    f32 u0, v0;
+    int charLen;
+    int controlArgCount;
+    int i;
+    int skipGlyph;
+    TextGlyph* g;
+    u8* p;
+    GameTextBox* winBase;
+    int glyphLang;
+    Texture* tex;
+    f32 spaceExtra;
+    f32 measW;
+    f32 measN;
+    int curTexPage;
+    u32 ch;
+    int params[8];
+    u32 scisX, scisY, scisW, scisH;
+    f32 e710;
+
+    byteOff = 0;
+    spaceExtra = 0.0f;
+    if (gameTextCharset == 2) {
+        glyphLang = 6;
+    } else {
+        glyphLang = sLanguageNameTable[curLanguage].fontId;
+    }
+    curTexPage = -1;
+    realign = 1;
+    if (str == NULL || gameTextFonts->status != 2) {
+        return;
+    }
+
+    if (curLanguage != 4 && mode == 1 && saveFileStruct_isCheatActive(CHEAT_DINO_LANGUAGE) && win == &gTextBoxes[10]) {
+        translateToDinoLanguage((u8*)str);
+    }
+
+    gameTextMeasureString((u8*)str, gGameTextScale, &measW, &measN, 0, 0, -1);
+    if (gGameTextMeasureOnly == 0) {
+        setTextColor(0, gGameTextColorR, gGameTextColorG, gGameTextColorB, gGameTextColorA);
+        _textSetColor(0, gGameTextColorR, gGameTextColorG, gGameTextColorB, gGameTextColorA);
+        gxTevResetStages();
+        textRenderSetup();
+        gxTevCommitStages();
+        gxSetAlphaBlendNoZTest();
+    }
+
+    x += win->x;
+    y += win->y;
+    winBase = gTextBoxes;
+
+    while (p = (u8*)str + byteOff, (ch = utf8GetNextChar(p, &charLen)) != 0) {
+        byteOff += charLen;
+        skipGlyph = 0;
+        if (ch >= 0xe000 && ch <= 0xf8ff) {
+            controlArgCount = ctrlCharLen(ch);
+            for (i = 0; i < controlArgCount; i++) {
+                int hi = ((u8*)str)[byteOff++];
+                int lo = ((u8*)str)[byteOff++];
+                params[i] = (hi << 8) | lo;
+            }
+            switch (ch) {
+            case TEXT_CTRL_SCALE:
+                gGameTextScale = gameTextDecodeScale(params[0]);
+                break;
+            case TEXT_CTRL_FONT:
+                glyphLang = params[0];
+                break;
+            case TEXT_CTRL_ALIGN_LEFT:
+                win->alignment = TEXT_ALIGN_LEFT;
+                realign = 1;
+                break;
+            case TEXT_CTRL_ALIGN_RIGHT:
+                win->alignment = TEXT_ALIGN_RIGHT;
+                realign = 1;
+                break;
+            case TEXT_CTRL_ALIGN_CENTER:
+                win->alignment = TEXT_ALIGN_CENTER;
+                realign = 1;
+                break;
+            case TEXT_CTRL_ALIGN_JUSTIFY:
+                win->alignment = TEXT_ALIGN_JUSTIFY;
+                realign = 1;
+                break;
+            case TEXT_CTRL_COLOR:
+                if (mode == 0) {
+                    {
+                        u8 c3 = params[3] * (gGameTextColorA + 1) >> 8;
+                        u8 c2 = params[2];
+                        u8 c1 = params[1];
+                        u8 c0 = params[0];
+                        gGameTextColorR = c0;
+                        gGameTextColorG = c1;
+                        gGameTextColorB = c2;
+                        gGameTextColorA = c3;
+                    }
+                    if (gGameTextMeasureOnly == 0) {
+                        setTextColor(0, gGameTextColorR, gGameTextColorG, gGameTextColorB, gGameTextColorA);
+                        _textSetColor(0, gGameTextColorR, gGameTextColorG, gGameTextColorB, gGameTextColorA);
+                        gxTevResetStages();
+                        textRenderSetup();
+                        gxTevCommitStages();
+                        gxSetAlphaBlendNoZTest();
+                    }
+                }
+                skipGlyph = 1;
+                break;
+            }
+            if (skipGlyph) {
+                continue;
+            }
+        } else {
+            if (mode == 0) {
+                gGameTextDrawnCharIndex++;
+            }
+        }
+
+        if (realign != 0) {
+            switch (win->alignment) {
+            case TEXT_ALIGN_LEFT:
+                spaceExtra = 0.0f;
+                break;
+            case TEXT_ALIGN_RIGHT:
+                spaceExtra = 0.0f;
+                gameTextMeasureString(p, gGameTextScale, &measW, NULL, 0, 0, -1);
+                x = win->x + (win->width - measW);
+                break;
+            case TEXT_ALIGN_CENTER:
+                spaceExtra = 0.0f;
+                gameTextMeasureString(p, gGameTextScale, &measW, NULL, 0, 0, -1);
+                x = (win->width - measW) / 2.0f + win->x;
+                break;
+            case TEXT_ALIGN_JUSTIFY: {
+                int spaceCount;
+                gameTextMeasureString(p, gGameTextScale, &measW, NULL, 0, 0, -1);
+                spaceCount = gameTextCountSpaces(p);
+                spaceExtra = (win->width - measW) / spaceCount;
+                break;
+            }
+            }
+            realign = 0;
+        }
+
+        g = findGlyph(ch, glyphLang);
+        if (g == NULL) {
+            continue;
+        }
+
+        if (ch == 0xa) {
+            x = 0.0f;
+            y += lineH;
+            continue;
+        }
+        if (ch == 0x20) {
+            x = gGameTextScale * (f32)(g->advanceX + (g->width + g->offsetX)) + x;
+            x += spaceExtra;
+            continue;
+        }
+
+        u0 = (f32)(g->u << 5);
+        v0 = (f32)(g->v << 5);
+        e710 = 4.0f;
+        fx0 = e710 * (x + (f32)((f32)g->offsetX * gGameTextScale));
+        fy0 = e710 * (y + (f32)((f32)g->offsetY * gGameTextScale));
+        fx1 = e710 * ((f32)(u32)g->width * gGameTextScale) + fx0;
+        fy1 = e710 * ((f32)(u32)g->height * gGameTextScale) + fy0;
+        if (fx0 < 0.0f && fx1 > 0.0f) {
+            u0 = 8.0f * -fx0 + u0;
+            fx0 = 0.0f;
+        }
+        if (fy0 < 0.0f && fy1 > 0.0f) {
+            v0 = 8.0f * -fy0 + v0;
+            fy0 = 0.0f;
+        }
+
+        if (gGameTextMeasureOnly != 0) {
+            if (fx0 < gGameTextBoundsMinX) {
+                gGameTextBoundsMinX = fx0;
+            }
+            if (fx1 > gGameTextBoundsMaxX) {
+                gGameTextBoundsMaxX = fx1;
+            }
+            if (fy0 < gGameTextBoundsMinY) {
+                gGameTextBoundsMinY = fy0;
+            }
+            if (fy1 > gGameTextBoundsMaxY) {
+                gGameTextBoundsMaxY = fy1;
+            }
+        } else {
+            if (g->font == GAMETEXT_FONT_FLAG) {
+                int shift = gGameTextFlagGlyphRaise << 2;
+                fy0 -= shift;
+                fy1 -= shift;
+                GXGetScissor(&scisX, &scisY, &scisW, &scisH);
+                GXSetScissor(scisX, (scisY >= gGameTextFlagGlyphRaise) ? scisY - gGameTextFlagGlyphRaise : 0, scisW,
+                             scisH);
+            }
+            if (g->font == GAMETEXT_FONT_FACE) {
+                int iw = g->advanceX + (g->width + g->offsetX);
+                int ih = g->advanceY + (g->height + g->offsetY);
+                GXGetScissor(&scisX, &scisY, &scisW, &scisH);
+                gxSetScissorRect(0, 0, winBase[126].x, winBase[126].y, winBase[126].x + winBase[126].width,
+                                 winBase[126].y + winBase[126].height);
+                fx0 = (f32)(winBase[126].x + ((winBase[126].width - iw) >> 1));
+                fx1 = fx0 + iw;
+                fy0 = (f32)(winBase[126].y + ((winBase[126].height - ih) >> 1));
+                fy1 = fy0 + ih;
+                fx0 *= 4.0f;
+                fx1 *= 4.0f;
+                fy0 *= 4.0f;
+                fy1 *= 4.0f;
+            }
+
+            if (mode != 0) {
+                int ox = gGameTextShadowOffsetX;
+                int oy = gGameTextShadowOffsetY;
+                fx0 += ox;
+                fx1 += ox;
+                fy0 += oy;
+                fy1 += oy;
+            }
+
+            if (gGameTextMeasureOnly == 0) {
+                if (curTexPage != g->page) {
+                    curTexPage = g->page;
+                    tex = gameTextFonts->textures[g->page];
+                    selectTexture(tex, 0);
+                    if (gGameTextFontMetrics[g->font].colorMode == GAMETEXT_FONT_COLOR_TEXTURE) {
+                        if (mode != 0) {
+                            setTextColor(0, 0, 0, 0, gGameTextColorA);
+                        } else {
+                            setTextColor(0, 0xff, 0xff, 0xff, gGameTextColorA);
+                            gxTevResetStages();
+                            gxTevTextureTimesColor1Stage();
+                            gxTevCommitStages();
+                        }
+                    } else {
+                        setTextColor(0, gGameTextColorR, gGameTextColorG, gGameTextColorB, gGameTextColorA);
+                        _textSetColor(0, gGameTextColorR, gGameTextColorG, gGameTextColorB, gGameTextColorA);
+                        gxTevResetStages();
+                        textRenderSetup();
+                        gxTevCommitStages();
+                    }
+                }
+            }
+
+            if (gGameTextRevealActive != 0 && mode == 0 && g->font != GAMETEXT_FONT_FACE &&
+                gGameTextDrawnCharIndex >= gGameTextRevealProgress) {
+                setTextColor(0, 0, 0, 0, 0);
+            }
+
+            if (gameTextDrawFunc != NULL) {
+                f32 sH = 32.0f * tex->height;
+                f32 sW = 32.0f * tex->width;
+                gameTextDrawFunc(fx0, fy0, fx1, fy1, u0 / sW, v0 / sH, (u0 + (f32)(g->width << 5)) / sW,
+                                 (v0 + (f32)(g->height << 5)) / sH);
+            } else {
+                f32 sH = 32.0f * tex->height;
+                f32 sW = 32.0f * tex->width;
+                textRenderChar((int)fx0, fy0, fx1, fy1, u0 / sW, v0 / sH, (u0 + (f32)(g->width << 5)) / sW,
+                               (v0 + (f32)(g->height << 5)) / sH);
+            }
+
+            if (g->font == GAMETEXT_FONT_FLAG || g->font == GAMETEXT_FONT_FACE) {
+                GXSetScissor(scisX, scisY, scisW, scisH);
+            }
+        }
+
+        if ((int)g->font != GAMETEXT_FONT_FACE) {
+            x = gGameTextScale * (f32)(g->advanceX + (g->width + g->offsetX)) + x;
+        }
+    }
+}
+
+static inline TextGlyph* findGlyph(u32 ch, int glyphLang) {
+    int cnt;
+    TextGlyph* g;
+
+    g = gameTextFonts->glyphs;
+    cnt = gameTextFonts->glyphCount;
+    while (cnt-- != 0) {
+        if (g->key == ch && g->font == glyphLang) {
+            return g;
+        }
+        g++;
+    }
+    return NULL;
+}
+
+void gameTextSetWindow(GameTextBox* textBox) {
+    int i;
+    GameTextSlot* cmd;
+    int idx;
+
+    if (textBox == NULL) {
+        i = gGameTextCommandCount;
+        gGameTextCommandCount = i + 1;
+        cmd = &gGameTextCommandSlots[i];
+        gCurTextBox = NULL;
+        cmd->opcode = 8;
+        cmd->arg0 = 0xff;
+    } else {
+        i = gGameTextCommandCount;
+        gGameTextCommandCount = i + 1;
+        cmd = &gGameTextCommandSlots[i];
+        idx = textBox - gTextBoxes;
+        if (idx == 0xff) {
+            gCurTextBox = NULL;
+        } else {
+            gCurTextBox = &gTextBoxes[idx];
+        }
+        cmd->opcode = 8;
+        cmd->arg0 = idx;
+    }
+}
+
+void gameTextSetWindowById(int boxId) {
+    int i = gGameTextCommandCount;
+    GameTextSlot* cmd;
+    GameTextBox* box;
+
+    gGameTextCommandCount = i + 1;
+    cmd = &gGameTextCommandSlots[i];
+    if (boxId == 0xff) {
+        box = NULL;
+    } else {
+        box = &gTextBoxes[boxId];
+    }
+    gCurTextBox = box;
+    cmd->opcode = 8;
+    cmd->arg0 = boxId;
+}
+
+static inline int ctrlCharLen(u32 c) {
+    CtrlCharEntry* p = gGameTextCtrlCodeArgCounts;
+    int i = 46;
+    while (i--) {
+        if (p->key == c) {
+            return p->len;
+        }
+        p++;
+    }
+    return 0;
+}
+
+GameTextBox* gameTextGetCurBox(void) {
+    return gCurTextBox;
+}
+
+GameTextBox* gameTextGetBox(int box) {
+    return &gTextBoxes[box];
+}
+
+char** gameTextWrapLines(char* str, f32 maxWidth, f32 scale, int* outLineCount, f32* outMaxLineHeight) {
+    int tableBytes;
+    int* lastBoundary;
+    int* copyBoundary;
+    int lineCount;
+    char** lines;
+    int scanOffset;
+    int copyOffset;
+    int wrapOffset;
+    int hasSpace;
+    f32 lineWidth;
+    char* readCursor;
+    int i;
+    u32 codePoint;
+    int lineStarts[32];
+    int arguments[8];
+    int fontId;
+    int byteCount;
+    const FontMetrics* metrics;
+    lineCount = 0;
+    tableBytes = 0;
+    scanOffset = 0;
+    wrapOffset = 0;
+    hasSpace = 0;
+    lineWidth = 0.0f;
+    if (gameTextCharset == GAMETEXT_SLOT_ERROR) {
+        i = GAMETEXT_FONT_SYSTEM;
+    } else {
+        i = sLanguageNameTable[curLanguage].fontId;
+    }
+    fontId = i;
+    metrics = &gGameTextFontMetrics[i];
+
+    *outLineCount = 0;
+    if (outMaxLineHeight != NULL) {
+        *outMaxLineHeight = (f32)(u32)metrics->lineHeight * scale;
+    }
+    if (str == NULL) {
+        return 0;
+    }
+    if (gGameTextCursorX != 0 || gGameTextCursorY != 0) {
+        maxWidth = (f32)(u32)gGameTextCursorX;
+    }
+
+    lineStarts[0] = 0;
+    copyBoundary = lineStarts;
+    lastBoundary = copyBoundary;
+
+    while ((codePoint = utf8GetNextChar((u8*)(str + scanOffset), &byteCount)) != 0) {
+        scanOffset += byteCount;
+        if (codePoint == 0x20) {
+            wrapOffset = scanOffset;
+            hasSpace = 1;
+        }
+        if (codePoint >= 0xe000 && codePoint <= 0xf8ff) {
+            int argumentIndex;
+            int metricsChanged;
+            i = gameTextCtrlCharLen(codePoint);
+            for (argumentIndex = 0; argumentIndex < i; argumentIndex++) {
+                int hi = ((u8*)str)[scanOffset++];
+                int lo = ((u8*)str)[scanOffset++];
+                arguments[argumentIndex] = (hi << 8) | lo;
+            }
+            metricsChanged = 1;
+            switch (codePoint) {
+            case TEXT_CTRL_SCALE:
+                scale = gameTextDecodeScale(arguments[0]);
+                break;
+            case TEXT_CTRL_FONT:
+                fontId = arguments[0];
+                metrics = &gGameTextFontMetrics[fontId];
+                break;
+            default:
+                metricsChanged = 0;
+            }
+            if (metricsChanged != 0 && fontId != GAMETEXT_FONT_FACE) {
+                f32 scaledLineHeight = (f32)(u32)metrics->lineHeight * scale;
+                if (outMaxLineHeight != NULL && scaledLineHeight > *outMaxLineHeight) {
+                    *outMaxLineHeight = scaledLineHeight;
+                }
+            }
+        } else {
+            TextGlyph* found = gameTextFindGlyph(codePoint, fontId);
+            if (found != NULL) {
+                int advance = (found->width + found->offsetX) + found->advanceX;
+                lineWidth += scale * (f32)advance;
+                if (lineWidth >= maxWidth) {
+                    if (hasSpace == 0) {
+                        wrapOffset = scanOffset - byteCount;
+                    }
+                    lastBoundary++;
+                    lineCount++;
+                    *(int*)((char*)lineStarts + (tableBytes += sizeof(lineStarts[0]))) = wrapOffset;
+                    if (lineCount > 1 && lastBoundary[0] == lastBoundary[-1]) {
+                        return 0;
+                    }
+                    if (lineCount >= 0x1e) {
+                        return 0;
+                    }
+                    lineWidth = 0.0f;
+                    scanOffset = wrapOffset;
+                    hasSpace = 0;
+                }
+            }
+        }
+    }
+
+    tableBytes = (lineCount = lineCount + 1) * sizeof(lines[0]);
+    *(int*)((char*)lineStarts + tableBytes) = scanOffset;
+    *outLineCount = lineCount;
+    if (scanOffset == 0) {
+        return 0;
+    }
+    /* The block holds the pointer table, copied bytes, and one terminator per line. */
+    byteCount = scanOffset + lineCount + tableBytes;
+    if (outMaxLineHeight != NULL) {
+        lines = mmAllocateFromFBMemoryStore((int)gGameTextStringStore, byteCount);
+    } else {
+        lines = mmAlloc(byteCount, 0, 0);
+    }
+    if (lines == NULL) {
+        return 0;
+    }
+    {
+        char* clearCursor = (char*)lines;
+        i = byteCount;
+        while (i-- != 0) {
+            *clearCursor++ = 0;
+        }
+    }
+
+    {
+        char* writeCursor;
+        int lineIndex;
+        char* lineText = (char*)lines + tableBytes;
+        lines[0] = lineText;
+        writeCursor = lineText;
+        lineIndex = 0;
+        copyOffset = 0;
+        readCursor = str;
+        while (copyOffset < scanOffset) {
+            *writeCursor++ = *readCursor;
+            if (copyOffset == copyBoundary[1]) {
+                char* breakChar;
+                int lookbehindLength;
+                int previousCharLength;
+                u32 previousCodePoint;
+
+                writeCursor--;
+                breakChar = writeCursor;
+                for (;;) {
+                    lookbehindLength = 6;
+                    do {
+                        previousCodePoint = utf8GetNextChar((u8*)(writeCursor - lookbehindLength), &previousCharLength);
+                        if (lookbehindLength != previousCharLength) {
+                            continue;
+                        }
+                        if (isSpace(previousCodePoint)) {
+                            int trimLength = previousCharLength;
+                            while (trimLength-- != 0) {
+                                *--writeCursor = 0;
+                            }
+                            break;
+                        }
+                        breakChar[1] = breakChar[0];
+                        breakChar[0] = 0;
+                        writeCursor = breakChar + 1;
+                        *(char**)((char*)lines + ((lineIndex + 1) << 2)) = writeCursor++;
+                        goto line_broken;
+                    } while (--lookbehindLength > 0);
+                }
+
+            line_broken:
+                copyBoundary++;
+                lineIndex++;
+            }
+            copyOffset++;
+            readCursor++;
+        }
+        *writeCursor = 0;
+        return lines;
+    }
+}
+
+void gameTextFreePhrase(NpcDialoguePhraseState* p) {
+    p->display.active = 0;
+    p->display.charIndex = 0;
+    p->display.f8 = 0;
+    p->display.fC = 0;
+    if (p->phraseBuffer != NULL) {
+        mm_free(p->phraseBuffer);
+        p->phraseBuffer = NULL;
+    }
+}
+
+static inline TextGlyph* gameTextFindGlyph(u32 ch, int langIdx) {
+    TextGlyph* g;
+    int cnt;
+
+    g = gameTextFonts->glyphs;
+    cnt = gameTextFonts->glyphCount;
+    while (cnt-- != 0) {
+        if (g->key == ch && g->font == langIdx) {
+            return g;
+        }
+        g++;
+    }
+    return NULL;
+}
+
+void gameTextQueueReveal(int a, TextDisplayState* b) {
+    int i = gGameTextCommandCount++;
+    GameTextSlot* e = &gGameTextCommandSlots[i];
+    e->opcode = GAMETEXT_COMMAND_TICK_REVEAL;
+    e->arg0 = a;
+    e->arg1 = (int)b;
+}
+
+void gameTextTickReveal(int textId, TextDisplayState* state) {
+    GameTextDef* def;
+    s32 charCount;
+    char* lineStr;
+    int special;
+
+    if (gameTextFonts->status == 1) {
+        return;
+    }
+    def = gameTextGet(textId);
+    special = 0;
+    if (def >= sGameTextFallbackDefs && def < sGameTextFallbackDefs + GAMETEXT_FALLBACK_COUNT) {
+        special = 1;
+    }
+    if (special) {
+        state->f8 = 1;
+        return;
+    }
+    lineStr = def->strings[state->charIndex];
+    charCount = gameTextCountChars(lineStr);
+    if (state->active == 0) {
+        gGameTextDrawnCharIndex = 0;
+        gGameTextRevealProgress = 2.0f;
+        state->f10 = def->count;
+        state->f8 = 0;
+        state->active = 1;
+    }
+    if (gGameTextRevealProgress == 2.0f) {
+        Sfx_PlayFromObject(0, SFXTRIG_clock_loop);
+    }
+    gGameTextRevealActive = 1;
+    gGameTextDrawnCharIndex = 0;
+    gGameTextRevealProgress = timeDelta * gGameTextRevealSpeed + gGameTextRevealProgress;
+    if (gGameTextRevealProgress >= (f32)(charCount - 2)) {
+        Sfx_StopFromObject(0, SFXTRIG_clock_loop);
+    }
+    if (state->fC != 0) {
+        if (gGameTextRevealProgress < charCount) {
+            gGameTextRevealProgress = charCount;
+        } else {
+            for (;;) {
+                if (state->fC > 0) {
+                    state->charIndex++;
+                } else {
+                    state->charIndex--;
+                }
+                if (state->charIndex < def->count && (u8)def->strings[state->charIndex][0] == 0) {
+                    continue;
+                }
+                break;
+            }
+            if (state->charIndex < 0) {
+                state->charIndex = 0;
+            } else if (state->charIndex >= def->count) {
+                state->charIndex = def->count - 1;
+            } else {
+                gGameTextRevealProgress = 2.0f;
+            }
+            if (state->charIndex < 0) {
+                state->charIndex = 0;
+            }
+            if (state->charIndex == def->count - 1 && (state->fC = 1) != 0 && gGameTextRevealProgress >= charCount) {
+                state->f8 = 1;
+            } else {
+                state->f8 = 0;
+            }
+            state->fC = 0;
+        }
+    }
+    gameTextRenderStrs(def->strings[state->charIndex], 0x7c);
+}
+
+static inline int gameTextCountChars(char* str) {
+    int charCount;
+    int byteOffset;
+    u32 ch;
+    int charLen;
+
+    charCount = 0;
+    byteOffset = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while ((ch = utf8GetNextChar((u8*)(str + byteOffset), &charLen)) != 0) {
+        byteOffset += charLen;
+        if (ch >= 0xe000 && ch <= 0xf8ff) {
+            byteOffset += gameTextCtrlCharLen(ch) * 2;
+        } else {
+            charCount++;
+        }
+    }
+    return charCount;
+}
+
+static inline int gameTextCtrlCharLen(u32 c) {
+    CtrlCharEntry* p = gGameTextCtrlCodeArgCounts;
+    int i = 46;
+    while (i--) {
+        if (p->key == c) {
+            return p->len;
+        }
+        p++;
+    }
+    return 0;
+}
+
+void gameTextShow(int textId) {
+    int commandIndex;
+    GameTextSlot* command;
+    if (gameTextDrawFunc != NULL) {
+        gameTextRenderById(textId, 0, 0);
+    } else {
+        commandIndex = gGameTextCommandCount++;
+        command = &gGameTextCommandSlots[commandIndex];
+        command->opcode = GAMETEXT_COMMAND_RENDER_BY_ID;
+        command->arg0 = textId;
+        command->arg1 = 0;
+        command->arg2 = 0;
+    }
+}
+
+void gameTextShowAt(int textId, int cursorX, int cursorY) {
+    int commandIndex;
+    GameTextSlot* command;
+    if (gameTextDrawFunc != NULL) {
+        gameTextRenderById(textId, cursorX, cursorY);
+    } else {
+        commandIndex = gGameTextCommandCount++;
+        command = &gGameTextCommandSlots[commandIndex];
+        command->opcode = GAMETEXT_COMMAND_RENDER_BY_ID;
+        command->arg0 = textId;
+        command->arg1 = cursorX;
+        command->arg2 = cursorY;
+    }
+}
+
+void gameTextRenderById(int textId, int cursorX, int cursorY) {
+    GameTextDef* def = gameTextGet(textId);
+    TextSlot* slot;
+    u8 savedRed = gGameTextColorR;
+    u8 savedGreen = gGameTextColorG;
+    u8 savedBlue = gGameTextColorB;
+    u8 savedAlpha = gGameTextColorA;
+    int phraseIndex;
+
+    gGameTextRenderingById = 1;
+    if (gCurTextBox != NULL) {
+        slot = gCurTextBox;
+    } else if (def->boxId == 255) {
+        slot = (TextSlot*)gTextBoxes + 2;
+    } else {
+        slot = (TextSlot*)gTextBoxes + def->boxId;
+    }
+
+    if (slot == (TextSlot*)gTextBoxes + 0x85) {
+        gGameTextColorR = 255;
+        gGameTextColorG = 255;
+        gGameTextColorB = 255;
+        gGameTextColorA = 255;
+    }
+
+    if (def->alignH == 0) {
+        slot->alignment = slot->alignH;
+    }
+    slot->cursorX = cursorX;
+    slot->cursorY = cursorY;
+
+    if (gGameTextMeasureOnly == 0) {
+        int verticalAlignment;
+        if (def->alignV == 0) {
+            verticalAlignment = slot->alignV;
+        } else {
+            verticalAlignment = def->alignV;
+        }
+        if (verticalAlignment == 2 || verticalAlignment == 3) {
+            int minX, maxX, minY, maxY;
+            int remainingHeight;
+            gameTextMeasureById(textId, cursorX, cursorY, &minX, &maxX, &minY, &maxY);
+            remainingHeight = slot->height - (maxY - minY);
+            if (verticalAlignment == 2) {
+                slot->cursorY = (s16)(remainingHeight / 2);
+            } else {
+                slot->cursorY = remainingHeight;
+            }
+        }
+    }
+
+    if (gGameTextMeasureOnly == 0) {
+        gameTextDrawBox(def, 0, slot);
+    }
+    if (gameTextDrawFunc != NULL) {
+        gxSetScissorRect(0, 0, 0, 0, 640, 480);
+    } else {
+        if (slot->x < 0) {
+            slot->x = 0;
+        }
+        if (slot->y < 0) {
+            slot->y = 0;
+        }
+        if (gGameTextMeasureOnly == 0) {
+            gxSetScissorRect(0, 0, slot->x, slot->y, slot->x + slot->width, slot->y + slot->height);
+        }
+    }
+
+    phraseIndex = 0;
+    for (; phraseIndex < def->count; phraseIndex++) {
+        gameTextRenderStrs(def->strings[phraseIndex], slot - (TextSlot*)gTextBoxes);
+    }
+
+    gGameTextRenderingById = 0;
+    if (gGameTextMeasureOnly == 0) {
+        Camera_ApplyCurrentViewport(0);
+    }
+    gGameTextColorR = savedRed;
+    gGameTextColorG = savedGreen;
+    gGameTextColorB = savedBlue;
+    gGameTextColorA = savedAlpha;
+}
+
+void gameTextMeasureStringBounds(char* str, int boxIdx, int* outMinX, int* outMaxX, int* outMinY, int* outMaxY) {
+    TextSlot* box = (TextSlot*)gTextBoxes + boxIdx;
+    s16 savedX = box->cursorX;
+    s16 savedY = box->cursorY;
+    gGameTextMeasureOnly = 1;
+    gGameTextBoundsMinX = 0x7FFFFFFF;
+    gGameTextBoundsMaxX = 0;
+    gGameTextBoundsMinY = 0x7FFFFFFF;
+    gGameTextBoundsMaxY = 0;
+    gameTextRenderStrs(str, boxIdx);
+    gGameTextMeasureOnly = 0;
+    if (outMinY != NULL) {
+        *outMinY = gGameTextBoundsMinY >> 2;
+    }
+    if (outMaxY != NULL) {
+        *outMaxY = gGameTextBoundsMaxY >> 2;
+    }
+    if (outMinX != NULL) {
+        *outMinX = gGameTextBoundsMinX >> 2;
+    }
+    if (outMaxX != NULL) {
+        *outMaxX = gGameTextBoundsMaxX >> 2;
+    }
+    box->cursorX = savedX;
+    box->cursorY = savedY;
+}
+
+void gameTextMeasureStringBoundsAt(char* str, int boxIdx, int x, int y, int* outMinX, int* outMaxX, int* outMinY,
+                                   int* outMaxY) {
+    TextSlot* box = (TextSlot*)gTextBoxes + boxIdx;
+    s16 savedX = box->cursorX;
+    s16 savedY = box->cursorY;
+    gGameTextMeasureOnly = 1;
+    gGameTextBoundsMinX = 0x7FFFFFFF;
+    gGameTextBoundsMaxX = 0;
+    gGameTextBoundsMinY = 0x7FFFFFFF;
+    gGameTextBoundsMaxY = 0;
+    box->cursorX = x;
+    box->cursorY = y;
+    gameTextRenderStrs(str, boxIdx);
+    gGameTextMeasureOnly = 0;
+    if (outMinY != NULL) {
+        *outMinY = gGameTextBoundsMinY >> 2;
+    }
+    if (outMaxY != NULL) {
+        *outMaxY = gGameTextBoundsMaxY >> 2;
+    }
+    if (outMinX != NULL) {
+        *outMinX = gGameTextBoundsMinX >> 2;
+    }
+    if (outMaxX != NULL) {
+        *outMaxX = gGameTextBoundsMaxX >> 2;
+    }
+    box->cursorX = savedX;
+    box->cursorY = savedY;
+}
+
+void gameTextMeasureById(int textId, int cursorX, int cursorY, int* outMinX, int* outMaxX, int* outMinY, int* outMaxY) {
+    if (!gameTextIdExists(textId)) {
+        *outMinX = 0;
+        *outMaxX = 0;
+        *outMinY = 0;
+        *outMaxY = 0;
+        return;
+    }
+    gGameTextMeasureOnly = 1;
+    gGameTextBoundsMinX = 0x7FFFFFFF;
+    gGameTextBoundsMaxX = 0;
+    gGameTextBoundsMinY = 0x7FFFFFFF;
+    gGameTextBoundsMaxY = 0;
+    gameTextRenderById(textId, cursorX, cursorY);
+    gGameTextMeasureOnly = 0;
+    if (outMinY != NULL) {
+        *outMinY = gGameTextBoundsMinY >> 2;
+    }
+    if (outMaxY != NULL) {
+        *outMaxY = gGameTextBoundsMaxY >> 2;
+    }
+    if (outMinX != NULL) {
+        *outMinX = gGameTextBoundsMinX >> 2;
+    }
+    if (outMaxX != NULL) {
+        *outMaxX = gGameTextBoundsMaxX >> 2;
+    }
+}
+
+void gameTextShowTimeStr(char* str) {
+    int i;
+    GameTextSlot* e;
+    char* buf;
+    i = gGameTextCommandCount++;
+    e = &gGameTextCommandSlots[i];
+    e->opcode = GAMETEXT_COMMAND_SHOW_TIME_STRING;
+    buf = gGameTextCommandStringCursor;
+    gGameTextCommandStringCursor = gameStrcpy(buf, str) + 1;
+    e->arg0 = (int)buf;
+}
+
+void gameTextAppendStr(char* str, int box) {
+    int i;
+    GameTextSlot* e;
+    char* buf;
+    if (gameTextDrawFunc != NULL) {
+        gameTextRenderStrs(str, box);
+    } else {
+        i = gGameTextCommandCount++;
+        e = &gGameTextCommandSlots[i];
+        e->opcode = GAMETEXT_COMMAND_APPEND_STRING;
+        buf = gGameTextCommandStringCursor;
+        gGameTextCommandStringCursor = gameStrcpy(buf, str) + 1;
+        e->arg0 = (int)buf;
+        e->arg1 = box;
+    }
+}
+
+void gameTextRenderStrs(char* str, int boxIdx) {
+    TextSlot* slot = (TextSlot*)gTextBoxes + boxIdx;
+    char** lines;
+    int count;
+    f32 lineH;
+    int i;
+    int closeAtEnd = 0;
+
+    if (gGameTextRenderingById != 1) {
+        slot->alignment = slot->alignH;
+        if (gGameTextMeasureOnly == 0) {
+            gameTextDrawBox(NULL, (int)str, slot);
+        }
+    }
+    lines = gameTextWrapLines(str, (f32)(u32)slot->width, slot->scale, &count, &lineH);
+    if (lines == NULL) {
+        slot->cursorY = (s16)(lineH * count + slot->cursorY);
+        return;
+    }
+    if (gameTextDrawFunc != NULL) {
+        gxSetScissorRect(0, 0, 0, 0, 0x280, 0x1e0);
+    } else if (gGameTextMeasureOnly == 0) {
+        gxSetScissorRect(0, 0, slot->x, slot->y, slot->x + slot->width, slot->y + slot->height);
+    }
+    gGameTextScale = slot->scale;
+    for (i = 0; i < count; i++) {
+        if (i == count - 1 && slot->alignment == 3) {
+            slot->alignment = 0;
+            closeAtEnd = 1;
+        }
+        if (gGameTextShadowEnabled == 1 && gGameTextMeasureOnly == 0) {
+            u8 save7 = gGameTextColorR;
+            u8 save6 = gGameTextColorG;
+            u8 save5 = gGameTextColorB;
+            f32 saveColor = gGameTextScale;
+            gGameTextColorR = gGameTextShadowColorR;
+            gGameTextColorG = gGameTextShadowColorG;
+            gGameTextColorB = gGameTextShadowColorB;
+            textRenderStr(lines[i], slot, slot->cursorX, slot->cursorY, lineH, 1);
+            gGameTextColorR = save7;
+            gGameTextColorG = save6;
+            gGameTextColorB = save5;
+            gGameTextScale = saveColor;
+        }
+        textRenderStr(lines[i], slot, slot->cursorX, slot->cursorY, lineH, 0);
+        slot->cursorY = (s16)((f32)slot->cursorY + lineH);
+        if (closeAtEnd) {
+            slot->alignment = 3;
+        }
+    }
+    if (gGameTextMeasureOnly == 0) {
+        Camera_ApplyCurrentViewport(NULL);
+    }
+}
+
+void gameTextShowStr(char* text, int box, int cursorX, int cursorY) {
+    int i;
+    GameTextSlot* e;
+    char* buf;
+    if (gameTextDrawFunc != NULL) {
+        TextSlot* slot = (TextSlot*)gTextBoxes + box;
+        slot->cursorX = cursorX;
+        slot->cursorY = cursorY;
+        gameTextRenderStrs(text, box);
+    } else {
+        i = gGameTextCommandCount++;
+        e = &gGameTextCommandSlots[i];
+        e->opcode = GAMETEXT_COMMAND_SHOW_STRING_AT;
+        buf = gGameTextCommandStringCursor;
+        gGameTextCommandStringCursor = gameStrcpy(buf, text) + 1;
+        e->arg0 = (int)buf;
+        e->arg1 = box;
+        e->arg2 = cursorX;
+        e->arg3 = cursorY;
+    }
+}
+
+int gameTextGetTaskText(int id, int* outTextSeqId, int* outDirId) {
+    int i;
+    TaskTextEntry* e = gTaskTextTable;
+    for (i = 0; i < GAMETEXT_TASK_TEXT_COUNT; i++) {
+        if (e->objSeqId == id) {
+            if (outTextSeqId != NULL) {
+                *outTextSeqId = e->textSeqId;
+            }
+            if (outDirId != NULL) {
+                *outDirId = e->dirId;
+            }
+            return 1;
+        }
+        e++;
+    }
+    return 0;
+}
+
+int utf8GetNextChar(u8* str, int* outLen) {
+    u8 first = *str;
+    int cls = gUtf8CharClassTable[first];
+    u32 acc = 0;
+    switch (cls) {
+    case 5:
+        str++;
+        acc = first << 6;
+    case 4:
+        acc += *str++;
+        acc <<= 6;
+    case 3:
+        acc += *str++;
+        acc <<= 6;
+    case 2:
+        acc += *str++;
+        acc <<= 6;
+    case 1:
+        acc += *str++;
+        acc <<= 6;
+    case 0:
+        acc += *str;
+    default:
+        break;
+    }
+    *outLen = cls + 1;
+    return acc - gUtf8ClassOffsetTable[cls];
+}
+
+static char* gameStrcpy(char* dst, char* src) {
+    u32 ch;
+    int len;
+    do {
+        ch = utf8GetNextChar((u8*)src, &len);
+        while (len-- != 0) {
+            *dst++ = *src++;
+        }
+        if (ch >= 0xe000 && ch <= 0xf8ff) {
+            len = getControlCharLen(ch) * 2;
+            while (len-- != 0) {
+                *dst++ = *src++;
+            }
+        }
+    } while (ch != 0);
+    return dst - 1;
+}
+
+static inline int textCountChars(char* lineStr) {
+    int charCount;
+    int byteOffset;
+    u32 ch;
+    int charLen;
+
+    charCount = 0;
+    byteOffset = 0;
+    if (lineStr == NULL) {
+        return 0;
+    }
+    while ((ch = utf8GetNextChar((u8*)(lineStr + byteOffset), &charLen)) != 0) {
+        byteOffset += charLen;
+        if (ch >= 0xe000 && ch <= 0xf8ff) {
+            CtrlCharEntry* g = gGameTextCtrlCodeArgCounts;
+            int n;
+            int val = 0;
+            for (n = 46; n-- != 0;) {
+                if (g->key == ch) {
+                    val = g->len;
+                    break;
+                }
+                g++;
+            }
+            byteOffset += val * 2;
+        } else {
+            charCount++;
+        }
+    }
+    return charCount;
+}
+
+static inline int gameTextIdExists(int id) {
+    GameTextDef* e;
+    int count;
+    int i;
+
+    if (gameTextFonts->status != 2) {
+        return 0;
+    }
+    e = gameTextFonts->entries;
+    count = gameTextFonts->entryCount;
+    for (i = 0; i != count; i++) {
+        if (e->identifier == id) {
+            return 1;
+        }
+        e++;
+    }
+    return 0;
+}
+
+int isSpace(u32 c) {
+    int result = 0;
+
+    if (c == 0x20 || c == 0x3000 || c == 0x303F) {
+        result = 1;
+    }
+    return result;
+}

@@ -1,0 +1,513 @@
+# ObjHits literal recovery
+
+## Source model
+
+The four one-element `gObjHitsScalar*` arrays supplied only `0.0f`,
+`1.0f`, `2.0f`, and `0.1f` to this TU. No other source consumed them.
+Use ordinary float literals, including at the four sites that cast an array
+element's address back to `f32*`. These are not recovered game-owned arrays.
+Keep the existing arithmetic, including explicit zero additions, until retail
+instruction evidence establishes the original expressions or vector helpers.
+
+The native literals do not yet reproduce the retail compilation model. Do not
+restore artificial arrays or force sections to hide that remaining work.
+
+## GC/1.3 comparison
+
+Baseline: `91e55140aa`, EN GSAE01, common game compiler profile.
+
+| Measure | Array baseline | Native literals |
+| --- | ---: | ---: |
+| TU fuzzy match | 99.701866% | 99.48638% |
+| Exact functions | 45/54 | 44/54 |
+| Generated text bytes | 25988 | 25976 |
+| Generated `.sdata2` bytes | 88 | 88 |
+
+Only five function bodies change:
+
+- `ObjHits_CollectSkeletonHitsXZ`: 1124 -> 1120 bytes.
+- `ObjHits_CollectSkeletonHits3D`: 988 -> 980 bytes.
+- `ObjHits_CalcTaperedCapsuleNormal`: 612 bytes, equality-compare operands swap.
+- `ObjHits_DetectObjectPair`: 1232 bytes, equality operands and FPR allocation change.
+- `ObjHits_CheckSkeletonPair`: 1116 bytes, GPR allocation and argument scheduling change.
+
+The collectors fold literal-zero additions into two-term squared distances.
+This removes loads and changes multiply/FMA evaluation order; it is not a
+bit-exact floating-point transformation. The capsule normal loses its 612-byte
+exact-function credit. No other function loses exact credit.
+
+The literal pool retains its size and values but changes physical order,
+losing 88 bytes of exact-section credit. In particular, `0.1f` and `2.0f` now
+appear at their later first-use positions. All other non-text sections and
+surviving named storage offsets are unchanged. All other built source objects
+are byte-identical to the baseline.
+
+`pool_value_sequence.py src/main/objhits.c` reports SAME 21, DIFF 0 against
+retail. The other 33 functions have no relevant loads. The tool collapses
+consecutive identical values, so this verifies the value progression, not
+load counts or physical pool layout; the baseline also passes this check.
+
+## Behavioral checks and limits
+
+`test_objhits_capsule_normal.py` executes the production normal calculation
+and three production vector helpers at host O0/O2, with separate and aliased
+point/output buffers: 50 cases, 200 calls. It checks endpoints, equal and
+unequal radii, oblique axes, collapsed length, and zero normals. Both retail
+endpoint branches use point-minus-tip; the tapered interior reverses radial
+direction through two cross products. The test preserves these behaviors.
+Reversing the radius equality predicate produces 64 failures and no errors.
+This is a geometric host check, not a PPC floating-point emulator or a test of
+the two collector functions.
+
+`ninja all_source` and the strict DOL gate pass. ObjHits remains NonMatching,
+so the strict link uses retail code and does not validate these C changes.
+
+## Native zero-test follow-up
+
+Using the scalar conditions `!radiusDelta` and `dist` recovers the retail
+`fcmpu` operand order without restoring named constants. Against `f92f0bf6e2`,
+only one comparison instruction changes in each of the capsule-normal and
+object-pair functions; the other 52 bodies, all allocated non-text sections,
+symbol layouts, and relocations remain unchanged.
+
+`ObjHits_CalcTaperedCapsuleNormal` is exact again (612 bytes); the object-pair
+function improves from 99.74026% to 99.77273%, with its remaining FPR allocation
+differences unchanged. The TU reaches 45/54 exact functions and 99.489456%
+fuzzy match. The native literal pool ordering remains unresolved. The 200-call
+capsule harness still passes; these scalar conditions preserve zero, nonzero,
+and unordered comparison results.
+
+## Native collision work-state storage
+
+The `803DCBC8..803DCBF0` small-BSS range belongs to `objhits.c`:
+`ObjHits_InitWorkBuffers` allocates the reset-object list, priority work slots,
+work buffer, and four hit-volume scratch buffers. `ObjHits_CheckObjectHitVolumes`
+saves and restores both model sphere-buffer banks through each scratch pair.
+The primary and secondary scratch pairs are now real two-pointer arrays;
+indexing past a declared scalar no longer supplies their second entries.
+
+| Offset | Definition | Bytes |
+|---|---|---:|
+| `+00` | `gObjHitsSecondaryHitboxScratchBuffers[2]` | 8 |
+| `+08` | `gObjHitsPrimaryHitboxScratchBuffers[2]` | 8 |
+| `+10` | `gObjHitsWorkBuffer` | 4 |
+| `+14` | `gObjHitsPriorityHitStates` | 4 |
+| `+18` | `gObjHitReactResetObjectCount` | 4 |
+| `+1C` | `gObjHitReactResetObjects` | 4 |
+| `+20` | `gObjHitsPriorityHitTickDelta` | 4 |
+
+GC/1.3 emits 36 bytes with eight-byte section alignment, matching the 40-byte
+retail span including its trailing alignment. Sized array definitions precede
+their consumers so the compiler can select small-data addressing; public extern
+array declarations remain unsized. All seven symbols have their retail offsets.
+The tick delta is a four-byte float, not an eight-byte allocation.
+
+Against `95bb0fe7d2`, all 54 function bodies and every pre-existing allocated data
+section and named data-symbol position are byte-identical. Objdiff credits 40
+additional matched data bytes (8,352 to 8,392); code remains 99.61259% fuzzy and
+45/54 exact functions. The TU remains NonMatching, so its source storage is
+verified by object comparison, while the strict DOL link still uses its retail
+object. The strict checksum and `ninja all_source` both pass.
+
+## Squared-length helper recovery (2026-09-07)
+
+Both skeleton-hit collectors now share a private inline three-component
+squared-length helper. Their root and midpoint culls pass zero for the vertical
+component: these broadphase checks remain horizontal even in the 3D collector.
+The helper computes `x*x + y*y + z*z` in that order. No named literal storage,
+compiler flags, or TU boundaries change.
+
+With GC/1.3, substituting the zero argument during inlining preserves the
+retail multiply-add sequence. The earlier explicit `x*x + 0.0f + z*z`
+expression lost its zero addition before that stage and compiled into a
+multiply followed by a differently ordered multiply-add. This recovery matters
+for floating-point rounding as well as instruction matching; algebraic equality
+alone did not justify the earlier generated sequence. The XZ collector also
+uses a scalar joint-length condition, recovering the retail zero-comparison
+operand order while preserving zero, nonzero, and unordered behavior.
+
+| Function | Before fuzzy | After fuzzy | Generated bytes before / after / retail |
+| --- | ---: | ---: | ---: |
+| `ObjHits_CollectSkeletonHitsXZ` | 98.20285% | 99.786476% | 1120 / 1124 / 1124 |
+| `ObjHits_CollectSkeletonHits3D` | 98.44129% | 99.75709% | 980 / 988 / 988 |
+
+Both complete mnemonic streams now match retail. Each retains eight differing
+register operands around the midpoint calculation; neither is claimed exact.
+The TU improves from 99.61259% to 99.73111%, retaining 45/54 exact functions.
+The other 52 function bodies, all allocated non-text section bytes, and all
+named data-symbol layouts remain unchanged. Passing temporary `Vec` records
+instead changes allocation and does not improve this scalar helper result.
+
+Validation includes the existing capsule-normal host suite, full source build,
+and strict retail checksum, plus direct object and whole-report comparisons.
+The host suite checks the neighboring capsule calculation, not these collectors;
+the instruction comparisons establish the collector improvements. The TU remains
+`NonMatching`, and its unresolved literal-pool ordering is unchanged. Formatting
+the active source and canonical header leaves the complete object unchanged.
+
+## Shared horizontal joint cull: both collectors exact
+
+The remaining register differences above are resolved by sharing the complete
+midpoint cull in `ObjHits_JointPassesHorizontalCull`. Both callers compare the
+horizontal squared distance from the doubled query point to the sum of the two
+joint positions against the square of the query diameter, joint length, and
+larger joint diameter. The XZ collector retains its preceding vertical-range
+test. Strict comparison, arithmetic association, endpoint radii, and joint-length
+loads are preserved. The private helper name and boundary are reconstructed,
+not recovered historical symbols.
+
+The helper owns the two delta temporaries and radius-limit calculation that
+were duplicated in the collectors. Declaring `deltaZ` before `deltaX`, while
+still calculating X before Z, gives the retail FPR allocation. With X declared
+first, each collector still differs in four operands; the helper extraction
+and declaration order are both needed. Moving the original locals into an
+inner scope is byte-neutral, and grouping them into a record or reusing the
+root-distance locals does not resolve the mismatch.
+
+A diagnostic compiler capture reproduces the ordinary object byte for byte.
+Its baseline 3D graph colors the endpoint-X values before the two caller-owned
+delta values, giving the latter `f6`/`f7` instead of retail's `f4`/`f5`. The
+matching helper capture verifies all 247 3D instructions and all 281 XZ
+instructions with zero retail differences. The captured FPR simplification and
+coloring both replay successfully, without high-degree removals. No compiler
+file or production flag is modified.
+
+Against `ca11c15ec0`, both collectors become 100% exact: 988 and 1,124 bytes,
+respectively. ObjHits rises from 45/54 to 47/54 exact functions, gaining 2,112
+bytes of exact-code credit; its fuzzy score moves from 99.73111% to 99.74958%.
+The other 52 function bodies, all allocated data bytes, every named symbol
+layout, and relocation destinations are unchanged. The TU remains
+`NonMatching` for its other residuals and literal-pool ordering.
+
+The existing capsule-normal tests, `ninja all_source`, and strict retail
+checksum pass. Formatting is a separate commit and preserves the complete
+object bytes. The compiler trace can be reproduced with
+`python3 tools/tricky_backend_trace.py --unit main/main/objhits --function ObjHits_CollectSkeletonHits3D --function ObjHits_CollectSkeletonHitsXZ --graph --register-class fpr --output /tmp/objhits-cull-trace`.
+
+## Skeleton-pair dispatcher exact
+
+`ObjHits_CheckSkeletonPair` now uses the existing
+`ObjAnim_GetPriorityHitState` accessor for both objects. The accessor returns
+the same state pointer as the former direct casts. Its inline boundary changes
+GC/1.3's virtual-register assignment, restoring retail's `r31` state pointer
+and `r30` active model. All 279 instructions now match, recovering 1,116 bytes
+of exact-code credit. A direct model lookup and local-declaration changes do
+not fix the swap; using the state accessor for object B alone is sufficient.
+Both objects use the canonical accessor in the retained source.
+
+The collector result is now named `hasHits`: the collectors return `hit != hits`,
+not a count. The float output is `inverseDistanceSum`, reflecting their
+accumulated inverse-distance weights and its subsequent use in response
+normalization. It is not a capsule axial coordinate. These local renames do
+not change generated bytes. The two shape branches retain their distinct scale
+expressions, temporary point copies, and response clamps.
+
+The instrumented compiler produces the same raw object as an ordinary compile.
+Its GPR graph replays simplification and coloring and verifies all 279 final
+instructions with zero retail differences. An audit of all nineteen comparable
+direct state casts in this TU found that replacing all of them regresses four
+other functions, including two exact functions; that broader rewrite is not
+retained. This result supports the accessor at this caller, not a mechanical
+whole-file migration.
+
+Against `6d5ed0b6a6`, ObjHits improves from 47/54 to 48/54 exact functions and
+99.74958% to 99.7642% fuzzy match. All other 53 function bodies, allocated
+non-text sections, named layouts, and relocation destinations are unchanged.
+The TU remains `NonMatching`. The existing capsule-normal host tests,
+`ninja all_source`, and strict retail checksum pass; the host tests cover the
+neighboring geometry routine, while the instruction comparison proves this
+dispatcher's match. Formatting is a separate, byte-neutral commit.
+
+## Work-slot invalidation and frame-contact reset
+
+`ObjHitbox_SetStateIndex` now delegates its work-slot scan to the private
+`ObjHits_InvalidateObjectWorkSlots` helper. A state change invalidates only
+active slots whose object pointer matches the caller. An unchanged state still
+returns before the scan. The model-count clamp and its original branch order
+are retained, while `modelCount` and the helper's `slotIndex` replace the
+former local shared between those two roles.
+
+This boundary recovers the retail slot-address and byte-stride registers:
+`r7` and `r9`, respectively. All 35 instructions (140 bytes) now match. The
+diagnostic compiler reproduces the ordinary object and successfully replays
+GPR simplification, coloring, and final instruction operands. Merely extracting
+an indexed slot getter does not match. No compiler settings change.
+
+The slot's canonical header now asserts its 60-byte size, active-counter
+offset zero, and object-pointer offset eight. Retail allocates
+3,000 bytes for fifty slots; both the invalidation and tick loops use the same
+60-byte stride. The remaining bytes stay opaque.
+
+The adjacent frame-contact reset also has one private helper shared by the
+main object and qualifying attached object. `ObjHits_ResetFrameContacts` clears
+the applied-response bit, contact flags and partner pointer, and sets the
+contact-volume sentinel. It uses the existing `hitObject` field instead of an
+integer-pointer cast over the state prefix. All its caller's instruction bytes
+are unchanged. Adding the helper renumbers three later anonymous literal names;
+their bytes, locations, and relocation destinations are unchanged.
+
+Against `ac1324bc62`, ObjHits rises from 48/54 to 49/54 exact functions and
+99.7642% to 99.770355% fuzzy match. Only the state-index setter changes function
+bytes. All allocated non-text sections, named layouts, and normalized relocation
+destinations remain unchanged. The TU remains `NonMatching` for five other
+functions and its literal-pool ordering. Full source compilation, the strict
+retail checksum, and the formatter checks pass. Formatting produces no further
+source changes and preserves the final semantic object byte for byte. Rebuilding
+the header's consumers changes no other source object.
+
+## Hit-volume cache dispatcher partial match
+
+`ObjHits_CheckObjectHitVolumes` now obtains object A's priority state through
+the existing `ObjAnim_GetPriorityHitState` accessor. This recovers the retail
+model register throughout the repeated sphere-cache copies. The 348-instruction
+stream retains its exact mnemonic sequence; operand differences fall from 73
+to 28, improving the function from 98.95115% to 99.583336%. Remaining differences
+are state-pointer register assignments and the two initial state loads. Using
+the accessor for both objects regresses this caller, so object B retains its
+direct cast. Extracting the full cache operation into a helper also performs
+worse than the retained change.
+
+The model local and selected sphere-buffer index now describe their actual
+roles. All sixteen copy lengths use `hitVolumeCount * sizeof(ObjModelHitSphere)`
+instead of a raw four-bit shift. The canonical model header already proves the
+16-byte sphere record and byte-sized count. These size expressions and local
+renames preserve the accessor-only object's generated code. The primary and
+attachment scratch-buffer pairs, copy directions, and cache-flag behavior are
+unchanged; the flag is still set only in the attachment save branch.
+
+Against `e99d77cabe`, the TU's fuzzy score rises from 99.770355% to 99.804214%.
+It remains `NonMatching`, with 49/54 exact functions. All other 53 function
+bodies, allocated non-text sections, named symbol layouts, and relocation
+destinations are unchanged. Nine anonymous literal names are renumbered without
+moving their storage. Full source compilation and the strict retail checksum
+pass. Formatting is a separate commit and preserves the complete object bytes;
+the active source and canonical header pass the formatter check.
+
+## Swept-pair distance and typed track-contact points
+
+**Matching update (2026-09-21):** `ObjHits_DetectObjectPair` now matches 100%
+in all five regions. See [the completion report](objhits_detect_object_pair_matching.md).
+The six-register-operand plateau below describes the earlier reconstruction.
+
+`ObjHits_SweepPointDistance` isolates the distance from object B to a projected
+point on object A's movement segment. The caller still checks the squared
+movement threshold and the projection's inclusive `[0, 1]` bounds before using
+the helper. Its arithmetic retains the Z, X, Y component evaluation order,
+separate squared terms, and `squaredZ + (squaredX + squaredY)` sum. The vertical
+shape handling, fallback distance, and separation response are unchanged.
+
+This inline boundary recovers retail's projection-fraction register and one
+squared-component register. `ObjHits_DetectObjectPair` improves from 99.77273%
+to 99.902596%, retaining all 308 instruction mnemonics. Six operand differences
+remain: the other object's Y/Z values occupy the opposite FPRs. Extracting the
+whole sweep-refinement operation, replacing the squared-length expressions,
+and splitting the helper's reused component local do not improve this result.
+
+`ObjHits_CheckTrackContact` now uses `ObjModelHitSphere` for both runtime sphere
+banks, their walking cursors, and linked-sphere entries. Radius and position
+accesses use the canonical fields; cursor increments and linked-entry byte
+offsets use the recovered 16-byte record size. The start/end point buffers use
+`Vec` records with the same storage extent as the former eighteen-float arrays.
+The query still accepts at most four points; the retained buffer extent does
+not establish a six-point query contract. X/Z map offsets, linked-sphere nibble
+decoding, and first-contact selection are preserved.
+
+Model-only locals now live inside the model-volume branch, and the mask,
+definition offset, hit results, and fallback radius have semantic names. The
+sphere-selection bits retain their shared buffer-index/linked-mask lifetime.
+Splitting that local changes code generation. Native linked-sphere indexing
+also changes allocation, so its byte offset remains explicit while every
+dereference uses the canonical sphere type. The entire object is byte-identical
+before and after the track-contact cleanup alone.
+
+Against `4baa238dfa`, the combined change raises ObjHits from 99.804214% to
+99.81037% fuzzy match. The TU remains `NonMatching`, with 49/54 exact functions.
+Only the pair detector's function bytes change. All other 53 bodies, allocated
+non-text sections, named symbol layouts, and normalized relocation destinations
+are unchanged. The helper renumbers later anonymous literal names without
+moving their storage. Full source compilation and the strict retail checksum
+pass. Formatting is a separate commit and preserves the semantic object byte
+for byte; the active source and canonical header pass the formatter check.
+
+## Canonical hit-volume query records
+
+**Matching update (2026-09-21):** This function now matches 100% in all five
+regions. See [CheckHitVolumes matching](objhits_check_hit_volumes_matching.md).
+The scores below describe the earlier typing-only change.
+
+`ObjHits_CheckHitVolumes` now uses `ObjModelHitSphere` throughout its active
+sphere arrays, previous-frame array, walking cursors, and selected contact
+sphere. Its two eight-float fallback arrays are explicit pairs of the same
+16-byte record. The two 24-byte fallback definition buffers are real
+`ModelHitSphereDef` locals, retaining their declaration order and the original
+partial initialization. Both canonical layouts and their field offsets already
+have assertions in `main/model.h`.
+
+The public parameter names now distinguish `recordHits` from `applyResponse`,
+and `hitMask` from `sweepMask`. The latter selects which A-side spheres use the
+previous-position sweep test; it is not a second count of hit volumes. The
+former `miss` local is `skipSweep`, and the misleading `radA2` local is
+`sphereRadiusA`. Named contact read/write cursors and fallback records make the
+linked-sphere refinement passes visible without changing their structure.
+
+All five callers retain their existing arguments, and the header changes only
+parameter names. The fallback previous array retains its second record's
+initialization from A's state and first fallback radius. No attempt is made to
+normalize that asymmetry, change the shift widths used by the sphere masks, or
+simplify the collision arithmetic.
+
+Against `a622044034`, the complete ObjHits object is byte-identical, including
+all 54 function bodies, data, symbol names and offsets, and relocations.
+Descriptor typing, sphere typing, and the combined change each independently
+preserve the raw object. The function remains 99.38196% fuzzy matching, and the
+TU remains `NonMatching`. Replacing its initial priority-state casts with
+canonical accessors was also tested and regressed register allocation; those
+rewrites are not retained.
+
+Full source compilation and the strict retail checksum pass. Rebuilding the
+public header's consumers changes no source-object hash. The active source and
+header pass the formatter check, and the separate formatting commit preserves
+the complete object bytes.
+
+## Nearest object-pair distance
+
+The signed halfword at hit-state offset 0x58 is now `nearestPairDistance`
+in both `ObjHitsPriorityState` and `ObjHitReactState`. The former names,
+`capsuleScale` and `resetFrameCount`, described neither its comparisons nor
+its updates. Both layout assertions continue to pin the same field to 0x58.
+
+`ObjHits_DetectObjectPair` calculates the current center distance, truncates
+it to an integer through the existing conversion sequence, caps it at 1024,
+and retains the smaller value in each object's state. This happens before
+the swept-movement distance refinement and separation-response checks. Pairs
+using a vertical span first pass the vertical overlap test, then use X/Z
+distance; ordinary pairs use all three axes. It is therefore an accumulated
+coarse distance for eligible pairs since reset, not penetration depth or a
+swept-contact distance.
+
+The same limit is restored when capsule bounds are set, object hit state is
+refreshed, or the enabled reset-update path in `ObjHitReact_ResetActiveObjects`
+runs. There is no decrementing frame counter in these uses. All three resets
+and both pair-distance clamps now use `OBJHITS_PAIR_DISTANCE_LIMIT` from the
+canonical hit-state types header. The two misleading default/reset constants
+are removed, and the stale flags-offset comment is corrected to the asserted
+0x60 offset.
+
+All 1,002 generated source objects are byte-identical after the semantic
+change and after formatting. Function scores, allocated data, layouts, and
+relocations are unchanged; this recovery does not add an exact function.
+The active TU and all three owning headers pass the formatter check. Only
+the reaction-state header needs formatting, committed separately. Both
+`ninja all_source` and the strict retail checksum build pass.
+
+## Final code completion and remaining pool order (2026-09-21)
+
+All 54 functions are now exact: 25,988 / 25,988 EN code bytes. The final
+function was `ObjHits_CheckObjectHitVolumes`; see
+`objhits_check_object_hit_volumes_matching.md`. Every allocated data section
+except `.sdata2` also matches. The unit remains `NonMatching`.
+
+The remaining pool discrepancy is placement, not missing values. Retail
+starts with `0.0f`, `2.0f`, `1.0f`, `0.1f`, then `1e-6f`; reconstructed
+source starts with `0.0f`, `1.0f`, `1e-6f`. Source emits `0.1f` at offset
+72 for the track-contact fallback radius and `2.0f` at offset 84 for the
+priority tick delta. Retail places them at offsets 12 and 4 respectively.
+Both sections occupy 88 bytes, including alignment padding.
+
+The existing GC/1.3 `FloatConstantPool.c` reconstruction in `../mwcc`
+(`GC13_InternFloatConstant`, binary address `0x004dee70`) interns constants
+by exact type identity and payload and publishes new entries when lowered.
+Merely declaring an inline clamp helper earlier does not move its constant.
+The following full-TU experiments were rejected and are not retained:
+
+- Expressing doubled radius or point coordinates as multiplication by
+  `2.0f` moves that literal earlier but introduces loads and multiply
+  instructions, regressing both already-exact skeleton collectors.
+- Named static const scalars are folded into the same late anonymous pool
+  entries. External const definitions add storage while their consumers
+  still use anonymous copies.
+- An earlier inline fallback-radius clamp preserves function bodies but
+  does not move `0.1f`. A non-inline helper moves it while adding a function
+  and changing track-contact code.
+
+No compiler override, fabricated constant array, section directive or
+TU split was introduced. These probes leave production source and the
+ordinary object byte-identical to the completed-function baseline, SHA-256
+`f820dbfc84359d46552f7fc4e41dadbf04228fd8a9f6d201d2b021a23168b689`.
+The remaining task is recovering the source/compiler mechanism that emitted
+these constants early without adding runtime instructions or duplicate data.
+
+## Called-helper pool experiment (2026-09-21)
+
+The stronger precedent is `docs/newclouds_source_recovery.md` and
+`docs/object_matching.md`: ordinary called static helpers can introduce
+constants in their emitted bodies, inline into callers, and then disappear
+through linker garbage collection. This differs from explicit inline
+helpers, which do not emit the early bodies under the current profile.
+
+An EN experiment reproduces the **complete 88-byte retail pool** using four
+called operations, defined in this order:
+
+1. Clear a vector's three components, replacing the repeated `pj.accum` and
+   `normAccum` zero stores in both skeleton-response functions.
+2. Allocate the four sphere scratch buffers and initialize the hit tick delta
+   to two, extracted from `ObjHits_InitWorkBuffers`.
+3. Compute a reciprocal, used for joint length and distance reciprocals in
+   both skeleton collectors.
+4. Clamp the fallback radius to 0.1, called from track-contact selection.
+
+With ordinary automatic inlining, every retail function except
+`ObjHits_CheckObjectHitVolumes` stays byte-identical. The 53 exact bodies
+include the initializer: keeping its active-volume reset block in the caller
+avoids the earlier extraction's missing zero-load instruction. All four new
+helper bodies are removed by the linker. An isolated link verifies that the
+**entire linked `.sdata2` section** equals the all-retail control. That control
+DOL also equals the hash-verified EN original.
+
+This candidate is not retained. Automatic inlining removes the two calls to
+the empty `ObjHits_OnPlayerHitVolumeMiss` function and changes the surrounding
+allocation; `ObjHits_CheckObjectHitVolumes` falls to 86.33046%. The retail calls
+are independent evidence against simply removing the existing `noauto`
+restriction. Explicit inline helpers with `noauto` preserve the calls but
+lose the early pool contribution. An inline dispatch wrapper does not protect
+the calls from automatic inlining. Reversing source definitions with deferred
+emission preserves the original function bodies under `noauto`, but leaves
+the original pool mismatch; enabling auto still removes the miss calls.
+
+The result narrows the unresolved issue to reconciling helper emission with
+these retained empty-function calls. No call casts, volatile accesses, fake
+bodies, no-inline annotations, section forcing or unused seed functions were
+introduced to bypass that evidence. The production source, object and compiler
+profile remain unchanged. Local diagnostic artifacts are under
+`build/objhits_pool/`; the strongest candidate is `initgroup_52/objhits.c`,
+with its isolated link under `link/`.
+
+### Stub and source-order follow-up
+
+The Dinosaur Planet reference `src/objhits.c` supplies a useful independent
+lineage clue: `func_80028DCC` makes the same two player-miss calls, and its
+callee `func_8002949C` contains substantial animation-sampling and collision
+work. Its return type is `void`. This supports identifying the SFA four-byte
+stub as a disabled former operation; it does not establish how the original
+SFA source prevented inlining. No legacy algorithm or unused locals were
+copied into the empty SFA body.
+
+Additional diagnostic probes leave the conflict unresolved:
+
+- An explicit `return;` and casts discarding all unused parameters still let
+  automatic inlining erase the calls.
+- Alternative inferred return types also fail to retain the calls. The
+  canonical `void` declaration is unchanged.
+- Inline declaration/definition ordering does not give the desired combination
+  of early out-of-line helper emission and explicit inlining under `noauto`.
+- Late named scalar definitions with reverse/deferred compilation introduce
+  duplicate zero storage and regress eight functions. They are not a valid
+  replacement for anonymous literals.
+- The configured original-artifact source-leak inventory has no `objhits`
+  match. The reference's nonempty routine is lineage evidence only, not a
+  recovered SFA body or permission to invent unreachable code.
+
+No new matching credit is claimed from these probes. Source, ordinary object,
+canonical declarations, TU boundaries and production flags are unchanged.
+The unresolved compiler/source distinction is specifically the retention of
+ordinary calls to the empty hook alongside early helper-emitted literals.

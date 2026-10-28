@@ -1,0 +1,105 @@
+diff --git a/source/gxm.c b/source/gxm.c
+index 8853f36..de7ea83 100644
+--- a/source/gxm.c
++++ b/source/gxm.c
+@@ -958,6 +958,68 @@ void vglSwapBuffers(GLboolean has_commondialog) {
+ #endif
+ }
+ 
++/* ---- GL_ARB_sync -----------------------------------------------------
++ *
++ * vitaGL previously offered no CPU/GPU synchronisation finer than glFinish,
++ * which drains the entire queue. That forces frame time to CPU + GPU for any
++ * application whose CPU depends on one early GPU result -- a deferred renderer
++ * reading back a G-buffer, for instance, waits out everything queued behind it.
++ *
++ * The primitive was already present. `query_fence` is a SceGxmNotification
++ * whose value increments on each scene_end and whose address the GPU writes as
++ * each scene COMPLETES, giving a monotonic completed-scene counter; buffers.c
++ * has used it exactly this way for occlusion queries. These entry points expose
++ * it under the standard names, which is why GLsync was already typedef'd.
++ *
++ * A sync object is the token of the scene current at glFenceSync time, so
++ * nothing is allocated and glDeleteSync has nothing to free. The counter is
++ * 32-bit and increments a few times per frame: at 60 fps it wraps after roughly
++ * four months of continuous running.
++ */
++GLsync glFenceSync(GLenum condition, GLbitfield flags) {
++	THREAD_SAFE()
++
++	// Ends the current scene so the GPU begins it now rather than whenever the
++	// render target next changes; without this the fence could not be waited on
++	// until unrelated work happened to flush it.
++	dirty_framebuffer = GL_TRUE;
++	scene_reset();
++	return (GLsync)query_fence.value;
++}
++
++GLboolean glIsSync(GLsync sync) {
++	return (sync >= 0) ? GL_TRUE : GL_FALSE;
++}
++
++void glDeleteSync(GLsync sync) {
++	// Sync objects are scene tokens, not allocations.
++}
++
++GLenum glClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout) {
++	uint32_t token = (uint32_t)sync;
++
++	if (*query_fence.address >= token)
++		return GL_ALREADY_SIGNALED;
++	if (timeout == 0)
++		return GL_TIMEOUT_EXPIRED;
++
++	// timeout is in nanoseconds; poll at 50 us, which is far below any frame
++	// and keeps the common "already finished" case free.
++	uint64_t waited = 0;
++	while (*query_fence.address < token) {
++		sceKernelDelayThread(50);
++		waited += 50000;
++		if (timeout != GL_TIMEOUT_IGNORED && waited >= timeout)
++			return GL_TIMEOUT_EXPIRED;
++	}
++	return GL_CONDITION_SATISFIED;
++}
++
++void glWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout) {
++	// The GPU already executes scenes in submission order, so a server-side
++	// wait on an earlier scene is implicit.
++}
++
+ void glFinish(void) {
+ 	THREAD_SAFE()
+ 
+diff --git a/source/vitaGL.h b/source/vitaGL.h
+index f045fd2..181267d 100644
+--- a/source/vitaGL.h
++++ b/source/vitaGL.h
+@@ -39,6 +39,15 @@ extern "C" {
+ #define GLfixed       int32_t
+ #define GLint64       int64_t
+ #define GLuint64      uint64_t
++
++// GL_ARB_sync
++#define GL_SYNC_GPU_COMMANDS_COMPLETE 0x9117
++#define GL_ALREADY_SIGNALED           0x911A
++#define GL_TIMEOUT_EXPIRED            0x911B
++#define GL_CONDITION_SATISFIED        0x911C
++#define GL_WAIT_FAILED                0x911D
++#define GL_SYNC_FLUSH_COMMANDS_BIT    0x00000001
++#define GL_TIMEOUT_IGNORED            0xFFFFFFFFFFFFFFFFull
+ #define GLsizei       int32_t
+ #define GLenum        uint32_t
+ #define GLintptr      int32_t
+@@ -779,6 +788,11 @@ void glEnd(void);
+ void glEndList(void);
+ void glEndQuery(GLenum target);
+ void glFinish(void);
++GLsync glFenceSync(GLenum condition, GLbitfield flags);
++GLenum glClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout);
++void glWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout);
++void glDeleteSync(GLsync sync);
++GLboolean glIsSync(GLsync sync);
+ void glFlush(void);
+ void glFlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length);
+ void glFlushMappedNamedBufferRange(GLuint buffer, GLintptr offset, GLsizeiptr length);

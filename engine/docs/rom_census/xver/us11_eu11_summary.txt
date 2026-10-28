@@ -1,0 +1,33 @@
+## US11 -> EU11 (.text), mapped on side A via GSAE01_rev1
+TU                                                   sites    delta  functions touched
+main/textrender_run.c                                    6      +b0  getCurGameText[NEWFN], gameTextBuildSystemFontAtlas
+main/gameloop.c                                          4      +8c  askProgressiveScanMode
+main/gameloop_main.c                                     5      -98  init
+main/mm.c                                                1       -8  mmInit
+main/pi_videoinit.c                                      1      -34  setDisplayCopyFilter
+track/intersect_memcard.c                                2      +e4  _saveGame[NEWFN], cardShowLoadingMsg[NEWFN]
+dlls/engine/2/maketex.c                                  7      -6c  fn_8007ED98, fn_8007F918
+dlls/engine/21/21.c                                      2      +f4  saveFileStruct_resetVolumes[NEWFN], loadSaveSettings
+dlls/engine/23/23.c                                      4      -44  loadGameOptions[NEWFN], SaveGame_initialise
+dlls/engine/52_n_attractmode/n_attractmode.c             6      +d8  TitleMenu_run, TitleMenu_initialise
+dlls/engine/55/55.c                                      5      -10  optionsMenu_applyAudioSetting[NEWFN], languageMenuInit, OptionsScreen_frameStart
+dlls/objects/704/704.c                                   1      -18  TitleScreen_initialise
+dlls/objects/273/273.c                                   1      +10  DoorLock_update
+dlls/objects/510/510.c                                   1       -c  PressureSwitch_update
+dlls/objects/589_BossDrakor/BossDrakor.c                 1      +24  bossdrakor_update
+dlls/objects/611_GM_MazeWell/GM_MazeWell.c               2      -74  GM_MazeWell_update
+dlls/objects/625/625.c                                   1      +30  drakorhoverpad_updateMain
+dlls/objects/626/626.c                                   1      +24  HighTop_update
+dolphin/os/OSRtc.c                                       2       +0  OSGetProgressiveMode, OSGetWirelessID[NEWFN]
+dolphin/vi/vi.c                                          1      -3c  VIGetTvFormat
+dolphin/TRK_MINNOW_DOLPHIN/targimpl.c                    1       +4  TRKValidMemory32
+?(past last unit)                                        1      -10  DR_CloudRunner_initialise
+
+whole-function insertions (B addr, size):
+  80019C2C +0x17c
+  8007DD0C +0x9c
+  8007EA20 +0x48
+  800E8298 +0xdc
+  800E8960 +0x28
+  8011C51C +0x17c
+  80246198 +0x114

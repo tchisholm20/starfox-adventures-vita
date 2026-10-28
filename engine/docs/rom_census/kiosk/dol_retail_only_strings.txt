@@ -1,0 +1,26 @@
+# Retail US10 main.dol strings BYTE-VERIFIED absent from KIOSK demo DOL (post-E3 additions)
+[new subsystem: FB memory store (mm.c)]
+mmShowInfoFBMemoryStore / mmAllocateFromFBMemoryStore / mmDestroyMemoryStore / mmCreateMemoryStore
+MMSTORE_ARRAY / MM_MAX_MEM_STORE_SIZE / mmStore->ptrStore / mmStore->handle / mmStore->ptrCurrent / mmUniqueIdent
+'1:/2:/7: *** mm Error *** ...' numbered mm error family, 'stbf stack too deep!'
+[savegame system rework]
+/savegame/save%d.bin ; WARNING in mainSetBits: Bit %d can't be set to %d while a savegame is loading
+card/memcardicon0..3.img .pal ; 'STARFOX ADVENTURES' + 'Dinosaur Planet' card comment strings
+[texture restructure expansion]
+texRestructRefs ReRegion family (~10 strings): 'Restruct textures Running', REREGION, Optimal/SubOptimal/Wrong region, 'ReRegioned alloc...'
+[crash handling]
+errorThreadFunc %x / 'Exception:' / exception-name table / 'Stack trace' / register dump  # replaced demo's 'Please power off and on'
+'Suspected graphics hang or infinite loop'
+[object system]
+<objSetupObject> loading is locked can't setup objno %d / LOADED OBJECT %s
+<objLoadAnimdata> Warning ACRomTab is NULL / SEQUENCE: Could not Find Object %i
+ERROR: asset index overflow / %s.romlist.zlb
+[map/object name table  (entirely absent from demo DOL - demo streams by number: SMAPNO/mapno)]
+94 names: frontend frontend2 dragrock krazoapalace discovery mazecave fortress wallcity swapcircle cloudtreasure clouddungeon cloudtrap moonpass snowmines krashrin2 kraztest krazchamber newicemount(2,3) animtest capeclaw insidegal *shrine set diamondbay earthwalker cloudrace finalboss wminsert snowmines2-5 trexboss mikelava swapstore magicave cloudjoin arwing* gamefront linklevel greatfox + pushable/sequence object names (dfpodium..vfppushblock, KamColumn etc.)
+[music tracks added]
+'Andross tune' kpanomaly teleport CloudDungeon GameMaze
+[SDK/libs added]
+atanf atan2f fsin16HighPrecision fcos16Precise CARDUnmount CARDSetStatus DBGEXIImm GXGetLightAttnK (functions, verified absent in demo)
+newer DVD lib (DVDGetDriveStatus, __OSIsGcam, __OSLockSramEx symbols)
+[misc]
+'urstovwxazbcmdefghtkilnpoq' (name-entry letter order) ; 'The Disc Cover is open.' ; ' Loading...'

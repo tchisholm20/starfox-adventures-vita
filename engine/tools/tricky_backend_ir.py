@@ -1,0 +1,344 @@
+"""Decode the observed GC/1.3 backend records used by the Tricky trace probe.
+
+This is reconstructed compiler IR, not retail debug data. Unknown fields stay
+opaque. Layouts/opcodes are specific to the hash-checked compiler capture profile.
+"""
+
+from __future__ import annotations
+
+import re
+import struct
+
+
+COMPILER_SHA256 = "4e502c38465500d4fda8d966b268151a6c74c730508e3d9b7efd23d1a6083715"
+
+
+# Verified by aligning captured FINAL CODE streams with their emitted ELF
+# instructions. Multiple spellings are PPC disassembler aliases/prediction bits.
+MNEMONICS = {
+    0x00: "b", 0x01: "bl", 0x05: "beq+ beq- bgt+ bgt- blt+ blt- beqlr-",
+    0x08: "bge+ bge- ble+ ble- bne+ bne- bgelr-", 0x0B: "bdnz+ bdnz-",
+    0x11: "blr", 0x12: "bctr", 0x13: "bctrl", 0x15: "lbz",
+    0x17: "lbzx", 0x19: "lhz", 0x1B: "lhzx", 0x1D: "lha", 0x1F: "lhax",
+    0x22: "lwz", 0x24: "lwzx", 0x28: "stb", 0x2A: "stbx", 0x2C: "sth", 0x2E: "sthx",
+    0x31: "stw", 0x32: "stwu", 0x33: "stwx", 0x3C: "add", 0x3D: "addc", 0x3E: "adde", 0x3F: "addi",
+    0x42: "addis", 0x44: "addze", 0x45: "divw", 0x46: "divwu", 0x47: "mulhw", 0x48: "mulhwu", 0x49: "mulli", 0x4A: "mullw", 0x4B: "neg",
+    0x4C: "subf", 0x4D: "subfc", 0x4E: "subfe", 0x4F: "subfic", 0x52: "cmpwi", 0x53: "cmpw",
+    0x54: "cmplwi", 0x55: "cmplw", 0x56: "andi.", 0x58: "ori", 0x59: "oris", 0x5A: "xori",
+    0x5B: "xoris", 0x5C: "and", 0x5D: "or", 0x5E: "xor", 0x62: "andc", 0x64: "extsb",
+    0x65: "extsh", 0x66: "cntlzw", 0x67: "clrlwi clrrwi rlwinm rotlwi slwi srwi",
+    0x69: "rlwimi", 0x6A: "slw", 0x6B: "srw", 0x6C: "srawi", 0x6D: "sraw", 0x70: "crset", 0x73: "cror",
+    0x75: "crclr", 0x78: "mtctr", 0x79: "mtlr", 0x81: "mflr", 0x82: "mfcr",
+    0x89: "li", 0x8A: "lis", 0x8B: "mr", 0x8D: "not", 0x8E: "lfs",
+    0x90: "lfsx", 0x92: "lfd", 0x96: "stfs", 0x98: "stfsx", 0x9A: "stfd", 0x9E: "fmr", 0x9F: "fabs",
+    0xA0: "fneg", 0xA2: "fadd", 0xA3: "fadds", 0xA4: "fsub", 0xA5: "fsubs", 0xA6: "fmul", 0xA7: "fmuls",
+    0xA8: "fdiv", 0xA9: "fdivs", 0xAA: "fmadd", 0xAB: "fmadds", 0xAD: "fmsubs", 0xAF: "fnmadds",
+    0xB0: "fnmsub", 0xB1: "fnmsubs", 0xB3: "frsqrte", 0xB5: "frsp", 0xB7: "fctiwz",
+    0xB8: "fcmpu", 0xB9: "fcmpo", 0x193: "psq_l", 0x195: "psq_lx", 0x197: "psq_st", 0x199: "psq_stx",
+}
+
+
+def operand(words):
+    raw = struct.pack("<3I", *words)
+    result = {"kind": raw[0], "raw": raw.hex()}
+    if raw[0] == 0:
+        result.update(register_class=raw[1], flags=int.from_bytes(raw[2:4], "little"),
+                      number=int.from_bytes(raw[4:6], "little", signed=True))
+    elif raw[0] == 2:
+        result["value"] = int.from_bytes(raw[2:6], "little", signed=True)
+    elif raw[0] == 4:
+        result["label"] = int.from_bytes(raw[2:6], "little")
+    return result
+
+
+def decode(instruction):
+    words = instruction["words"]
+    if len(words) < 9 or len(words) != 9 + 3 * (words[8] >> 16):
+        raise ValueError("instruction size does not match operand count")
+    return {
+        "address": instruction["address"], "block": words[2],
+        "line": None if words[7] == 0xFFFFFFFF else words[7],
+        "opcode": words[8] & 0xFFFF,
+        "operands": [operand(words[i:i + 3]) for i in range(9, len(words), 3)],
+    }
+
+
+def capture_snapshot(memory, name, stage, head):
+    """Read only evidenced record widths; reject cycles and inconsistent links."""
+    def words(address, count):
+        data = memory(address, count * 4)
+        if len(data) != count * 4:
+            raise ValueError("short IR memory read")
+        return list(struct.unpack("<" + "I" * count, data))
+
+    blocks, labels, seen = [], {}, set()
+
+    def label(address):
+        chain = set()
+        while address:
+            if address in chain:
+                raise ValueError("cyclic label chain")
+            chain.add(address)
+            key = str(address)
+            if key in labels:
+                return
+            if len(labels) >= 16384:
+                raise ValueError("implausible label chain")
+            labels[key] = words(address, 3)
+            address = labels[key][0]
+
+    cursor = head
+    while cursor:
+        if cursor in seen or len(blocks) >= 4096:
+            raise ValueError("cyclic or implausible basic-block chain")
+        seen.add(cursor)
+        block_words = words(cursor, 11)
+        label(block_words[2])
+        instructions, instruction_seen = [], set()
+        address = block_words[5]
+        while address:
+            if address in instruction_seen or len(instructions) >= 4096:
+                raise ValueError("cyclic or implausible instruction chain")
+            instruction_seen.add(address)
+            prefix = words(address, 9)
+            count = prefix[8] >> 16
+            if count > 128:
+                raise ValueError("implausible instruction operand count")
+            instruction = {"address": address, "words": prefix + words(address + 36, 3 * count)}
+            for item in decode(instruction)["operands"]:
+                if item["kind"] == 4:
+                    label(item["label"])
+            instructions.append(instruction)
+            address = prefix[0]
+        blocks.append({"address": cursor, "words": block_words, "instructions": instructions})
+        cursor = block_words[0]
+    result = {"name": name, "stage": stage, "head": head, "blocks": blocks, "labels": labels}
+    validate_snapshot(result)
+    return result
+
+
+def validate_snapshot(snapshot):
+    blocks = snapshot["blocks"]
+    addresses = {b["address"] for b in blocks}
+    if len(addresses) != len(blocks) or 0 in addresses:
+        raise ValueError("duplicate or null basic-block address")
+    if snapshot["head"] != (blocks[0]["address"] if blocks else 0):
+        raise ValueError("incorrect basic-block head")
+    seen = set()
+    for index, block in enumerate(blocks):
+        w, instructions = block["words"], block["instructions"]
+        if len(w) != 11:
+            raise ValueError("incorrect basic-block width")
+        if w[0] != (blocks[index + 1]["address"] if index + 1 < len(blocks) else 0):
+            raise ValueError("incorrect next basic block")
+        if w[1] != (blocks[index - 1]["address"] if index else 0):
+            raise ValueError("incorrect previous basic block")
+        if w[2] and str(w[2]) not in snapshot["labels"]:
+            raise ValueError("missing block-head label")
+        if (w[10] & 0xFFFF) != len(instructions):
+            raise ValueError("incorrect basic-block instruction count")
+        if w[5:7] != ([instructions[0]["address"], instructions[-1]["address"]] if instructions else [0, 0]):
+            raise ValueError("incorrect first/last instruction")
+        for j, instruction in enumerate(instructions):
+            address, iw = instruction["address"], instruction["words"]
+            if address in seen or not address:
+                raise ValueError("duplicate or null instruction address")
+            seen.add(address)
+            decoded = decode(instruction)
+            if decoded["block"] != block["address"]:
+                raise ValueError("incorrect instruction owner")
+            if iw[0] != (instructions[j + 1]["address"] if j + 1 < len(instructions) else 0):
+                raise ValueError("incorrect next instruction")
+            if iw[1] != (instructions[j - 1]["address"] if j else 0):
+                raise ValueError("incorrect previous instruction")
+            for item in decoded["operands"]:
+                if item["kind"] == 4 and str(item["label"]) not in snapshot["labels"]:
+                    raise ValueError("missing operand label")
+    for label in snapshot["labels"].values():
+        if len(label) != 3:
+            raise ValueError("incorrect label width")
+        if label[0] and str(label[0]) not in snapshot["labels"]:
+            raise ValueError("missing next label")
+        # Labels for removed blocks may survive earlier optimizer stages.
+    complete = set()
+    for address in snapshot["labels"]:
+        chain = set()
+        while address != "0" and address not in complete:
+            if address in chain:
+                raise ValueError("cyclic label chain")
+            chain.add(address)
+            address = str(snapshot["labels"][address][0])
+        complete.update(chain)
+
+
+def emitted_instructions(snapshot):
+    validate_snapshot(snapshot)
+    if snapshot["stage"] != "FINAL CODE":
+        raise ValueError("only FINAL CODE can be aligned to emitted instructions")
+    result = []
+    blocks = {b["address"]: b for b in snapshot["blocks"]}
+    for block in snapshot["blocks"]:
+        for instruction in block["instructions"]:
+            decoded = decode(instruction)
+            decoded["block_id"] = block["words"][7]
+            if decoded["opcode"] == 0:
+                if not decoded["operands"]:
+                    raise ValueError("missing unconditional branch operand")
+                first = decoded["operands"][0]
+                if first["kind"] != 4:
+                    raise ValueError("unrecognized unconditional branch operand")
+                target = snapshot["labels"][str(first["label"])][1]
+                if target not in blocks:
+                    raise ValueError("final branch targets an absent basic block")
+                following = block["words"][0]
+                while following and following != target and not blocks[following]["instructions"]:
+                    following = blocks[following]["words"][0]
+                if target == following:
+                    continue
+            result.append(decoded)
+    return result
+
+
+def validate_alignment(snapshot, assembly, code):
+    """Check opcodes, registers, and exact load/move/store/mask/division encodings.
+
+    This is deliberately not a complete PowerPC emitter or relocation decoder.
+    Unsupported opcodes fail closed rather than silently aligning a shifted trace.
+    """
+    instructions = emitted_instructions(snapshot)
+    if len(instructions) != len(assembly) or len(code) != 4 * len(instructions):
+        raise ValueError("FINAL CODE and emitted instruction counts differ")
+    for index, (instruction, asm) in enumerate(zip(instructions, assembly)):
+        op, args = instruction["opcode"], instruction["operands"]
+        if asm.split()[0] not in MNEMONICS.get(op, "").split():
+            raise ValueError(f"opcode alignment failed at {index}: {op:#x} / {asm}")
+        if op not in (0x01, 0x13):  # Calls also carry implicit argument/clobber operands.
+            operand_text = asm.split("<", 1)[0]
+            registers = [
+                ({4: "r", 3: "f"}[a["register_class"]], str(a["number"]))
+                for a in args if a["kind"] == 0 and a["register_class"] in (3, 4)
+            ]
+            # A D-form zero base is printed as (0), not (r0).
+            if "(0)" in operand_text and registers and registers[-1] == ("r", "0"):
+                registers.pop()
+            # Branch addresses such as f0 or f150 are hex, not FPR operands.
+            # Symbol annotations can also contain register-shaped names.
+            printed = [] if op in (0x00, 0x05, 0x08, 0x0B, 0x11, 0x12) else re.findall(
+                r"\b([rf])(\d+)\b", operand_text)
+            if registers != printed:
+                raise ValueError(f"register alignment failed at {index}: {asm}")
+        expected = None
+        if op in (0x89, 0x8A, 0x8B, 0x8D) and len(args) < 2:
+            raise ValueError("missing load/move operands")
+        if op == 0x89 and (args[0]["kind"] != 0 or args[1]["kind"] not in (2, 3)):
+            raise ValueError("invalid immediate load operands")
+        if op == 0x8A and (args[0]["kind"] != 0 or args[1]["kind"] not in (2, 3)):
+            raise ValueError("invalid shifted load operands")
+        actual = int.from_bytes(code[index * 4:index * 4 + 4], "big")
+        if op in (0x89, 0x8A):
+            if args[0]["register_class"] != 4 or not 0 <= args[0]["number"] < 32:
+                raise ValueError("invalid emitted GPR")
+            expected = ((14 if op == 0x89 else 15) << 26) | (args[0]["number"] << 21)
+            if args[1]["kind"] == 2:
+                expected |= args[1]["value"] & 0xFFFF
+            else:
+                # Symbol operands remain opaque; relocations own the low halfword.
+                actual &= 0xFFFF0000
+        elif op in (0x8B, 0x8D):
+            dest, source = args[:2]
+            if any(a["kind"] != 0 or a["register_class"] != 4 or not 0 <= a["number"] < 32 for a in (dest, source)):
+                raise ValueError("invalid emitted move registers")
+            extended = 444 if op == 0x8B else 124  # mr = or; not = nor.
+            expected = (31 << 26) | (source["number"] << 21) | (dest["number"] << 16) | (source["number"] << 11) | (extended << 1)
+        elif op in (0x2A, 0x2E, 0x33, 0x98):
+            classes = (3 if op == 0x98 else 4, 4, 4)
+            if len(args) != 3 or any(
+                    a["kind"] != 0 or a["register_class"] != cls or not 0 <= a["number"] < 32
+                    for a, cls in zip(args, classes)):
+                raise ValueError("invalid indexed store operands")
+            source, base, index_register = args
+            extended = {0x2A: 215, 0x2E: 407, 0x33: 151, 0x98: 663}[op]
+            expected = ((31 << 26) | (source["number"] << 21) | (base["number"] << 16)
+                        | (index_register["number"] << 11) | (extended << 1))
+        elif op in (0x45, 0x46):
+            if len(args) != 3 or any(
+                    a["kind"] != 0 or a["register_class"] != 4 or not 0 <= a["number"] < 32
+                    for a in args):
+                raise ValueError("invalid division operands")
+            dest, dividend, divisor = args
+            expected = ((31 << 26) | (dest["number"] << 21) | (dividend["number"] << 16)
+                        | (divisor["number"] << 11) | ((491 if op == 0x45 else 459) << 1))
+        elif op == 0x56:
+            if len(args) != 4:
+                raise ValueError("invalid immediate mask operands")
+            dest, source, mask, condition = args
+            if (any(a["kind"] != 0 or a["register_class"] != 4 or not 0 <= a["number"] < 32 for a in (dest, source))
+                    or mask["kind"] != 2 or not 0 <= mask["value"] <= 0xFFFF
+                    or condition["kind"] != 0 or condition["register_class"] != 1 or condition["number"] != 0):
+                raise ValueError("invalid immediate mask operands")
+            expected = (28 << 26) | (source["number"] << 21) | (dest["number"] << 16) | mask["value"]
+        elif op == 0x67:
+            if len(args) != 5:
+                raise ValueError("invalid rotate-and-mask operands")
+            dest, source, shift, mask_begin, mask_end = args
+            if (any(a["kind"] != 0 or a["register_class"] != 4 or not 0 <= a["number"] < 32
+                    for a in (dest, source))
+                    or any(a["kind"] != 2 or not 0 <= a["value"] < 32
+                           for a in (shift, mask_begin, mask_end))):
+                raise ValueError("invalid rotate-and-mask operands")
+            expected = ((21 << 26) | (source["number"] << 21) | (dest["number"] << 16)
+                        | (shift["value"] << 11) | (mask_begin["value"] << 6) | (mask_end["value"] << 1))
+        if expected is not None and expected != actual:
+            raise ValueError(f"operand encoding failed at {index}: {asm}")
+    return instructions
+
+
+def instruction_history(snapshots, final_instruction):
+    """Follow an address within one function; expose absent/replaced records.
+
+    Compiler arena addresses can be reused. This reports observed records, not a
+    proof of source-variable identity across transformations. Block/line/opcode
+    changes remain visible to the caller instead of being normalized away.
+    """
+    history = []
+    for ordinal, snapshot in enumerate(snapshots):
+        record = next((decode(i) for b in snapshot["blocks"] for i in b["instructions"]
+                       if i["address"] == final_instruction["address"]), None)
+        history.append({"stage_index": ordinal, "stage": snapshot["stage"], "record": record})
+    return history
+
+
+def describe(instruction):
+    if instruction is None:
+        return "absent"
+    items = []
+    for item in instruction["operands"]:
+        if item["kind"] == 0:
+            prefix = {4: "gpr", 3: "fpr", 1: "cr"}.get(item["register_class"], f"class{item['register_class']}:")
+            items.append(f"{prefix}{item['number']}[{item['flags']:#x}]")
+        elif item["kind"] == 2:
+            items.append(str(item["value"]))
+        elif item["kind"] == 6:
+            continue
+        else:
+            items.append(item["raw"])
+    return f"op={instruction['opcode']:#x} line={instruction['line']} " + ", ".join(items)
+
+
+def immediate_commoning(instruction, bounds):
+    """Observed eligibility gate, not a promise that equivalent values are found.
+
+    GC/1.3 VA 0x5082E0 rejects li/lis in mode zero; in nonzero mode its
+    destination register must lie in this inclusive range. Bounds captured
+    outside the pass describe its globals, not whether that pass is running.
+    Only use this on virtual-register records before register coloring.
+    """
+    if instruction is None or instruction["opcode"] not in (0x89, 0x8A):
+        return None
+    args = instruction["operands"]
+    if not args or args[0]["kind"] != 0 or args[0]["register_class"] != 4:
+        raise ValueError("unrecognized immediate destination")
+    low, high = bounds["first_register"], bounds["last_register"]
+    if low > high:
+        raise ValueError("inverted immediate-commoning bounds")
+    return low <= args[0]["number"] <= high

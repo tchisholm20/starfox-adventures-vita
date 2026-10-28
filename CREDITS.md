@@ -11,6 +11,14 @@ The `engine/` directory is that tree with the Vita port's changes on top. Its
 [`LICENSE`](engine/LICENSE) is the decompilation's CC0 dedication. The Vita port's own
 code (`vita/`, and the port's additions under `engine/`) is MIT; see [LICENSE](LICENSE).
 
+## Code from other projects inside this repository
+
+| What | Where | From | License |
+|---|---|---|---|
+| Four precompiled shaders (clear and blit) | `vita/src/gxm_shaders/` | [vitaGL](https://github.com/Rinnegatamante/vitaGL), copied unchanged | LGPL-3.0 |
+| Matrix and vector math, controller stick clamping | `engine/src/port/src/hal/sdk_mtx/`, `engine/src/port/src/hal/pad_input.c` | [doldecomp/dolsdk2004](https://github.com/doldecomp/dolsdk2004), the community decompilation of the GameCube SDK | none stated by that project |
+| fdlibm math functions | `engine/src/MSL_C/` | Sun Microsystems, via the upstream decompilation | the notice in each file |
+
 ## Libraries in the release binary
 
 The Vita build statically links these libraries. They are used unmodified unless noted.

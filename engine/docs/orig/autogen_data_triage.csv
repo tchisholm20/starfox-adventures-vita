@@ -1,0 +1,202 @@
+address,section,size_bytes,byte_class,subtype_reason,adjacent_owner,adjacency_confidence,referencing_units,top_referencing_unit,b_src_pinned,b_symtxt_only,b_pad,b_orphan
+0x8030C6A0,.data,440,string-data,string / char table,boot_logo.c,high,0,,0,440,0,0
+0x80322518,.data,520,data-table,structured .data (relocs/pointers present),dll_0126_trigger.c,high,6,main/dll/dll_0126_trigger.o,274,240,0,0
+0x803230F8,.data,48,data-table,opaque .data table (needs inspection),dll_0167_spiritdoorlock.c,high,1,main/modelEngine.o,48,0,0,0
+0x80335840,.bss,256,bss,zero-init,,-,0,,0,0,256,0
+0x803387A0,.bss,120,bss,zero-init,,-,1,main/voxmaps.o,120,0,0,0
+0x803878D8,.bss,216,bss,zero-init,,-,5,main/shader.o,216,0,0,0
+0x8039C2C0,.bss,32,bss,zero-init,,-,2,main/dll/modgfx.o,32,0,0,0
+0x8039C320,.bss,48,bss,zero-init,,-,3,main/dll/modgfx.o,48,0,0,0
+0x8039C368,.bss,72,bss,zero-init,,-,4,main/dll/modgfx.o,72,0,0,0
+0x803A4218,.bss,16,bss,zero-init,,-,2,main/dll/gameplay.o,16,0,0,0
+0x803A4448,.bss,24,bss,zero-init,,-,1,main/audio_decode_thread.o,24,0,0,0
+0x803A87D0,.bss,32,bss,zero-init,,-,6,main/dll/dll_0037_optionsscreen.o,32,0,0,0
+0x803A9364,.bss,244,bss,zero-init,,-,16,main/dll/dll_0000_gameui.o,244,0,0,0
+0x803AC528,.bss,88,bss,zero-init,,-,2,main/dll/dll_00CA_icebaddie.o,88,0,0,0
+0x803AC598,.bss,56,bss,zero-init,,-,1,main/dll/dll_00CE_dllce.o,56,0,0,0
+0x803AC5E8,.bss,80,bss,zero-init,,-,5,main/dll/dll_00CB_dllcb.o,80,0,0,0
+0x803AC680,.bss,56,bss,zero-init,,-,3,main/dll/dll_00D5_kaldachom.o,56,0,0,0
+0x803AD048,.bss,728,bss,zero-init,,-,24,main/dll/WC/dll_028D_wclevelcont.o,728,0,0,0
+0x803AD3B4,.bss,12,bss,zero-init,,-,0,,0,0,12,0
+0x803ADEF0,.bss,16,bss,zero-init,,-,0,,0,0,16,0
+0x803D41E4,.bss,644,bss,zero-init,,-,2,main/audio/aram_queue.o,644,0,0,0
+0x803D68EC,.bss,52,bss,zero-init,,-,4,dolphin/TRK_MINNOW_DOLPHIN/msgbuf.o,44,0,4,0
+0x803DB170,.bss,80,bss,zero-init,,-,2,main/dll/DR/dll_0257_drearthwarrior.o,80,0,0,0
+0x803DB1E0,.sdata,8,const-data,small const / rodata,audio.c,med,0,,0,0,8,0
+0x803DB610,.sdata,16,const-data,small const / rodata,rcp_dolphin.c,high,9,main/sky_state.o,16,0,0,0
+0x803DB648,.sdata,8,const-data,small const / rodata,tex_dolphin.c,high,1,main/shader.o,8,0,0,0
+0x803DB798,.sdata,8,const-data,small const / rodata,expgfx.c,high,1,main/dll/dll_0018_boneparticleeffect.o,8,0,0,0
+0x803DBE00,.sdata,8,const-data,small const / rodata,dll_013E_dimbossicesmash.c,high,1,main/modelEngine.o,8,0,0,0
+0x803DBE10,.sdata,16,const-data,small const / rodata,dll_0145_cloudprisoncontrol.c,high,1,main/modelEngine.o,16,0,0,0
+0x803DBE50,.sdata,8,const-data,small const / rodata,dll_014C_babycloudrunner.c,high,1,main/modelEngine.o,8,0,0,0
+0x803DBE60,.sdata,24,const-data,small const / rodata,dll_0150_gcrobotlightbea.c,high,1,main/modelEngine.o,24,0,0,0
+0x803DBEA0,.sdata,48,const-data,small const / rodata,dll_015B_cfforcefield.c,high,1,main/modelEngine.o,48,0,0,0
+0x803DBEE0,.sdata,8,const-data,small const / rodata,dll_0167_spiritdoorlock.c,high,1,main/modelEngine.o,8,0,0,0
+0x803DC0F8,.sdata,24,const-data,small const / rodata,dll_01F8_wmgalleon.c,high,1,main/modelEngine.o,24,0,0,0
+0x803DC150,.sdata,16,const-data,small const / rodata,dll_0216_vfplevelcontrol.c,high,1,main/modelEngine.o,16,0,0,0
+0x803DC2C0,.sdata,8,const-data,small const / rodata,dll_0262_drakormissile.c,high,1,main/modelEngine.o,8,0,0,0
+0x803DC2D0,.sdata,32,const-data,small const / rodata,dll_0266_kytesmum.c,high,4,main/modelEngine.o,32,0,0,0
+0x803DC308,.sdata,56,const-data,small const / rodata,dll_0271_drakorhoverpad.c,high,4,main/dll/dll_0272_hightop.o,54,0,0,0
+0x803DC358,.sdata,40,const-data,small const / rodata,dll_0273_firepipe.c,high,1,main/modelEngine.o,40,0,0,0
+0x803DC388,.sdata,16,const-data,small const / rodata,dll_0279_drenergydisc.c,high,1,main/modelEngine.o,16,0,0,0
+0x803DC420,.sdata,8,const-data,small const / rodata,dll_02B5_timer.c,high,2,auto_07_8032BE50_data.o,8,0,0,0
+0x803DC500,.sdata,48,const-data,small const / rodata,dll_02BD_androsshand.c,high,5,main/unknown/autos/placeholder_80220608.o,48,0,0,0
+0x803DC648,.sdata,24,const-data,small const / rodata,printf.c,high,2,MSL_C/PPCEABI/bare/H/e_pow.o,24,0,0,0
+0x803DC6F0,.sdata,112,const-data,small const / rodata,player.c,high,5,main/unknown/autos/placeholder_802A36EC.o,110,0,0,0
+0x803DC76C,.sdata,50,const-data,small const / rodata,dll_0257_drearthwarrior.c,high,5,main/dll/DR/dll_0258_drcloudrunner.o,48,0,0,0
+0x803DC7A0,.sbss,24,bss,zero-init,,-,6,main/model.o,17,0,4,0
+0x803DC908,.sbss,72,bss,zero-init,,-,1,main/pad.o,67,0,0,0
+0x803DC968,.sbss,200,bss,zero-init,,-,21,main/unknown/autos/placeholder_8001746C.o,193,0,0,0
+0x803DCBC8,.sbss,64,bss,zero-init,,-,4,main/objlib.o,64,0,0,0
+0x803DCC70,.sbss,40,bss,zero-init,,-,4,main/pi_dolphin.o,37,0,0,0
+0x803DCDC8,.sbss,272,bss,zero-init,,-,106,main/shader.o,248,0,0,0
+0x803DD040,.sbss,32,bss,zero-init,,-,2,main/maketex.o,31,0,0,0
+0x803DD410,.sbss,16,bss,zero-init,,-,3,main/dll/dll_0003_checkpoint.o,16,0,0,0
+0x803DD478,.sbss,8,bss,zero-init,,-,4,main/dll/dll_0014_unk.o,8,0,0,0
+0x803DD5F8,.sbss,24,bss,zero-init,,-,1,main/dll/dll_0033_nrareware.o,16,0,0,0
+0x803DD658,.sbss,12,bss,zero-init,,-,7,main/dll/picmenu.o,12,0,0,0
+0x803DD668,.sbss,56,bss,zero-init,,-,11,main/dll/picmenu.o,56,0,0,0
+0x803DD6D0,.sbss,64,bss,zero-init,,-,11,main/dll/dll_0036_entersavenamescreen.o,52,0,0,0
+0x803DD8E0,.sbss,8,bss,zero-init,,-,7,main/dll/dll_0000_gameui.o,8,0,0,0
+0x803DD918,.sbss,16,bss,zero-init,,-,2,main/dll/dll_003D_titlemenuitem.o,14,0,0,0
+0x803DD960,.sbss,24,bss,zero-init,,-,3,main/dll/baddie/Tumbleweed.o,21,0,0,0
+0x803DD9D8,.sbss,112,bss,zero-init,,-,5,main/dll/dll_80136a40.o,107,0,0,0
+0x803DDA58,.sbss,8,bss,zero-init,,-,2,main/dll/dll_00DF_hagabon.o,8,0,0,0
+0x803DDB48,.sbss,8,bss,zero-init,,-,2,main/dll/IM/dll_0171_imspaceringgen.o,8,0,0,0
+0x803DDB80,.sbss,16,bss,zero-init,,-,6,main/dll/DIM/DIM2icicle.o,13,0,0,0
+0x803DDBC0,.sbss,8,bss,zero-init,,-,2,main/dll/dll_018F_ecshshrine.o,8,0,0,0
+0x803DDC80,.sbss,8,bss,zero-init,,-,1,dlls/objects/508/508.o,8,0,0,0
+0x803DDCA0,.sbss,24,bss,zero-init,,-,2,main/dll/WM/dll_020E_wmsun.o,24,0,0,0
+0x803DDCC0,.sbss,32,bss,zero-init,,-,2,main/light.o,31,0,0,0
+0x803DDD00,.sbss,48,bss,zero-init,,-,4,main/worldplanet_update.o,39,0,0,0
+0x803DDDD0,.sbss,8,bss,zero-init,,-,1,main/dll/dll_02BD_androsshand.o,8,0,0,0
+0x803DDE98,.sbss,8,bss,zero-init,,-,1,dolphin/db/db.o,8,0,0,0
+0x803DE218,.sbss,432,bss,zero-init,,-,94,main/audio/hw_dspctrl.o,405,0,0,0
+0x803DE3E4,.sbss,12,bss,zero-init,,-,2,Runtime.PPCEABI.H/GCN_mem_alloc.o,8,0,4,0
+0x803DE408,.sbss,8,bss,zero-init,,-,1,MSL_C/PPCEABI/bare/H/FILE_POS.o,8,0,0,0
+0x803DE4C0,.sbss,36,bss,zero-init,,-,6,main/dll/DR/dll_0257_drearthwarrior.o,34,0,0,0
+0x803DE500,.sdata2,440,float-pool,read-only const/float pool (.sdata2),modelEngine.c,med,6,main/unknown/autos/placeholder_800066E0.o,240,129,68,0
+0x803DE6E4,.sdata2,12,float-pool,read-only const/float pool (.sdata2),modelEngine.c,high,1,main/pad.o,4,4,0,0
+0x803DE6F0,.sdata2,184,float-pool,read-only const/float pool (.sdata2),modelEngine.c,med,10,main/unknown/autos/placeholder_8001746C.o,108,68,0,0
+0x803DE7BC,.sdata2,28,float-pool,read-only const/float pool (.sdata2),gameloop_main.c,high,4,main/unknown/autos/placeholder_8001746C.o,24,4,0,0
+0x803DE7D8,.sdata2,1160,float-pool,read-only const/float pool (.sdata2),gameloop_main.c,med,26,main/unknown/autos/placeholder_8001746C.o,800,325,0,0
+0x803DEC68,.sdata2,1560,float-pool,read-only const/float pool (.sdata2),track_dolphin.c,high,17,main/unknown/autos/placeholder_80080E58.o,1076,464,0,8
+0x803DF2E0,.sdata2,104,float-pool,read-only const/float pool (.sdata2),cloudaction.c,high,4,main/dll/dll_0013_waterfx.o,94,8,0,0
+0x803DF3B4,.sdata2,140,float-pool,read-only const/float pool (.sdata2),objfx.c,high,6,main/dll/dll_000A_expgfx.o,40,100,0,0
+0x803DF440,.sdata2,40,float-pool,read-only const/float pool (.sdata2),objfx.c,med,2,main/dll/dll_000B_dll0b.o,0,40,0,0
+0x803E04D8,.sdata2,192,float-pool,read-only const/float pool (.sdata2),dll_002D_effect20.c,high,6,main/dll/dll_0003_checkpoint.o,144,48,0,0
+0x803E05A0,.sdata2,400,float-pool,read-only const/float pool (.sdata2),dll_000F_unk.c,high,12,main/dll/dll_0014_unk.o,240,160,0,0
+0x803E0760,.sdata2,96,float-pool,read-only const/float pool (.sdata2),dll_005B_modgfxfunc03.c,high,3,main/dll/gameplay.o,96,0,0,0
+0x803E0898,.sdata2,40,float-pool,read-only const/float pool (.sdata2),dll_0061_dll61func0.c,high,2,main/dll/dll_0062_dll62func0.o,36,4,0,0
+0x803E0990,.sdata2,144,float-pool,read-only const/float pool (.sdata2),dll_00A3_dlla3func0.c,high,5,main/dll/gameplay.o,132,12,0,0
+0x803E0A28,.sdata2,40,float-pool,read-only const/float pool (.sdata2),dll_0069_dll69func0.c,high,2,main/dll/dll_006A_dll6afunc0.o,40,0,0,0
+0x803E1628,.sdata2,56,float-pool,read-only const/float pool (.sdata2),dll_00AA_dllaafunc0.c,high,8,main/dll/dll_0001_camcontrol.o,40,16,0,0
+0x803E1668,.sdata2,104,float-pool,read-only const/float pool (.sdata2),dll_b8.c,high,11,main/dll/dll_0042_unk.o,96,8,0,0
+0x803E16D8,.sdata2,104,float-pool,read-only const/float pool (.sdata2),dll_0042_unk.c,high,5,main/dll/dll_0042_unk.o,92,12,0,0
+0x803E17C0,.sdata2,168,float-pool,read-only const/float pool (.sdata2),dll_0045_camTalk.c,high,5,main/dll/dll_0044_cameramodeviewfinder.o,144,24,0,0
+0x803E1888,.sdata2,176,float-pool,read-only const/float pool (.sdata2),dll_0048_cameramodestatic.c,high,10,main/dll/dll_0049_cameramodecombat.o,156,20,0,0
+0x803E1940,.sdata2,80,float-pool,read-only const/float pool (.sdata2),dll_0049_cameramodecombat.c,high,3,main/dll/dll_004A_cameramodeshipbattle.o,64,12,0,0
+0x803E19A0,.sdata2,48,float-pool,read-only const/float pool (.sdata2),dll_004B_cameramodeclimb.c,high,3,main/dll/dll_004B_cameramodeclimb.o,44,4,0,0
+0x803E1A24,.sdata2,76,float-pool,read-only const/float pool (.sdata2),dll_004D_cameramodenpcspeak.c,high,2,main/dll/dll_004E_cameramodeworldmap.o,20,56,0,0
+0x803E1A70,.sdata2,24,float-pool,read-only const/float pool (.sdata2),dll_004D_cameramodenpcspeak.c,med,2,main/dll/dll_004E_cameramodeworldmap.o,0,24,0,0
+0x803E1B98,.sdata2,32,float-pool,read-only const/float pool (.sdata2),dll_0055_cameramodeperv.c,high,3,main/dll/dll_0056_cameramodearwing.o,28,4,0,0
+0x803E1BC0,.sdata2,32,float-pool,read-only const/float pool (.sdata2),dll_0056_cameramodearwing.c,high,2,main/dll/dll_0056_cameramodearwing.o,32,0,0,0
+0x803E1CF0,.sdata2,32,float-pool,read-only const/float pool (.sdata2),dll_0032_titlescreeninit.c,high,3,main/dll/dll_0032_titlescreeninit.o,24,8,0,0
+0x803E1D50,.sdata2,80,float-pool,read-only const/float pool (.sdata2),n_options.c,high,9,main/dll/dll_0036_entersavenamescreen.o,72,8,0,0
+0x803E1DD0,.sdata2,24,float-pool,read-only const/float pool (.sdata2),dll_0036_entersavenamescreen.c,high,3,main/dll/dll_0037_optionsscreen.o,24,0,0,0
+0x803E1DF0,.sdata2,8,float-pool,read-only const/float pool (.sdata2),dll_0037_optionsscreen.c,high,1,main/dll/dll_0038_weirdunusedmenu.o,4,0,0,0
+0x803E1E00,.sdata2,992,float-pool,read-only const/float pool (.sdata2),dll_0038_weirdunusedmenu.c,high,17,main/dll/dll_0000_gameui.o,908,77,0,0
+0x803E21FC,.sdata2,84,float-pool,read-only const/float pool (.sdata2),dll_003D_titlemenuitem.c,high,2,main/dll/dll_0031_minimap.o,76,8,0,0
+0x803E2250,.sdata2,112,float-pool,read-only const/float pool (.sdata2),dll_003D_titlemenuitem.c,med,4,main/dll/dll_0031_minimap.o,88,24,0,0
+0x803E22D8,.sdata2,184,float-pool,read-only const/float pool (.sdata2),dll_0041_warpstoneui.c,high,3,main/dll/baddie/Tumbleweed.o,160,20,0,0
+0x803E25CC,.sdata2,20,float-pool,read-only const/float pool (.sdata2),tricky.c,high,3,main/dll/sidekickToy.o,20,0,0,0
+0x803E25E0,.sdata2,40,float-pool,read-only const/float pool (.sdata2),tricky.c,med,5,main/dll/dll_00C9_enemy_8014c920.o,28,12,0,0
+0x803E2900,.sdata2,96,float-pool,read-only const/float pool (.sdata2),kooshy.c,high,2,main/dll/weevil.o,84,8,0,0
+0x803E29F8,.sdata2,24,float-pool,read-only const/float pool (.sdata2),fallladdersgroup.c,high,5,main/dll/fireflylantern_steer.o,16,8,0,0
+0x803E2A70,.sdata2,48,float-pool,read-only const/float pool (.sdata2),spittingeba.c,high,2,main/dll/duster_wb.o,40,8,0,0
+0x803E2AA8,.sdata2,112,float-pool,read-only const/float pool (.sdata2),duster_wb.c,high,1,main/dll/duster_wb.o,112,0,0,0
+0x803E2C0C,.sdata2,28,float-pool,read-only const/float pool (.sdata2),firecrawler.c,high,3,main/dll/hagabon_mk2.o,28,0,0,0
+0x803E2C30,.sdata2,128,float-pool,read-only const/float pool (.sdata2),hagabon_mk2.c,high,3,main/dll/smallbasket.o,124,0,0,0
+0x803E2F2C,.sdata2,20,float-pool,read-only const/float pool (.sdata2),grimblegroup.c,high,3,main/dll/dll_00CF_cannonclaw.o,12,4,4,0
+0x803E2FD4,.sdata2,68,float-pool,read-only const/float pool (.sdata2),tumbleweedgroup.c,high,5,main/dll/dll_00D3_staffAction.o,60,8,0,0
+0x803E3078,.sdata2,104,float-pool,read-only const/float pool (.sdata2),cfdoorlightgroup.c,high,8,main/dll/cfdoorlightgroup.o,100,4,0,0
+0x803E3110,.sdata2,32,float-pool,read-only const/float pool (.sdata2),dll_00D7_kaldachompspit.c,high,3,main/dll/dll_13C.o,32,0,0,0
+0x803E31A0,.sdata2,24,float-pool,read-only const/float pool (.sdata2),dll_00DA_pollenfragment.c,high,1,main/dll/dll_00DB_mikabomb.o,20,4,0,0
+0x803E33A0,.sdata2,80,float-pool,read-only const/float pool (.sdata2),dll_00E4_flamethrowerspe.c,high,3,main/dll/genprops.o,28,52,0,0
+0x803E3680,.sdata2,8,float-pool,read-only const/float pool (.sdata2),dll_00F4_doorf4.c,high,2,main/dll/dll_00F4_doorf4.o,8,0,0,0
+0x803E3750,.sdata2,48,float-pool,read-only const/float pool (.sdata2),dll_00FA_invisiblehitswitch.c,high,6,main/dll/dll_148.o,28,20,0,0
+0x803E37C8,.sdata2,128,float-pool,read-only const/float pool (.sdata2),dll_0116_wmcolumn.c,high,4,main/dll/dll_0117_appleontree_update.o,104,24,0,0
+0x803E3850,.sdata2,16,float-pool,read-only const/float pool (.sdata2),dll_00FC_babycloudrunner.c,high,7,main/dll/dll_00FE_magicplant.o,16,0,0,0
+0x803E3870,.sdata2,104,float-pool,read-only const/float pool (.sdata2),dll_00FE_magicplant.c,high,7,main/dll/dll_00FE_magicplant.o,92,12,0,0
+0x803E39EC,.sdata2,92,float-pool,read-only const/float pool (.sdata2),dll_0105_largecrate.c,high,4,main/dll/dll_0106_scarab.o,80,12,0,0
+0x803E3A48,.sdata2,16,float-pool,read-only const/float pool (.sdata2),dll_0105_largecrate.c,med,2,main/dll/dll_0106_scarab.o,0,16,0,0
+0x803E3A88,.sdata2,40,float-pool,read-only const/float pool (.sdata2),dll_0107_unused.c,high,4,main/dll/dll_010C_lanternfirefly.o,32,8,0,0
+0x803E3AB8,.sdata2,64,float-pool,read-only const/float pool (.sdata2),dll_010C_lanternfirefly.c,high,4,main/dll/dll_010C_lanternfirefly.o,56,8,0,0
+0x803E3BB4,.sdata2,20,float-pool,read-only const/float pool (.sdata2),dll_011B_landedarwing.c,high,8,main/dll/staffactivatedgroup.o,16,4,0,0
+0x803E40C8,.sdata2,72,float-pool,read-only const/float pool (.sdata2),dll_0133_sfxplayer.c,high,7,main/dll/dll_80198a00.o,32,40,0,0
+0x803E4168,.sdata2,88,float-pool,read-only const/float pool (.sdata2),dll_0148_cfguardian.c,high,2,main/dll/DR/sandwormBoss.o,88,0,0,0
+0x803E4210,.sdata2,96,float-pool,read-only const/float pool (.sdata2),dll_014B_cfmaincrystal.c,high,4,main/dll/DR/sandwormBoss.o,72,20,0,0
+0x803E4344,.sdata2,12,float-pool,read-only const/float pool (.sdata2),dll_0158_gunpowderbarrel.c,high,2,main/dll/dll_0159_blasted.o,4,8,0,0
+0x803E43E8,.sdata2,8,float-pool,read-only const/float pool (.sdata2),dll_0162_cfmagicwall.c,high,2,main/dll/CF/dll_0164_cflevelcontrol.o,8,0,0,0
+0x803E442C,.sdata2,12,float-pool,read-only const/float pool (.sdata2),dll_0166_exploded.c,high,2,main/dll/dll_0167_spiritdoorlock.o,4,4,0,0
+0x803E4440,.sdata2,32,float-pool,read-only const/float pool (.sdata2),dll_0167_spiritdoorlock.c,high,1,main/dll/dll_0167_spiritdoorlock.o,28,4,0,0
+0x803E46D8,.sdata2,16,float-pool,read-only const/float pool (.sdata2),dll_018B_cclevcontrol.c,high,2,main/dll/DIM/DIMboulder.o,12,4,0,0
+0x803E480C,.sdata2,12,float-pool,read-only const/float pool (.sdata2),446.c,high,2,dlls/objects/447_DIMLavaBall/DIMLavaBall.o,8,4,0,0
+0x803E4BB8,.sdata2,4,float-pool,read-only const/float pool (.sdata2),dll_01DF_dll1df.c,high,2,main/dll/dll_801b9ecc.o,4,0,0,0
+0x803E4C34,.sdata2,156,float-pool,read-only const/float pool (.sdata2),dim2lift.c,high,15,main/dll/DIM/DIM2icicle.o,148,8,0,0
+0x803E4D60,.sdata2,48,float-pool,read-only const/float pool (.sdata2),dll_01E5_dimbossspit.c,high,3,main/dll/DIM/dll_01E5_dimbossspit.o,44,4,0,0
+0x803E4D98,.sdata2,48,float-pool,read-only const/float pool (.sdata2),dll_01E4_magicmaker.c,high,3,main/dll/DIM/dll_01E7_dimbossfire.o,40,8,0,0
+0x803E4DE0,.sdata2,104,float-pool,read-only const/float pool (.sdata2),dll_0174_ccriverflow.c,high,15,main/dll/DF/dll_0175_dfropenode.o,92,12,0,0
+0x803E4EB8,.sdata2,8,float-pool,read-only const/float pool (.sdata2),dll_017A_spiritprize.c,high,1,main/dll/DF/dll_0179_dfshobjcreator.o,4,4,0,0
+0x803E4FF4,.sdata2,12,float-pool,read-only const/float pool (.sdata2),dll_018F_ecshshrine.c,high,2,main/dll/dll_0191_ecshcreator.o,4,8,0,0
+0x803E5150,.sdata2,8,float-pool,read-only const/float pool (.sdata2),dll_0197_dll197.c,high,3,main/dll/dll_1CA.o,4,4,0,0
+0x803E5180,.sdata2,40,float-pool,read-only const/float pool (.sdata2),dll_0199_dll199.c,high,6,main/dll/dll_019B_dll19b.o,32,8,0,0
+0x803E5384,.sdata2,28,float-pool,read-only const/float pool (.sdata2),dll_01A9_bombplant.c,high,3,main/dll/dll_01AA_bombplantspore.o,24,4,0,0
+0x803E53A8,.sdata2,128,float-pool,read-only const/float pool (.sdata2),dll_01AA_bombplantspore.c,high,13,main/dll/dll_01AA_bombplantspore.o,120,4,0,0
+0x803E54C0,.sdata2,64,float-pool,read-only const/float pool (.sdata2),dll_01AE_shlevelcontrol.c,high,5,main/dll/SH/dll_01B1_shstaff.o,52,12,0,0
+0x803E5618,.sdata2,32,float-pool,read-only const/float pool (.sdata2),SC_totempuz.c,high,2,dlls/objects/442_SC_totempuz/SC_totempuz.o,28,4,0,0
+0x803E56B0,.sdata2,376,float-pool,read-only const/float pool (.sdata2),SC_totemstr.c,high,9,main/dll/dbprotection.o,344,32,0,0
+0x803E59C0,.sdata2,56,float-pool,read-only const/float pool (.sdata2),502.c,high,11,main/dll/laserturretgroup.o,40,12,0,0
+0x803E5AD8,.sdata2,456,float-pool,read-only const/float pool (.sdata2),dll_0288_spdrape.c,high,21,main/dll/dll_0255_snowbike.o,424,32,0,0
+0x803E5CA8,.sdata2,56,float-pool,read-only const/float pool (.sdata2),sbcloudrunnergroup.c,high,6,main/dll/sbcloudrunnergroup.o,52,4,0,0
+0x803E5DC4,.sdata2,60,float-pool,read-only const/float pool (.sdata2),dll_0200_dll200.c,high,3,main/dll/ARW/ARWarwingattachment.o,48,12,0,0
+0x803E6100,.sdata2,192,float-pool,read-only const/float pool (.sdata2),dll_021D_vfplift.c,high,2,main/main.o,120,64,0,0
+0x803E626C,.sdata2,44,float-pool,read-only const/float pool (.sdata2),dll_023F_dbegg.c,high,3,main/dll/dll_0241_drakorenergy.o,40,4,0,0
+0x803E64F8,.sdata2,144,float-pool,read-only const/float pool (.sdata2),dfplightni.c,high,4,main/dll/dll_024D_bossdrakor.o,124,20,0,0
+0x803E65CC,.sdata2,12,float-pool,read-only const/float pool (.sdata2),dll_024E_drakordthornbush.c,high,1,main/worldasteroids.o,4,8,0,0
+0x803E65E0,.sdata2,256,float-pool,read-only const/float pool (.sdata2),worldasteroids.c,high,8,main/worldobj.o,200,56,0,0
+0x803E673C,.sdata2,84,float-pool,read-only const/float pool (.sdata2),snowclaw.c,high,10,main/proximitymine_update.o,64,20,0,0
+0x803E6798,.sdata2,24,float-pool,read-only const/float pool (.sdata2),proximitymine_update.c,high,5,main/proximitymine_update.o,20,4,0,0
+0x803E68D8,.sdata2,104,float-pool,read-only const/float pool (.sdata2),dll_0254_ktfallingrocks.c,high,3,main/dll/DR/dll_0261_drlasercannon.o,84,20,0,0
+0x803E6978,.sdata2,8,float-pool,read-only const/float pool (.sdata2),dll_0262_drakormissile.c,high,3,main/dll/dll_0263_gmmazewell.o,4,0,0,0
+0x803E69A4,.sdata2,12,float-pool,read-only const/float pool (.sdata2),dll_0266_kytesmum.c,high,3,main/dll/DR/dll_0265_drcreator.o,4,8,0,0
+0x803E6A28,.sdata2,16,float-pool,read-only const/float pool (.sdata2),dll_026C_drcagewith.c,high,3,main/dll/DR/dll_026E_dr_shackle.o,12,4,0,0
+0x803E6B58,.sdata2,72,float-pool,read-only const/float pool (.sdata2),dll_0272_hightop.c,high,5,main/dll/dll_0273_firepipe.o,68,0,0,0
+0x803E6C08,.sdata2,64,float-pool,read-only const/float pool (.sdata2),dll_0280_drcloudper.c,high,8,main/unknown/autos/placeholder_80220608.o,64,0,0,0
+0x803E6C58,.sdata2,112,float-pool,read-only const/float pool (.sdata2),obj_movelib.c,high,8,main/unknown/autos/placeholder_80220608.o,104,4,0,0
+0x803E6CD0,.sdata2,48,float-pool,read-only const/float pool (.sdata2),dll_0283_drbarrelgr.c,high,6,main/dll/WC/dll_028A_wcearthwalker.o,36,8,0,0
+0x803E6D08,.sdata2,64,float-pool,read-only const/float pool (.sdata2),dll_028A_wcearthwalker.c,high,4,main/dll/WC/dll_028C_wcbouncycra.o,60,4,0,0
+0x803E6D50,.sdata2,72,float-pool,read-only const/float pool (.sdata2),dll_028C_wcbouncycra.c,high,3,main/dll/WC/dll_0290_wcpushblock.o,72,0,0,0
+0x803E6DA0,.sdata2,40,float-pool,read-only const/float pool (.sdata2),dll_0290_wcpushblock.c,high,3,main/dll/WC/dll_028D_wclevelcont.o,32,4,0,0
+0x803E6DD0,.sdata2,88,float-pool,read-only const/float pool (.sdata2),dll_028D_wclevelcont.c,high,10,main/unknown/autos/placeholder_80220608.o,68,20,0,0
+0x803E6E44,.sdata2,12,float-pool,read-only const/float pool (.sdata2),dll_0295_wcapertures.c,high,1,main/dll/WC/dll_0296_wctempledia.o,4,8,0,0
+0x803E6E58,.sdata2,24,float-pool,read-only const/float pool (.sdata2),dll_0296_wctempledia.c,high,2,main/dll/WC/dll_0296_wctempledia.o,20,4,0,0
+0x803E6EF0,.sdata2,280,float-pool,read-only const/float pool (.sdata2),dll_029A_arwarwing.c,high,2,main/dll/ARW/dll_029A_arwarwing.o,272,8,0,0
+0x803E7058,.sdata2,16,float-pool,read-only const/float pool (.sdata2),dll_029C_arwarwingbo.c,high,2,main/dll/ARW/dll_029D_arwarwinggu.o,12,4,0,0
+0x803E7138,.sdata2,16,float-pool,read-only const/float pool (.sdata2),dll_02A4.c,high,3,main/unknown/autos/placeholder_80220608.o,12,4,0,0
+0x803E72B0,.sdata2,40,float-pool,read-only const/float pool (.sdata2),dll_02AD_softbody.c,high,3,main/dll/dll_02AE_waterflowwe.o,40,0,0,0
+0x803E72E8,.sdata2,16,float-pool,read-only const/float pool (.sdata2),dll_02AE_waterflowwe.c,high,3,main/dll/dll_02AE_waterflowwe.o,16,0,0,0
+0x803E73D0,.sdata2,56,float-pool,read-only const/float pool (.sdata2),dll_02B2_dustmotesou.c,high,3,main/dll/dll_02B3_vortex.o,40,16,0,0
+0x803E777C,.sdata2,20,float-pool,read-only const/float pool (.sdata2),THPDec.c,high,4,main/audio/synth_seq_dispatch.o,8,8,0,0
+0x803E7790,.sdata2,8,float-pool,read-only const/float pool (.sdata2),THPDec.c,med,4,main/audio/synth_seq_dispatch.o,0,8,0,0
+0x803E77D8,.sdata2,24,float-pool,read-only const/float pool (.sdata2),synth.c,high,2,main/audio/synth_jobs.o,4,20,0,0
+0x803E78E4,.sdata2,12,float-pool,read-only const/float pool (.sdata2),hw_volume.c,high,4,main/audio/hw_volume.o,8,0,0,0
+0x803E7920,.sdata2,40,float-pool,read-only const/float pool (.sdata2),reverb_std_create.c,high,4,dolphin/axfx/reverb_std_callback.o,36,4,0,0
+0x803E79C0,.sdata2,528,float-pool,read-only const/float pool (.sdata2),math_float_helpers.c,high,15,MSL_C/PPCEABI/bare/H/k_sin.o,512,12,0,0
+0x803E7BD8,.sdata2,56,float-pool,read-only const/float pool (.sdata2),e_sqrt.c,high,6,auto_03_802929CC_text.o,52,4,0,0
+0x803E7C18,.sdata2,408,float-pool,read-only const/float pool (.sdata2),s_tan.c,high,17,MSL_C/PPCEABI/bare/H/e_rem_pio2.o,400,8,0,0
+0x803E8214,.sdata2,28,float-pool,read-only const/float pool (.sdata2),player.c,high,3,dlls/objects/437/437.o,24,4,0,0
+0x803E82D4,.sdata2,12,float-pool,read-only const/float pool (.sdata2),dll_01D9_dim2prisonmammoth.c,high,3,main/dll/DR/dll_0257_drearthwarrior.o,4,8,0,0
+0x803E82E0,.sdata2,136,float-pool,read-only const/float pool (.sdata2),dll_01D9_dim2prisonmammoth.c,med,3,main/dll/DR/dll_0257_drearthwarrior.o,108,28,0,0
+0x803E8390,.sdata2,8,float-pool,read-only const/float pool (.sdata2),synth_constants.c,high,3,main/dll/DR/dll_0257_drearthwarrior.o,8,0,0,0
+0x803E8440,.sbss2,56,bss,zero-init,,-,10,main/unknown/autos/placeholder_80080E58.o,48,8,0,0

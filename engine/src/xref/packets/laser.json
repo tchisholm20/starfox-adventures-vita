@@ -1,0 +1,51 @@
+{
+  "key": "laser",
+  "labels": [
+    "laser.c"
+  ],
+  "categories": [
+    "source"
+  ],
+  "direct_xref_count": 1,
+  "direct_function_count": 1,
+  "source_string_count": 1,
+  "orig": {
+    "root_file_count": 0,
+    "root_files": [],
+    "nested_file_count": 0,
+    "nested_files": [],
+    "named_directory_count": 0,
+    "named_directories": [],
+    "root_romlist_count": 0,
+    "root_romlists": []
+  },
+  "family_hint": null,
+  "map_hints": [],
+  "functions": [
+    {
+      "function_start": "0x80209074",
+      "function_name": "laser_init",
+      "xrefs": [
+        {
+          "xref_address": "0x80209080",
+          "pair_address": "0x80209084",
+          "target_address": "0x80329C20",
+          "target_text": "<laser.c Init>No Longer supported ",
+          "pair_kind": "lis/addi",
+          "function_name": "laser_init"
+        }
+      ]
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x80329C20",
+      "text": "<laser.c Init>No Longer supported ",
+      "tags": [
+        "source",
+        "warning"
+      ]
+    }
+  ],
+  "neighbor_strings": []
+}

@@ -1,0 +1,55 @@
+{
+  "key": "savegame",
+  "labels": [
+    "savegame"
+  ],
+  "categories": [
+    "file"
+  ],
+  "direct_xref_count": 1,
+  "direct_function_count": 1,
+  "source_string_count": 0,
+  "orig": {
+    "root_file_count": 2,
+    "root_files": [
+      "SAVEGAME.bin",
+      "SAVEGAME.tab"
+    ],
+    "nested_file_count": 0,
+    "nested_files": [],
+    "named_directory_count": 1,
+    "named_directories": [
+      "savegame"
+    ],
+    "root_romlist_count": 0,
+    "root_romlists": []
+  },
+  "family_hint": null,
+  "map_hints": [],
+  "functions": [
+    {
+      "function_start": "0x8011AE24",
+      "function_name": "SaveSelectScreen_run",
+      "xrefs": [
+        {
+          "xref_address": "0x8011AFB4",
+          "pair_address": "0x8011AFB8",
+          "target_address": "0x8031A864",
+          "target_text": "/savegame/save%d.bin",
+          "pair_kind": "lis/addi",
+          "function_name": "SaveSelectScreen_run"
+        }
+      ]
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x8031A864",
+      "text": "/savegame/save%d.bin",
+      "tags": [
+        "file"
+      ]
+    }
+  ],
+  "neighbor_strings": []
+}

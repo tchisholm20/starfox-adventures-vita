@@ -1,0 +1,8186 @@
+{
+ "ARWBlocker_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/680_ARWBlocker/ARWBlocker.c",
+  "type": "ARWBlockerSetup"
+ },
+ "ARWBombColl_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/671_ARWBombColl/ARWBombColl.c",
+  "type": "ARWBombCollSetup"
+ },
+ "ARWSquadron_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 32,
+    "path": "ArwSquadronSetup.leaderObjectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "ArwSquadronSetup.exitDistance"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 42,
+    "path": "ArwSquadronSetup.volleyAngleSpread"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "ArwSquadronSetup.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 52,
+  "tu": "src/dlls/objects/678_ARWSquadron/ARWSquadron.c",
+  "type": "ArwSquadronSetup"
+ },
+ "AlphaAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "AlphaAnimatorPlacement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "AlphaAnimatorPlacement.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "AlphaAnimatorPlacement.fadeLimit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "AlphaAnimatorPlacement.sfxId"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 311)",
+  "size": 40,
+  "tu": "src/dlls/objects/311_AlphaAnimat/AlphaAnimat.c",
+  "type": "AlphaAnimatorPlacement"
+ },
+ "AndrossHand_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/701/701.c",
+  "type": "AndrossHandSetup"
+ },
+ "AppleOnTree_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 24,
+    "path": "AppleOnTreePlacement.unk18"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "AppleOnTreePlacement.phaseDuration"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "AppleOnTreePlacement.initialElapsedTime"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "AppleOnTreePlacement.despawnGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/279_AppleOnTree/AppleOnTree.c",
+  "type": "AppleOnTreePlacement"
+ },
+ "AreaFXEmit_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "AreaFXEmitPlacement.effectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "AreaFXEmitPlacement.emitCount"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "AreaFXEmitPlacement.enableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "AreaFXEmitPlacement.stopGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/304_AreaFXEmit/AreaFXEmit.c",
+  "type": "AreaFXEmitPlacement"
+ },
+ "BaddieInterestP_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "BaddieInterestPPlacement.targetLinkIdLo"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "BaddieInterestPPlacement.targetLinkIdHi"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "BaddieInterestPPlacement.doneGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "BaddieInterestPPlacement.enableGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 222)",
+  "size": 48,
+  "tu": "src/dlls/objects/222_baddieInter/baddieInter.c",
+  "type": "BaddieInterestPPlacement"
+ },
+ "BarrelPad_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/303_BarrelPad/BarrelPad.c",
+  "type": "BarrelPadPlacement"
+ },
+ "BombPlantSpore_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "BombPlantSporePlacement.?{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "BombPlantSporePlacement.?{union}"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/426_BombPlantSp/BombPlantSp.c",
+  "type": "BombPlantSporePlacement"
+ },
+ "BombPlant_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "BombPlantPlacement.growTimer"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "BombPlantPlacement.timerBase"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "BombPlantPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/425_BombPlant/BombPlant.c",
+  "type": "BombPlantPlacement"
+ },
+ "BombPlantingSpot_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const BombPlantingSpotPlacement.plantedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const BombPlantingSpotPlacement.requiredGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/427_BombPlantin/BombPlantin.c",
+  "type": "const BombPlantingSpotPlacement"
+ },
+ "CCTestInfot_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/290_CCTestInfot/CCTestInfot.c",
+  "type": "CCTestInfotPlacement"
+ },
+ "CFCrate_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CFCratePlacement.?{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "CFCratePlacement.param1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CFCratePlacement.gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CFCratePlacement.gameBitB"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/298_CFCrate/CFCrate.c",
+  "type": "CFCratePlacement"
+ },
+ "CFLightWall_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/302/302.c",
+  "type": "CFLightWallPlacement"
+ },
+ "CF_DoorLight_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CFDoorLightPlacement.maxFrame"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "CFDoorLightPlacement.frameStep"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CFDoorLightPlacement.doneGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CFDoorLightPlacement.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/305/305.c",
+  "type": "CFDoorLightPlacement"
+ },
+ "CampFire_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "CampFirePlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/297_CampFire/CampFire.c",
+  "type": "CampFirePlacement"
+ },
+ "ChukChuk_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "ChukChukPlacement.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "ChukChukPlacement.unk22"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 56,
+  "tu": "src/dlls/objects/204_ChukChuk/ChukChuk.c",
+  "type": "ChukChukPlacement"
+ },
+ "CntCounter_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CntCounterPlacementPrefix.initialCount"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CntCounterPlacementPrefix.doneGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CntCounterPlacementPrefix.countInputGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 692)",
+  "size": 36,
+  "tu": "src/dlls/objects/692_CNTcounter/CNTcounter.c",
+  "type": "CntCounterPlacementPrefix"
+ },
+ "ControlLight_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ControlLightSetup.radius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "ControlLightSetup.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/684_LGTControlL/LGTControlL.c",
+  "type": "ControlLightSetup"
+ },
+ "CurveFish_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CurveFishPlacement.waitSeconds"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/259_CurveFish/CurveFish.c",
+  "type": "CurveFishPlacement"
+ },
+ "DFPSpPl_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DfpSpellPlacePlacementPrefix.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DfpSpellPlacePlacementPrefix.activationGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/567_DFPSpPl/DFPSpPl.c",
+  "type": "DfpSpellPlacePlacementPrefix"
+ },
+ "DFP_Floorbar_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DfpFloorbarPlacementPrefix.motionScaleDivisor"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DfpFloorbarPlacementPrefix.placementGameBit1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DfpFloorbarPlacementPrefix.initialLoweredGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/559_DFP_floorba/DFP_floorba.c",
+  "type": "DfpFloorbarPlacementPrefix"
+ },
+ "DFP_LevelControl_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DfpLevelControlPlacementPrefix.mode"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/553_DFP_LevelCo/DFP_LevelCo.c",
+  "type": "DfpLevelControlPlacementPrefix"
+ },
+ "DFP_Lightni_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DfpLightniPlacementPrefix.boltSegmentDensityParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DfpLightniPlacementPrefix.strandSegmentDensityParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DfpLightniPlacementPrefix.targetPlayerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/571_DFP_Lightni/DFP_Lightni.c",
+  "type": "DfpLightniPlacementPrefix"
+ },
+ "DFP_ObjCreator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "DfpObjCreatorPlacementPrefix.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DfpObjCreatorPlacementPrefix.behaviorMode"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DfpObjCreatorPlacementPrefix.spawnPeriod"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/554_DFP_ObjCrea/DFP_ObjCrea.c",
+  "type": "DfpObjCreatorPlacementPrefix"
+ },
+ "DFP_RotateP_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DFPRotatePPlacement.eventGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DFPRotatePPlacement.activationGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/562_DFP_RotateP/DFP_RotateP.c",
+  "type": "DFPRotatePPlacement"
+ },
+ "DFP_Statue1_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DfpStatue1PlacementPrefix.unknown1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DfpStatue1PlacementPrefix.activationGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/563_DFP_Statue1/DFP_Statue1.c",
+  "type": "DfpStatue1PlacementPrefix"
+ },
+ "DFP_Torch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DfpTorchPlacementPrefix.motionRate"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DfpTorchPlacementPrefix.colorIdx"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DfpTorchPlacementPrefix.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/555_DFP_Torch/DFP_Torch.c",
+  "type": "DfpTorchPlacementPrefix"
+ },
+ "DFP_seqpoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DfpSeqPointPlacement.triggerRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DfpSeqPointPlacement.sequenceId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DfpSeqPointPlacement.conditionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DfpSeqPointPlacement.disableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DfpSeqPointPlacement.unk24"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 557)",
+  "size": 48,
+  "tu": "src/dlls/objects/557_DFP_seqpoin/DFP_seqpoin.c",
+  "type": "DfpSeqPointPlacement"
+ },
+ "DFropenode_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DFropenodePlacement.fadeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/373_DFropenode/DFropenode.c",
+  "type": "DFropenodePlacement"
+ },
+ "DIM2PathGenerator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "Dim2PathGeneratorPlacementView.spawnPeriod"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "Dim2PathGeneratorPlacementView.primarySpawnType"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "Dim2PathGeneratorPlacementView.secondarySpawnType"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "Dim2PathGeneratorPlacementView.activeGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 472)",
+  "size": 36,
+  "tu": "src/dlls/objects/472_DIM2PathGen/DIM2PathGen.c",
+  "type": "Dim2PathGeneratorPlacementView"
+ },
+ "DIMBossIceSmash_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimBossIceSmashPlacement.spawnRotX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DimBossIceSmashPlacement.spawnRotY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DimBossIceSmashPlacement.spawnRotZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DimBossIceSmashPlacement.velocityX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "DimBossIceSmashPlacement.velocityY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DimBossIceSmashPlacement.velocityZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "DimBossIceSmashPlacement.gravityX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 40,
+    "path": "DimBossIceSmashPlacement.gravityY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 42,
+    "path": "DimBossIceSmashPlacement.gravityZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "DimBossIceSmashPlacement.rotVelX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "DimBossIceSmashPlacement.rotVelY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "DimBossIceSmashPlacement.rotVelZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "DimBossIceSmashPlacement.rotGravityX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 52,
+    "path": "DimBossIceSmashPlacement.rotGravityY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 54,
+    "path": "DimBossIceSmashPlacement.rotGravityZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 56,
+    "path": "DimBossIceSmashPlacement.lifetime"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 58,
+    "path": "DimBossIceSmashPlacement.fadeStartFrame"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 62,
+    "path": "DimBossIceSmashPlacement.activateGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 64,
+    "path": "DimBossIceSmashPlacement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 66,
+    "path": "DimBossIceSmashPlacement.homingTargetX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 68,
+    "path": "DimBossIceSmashPlacement.homingTargetY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 70,
+    "path": "DimBossIceSmashPlacement.homingTargetZ"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 72,
+  "tu": "src/dlls/objects/318/318.c",
+  "type": "DimBossIceSmashPlacement"
+ },
+ "DIMCannon_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimCannonPlacement.resetGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DimCannonPlacement.armGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DimCannonPlacement.holdGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "DimCannonPlacement.triggerRange"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 44,
+  "tu": "src/dlls/objects/454_DIMCannon/DIMCannon.c",
+  "type": "DimCannonPlacement"
+ },
+ "DIMDismountPoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "altPoseValue"
+   }
+  ],
+  "how": "typed parameter + also: DLL 457: DimDismountPlacement declares bytes from 0x19, but DIMSnowHorn.c:1176 reads placementData[0xd] (s16* view = offset 0x1a) of every dismount point and writes it to a game bit as the VALUE (disc: 0 or 1; unswapped 0 or 256)",
+  "size": 36,
+  "tu": "src/dlls/objects/457_DIMDismount/DIMDismount.c",
+  "type": "DimDismountPlacement"
+ },
+ "DIMLogFire_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const DimLogFirePlacement.unknown18"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const DimLogFirePlacement.initialMode"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const DimLogFirePlacement.initialStrength"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const DimLogFirePlacement.douseGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const DimLogFirePlacement.unknown20"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "const DimLogFirePlacement.unknown22"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/448_DIMLogFire/DIMLogFire.c",
+  "type": "const DimLogFirePlacement"
+ },
+ "DIMSnowHorn1_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/598_DIMSnowHorn/DIMSnowHorn.c",
+  "type": "DIMSnowHorn1Placement"
+ },
+ "DIM_BossGut2_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "GroundBaddiePlacement.gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "GroundBaddiePlacement.gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "GroundBaddiePlacement.gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "GroundBaddiePlacement.soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "GroundBaddiePlacement.soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "GroundBaddiePlacement.triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "GroundBaddiePlacement.unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "GroundBaddiePlacement.respawnDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "GroundBaddiePlacement.gameBitB"
+   }
+  ],
+  "how": "override: DLL 483: initGroundBaddie(obj, placementAddress, ...), DIM_BossGut.c:269",
+  "size": 52,
+  "tu": "src/dlls/objects/483_DIM_BossGut/DIM_BossGut.c",
+  "type": "GroundBaddiePlacement"
+ },
+ "DIMboss_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "DIMbossPlacementView.eventId"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 480)",
+  "size": 48,
+  "tu": "src/dlls/objects/480_DIM_Boss/DIM_Boss.c",
+  "type": "DIMbossPlacementView"
+ },
+ "DIMbosscrackpar_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DIMbosscrackparPlacementView.particleEffectOffset"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DIMbosscrackparPlacementView.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/486_DIMbosscrac/DIMbosscrac.c",
+  "type": "DIMbosscrackparPlacementView"
+ },
+ "DIMbosstonsil_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "DIMbosstonsilPlacementView.eventId"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 482)",
+  "size": 48,
+  "tu": "src/dlls/objects/482_DIM_BossTon/DIM_BossTon.c",
+  "type": "DIMbosstonsilPlacementView"
+ },
+ "DR_BarrelGr_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrbarrelgrPlacement.range"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DrbarrelgrPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/643_DR_BarrelGr/DR_BarrelGr.c",
+  "type": "DrbarrelgrPlacement"
+ },
+ "DR_CageControl_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CageControlPlacement.armGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CageControlPlacement.watchGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/616_DR_CageCont/DR_CageCont.c",
+  "type": "CageControlPlacement"
+ },
+ "DR_CageWith_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrcagewithPlacement.unk1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DrcagewithPlacement.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DrcagewithPlacement.openedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/620/620.c",
+  "type": "DrcagewithPlacement"
+ },
+ "DR_Chimmey_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DRChimmeySetup.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DRChimmeySetup.enableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/619_DR_Chimmey/DR_Chimmey.c",
+  "type": "DRChimmeySetup"
+ },
+ "DR_CloudPer_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DrCloudPerSetup.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/640_DR_CloudPer/DR_CloudPer.c",
+  "type": "DrCloudPerSetup"
+ },
+ "DR_CloudRunner_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DRCloudRunnerPlacement.airMeterCapacity"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DRCloudRunnerPlacement.pathSpeedTenths"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DRCloudRunnerPlacement.enableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/600_DR_CloudRun/DR_CloudRun.c",
+  "type": "DRCloudRunnerPlacement"
+ },
+ "DR_Creator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "DrcreatorPlacement.spawnGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrcreatorPlacement.behaviorMode"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DrcreatorPlacement.spawnInterval"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/613_DR_Creator/DR_Creator.c",
+  "type": "DrcreatorPlacement"
+ },
+ "DR_EarthWarrior_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DREarthWarriorPlacement.energyCapacity"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/599_DR_EarthWar/DR_EarthWar.c",
+  "type": "DREarthWarriorPlacement"
+ },
+ "DR_EnergyDisc_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DrenergydiscPlacement.moveGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DrenergydiscPlacement.activeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/633_DR_EnergyDi/DR_EnergyDi.c",
+  "type": "DrenergydiscPlacement"
+ },
+ "DR_LaserCannon_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrLaserCannonSetup.targetRange"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DrLaserCannonSetup.beamSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DrLaserCannonSetup.destroyedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DrLaserCannonSetup.warningOffGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/609_DR_LaserCan/DR_LaserCan.c",
+  "type": "DrLaserCannonSetup"
+ },
+ "DR_LightBea_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DrlightbeaPlacement.gameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 636)",
+  "size": 40,
+  "tu": "src/dlls/objects/636_DR_LightBea/DR_LightBea.c",
+  "type": "DrlightbeaPlacement"
+ },
+ "DeathGas_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DeathGasPlacement.activeGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 292)",
+  "size": 28,
+  "tu": "src/dlls/objects/292/292.c",
+  "type": "DeathGasPlacement"
+ },
+ "DoorF4_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DoorF4Placement.farSideGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DoorF4Placement.toggleMask"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DoorF4Placement.openGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DoorF4Placement.nearSideGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/244/244.c",
+  "type": "DoorF4Placement"
+ },
+ "DoorLock_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DoorLockPlacement.unlockedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DoorLockPlacement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "DoorLockPlacement.requiredGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DoorLockPlacement.queuedSequenceId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "DoorLockPlacement.modeFlags"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/273/273.c",
+  "type": "DoorLockPlacement"
+ },
+ "Door_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "DoorPlacement.closeRequestGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DoorPlacement.closedLatchGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DoorPlacement.triggerSequenceId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "DoorPlacement.closeReadyGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/272/272.c",
+  "type": "DoorPlacement"
+ },
+ "EdibleMushroom_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "EdibleMushroomPlacement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/423/423.c",
+  "type": "EdibleMushroomPlacement"
+ },
+ "EffectBox_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "EffectBoxPlacement.gameBitIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/238_EffectBox/EffectBox.c",
+  "type": "EffectBoxPlacement"
+ },
+ "EnemyMushroom_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "EnemyMushroomPlacement.regrowDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "EnemyMushroomPlacement.respawnFrameLimit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "EnemyMushroomPlacement.popGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/424_SH_killermu/SH_killermu.c",
+  "type": "EnemyMushroomPlacement"
+ },
+ "ExplodeAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "ExplodeAnimatorPlacement.posXMin"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ExplodeAnimatorPlacement.posYMin"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "ExplodeAnimatorPlacement.posZMin"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "ExplodeAnimatorPlacement.posXMax"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "ExplodeAnimatorPlacement.posYMax"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "ExplodeAnimatorPlacement.posZMax"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "ExplodeAnimatorPlacement.effectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 40,
+    "path": "ExplodeAnimatorPlacement.velXMax"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 42,
+    "path": "ExplodeAnimatorPlacement.velYMax"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "ExplodeAnimatorPlacement.velXMin"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "ExplodeAnimatorPlacement.velYMin"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "ExplodeAnimatorPlacement.resultGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 52,
+    "path": "ExplodeAnimatorPlacement.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 56,
+  "tu": "src/dlls/objects/317_ExplodeAnim/ExplodeAnim.c",
+  "type": "ExplodeAnimatorPlacement"
+ },
+ "FXEmit_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FXEmitPlacement.effectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "FXEmitPlacement.emitRate"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "FXEmitPlacement.toggleGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FXEmitPlacement.disableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 42,
+    "path": "FXEmitPlacement.intervalSfxId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 44,
+  "tu": "src/dlls/objects/299_FXEmit/FXEmit.c",
+  "type": "FXEmitPlacement"
+ },
+ "Fall_Ladders_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FallLadderPlacement.initialHeightOffset"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "FallLadderPlacement.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "FallLadderPlacement.baseGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FallLadderPlacement.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/266_Fall_Ladder/Fall_Ladder.c",
+  "type": "FallLadderPlacement"
+ },
+ "FireFlyLantern_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/267_FireFlyLant/FireFlyLant.c",
+  "type": "FireFlyLanternPlacement"
+ },
+ "Fireball_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FireballPlacement.startupDelayEnabled"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "FireballPlacement.startDisabled"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "FireballPlacement.unk1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FireballPlacement.unk20"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "FireballPlacement.unk2C"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 227)",
+  "size": 48,
+  "tu": "src/dlls/objects/227/227.c",
+  "type": "FireballPlacement"
+ },
+ "FlameThrowerspe_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FlameThrowerspePlacement.scaleParam"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/228/228.c",
+  "type": "FlameThrowerspePlacement"
+ },
+ "FlammableVine_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FlammableVinePlacement.scaleParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "FlammableVinePlacement.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "FlammableVinePlacement.burnedBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FlammableVinePlacement.gateBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/231/231.c",
+  "type": "FlammableVinePlacement"
+ },
+ "FogControl_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "FogControlPlacement.enableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "FogControlPlacement.fogTop"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "FogControlPlacement.fogBottom"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FogControlPlacement.fogBase"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "FogControlPlacement.depthOffset"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "FogControlPlacement.depthScale"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/320_fogControl/fogControl.c",
+  "type": "FogControlPlacement"
+ },
+ "FuelCell_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "FuelCellPlacement.offBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FuelCellPlacement.onBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 291)",
+  "size": 36,
+  "tu": "src/dlls/objects/291_fuelCell/fuelCell.c",
+  "type": "FuelCellPlacement"
+ },
+ "GCRobotBlast_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/576_GCRobotBlas/GCRobotBlas.c",
+  "type": "GCRobotBlastPlacement"
+ },
+ "GCbaddieShield_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "GCbaddieShieldPlacement.unk18"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "GCbaddieShieldPlacement.lifetime"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/221_GCbaddieShi/GCbaddieShi.c",
+  "type": "GCbaddieShieldPlacement"
+ },
+ "GroundAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "GroundAnimatorPlacement.sunkGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "GroundAnimatorPlacement.enableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "GroundAnimatorPlacement.digParticleVariant"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/312_GroundAnima/GroundAnima.c",
+  "type": "GroundAnimatorPlacement"
+ },
+ "Hagabon_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "HagabonPlacement.curveStepRaw"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "HagabonPlacement.timeReward"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "HagabonPlacement.startInactive"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "HagabonPlacement.armGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/223_Hagabon/Hagabon.c",
+  "type": "HagabonPlacement"
+ },
+ "HighTop_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "HighTopPlacement.airMeterParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "HighTopPlacement.curveScaleParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "HighTopPlacement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/626/626.c",
+  "type": "HighTopPlacement"
+ },
+ "HitAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "HitAnimatorPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/313_HitAnimator/HitAnimator.c",
+  "type": "HitAnimatorPlacement"
+ },
+ "IMMultiSeq_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "IMMultiSeqPlacement.completionGameBits[0]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "IMMultiSeqPlacement.completionGameBits[1]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "IMMultiSeqPlacement.completionGameBits[2]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "IMMultiSeqPlacement.completionGameBits[3]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "IMMultiSeqPlacement.activeGameBits[0]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "IMMultiSeqPlacement.activeGameBits[1]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "IMMultiSeqPlacement.activeGameBits[2]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "IMMultiSeqPlacement.activeGameBits[3]"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 52,
+  "tu": "src/dlls/objects/276_IMMultiSeq/IMMultiSeq.c",
+  "type": "IMMultiSeqPlacement"
+ },
+ "InfoPoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "InfoPointPlacement.textId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/236_InfoPoint/InfoPoint.c",
+  "type": "InfoPointPlacement"
+ },
+ "InvHit_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 28,
+    "path": "InvHitObjectDef.anchorObj"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/241_InvHit/InvHit.c",
+  "type": "InvHitObjectDef"
+ },
+ "InvisibleHitSwitch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "InvisibleHitSwitchPlacement.gameBitId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "InvisibleHitSwitchPlacement.autoResetDelayTenths"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/250_InvisibleHi/InvisibleHi.c",
+  "type": "InvisibleHitSwitchPlacement"
+ },
+ "KT_Lazerwall_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "KtlazerwallPlacement.intensityBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "KtlazerwallPlacement.fireThreshold"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "KtlazerwallPlacement.activeBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/594_KT_Lazerwal/KT_Lazerwal.c",
+  "type": "KtlazerwallPlacement"
+ },
+ "KT_RexFloorSwitch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const KtrexfloorswitchPlacement.levelBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const KtrexfloorswitchPlacement.activeBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/593_KT_RexFloor/KT_RexFloor.c",
+  "type": "const KtrexfloorswitchPlacement"
+ },
+ "KT_Torch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "KTTorchPlacement.visibilityGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/296_KT_Torch/KT_Torch.c",
+  "type": "KTTorchPlacement"
+ },
+ "KaldachomMe_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/214_KaldachomMe/KaldachomMe.c",
+  "type": "KaldachomMePlacement"
+ },
+ "LFXEmitter_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "LFXEmitterPlacement.spinRoll"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "LFXEmitterPlacement.spinPitch"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "LFXEmitterPlacement.spinYaw"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "LFXEmitterPlacement.actionIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "LFXEmitterPlacement.lifeTimer"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "LFXEmitterPlacement.enableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/301_LFXEmitter/LFXEmitter.c",
+  "type": "LFXEmitterPlacement"
+ },
+ "LanternFireFly_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "LanternFireFlyPlacement.timer"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "LanternFireFlyPlacement.driftRangeZ"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/268_LanternFire/LanternFire.c",
+  "type": "LanternFireFlyPlacement"
+ },
+ "LargeCrate_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "LargeCratePlacement.unk1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "LargeCratePlacement.respawnMinutes"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "LargeCratePlacement.brokenGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/261_LargeCrate/LargeCrate.c",
+  "type": "LargeCratePlacement"
+ },
+ "LaserBeam_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const LaserBeamPlacementView.beamRange"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const LaserBeamPlacementView.cyclePeriod"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const LaserBeamPlacementView.disableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/508/508.c",
+  "type": "const LaserBeamPlacementView"
+ },
+ "LevelName_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "LevelNamePlacement.enableGameBit"
+   },
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 28,
+    "path": "LevelNamePlacement.textId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/248_LevelName/LevelName.c",
+  "type": "LevelNamePlacement"
+ },
+ "Lightfoot_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const LightfootPlacement.?{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const LightfootPlacement.eventGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "const LightfootPlacement.activeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 52,
+  "tu": "src/dlls/objects/437/437.c",
+  "type": "const LightfootPlacement"
+ },
+ "MMP_Bridge_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "MMPBridgePlacement.enableGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 271)",
+  "size": 32,
+  "tu": "src/dlls/objects/271_MMP_Bridge/MMP_Bridge.c",
+  "type": "MMPBridgePlacement"
+ },
+ "MagicCaveTop_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "MagicCaveTopPlacement.visibleGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "MagicCaveTopPlacement.textureSwapGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/287_MagicCaveTo/MagicCaveTo.c",
+  "type": "MagicCaveTopPlacement"
+ },
+ "MagicDust_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "CollectibleSetup.hideGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CollectibleSetup.collectGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "CollectibleSetup.visibilityGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "CollectibleSetup.counterGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "CollectibleSetup.spawnMode"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/255/255.c",
+  "type": "CollectibleSetup"
+ },
+ "MagicLight_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const MagicLightPlacement.subtype"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/363/363.c",
+  "type": "const MagicLightPlacement"
+ },
+ "MagicPlant_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "MagicPlantPlacement.eventDuration"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/254_MagicPlant/MagicPlant.c",
+  "type": "MagicPlantPlacement"
+ },
+ "MoonSeedPlantingSpot_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/603_MSPlantingS/MSPlantingS.c",
+  "type": "MoonSeedPlantingSpotPlacement"
+ },
+ "NW_ice_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "INFERRED from anim.placement casts (DLL 420)",
+  "size": 32,
+  "tu": "src/dlls/objects/420/420.c",
+  "type": "NwIcePlacement"
+ },
+ "NW_mammoth_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "NwMammothPlacement.triggerDistance"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/417/417.c",
+  "type": "NwMammothPlacement"
+ },
+ "PaymentKiosk_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const PaymentKioskPlacement.price"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const PaymentKioskPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/445/445.c",
+  "type": "const PaymentKioskPlacement"
+ },
+ "PointLight_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "PointLightSetup.enableBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "PointLightSetup.distanceNear"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "PointLightSetup.distanceFar"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "PointLightSetup.colorFadeFrames"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "PointLightSetup.rotXSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 52,
+    "path": "PointLightSetup.rotYSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 54,
+    "path": "PointLightSetup.glowScale"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 56,
+    "path": "PointLightSetup.glowTexture"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 64,
+  "tu": "src/dlls/objects/681/681.c",
+  "type": "PointLightSetup"
+ },
+ "PortalSpellDoor_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "PortalSpellDoorPlacement.rotY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "PortalSpellDoorPlacement.openedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/269_PortalSpell/PortalSpell.c",
+  "type": "PortalSpellDoorPlacement"
+ },
+ "PressureSwitchFB_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "PressureSwitchFBPlacement.pressedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "PressureSwitchFBPlacement.enableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/251/251.c",
+  "type": "PressureSwitchFBPlacement"
+ },
+ "PressureSwitch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const PressureSwitchPlacementView.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const PressureSwitchPlacementView.retriggerDelay"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/510/510.c",
+  "type": "const PressureSwitchPlacementView"
+ },
+ "ProjectedLight_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ProjectedLightSetup.distanceNear"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "ProjectedLightSetup.distanceFar"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "ProjectedLightSetup.colorFadeFrames"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "ProjectedLightSetup.rotXSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "ProjectedLightSetup.rotYSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "ProjectedLightSetup.textureAsset"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 40,
+    "path": "ProjectedLightSetup.projectionHeight"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 42,
+    "path": "ProjectedLightSetup.projectionWidth"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 60,
+    "path": "ProjectedLightSetup.farZ"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 64,
+  "tu": "src/dlls/objects/683_LGTProjecte/LGTProjecte.c",
+  "type": "ProjectedLightSetup"
+ },
+ "ProjectileSwitch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "ProjectileSwitchPlacement.gameBitId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ProjectileSwitchPlacement.autoResetDelayTenths"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/249/249.c",
+  "type": "ProjectileSwitchPlacement"
+ },
+ "ProximityMine_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ProximityMinePlacement.parameter{union}"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/608/608.c",
+  "type": "ProximityMinePlacement"
+ },
+ "ReStartMark_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/230_ReStartMark/ReStartMark.c",
+  "type": "ReStartMarkPlacement"
+ },
+ "SB_KyteCage_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/496_SB_KyteCage/SB_KyteCage.c",
+  "type": "SBKyteCagePlacementView"
+ },
+ "SB_Propeller_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SBPropellerPlacementView.modelBankIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/489_SB_Propelle/SB_Propelle.c",
+  "type": "SBPropellerPlacementView"
+ },
+ "SB_SeqDoor_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/497_SB_SeqDoor/SB_SeqDoor.c",
+  "type": "const SBSeqDoorPlacementView"
+ },
+ "SB_ShipGunBroke_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "SBShipGunBrokePlacementView.destroyedGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 503)",
+  "size": 32,
+  "tu": "src/dlls/objects/503_SB_ShipGunB/SB_ShipGunB.c",
+  "type": "SBShipGunBrokePlacementView"
+ },
+ "SB_ShipGun_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "INFERRED from anim.placement casts (DLL 492)",
+  "size": 28,
+  "tu": "src/dlls/objects/492_SB_ShipGun/SB_ShipGun.c",
+  "type": "SBShipGunPlacementView"
+ },
+ "SH_EmptyTumbleW_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 28,
+    "path": "ShEmptyTumbleweedPlacement.scale"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/436_SH_EmptyTum/SH_EmptyTum.c",
+  "type": "ShEmptyTumbleweedPlacement"
+ },
+ "SHthorntail_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const SHthorntailPlacement.scale"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/429_SH_thorntai/SHthorntail.c",
+  "type": "const SHthorntailPlacement"
+ },
+ "SPScarab_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SpscarabPlacement.groundY"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/647_SPScarab/SPScarab.c",
+  "type": "SpscarabPlacement"
+ },
+ "Scarab_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const ScarabPlacement.activeTimer"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/262/262.c",
+  "type": "const ScarabPlacement"
+ },
+ "SeqObj2_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "SeqObj2Placement.usedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SeqObj2Placement.requiredGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "SeqObj2Placement.preemptSequenceId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "SeqObj2Placement.sequenceParam"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/275/275.c",
+  "type": "SeqObj2Placement"
+ },
+ "SeqObject_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "SeqObjectPlacement.openGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SeqObjectPlacement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "SeqObjectPlacement.preemptSequenceId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "SeqObjectPlacement.sequenceParam"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/274/274.c",
+  "type": "SeqObjectPlacement"
+ },
+ "SeqPoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WmSeqPointMapData.triggerRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WmSeqPointMapData.sequenceId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WmSeqPointMapData.conditionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WmSeqPointMapData.disableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/545/545.c",
+  "type": "WmSeqPointMapData"
+ },
+ "SfxPlayer_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "SfxPlayerPlacement.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SfxPlayerPlacement.primarySfxId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "SfxPlayerPlacement.secondarySfxId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/307_sfxPlayer/sfxPlayer.c",
+  "type": "SfxPlayerPlacement"
+ },
+ "SkeetlaWall_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/212_SkeetlaWall/SkeetlaWall.c",
+  "type": "SkeetlaWallPlacement"
+ },
+ "SmallBasket_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SmallBasketPlacement.unk1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "SmallBasketPlacement.respawnMinutes"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "SmallBasketPlacement.enableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "SmallBasketPlacement.leashRange"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/260_SmallBasket/SmallBasket.c",
+  "type": "SmallBasketPlacement"
+ },
+ "SnowBike_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SnowBikePlacement.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "SnowBikePlacement.finishedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/597/597.c",
+  "type": "SnowBikePlacement"
+ },
+ "SoftBody_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/685/685.c",
+  "type": "SoftBodySetup"
+ },
+ "SpiritDoorLock_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const SpiritDoorLockPlacement.orbitCount"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const SpiritDoorLockPlacement.doneGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const SpiritDoorLockPlacement.activeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/359_SpiritDoorL/SpiritDoorL.c",
+  "type": "const SpiritDoorLockPlacement"
+ },
+ "StaticCamera_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "StaticCameraPlacement.?{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "StaticCameraPlacement.?{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "StaticCameraPlacement.?{union}"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/602_StaticCamer/StaticCamer.c",
+  "type": "StaticCameraPlacement"
+ },
+ "StayPoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "StayPointPlacement.activeGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "StayPointPlacement.requiredGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 258)",
+  "size": 36,
+  "tu": "src/dlls/objects/258_StayPoint/StayPoint.c",
+  "type": "StayPointPlacement"
+ },
+ "SwarmBaddie_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SwarmBaddiePlacement.curveStepParam"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/224_SwarmBaddie/SwarmBaddie.c",
+  "type": "SwarmBaddiePlacement"
+ },
+ "TexFrameAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TexFrameAnimatorPlacement.endFrame"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "TexFrameAnimatorPlacement.speed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "TexFrameAnimatorPlacement.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "TexFrameAnimatorPlacement.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/319_TexFrameAni/TexFrameAni.c",
+  "type": "TexFrameAnimatorPlacement"
+ },
+ "TexScroll2_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "TexScrollPlacement.textureTableIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TexScrollPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/308_texscroll2/texscroll2.c",
+  "type": "TexScrollPlacement"
+ },
+ "TexScroll_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "TexScrollPlacement.textureTableIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TexScrollPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/309_texscroll/texscroll.c",
+  "type": "TexScrollPlacement"
+ },
+ "Transporter_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "TransporterPlacement.enableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/300_Transporter/Transporter.c",
+  "type": "TransporterPlacement"
+ },
+ "TreasureChest_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TreasureChestPlacement.triggerObjectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "TreasureChestPlacement.dialogueId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "TreasureChestPlacement.openedGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 285)",
+  "size": 32,
+  "tu": "src/dlls/objects/285/285.c",
+  "type": "TreasureChestPlacement"
+ },
+ "TrickyCurve_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TrickyCurveObjectDef.rangeX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "TrickyCurveObjectDef.rangeZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "TrickyCurveObjectDef.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "TrickyCurveObjectDef.gateGameBit"
+   }
+  ],
+  "how": "override: DLL 561 (0 disc placements): `u8* def` cast to TrickyCurveObjectDef; s16 rangeX/rangeZ/triggerGameBit/gateGameBit @0x1a..0x20",
+  "size": 40,
+  "tu": "src/dlls/objects/561_DFP_ForceAw/DFP_ForceAw.c",
+  "type": "TrickyCurveObjectDef"
+ },
+ "TrickyGuardSpot_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TrickyGuardSpotPlacement.triggerRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "TrickyGuardSpotPlacement.trickyInRangeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/288_TrickyGuard/TrickyGuard.c",
+  "type": "TrickyGuardSpotPlacement"
+ },
+ "TrickyGuard_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TrickyGuardPlacement.armingGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/257_TrickyGuard/TrickyGuard.c",
+  "type": "TrickyGuardPlacement"
+ },
+ "TrickyWarp_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/256_TrickyWarp/TrickyWarp.c",
+  "type": "TrickyWarpPlacement"
+ },
+ "Tricky_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "SideRepelPlacement.minDistance"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SideRepelPlacement.moveDistance"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 196)",
+  "size": 28,
+  "tu": "src/dlls/objects/196_Tricky/tricky.c",
+  "type": "SideRepelPlacement"
+ },
+ "Trigger_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 56,
+    "path": "TriggerPlacement.triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 68,
+    "path": "TriggerPlacement.gameBitSrc"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 70,
+    "path": "TriggerPlacement.triggerDelayFrames"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 72,
+    "path": "TriggerPlacement.gateBitSrc[0]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 74,
+    "path": "TriggerPlacement.gateBitSrc[1]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 76,
+    "path": "TriggerPlacement.gateBitSrc[2]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 78,
+    "path": "TriggerPlacement.gateBitSrc[3]"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 80,
+  "tu": "src/dlls/objects/294/294.c",
+  "type": "TriggerPlacement"
+ },
+ "TumbleWeedBush_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 28,
+    "path": "TumbleweedBushPlacement.scale"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/209_TumbleWeedB/TumbleWeedB.c",
+  "type": "TumbleweedBushPlacement"
+ },
+ "VFPDragHead_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpDragHeadPlacement.headIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpDragHeadPlacement.gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VfpDragHeadPlacement.gameBitB"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/546_VFPDragHead/VFPDragHead.c",
+  "type": "VfpDragHeadPlacement"
+ },
+ "VFPLift_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpLiftPlacement.travelDistance"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "VfpLiftPlacement.mapEventNo"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpLiftPlacement.toggleGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VfpLiftPlacement.hitDisableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/541/541.c",
+  "type": "VfpLiftPlacement"
+ },
+ "VFP_Block1_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpBlock1Placement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/542_VFP_Block1/VFP_Block1.c",
+  "type": "VfpBlock1Placement"
+ },
+ "VFP_DoorSwitch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "VfpDoorSwitchPlacement.rotY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpDoorSwitchPlacement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/544/544.c",
+  "type": "VfpDoorSwitchPlacement"
+ },
+ "VFP_Ladders_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpLaddersSetup.baseGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VfpLaddersSetup.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/540_VFP_Ladders/VFP_Ladders.c",
+  "type": "VfpLaddersSetup"
+ },
+ "VFP_LevelControl_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpLevelControlSetup.areaMode"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/534_VFP_LevelCo/VFP_LevelCo.c",
+  "type": "VfpLevelControlSetup"
+ },
+ "VFP_ObjCreator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "VfpObjCreatorPlacement.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpObjCreatorPlacement.spawnMode"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "VfpObjCreatorPlacement.spawnInterval"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 535)",
+  "size": 36,
+  "tu": "src/dlls/objects/535_VFP_ObjCrea/VFP_ObjCrea.c",
+  "type": "VfpObjCreatorPlacement"
+ },
+ "VFP_Platform_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VfpPlatformPlacement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/543/543.c",
+  "type": "VfpPlatformPlacement"
+ },
+ "VFP_SpellPlace_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpSpellPlacePlacementPrefix.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VfpSpellPlacePlacementPrefix.activationGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/552/552.c",
+  "type": "VfpSpellPlacePlacementPrefix"
+ },
+ "VFP_coreplat_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VfpCorePlatformPlacement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/547_VFP_corepla/VFP_corepla.c",
+  "type": "VfpCorePlatformPlacement"
+ },
+ "VFP_flamepoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpFlamePointMapData.counterInit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "VfpFlamePointMapData.noCheck"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpFlamePointMapData.showGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VfpFlamePointMapData.checkGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 549)",
+  "size": 36,
+  "tu": "src/dlls/objects/549_VFP_flamepo/VFP_flamepo.c",
+  "type": "VfpFlamePointMapData"
+ },
+ "VFP_lavapool_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpLavaPoolMapData.amplitudeDivisor"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/550_VFP_lavapoo/VFP_lavapoo.c",
+  "type": "VfpLavaPoolMapData"
+ },
+ "VFP_lavastar_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpLavaStarMapData.heightOffset"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpLavaStarMapData.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/551_VFP_lavasta/VFP_lavasta.c",
+  "type": "VfpLavaStarMapData"
+ },
+ "VFP_statueball_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VfpStatueBallPlacement.variant"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "VfpStatueBallPlacement.scale"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VfpStatueBallPlacement.activationGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/538_VFP_statueb/VFP_statueb.c",
+  "type": "VfpStatueBallPlacement"
+ },
+ "VisAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "VisAnimatorPlacement.gateGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/314_VisAnimator/VisAnimator.c",
+  "type": "VisAnimatorPlacement"
+ },
+ "Vortex_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "VortexPlacementPrefix.windLiftScaleQ14"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "VortexPlacementPrefix.reverseTextureScroll"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "VortexPlacementPrefix.control{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "VortexPlacementPrefix.activeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/691/691.c",
+  "type": "VortexPlacementPrefix"
+ },
+ "WM_Column_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WMColumnPlacement.occupiedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/278_WM_Column/WM_Column.c",
+  "type": "WMColumnPlacement"
+ },
+ "WM_Galleon_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const WMGalleonSetup.unknown1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const WMGalleonSetup.unknown1E"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/504_WM_Galleon/WM_Galleon.c",
+  "type": "const WMGalleonSetup"
+ },
+ "WM_LaserTarget_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const WMLaserTargetPlacement.cooldown"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const WMLaserTargetPlacement.toggleGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const WMLaserTargetPlacement.pairedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/509_WM_LaserTar/WM_LaserTar.c",
+  "type": "const WMLaserTargetPlacement"
+ },
+ "WM_ObjCreator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const WMObjCreatorPlacementView.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const WMObjCreatorPlacementView.spawnMode"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const WMObjCreatorPlacementView.spawnPeriod"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/505_WM_ObjCreat/WM_ObjCreat.c",
+  "type": "const WMObjCreatorPlacementView"
+ },
+ "WM_Planets_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WmPlanetsMapData.modelIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/528_WM_Planets/WM_Planets.c",
+  "type": "WmPlanetsMapData"
+ },
+ "WM_Worm_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const WMWormPlacementView.particleEffectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const WMWormPlacementView.spawnCountOrInterval"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/519_WM_Worm/WM_Worm.c",
+  "type": "const WMWormPlacementView"
+ },
+ "WM_colrise_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const WMColrisePlacementView.riseGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/513_WM_colrise/WM_colrise.c",
+  "type": "const WMColrisePlacementView"
+ },
+ "WM_seqobject_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/506_WM_seqobjec/WM_seqobjec.c",
+  "type": "const WMSeqObjectPlacementView"
+ },
+ "WM_spiritplace_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WmSpiritPlaceMapData.rotYAngle"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WmSpiritPlaceMapData.heightOffset"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WmSpiritPlaceMapData.sequenceGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WmSpiritPlaceMapData.promptGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/524_WM_spiritpl/WM_spiritpl.c",
+  "type": "WmSpiritPlaceMapData"
+ },
+ "WallAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "WallAnimatorPlacement.completionBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WallAnimatorPlacement.digParticleVariant"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "WallAnimatorPlacement.initialRotX"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/315_WallAnimato/WallAnimato.c",
+  "type": "WallAnimatorPlacement"
+ },
+ "WarpPoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WarpPointPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/240_WarpPoint/WarpPoint.c",
+  "type": "WarpPointPlacement"
+ },
+ "WaterFallSpray_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "WaterFallSprayPlacement.enableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/306_WaterFallSp/WaterFallSp.c",
+  "type": "WaterFallSprayPlacement"
+ },
+ "WaveAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "WaveAnimatorPlacement.originX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WaveAnimatorPlacement.originY"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/310_WaveAnimato/WaveAnimato.c",
+  "type": "WaveAnimatorPlacement"
+ },
+ "WispBaddie_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WispBaddiePlacement.maxHitRadiusParameter"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/225_WispBaddie/WispBaddie.c",
+  "type": "WispBaddiePlacement"
+ },
+ "XyzAnimator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "XyzAnimatorPlacement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "XyzAnimatorPlacement.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "XyzAnimatorPlacement.startX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "XyzAnimatorPlacement.startY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "XyzAnimatorPlacement.startZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "XyzAnimatorPlacement.targetX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "XyzAnimatorPlacement.targetY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "XyzAnimatorPlacement.targetZ"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 316)",
+  "size": 48,
+  "tu": "src/dlls/objects/316_XYZAnimator/XYZAnimator.c",
+  "type": "XyzAnimatorPlacement"
+ },
+ "_accepted": {
+  "CurveFish_init": "DLL 259, 28 placements: the disc's waitSeconds (u16 @0x20) are byte pairs (0x0100, 0x0200, 0x1e00, 0x4000, 0x0258) so plausibility cannot decide it, but CurveFish.c is MatchingFor(\"GSAE01\") in configure.py: the retail object code is byte-identical to this source, so `(u32)placement->waitSeconds` IS an unsigned halfword load at +0x20, which is big-endian on the GameCube. Swap it."
+ },
+ "_refused": [],
+ "_skipped": {
+  "ARWArwingGu_init": "DLL 669 (25 records): getExtraSize/init read romDefNo only",
+  "ARWSpeedStr_init": "DLL 674: placement parameter unused",
+  "AndrossBrain_init": "DLL 702: init(obj) only",
+  "Carryable_init": "DLL 47 is an engine DLL (Carryable_funcs); no disc placement uses it, and its parameter is a CarryableState",
+  "CloudPrisonControl_init": "DLL 325",
+  "ColdWaterControl_init": "DLL 281: init(obj) only",
+  "DIM_BossGut_init": "DLL 481 (1 record, 56 bytes): init(obj) only; DLL 483's DIM_BossGut2_init is the GroundBaddiePlacement one",
+  "DIMbossspit_init": "DLL 485",
+  "DeathSeq_init": "DLL 270",
+  "Dummy29E_init": "DLL 670",
+  "EndObject_init": "DLL 264: init(void)",
+  "FElevControl_init": "DLL 322",
+  "FEseqobject_init": "DLL 323: init(obj) only",
+  "GM_MazeWell_init": "DLL 611: init(obj) only",
+  "IMIceMountain_init": "DLL 361 (24-byte record)",
+  "IceBall_init": "DLL 205",
+  "KT_RexLevel_init": "DLL 591 (24-byte record)",
+  "KaldachomSpit_init": "DLL 215",
+  "LinkALevControl_init": "DLL 568: init(obj) only",
+  "MagicCaveBottom_update": "DLL 286 (2 records, 32 bytes): update reads u8 rotationX @0x1a and u8 sequenceBank @0x1b only (a float 1.0 sits at 0x1c on the disc; nothing reads it)",
+  "MikaBombShadow_init": "DLL 220",
+  "MikaBomb_init": "DLL 219",
+  "Pollen_init": "DLL 217",
+  "SB_CageKyte_init": "DLL 498: init(obj) only",
+  "SB_CannonBall_init": "DLL 494",
+  "SB_CloudBall_init": "DLL 495",
+  "SB_CloudRunner_init": "DLL 601: init(obj) only",
+  "SB_FireBall_init": "DLL 493",
+  "SB_Galleon_init": "DLL 488: obj->anim.placement->posX/posZ (header) only",
+  "SB_MiniFire_init": "DLL 499",
+  "SB_ShipHead_init": "DLL 490: init(obj) only; the spawned fire balls are runtime records",
+  "SB_ShipMast_init": "DLL 491: init(void)",
+  "SH_LevelControl_init": "DLL 430 (24-byte records)",
+  "SH_StaffHaze_update": "DLL 434 (0 disc records): SH_staffHaz.c never touches its placement",
+  "Shield_init": "DLL 229: parameter unused",
+  "ShopKeeper_init": "DLL 646: the 0x2C s8 'rotZ' in SPShopKeepe.c is ShopKeeperCurveNode (a ROM CURVE record, objectId 110, swapped at load), not this object's own placement",
+  "SidekickBall_init": "DLL 245",
+  "TitleScreen_init": "DLL 704 (9 records): TitlescreenPlacement is one s8 spawnRot @0x18",
+  "VFP_MiniFire_init": "DLL 536: only ((ObjPlacement*)init)->posY (header)",
+  "WCBouncyCra_init": "DLL 652: only setup->posY (header)",
+  "WM_GeneralScales_init": "DLL 522: init(obj) only",
+  "WM_LevelControl_init": "DLL 521 (24-byte record)",
+  "WM_newcrystal_init": "DLL 533: placement parameter unused",
+  "andross_init": "DLL 700: only setup->posX/Y/Z (header); asteroid->anim.placementData->objectId (header) in Andross.c",
+  "androssligh_init": "DLL 703",
+  "area_init": "DLL 246",
+  "arwarwing_init": "DLL 666 (7 records): reads mapEventSlot/romDefNo only; its Obj_AllocObjectSetup'd children are runtime records",
+  "arwlevelcon_init": "DLL 673: the 6 disc records are 24 bytes (header only); ARWLevelConSetup.routeSignature overlays the header's ident @0x14",
+  "ccGasVent_init": "DLL 389: init(obj) only adds the object type",
+  "ccLevelControl_init": "DLL 395: init(obj) only",
+  "cfPerch_init": "DLL 339 (24-byte record)",
+  "cfPrisonUncle_init": "DLL 335 (24-byte record)",
+  "checkpoint4_init": "DLL 232: its view (Checkpoint4Placement) pads the four s32 route links as bytes; the ENGINE reads them (CheckpointRouteEntry) and mldf_endian.c swaps objectId-5 records at load",
+  "crcloudrace_init": "DLL 605 (24-byte record)",
+  "dbshSymbol_init": "DLL 406: init(obj) only",
+  "depthoffieldpoint_init": "DLL 200 (32 records): init(obj) only; state is extra, placement never read",
+  "dfperchwitch_init": "DLL 564",
+  "dim_levelcontrol_init": "DLL 461 (24-byte record)",
+  "dim_tricky_init": "DLL 464: init(obj) only",
+  "dll419_init": "DLL 419: init(obj), placement not read",
+  "dll_144_init": "DLL 324",
+  "dll_1DA_init": "DLL 474",
+  "dll_28B_init": "DLL 651",
+  "dll_2A3_init": "DLL 675",
+  "dll_2A4_init": "DLL 676",
+  "doorswitch_init": "DLL 558",
+  "drmusiccont_init": "DLL 638: init(obj) only",
+  "ecshShrine_init": "DLL 399 ECSH_Shrine: placement is `const s8*`, only placement[ECSH_SHRINE_PLACEMENT_ROTATION_OFFSET] (a byte) is read",
+  "gcRobotLightBeam_init": "DLL 336",
+  "gf_levelcon_init": "DLL 699 (24-byte record): reads OTHER objects' placement ident (header) only",
+  "gpshShrine_init": "DLL 402 GPSH_Shrine: `(void)placement;` -- the parameter is unused, the shrine reads only obj->anim.placementData->posY (header)",
+  "hagabonMK2_init": "called by Baddie.c's dispatcher with a state pointer, never a descriptor init; DLL 201's enemy_init swaps EnemyPlacement",
+  "hoodedZyck_init": "as hagabonMK2_init",
+  "imAnimSpace_init": "DLL 366: init(obj) only",
+  "imIcePillar_init": "DLL 365",
+  "imSpaceRingGenerator_init": "DLL 369: update copies ObjPlacement colour bytes (header) into the spawned ring",
+  "laser_init": "DLL 566",
+  "linkLevelControl_init": "DLL 371: init(obj) only",
+  "linkbLevelControl_init": "DLL 370: init(obj) only",
+  "magicmaker_init": "DLL 484 (1 record, 40 bytes): init is empty; update copies ObjPlacement colour bytes (header) into the spawned setup",
+  "mikaladon_init": "as hagabonMK2_init",
+  "mmpAsteroidRe_init": "DLL 384: init(obj) only",
+  "mmpLevelControl_init": "DLL 382 (24-byte record)",
+  "nwGeyser_init": "DLL 416: init(obj) only",
+  "nwLevelControl_init": "DLL 421: init(obj) only",
+  "nwTricky_init": "DLL 418: init(obj) only",
+  "nwshLevelControl_init": "DLL 408: `(void)placement;` -- unused",
+  "pinponspike_init": "DLL 216",
+  "platform1_init": "DLL 570",
+  "sc_levelcontrol_init": "DLL 438 (24-byte record)",
+  "sc_totemstrength_init": "DLL 444: init(obj) only",
+  "setuppoint_init": "DLL 233 (278 records, 8-byte tail): init(void); no code in the object reads the tail. Cross-checked: no src/main or other-object code reads a Setuppoint record's tail (they are found by ident, header)",
+  "shTricky_init": "DLL 422: init(obj) only",
+  "sh_staff_update": "DLL 433 (1 record, 32 bytes): reads u8 rotZByte @0x18 / rotYByte @0x19 only",
+  "shop_init": "DLL 645 (24-byte record): shop_initBody ignores objDef",
+  "staff_init": "DLL 226",
+  "textblockObj_init": "DLL 569",
+  "wclevelcont_init": "DLL 653 (24-byte record)",
+  "worldasteroids_init": "DLL 468",
+  "worldplanet_init": "DLL 466: update copies ObjPlacement colour bytes (header) into the spawned setup"
+ },
+ "animatedobj_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "AnimatedObjPlacement.animDataIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "AnimatedObjPlacement.sequenceGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "AnimatedObjPlacement.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "AnimatedObjPlacement.unk1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "AnimatedObjPlacement.unk20"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "AnimatedObjPlacement.unk2C"
+   }
+  ],
+  "how": "typed parameter (descriptor DLL 198)",
+  "size": 48,
+  "tu": "src/dlls/objects/198_AnimatedObj/AnimatedObj.c",
+  "type": "AnimatedObjPlacement"
+ },
+ "arwarwingbo_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/668_ARWArwingBo/ARWArwingBo.c",
+  "type": "ArwingBombSetup"
+ },
+ "arwgenerato_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "ARWGeneratorSetup.spawnInterval"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ARWGeneratorSetup.projectileSpeed"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/677_ARWGenerato/ARWGenerato.c",
+  "type": "ARWGeneratorSetup"
+ },
+ "arwingandrossstuff_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/667/667.c",
+  "type": "ArwProjectileSetup"
+ },
+ "arwproximit_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 50,
+  "tu": "src/dlls/objects/679_ARWProximit/ARWProximit.c",
+  "type": "ARWProximitSetup"
+ },
+ "attractor_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "AttractorPlacement.unknown1A"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/351/351.c",
+  "type": "AttractorPlacement"
+ },
+ "babyCloudRunner_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "BabyCloudRunnerPlacement.outerRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "BabyCloudRunnerPlacement.innerRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "BabyCloudRunnerPlacement.enableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "BabyCloudRunnerPlacement.runnerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/332/332.c",
+  "type": "BabyCloudRunnerPlacement"
+ },
+ "barrelgener_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "INFERRED from anim.placement casts (DLL 642)",
+  "size": 26,
+  "tu": "src/dlls/objects/642_BarrelGener/BarrelGener.c",
+  "type": "BarrelGeneratorSetup"
+ },
+ "blasted_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "BlastedTargetPlacement.pieceCount"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "BlastedTargetPlacement.mapLayerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "BlastedTargetPlacement.completedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "BlastedTargetPlacement.progressGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/345/345.c",
+  "type": "BlastedTargetPlacement"
+ },
+ "bossdrakor_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "BossdrakorPlacement.airMeterMax"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "BossdrakorPlacement.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "BossdrakorPlacement.defeatedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/589_BossDrakor/BossDrakor.c",
+  "type": "BossdrakorPlacement"
+ },
+ "breakableCarryable_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/265/265.c",
+  "type": "BreakableCarryablePlacement"
+ },
+ "brokenpipe_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/688_BrokenPipe/BrokenPipe.c",
+  "type": "BrokenPipePlacementPrefix"
+ },
+ "cannonclaw_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 44,
+  "tu": "src/dlls/objects/207_CannonClaw/CannonClaw.c",
+  "type": "CannonClawPlacement"
+ },
+ "ccGasVentControl_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/390_CCgasventCo/CCgasventCo.c",
+  "type": "const CCGasVentControlPlacement"
+ },
+ "ccLightfoot_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/392_CClightfoot/CClightfoot.c",
+  "type": "const CCLightfootPlacement"
+ },
+ "ccPedestal_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/394_CCpedstal/CCpedstal.c",
+  "type": "const CCPedestalPlacement"
+ },
+ "ccQueen_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/391_CCqueen/CCqueen.c",
+  "type": "const CCQueenPlacement"
+ },
+ "ccRiverFlow_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "CCRiverFlowPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/372_CCriverflow/CCriverflow.c",
+  "type": "CCRiverFlowPlacement"
+ },
+ "ccSharpClawPad_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const CCSharpClawPadPlacement.activationGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/393_CCSharpclaw/CCSharpclaw.c",
+  "type": "const CCSharpClawPadPlacement"
+ },
+ "cfMainCrystal_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/331_CFMainCryst/CFMainCryst.c",
+  "type": "CfMainCrystalPlacement"
+ },
+ "cfPowerBase_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CfPowerBasePlacement.poweredGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/330_CFPowerBase/CFPowerBase.c",
+  "type": "CfPowerBasePlacement"
+ },
+ "cfPrisonCage_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "CfPrisonCagePlacement.openedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/340/340.c",
+  "type": "CfPrisonCagePlacement"
+ },
+ "cfPrisonGuard_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CfPrisonGuardPlacement.watchRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "CfPrisonGuardPlacement.unknown1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CfPrisonGuardPlacement.disableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "CfPrisonGuardPlacement.unknown22"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/334_CFPrisonGua/CFPrisonGua.c",
+  "type": "CfPrisonGuardPlacement"
+ },
+ "cfforcefield_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CfForceFieldPlacement.unknown1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CfForceFieldPlacement.activeGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CfForceFieldPlacement.collapseGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/347_CFForceFiel/CFForceFiel.c",
+  "type": "CfForceFieldPlacement"
+ },
+ "cfguardian_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/328_CFGuardian/CFGuardian.c",
+  "type": "CfGuardianPlacement"
+ },
+ "cflevelcontrol_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/356_CFLevelCont/CFLevelCont.c",
+  "type": "CfLevelControlPlacement"
+ },
+ "cfmagicwall_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CfMagicWallPlacement.fadeRange"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CfMagicWallPlacement.visibleGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/354_CFMagicWall/CFMagicWall.c",
+  "type": "CfMagicWallPlacement"
+ },
+ "chuka_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DfpWallbarPlacementPrefix.initialRotZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DfpWallbarPlacementPrefix.motionScaleDivisor"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/560_DFP_wallbar/DFP_wallbar.c",
+  "type": "DfpWallbarPlacementPrefix"
+ },
+ "cmbsrc_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 32,
+    "path": "CmbSrcPlacement.radius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "CmbSrcPlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/689_CmbSrc/CmbSrc.c",
+  "type": "CmbSrcPlacement"
+ },
+ "cnthitobjec_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CntHitObjectPlacementPrefix.startHealth"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "CntHitObjectPlacementPrefix.modeParam{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CntHitObjectPlacementPrefix.doneGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "CntHitObjectPlacementPrefix.startGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/694_CNThitObjec/CNThitObjec.c",
+  "type": "CntHitObjectPlacementPrefix"
+ },
+ "collectible_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "CollectibleSetup.hideGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CollectibleSetup.collectGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "CollectibleSetup.visibilityGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "CollectibleSetup.counterGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "CollectibleSetup.spawnMode"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/237/237.c",
+  "type": "CollectibleSetup"
+ },
+ "crfueltank_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "CrFuelTankPlacementPrefix.hitVolumeIdTimes10"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "CrFuelTankPlacementPrefix.hitGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/607_CRFuelTank/CRFuelTank.c",
+  "type": "CrFuelTankPlacementPrefix"
+ },
+ "crrockfall_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const CrRockfallPlacement.gameBitId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const CrRockfallPlacement.fallDelay"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/362_CRrockfall/CRrockfall.c",
+  "type": "const CrRockfallPlacement"
+ },
+ "curve_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 28,
+    "path": "RomCurveDef.linkIds[0]"
+   },
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 32,
+    "path": "RomCurveDef.linkIds[1]"
+   },
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 36,
+    "path": "RomCurveDef.linkIds[2]"
+   },
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 40,
+    "path": "RomCurveDef.linkIds[3]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "RomCurveDef.requiredBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "RomCurveDef.forbiddenBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 56,
+    "path": "RomCurveDef.roll"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 68,
+  "tu": "src/dlls/objects/293_curve/curve.c",
+  "type": "RomCurveDef"
+ },
+ "dbegg_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DbEggPlacementPrefix.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DbEggPlacementPrefix.secondaryGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DbEggPlacementPrefix.activateGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "DbEggPlacementPrefix.counterGameBit"
+   }
+  ],
+  "how": "override: DLL 575: CCRiverFlowPlacement in the same TU is a DIFFERENT object's placement read across objects",
+  "size": 48,
+  "tu": "src/dlls/objects/575_DB_egg/DB_egg.c",
+  "type": "DbEggPlacementPrefix"
+ },
+ "dbholecontrol1_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "Dbholecontrol1Placement.gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "Dbholecontrol1Placement.gameBitB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "Dbholecontrol1Placement.hideGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "Dbholecontrol1Placement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "Dbholecontrol1Placement.unk24"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 579)",
+  "size": 48,
+  "tu": "src/dlls/objects/579_DBHoleContr/DBHoleContr.c",
+  "type": "Dbholecontrol1Placement"
+ },
+ "dbshShrine_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/405_DBSH_Shrine/DBSH_Shrine.c",
+  "type": "const DBSHShrinePlacement"
+ },
+ "dbstealerworm_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "GroundBaddiePlacement.gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "GroundBaddiePlacement.gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "GroundBaddiePlacement.gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "GroundBaddiePlacement.soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "GroundBaddiePlacement.soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "GroundBaddiePlacement.triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "GroundBaddiePlacement.unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "GroundBaddiePlacement.respawnDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "GroundBaddiePlacement.gameBitB"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 578)",
+  "size": 52,
+  "tu": "src/dlls/objects/578_DBstealerwo/DBstealerwo.c",
+  "type": "GroundBaddiePlacement"
+ },
+ "decoration11a_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/282/282.c",
+  "type": "Decoration11APlacement"
+ },
+ "dfppowersl_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DfpPowerSlPlacementPrefix.sequenceStartFrame"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DfpPowerSlPlacementPrefix.effectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DfpPowerSlPlacementPrefix.disableEffectGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/572_DFP_PowerSl/DFP_PowerSl.c",
+  "type": "DfpPowerSlPlacementPrefix"
+ },
+ "dfptargetblock_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DfpTargetBlockPlacement.completionSfxId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DfpTargetBlockPlacement.stateSfxId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/565_DFP_TargetB/DFP_TargetB.c",
+  "type": "DfpTargetBlockPlacement"
+ },
+ "dfshLaserBeam_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const DFSHLaserBeamPlacement.beamRange"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const DFSHLaserBeamPlacement.cyclePeriod"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const DFSHLaserBeamPlacement.disableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/379_DFSH_LaserB/DFSH_LaserB.c",
+  "type": "const DFSHLaserBeamPlacement"
+ },
+ "dfshObjCreator_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/377_DFSH_ObjCre/DFSH_ObjCre.c",
+  "type": "const DFSHObjCreatorPlacement"
+ },
+ "dfshShrine_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const DFSHShrinePlacement.startDelay"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/376_DFSH_Shrine/DFSH_Shrine.c",
+  "type": "const DFSHShrinePlacement"
+ },
+ "dim2conveyor_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dim2ConveyorPlacement.scrollSpeed"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/469_DIM2Conveyo/DIM2Conveyo.c",
+  "type": "const Dim2ConveyorPlacement"
+ },
+ "dim2icefloe_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "Dim2IceFloePlacementView.pathStep"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/476_DIM2IceFloe/DIM2IceFloe.c",
+  "type": "Dim2IceFloePlacementView"
+ },
+ "dim2icicle_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const Dim2IciclePlacementView.impactGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/477_DIM2Icicle/DIM2Icicle.c",
+  "type": "const Dim2IciclePlacementView"
+ },
+ "dim2lavacontrol_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dim2LavaControlPlacementView.countdownInitialValue"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const Dim2LavaControlPlacementView.unknown1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const Dim2LavaControlPlacementView.completionGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/478_DIM2LavaCon/DIM2LavaCon.c",
+  "type": "const Dim2LavaControlPlacementView"
+ },
+ "dim2prisonmammoth_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/473_DIM2PrisonM/DIM2PrisonM.c",
+  "type": "const Dim2PrisonMammothPlacement"
+ },
+ "dim2roofrub_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "DIM2RoofRubPlacement.animDataIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DIM2RoofRubPlacement.sequenceGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DIM2RoofRubPlacement.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DIM2RoofRubPlacement.unk1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DIM2RoofRubPlacement.unk20"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "DIM2RoofRubPlacement.unk2C"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/199_DIM2RoofRub/DIM2RoofRub.c",
+  "type": "DIM2RoofRubPlacement"
+ },
+ "dim2snowball_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "Dim2SnowBallPlacement.unknown1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "Dim2SnowBallPlacement.unknown1C"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/471_DIM2SnowBal/DIM2SnowBal.c",
+  "type": "Dim2SnowBallPlacement"
+ },
+ "dimbarrier_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const DimBarrierPlacement.barrierGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/453_DIMBarrier/DIMBarrier.c",
+  "type": "const DimBarrierPlacement"
+ },
+ "dimbossfire_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimBossFirePlacementView.flameColor"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DimBossFirePlacementView.triggerGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 487)",
+  "size": 36,
+  "tu": "src/dlls/objects/487_DIMbossfire/DIMbossfire.c",
+  "type": "DimBossFirePlacementView"
+ },
+ "dimbridgecogmai_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const DimBridgeCogPlacement.doneGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const DimBridgeCogPlacement.watchGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/456_DIMBridgeCo/DIMBridgeCo.c",
+  "type": "const DimBridgeCogPlacement"
+ },
+ "dimgate_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DimGatePlacement.openGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/451_DIMGate/DIMGate.c",
+  "type": "DimGatePlacement"
+ },
+ "dimicewall_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimIceWallPlacement.hitPoints"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DimIceWallPlacement.shatterGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/452_DIMIceWall/DIMIceWall.c",
+  "type": "DimIceWallPlacement"
+ },
+ "dimlavasmash_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimLavaSmashPlacement.surfaceLayerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DimLavaSmashPlacement.sequenceSlot"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DimLavaSmashPlacement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DimLavaSmashPlacement.gateGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/455_DIMLavaSmas/DIMLavaSmas.c",
+  "type": "DimLavaSmashPlacement"
+ },
+ "dimmagicbridge_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/460_DIMMagicBri/DIMMagicBri.c",
+  "type": "const DimMagicBridgePlacement"
+ },
+ "dimsnowball1c2_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "DimSnowBallSpawnerPlacement.spawnPeriod"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/450_DIMSnowBall/DIMSnowBall.c",
+  "type": "DimSnowBallSpawnerPlacement"
+ },
+ "dimsnowball_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimSnowBallPlacement.rotationParam1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DimSnowBallPlacement.rotationParam1C"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/449_DIMSnowBall/DIMSnowBall.c",
+  "type": "DimSnowBallPlacement"
+ },
+ "dimtruthhornice_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const DimTruthHornIcePlacement.hitCount"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const DimTruthHornIcePlacement.unknown1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const DimTruthHornIcePlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/465_DIMTruthHor/DIMTruthHor.c",
+  "type": "const DimTruthHornIcePlacement"
+ },
+ "dimwooddoor2_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const DimWoodDoorPlacement.openedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/459_DIMWoodDoor/DIMWoodDoor.c",
+  "type": "const DimWoodDoorPlacement"
+ },
+ "directionallight_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DirectionalLightSetup.enableBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "DirectionalLightSetup.colorFadeFrames"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "DirectionalLightSetup.rotXSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 52,
+    "path": "DirectionalLightSetup.rotYSpeed"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 56,
+  "tu": "src/dlls/objects/682_LGTDirectio/LGTDirectio.c",
+  "type": "DirectionalLightSetup"
+ },
+ "dll407_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll197Placement.scale"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const Dll197Placement.stage"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const Dll197Placement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/407/407.c",
+  "type": "const Dll197Placement"
+ },
+ "dll409_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll199Placement.activationDistancePacked"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/409/409.c",
+  "type": "const Dll199Placement"
+ },
+ "dll410_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/410/410.c",
+  "type": "const Dll19APlacement"
+ },
+ "dll411_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll19BPlacement.activationDistancePacked"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/411/411.c",
+  "type": "const Dll19BPlacement"
+ },
+ "dll412_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/412/412.c",
+  "type": "const Dll19CPlacement"
+ },
+ "dll413_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "INFERRED from anim.placement casts (DLL 413)",
+  "size": 28,
+  "tu": "src/dlls/objects/413/413.c",
+  "type": "Dll19DPlacement"
+ },
+ "dll414_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll19EPlacement.scalePacked"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const Dll19EPlacement.sequenceIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const Dll19EPlacement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/414/414.c",
+  "type": "const Dll19EPlacement"
+ },
+ "dll500_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/500/500.c",
+  "type": "const Dll1F4PlacementView"
+ },
+ "dll501_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "Dll1F5PlacementView.segmentIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "Dll1F5PlacementView.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/501/501.c",
+  "type": "Dll1F5PlacementView"
+ },
+ "dll502_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/502/502.c",
+  "type": "const Dll1F6PlacementView"
+ },
+ "dll507_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll1FBPlacementView.triggerMode"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const Dll1FBPlacementView.rotationY"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/507/507.c",
+  "type": "const Dll1FBPlacementView"
+ },
+ "dll_115_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "Dll115Placement.completionGameBits[0]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "Dll115Placement.completionGameBits[1]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "Dll115Placement.completionGameBits[2]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "Dll115Placement.completionGameBits[3]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "Dll115Placement.completionGameBits[4]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "Dll115Placement.completionGameBits[5]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "Dll115Placement.completionGameBits[6]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "Dll115Placement.completionGameBits[7]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 40,
+    "path": "Dll115Placement.activeGameBits[0]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 42,
+    "path": "Dll115Placement.activeGameBits[1]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "Dll115Placement.activeGameBits[2]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "Dll115Placement.activeGameBits[3]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "Dll115Placement.activeGameBits[4]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "Dll115Placement.activeGameBits[5]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 52,
+    "path": "Dll115Placement.activeGameBits[6]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 54,
+    "path": "Dll115Placement.activeGameBits[7]"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 60,
+    "path": "Dll115Placement.finishPreemptId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 72,
+  "tu": "src/dlls/objects/277/277.c",
+  "type": "Dll115Placement"
+ },
+ "dll_127_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/295/295.c",
+  "type": "Dll127Placement"
+ },
+ "dll_177_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "const Dll177Placement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/375/375.c",
+  "type": "const Dll177Placement"
+ },
+ "dll_184_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const Dll184Placement.animDataIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll184Placement.sequenceGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/388/388.c",
+  "type": "const Dll184Placement"
+ },
+ "dll_1CE_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll1CEPlacementView.contentsSpawnBitValue"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const Dll1CEPlacementView.openedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/462/462.c",
+  "type": "const Dll1CEPlacementView"
+ },
+ "dll_1CF_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll1CFPlacementView.rotationYDegrees"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const Dll1CFPlacementView.gateGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/463/463.c",
+  "type": "const Dll1CFPlacementView"
+ },
+ "dll_1D6_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const Dll1D6PlacementView.upTimer"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const Dll1D6PlacementView.downTimer"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/470/470.c",
+  "type": "const Dll1D6PlacementView"
+ },
+ "dll_1DB_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const Dll1DBPlacementView.boardedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const Dll1DBPlacementView.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/475/475.c",
+  "type": "const Dll1DBPlacementView"
+ },
+ "dll_1DF_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/479/479.c",
+  "type": "const Dll1DFPlacementView"
+ },
+ "dll_1FF_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/511/511.c",
+  "type": "const Dll1FFPlacementView"
+ },
+ "dll_200_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/512/512.c",
+  "type": "const Dll200PlacementView"
+ },
+ "dll_219_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "Dll219Setup.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/537/537.c",
+  "type": "Dll219Setup"
+ },
+ "dll_21B_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "Dll21BPlacement.driveGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/539/539.c",
+  "type": "Dll21BPlacement"
+ },
+ "dll_224_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "SpellStonePlacement.completeGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "SpellStonePlacement.requiredGameBit"
+   }
+  ],
+  "how": "override: DLL 548 (0 disc placements): `void* other` cast to SpellStonePlacement; s16 completeGameBit @0x1e, requiredGameBit @0x20",
+  "size": 36,
+  "tu": "src/dlls/objects/548/548.c",
+  "type": "SpellStonePlacement"
+ },
+ "dll_22C_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "Dll22CPlacementPrefix.parameter1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "Dll22CPlacementPrefix.activationMode"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "Dll22CPlacementPrefix.gameBit2"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "Dll22CPlacementPrefix.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/556/556.c",
+  "type": "Dll22CPlacementPrefix"
+ },
+ "dll_299_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "Dll299Setup.id"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/665/665.c",
+  "type": "Dll299Setup"
+ },
+ "dll_CB_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DllCBPlacement.trackYieldId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "DllCBPlacement.gameBitId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/203/203.c",
+  "type": "DllCBPlacement"
+ },
+ "dll_CE_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/206/206.c",
+  "type": "DllCEPlacement"
+ },
+ "dll_D3_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/211/211.c",
+  "type": "DllD3Placement"
+ },
+ "dll_F7_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DllF7Placement.completeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/247/247.c",
+  "type": "DllF7Placement"
+ },
+ "dll_FC_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "DllFCPlacement.gateGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DllFCPlacement.rememberedGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/252/252.c",
+  "type": "DllFCPlacement"
+ },
+ "dll_FD_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "DllFDPlacement.enableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DllFDPlacement.stateGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DllFDPlacement.eventId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DllFDPlacement.preemptSequenceId"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 253)",
+  "size": 36,
+  "tu": "src/dlls/objects/253/253.c",
+  "type": "DllFDPlacement"
+ },
+ "drakord_thornbush_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrakordThornbushPlacement.regrowDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DrakordThornbushPlacement.baseRadius"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 590)",
+  "size": 32,
+  "tu": "src/dlls/objects/590/590.c",
+  "type": "DrakordThornbushPlacement"
+ },
+ "drakorenergy_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DrakorenergyPlacement.gameBitId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DrakorenergyPlacement.unk24"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/577_DrakorEnerg/DrakorEnerg.c",
+  "type": "DrakorenergyPlacement"
+ },
+ "drakorhoverpad_initMain": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrakorHoverpadPlacement.unk1a"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DrakorHoverpadPlacement.activateGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 625)",
+  "size": 40,
+  "tu": "src/dlls/objects/625/625.c",
+  "type": "DrakorHoverpadPlacement"
+ },
+ "drakormissile_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/610/610.c",
+  "type": "DrakorMissileSetup"
+ },
+ "drearthcal_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/641_DR_EarthCal/DR_EarthCal.c",
+  "type": "DREarthCalSetup"
+ },
+ "drgenerator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrgeneratorPlacement.timerSeconds"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DrgeneratorPlacement.completionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "DrgeneratorPlacement.watchGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/623/623.c",
+  "type": "DrgeneratorPlacement"
+ },
+ "drshackle_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DrshacklePlacement.pathObjGroupBase"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DrshacklePlacement.quarterTurns"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "DrshacklePlacement.activeGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 622)",
+  "size": 32,
+  "tu": "src/dlls/objects/622/622.c",
+  "type": "DrshacklePlacement"
+ },
+ "duster_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DusterPlacement.activeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/280_Duster/Duster.c",
+  "type": "DusterPlacement"
+ },
+ "dustmotesou_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 32,
+    "path": "DustMoteSouPlacementPrefix.scale"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "DustMoteSouPlacementPrefix.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 44,
+  "tu": "src/dlls/objects/690_DustMoteSou/DustMoteSou.c",
+  "type": "DustMoteSouPlacementPrefix"
+ },
+ "earthwalker_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/650/650.c",
+  "type": "EarthWalkerPlacement"
+ },
+ "ecshCreator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const ECSHCreatorPlacement.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/401_ECSH_Creato/ECSH_Creato.c",
+  "type": "const ECSHCreatorPlacement"
+ },
+ "ecshCup_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const ECSHCupPlacement.cupIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/400_ECSH_Cup/ECSH_Cup.c",
+  "type": "const ECSHCupPlacement"
+ },
+ "enemy_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "EnemyPlacement.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "EnemyPlacement.gameBit2"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "EnemyPlacement.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "EnemyPlacement.unk1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "EnemyPlacement.unk20"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "EnemyPlacement.droppedItemId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "EnemyPlacement.unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "EnemyPlacement.respawnDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "EnemyPlacement.unk30"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 52,
+    "path": "EnemyPlacement.unk34"
+   }
+  ],
+  "how": "override: DLL 201 (all Baddie variants, 350 placements): the other cast in the TU is BaddieInstantiateWeaponPlacement, a child-spawn setup",
+  "size": 56,
+  "tu": "src/dlls/objects/201_Baddie/Baddie.c",
+  "type": "EnemyPlacement"
+ },
+ "explodable_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ExplodablePlacement.rotX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "ExplodablePlacement.rotY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "ExplodablePlacement.rotZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "ExplodablePlacement.originX"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "ExplodablePlacement.originY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "ExplodablePlacement.originZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "ExplodablePlacement.launchForce"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "ExplodablePlacement.fragmentHeight"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "ExplodablePlacement.secondaryLaunchScale"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 56,
+    "path": "ExplodablePlacement.launchDelayBase"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 62,
+    "path": "ExplodablePlacement.doneGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 64,
+    "path": "ExplodablePlacement.activateGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 72,
+  "tu": "src/dlls/objects/346/346.c",
+  "type": "ExplodablePlacement"
+ },
+ "exploded_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "ExplodedPlacement.initialRotation.x"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "ExplodedPlacement.initialRotation.y"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "ExplodedPlacement.initialRotation.z"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "ExplodedPlacement.initialVelocity.x"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "ExplodedPlacement.initialVelocity.y"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "ExplodedPlacement.initialVelocity.z"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "ExplodedPlacement.acceleration.x"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 40,
+    "path": "ExplodedPlacement.acceleration.y"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 42,
+    "path": "ExplodedPlacement.acceleration.z"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "ExplodedPlacement.spin.x"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 46,
+    "path": "ExplodedPlacement.spin.y"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "ExplodedPlacement.spin.z"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 50,
+    "path": "ExplodedPlacement.spinVelocity.x"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 52,
+    "path": "ExplodedPlacement.spinVelocity.y"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 54,
+    "path": "ExplodedPlacement.spinVelocity.z"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 56,
+    "path": "ExplodedPlacement.lifetimeFrames"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 58,
+    "path": "ExplodedPlacement.?{union}"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 68,
+  "tu": "src/dlls/objects/358/358.c",
+  "type": "ExplodedPlacement"
+ },
+ "explodeplan_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "ExplodePlanPlacement.removeGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/617_ExplodePlan/ExplodePlan.c",
+  "type": "ExplodePlanPlacement"
+ },
+ "explosion_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimExplosionPlacement.scaleParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DimExplosionPlacement.configFlags"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/458_DIMExplosio/DIMExplosio.c",
+  "type": "DimExplosionPlacement"
+ },
+ "firefly_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FireFlyMapData.variantParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FireFlyMapData.requiredGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/523_FireFly/FireFly.c",
+  "type": "FireFlyMapData"
+ },
+ "firepipe_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FirePipeMapData.cycleTime"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "FirePipeMapData.scale"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "FirePipeMapData.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "FirePipeMapData.startOffset"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/627_FirePipe/FirePipe.c",
+  "type": "FirePipeMapData"
+ },
+ "flameblast_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "FlameblastPlacement.streamIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/243_flameblast/flameblast.c",
+  "type": "FlameblastPlacement"
+ },
+ "gpshObjCreator_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const GPSHObjCreatorPlacement.symbolSpawnActivationGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const GPSHObjCreatorPlacement.childTypeIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/403_GPSH_ObjCre/GPSH_ObjCre.c",
+  "type": "const GPSHObjCreatorPlacement"
+ },
+ "gpshScene_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/404_GPSH_Scene/GPSH_Scene.c",
+  "type": "const GPSHScenePlacement"
+ },
+ "grimble_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "GroundBaddiePlacement.gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "GroundBaddiePlacement.gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "GroundBaddiePlacement.gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "GroundBaddiePlacement.soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "GroundBaddiePlacement.soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "GroundBaddiePlacement.triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "GroundBaddiePlacement.unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "GroundBaddiePlacement.respawnDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "GroundBaddiePlacement.gameBitB"
+   }
+  ],
+  "how": "override: DLL 208 (0 disc placements): hands (u8*)placement to initGroundBaddie, like DLL 483 / 202 / 203 / 206 / 213 / 437 do",
+  "size": 52,
+  "tu": "src/dlls/objects/208_Grimble/Grimble.c",
+  "type": "GroundBaddiePlacement"
+ },
+ "gunpowderBarrel_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "GunpowderBarrelPlacement.generatorLinkId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "GunpowderBarrelPlacement.returnHome"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "GunpowderBarrelPlacement.unknown1E"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/344/344.c",
+  "type": "GunpowderBarrelPlacement"
+ },
+ "iceBaddie_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "GroundBaddiePlacement.gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "GroundBaddiePlacement.gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "GroundBaddiePlacement.gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "GroundBaddiePlacement.soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "GroundBaddiePlacement.soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "GroundBaddiePlacement.triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "GroundBaddiePlacement.unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "GroundBaddiePlacement.respawnDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "GroundBaddiePlacement.gameBitB"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 52,
+  "tu": "src/dlls/objects/202/202.c",
+  "type": "GroundBaddiePlacement"
+ },
+ "iceblast_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "IceblastPlacement.initialLaunchTimer"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "IceblastPlacement.unk1C"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/242_iceblast/iceblast.c",
+  "type": "IceblastPlacement"
+ },
+ "imSnowClaw_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 56,
+  "tu": "src/dlls/objects/364/364.c",
+  "type": "IMSnowClawPlacement"
+ },
+ "imSpaceRing_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const IMSpaceRingPlacement.spinSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const IMSpaceRingPlacement.tiltSpeed"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/368_IMSpaceRing/IMSpaceRing.c",
+  "type": "const IMSpaceRingPlacement"
+ },
+ "imSpaceThruster_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const IMSpaceThrusterPlacement.initialRotY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const IMSpaceThrusterPlacement.bankIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/367_IMSpaceThru/IMSpaceThru.c",
+  "type": "const IMSpaceThrusterPlacement"
+ },
+ "infotext_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/289/289.c",
+  "type": "InfoTextPlacement"
+ },
+ "kaldachom_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 48,
+  "tu": "src/dlls/objects/213_Kaldachom/Kaldachom.c",
+  "type": "KaldachomPlacement"
+ },
+ "ktfallingrocks_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "KtfallingrocksPlacement.effectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "KtfallingrocksPlacement.triggerBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 596)",
+  "size": 40,
+  "tu": "src/dlls/objects/596_KT_Fallingr/KT_Fallingr.c",
+  "type": "KtfallingrocksPlacement"
+ },
+ "ktlazerlight_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "KtlazerlightPlacement.onIntensityBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "KtlazerlightPlacement.onStayLitBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/595_KT_Lazerlig/KT_Lazerlig.c",
+  "type": "KtlazerlightPlacement"
+ },
+ "ktrex_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 56,
+    "path": "KtrexPlacement.laneSpeeds[0]"
+   },
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 60,
+    "path": "KtrexPlacement.laneSpeeds[1]"
+   },
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 64,
+    "path": "KtrexPlacement.laneSpeeds[2]"
+   }
+  ],
+  "how": "override: DLL 592: reads ((KtrexPlacement*)p)->laneSpeeds[], p = obj->anim.placementData, so no direct cast for the generator to see",
+  "size": 68,
+  "tu": "src/dlls/objects/592_KT_Rex/KT_Rex.c",
+  "type": "KtrexPlacement"
+ },
+ "kytesmum_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "KytesMumSetup.interactionRange"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "KytesMumSetup.completionGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/614_KytesMum/KytesMum.c",
+  "type": "KytesMumSetup"
+ },
+ "landed_arwing_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "LandedArwingPlacement.triggerGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/283_Landed_Arwi/Landed_Arwi.c",
+  "type": "LandedArwingPlacement"
+ },
+ "lavaball1be_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "DimLavaProjectilePlacement.verticalSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "DimLavaProjectilePlacement.horizontalSpeed"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/446/446.c",
+  "type": "DimLavaProjectilePlacement"
+ },
+ "lavaball1bf_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const DimLavaBallPlacement.firePeriod"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const DimLavaBallPlacement.triggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "const DimLavaBallPlacement.triggeredLaunchGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "const DimLavaBallPlacement.stateGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/447_DIMLavaBall/DIMLavaBall.c",
+  "type": "const DimLavaBallPlacement"
+ },
+ "lightning_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 24,
+    "path": "LightningPlacement.linkedIdent"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "LightningPlacement.enableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/321_Lightning/Lightning.c",
+  "type": "LightningPlacement"
+ },
+ "lightsource_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const LightSourcePlacementView.range"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const LightSourcePlacementView.flags"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const LightSourcePlacementView.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/518_LightSource/LightSource.c",
+  "type": "const LightSourcePlacementView"
+ },
+ "mclightning_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/698_MCLightning/MCLightning.c",
+  "type": "McLightningSetup"
+ },
+ "mcstaffeffe_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/697_MCStaffEffe/MCStaffEffe.c",
+  "type": "McStaffEffectSetup"
+ },
+ "mcupgrade_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "McUpgradeSetup.dialogueTextId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "McUpgradeSetup.collectedGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 695)",
+  "size": 32,
+  "tu": "src/dlls/objects/695_MCUpgrade/MCUpgrade.c",
+  "type": "McUpgradeSetup"
+ },
+ "mcupgradema_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "McUpgradeMaSetup.collectedGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 696)",
+  "size": 28,
+  "tu": "src/dlls/objects/696_MCUpgradeMa/MCUpgradeMa.c",
+  "type": "McUpgradeMaSetup"
+ },
+ "mmpGeyserVent_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "MMPGeyserVentPlacement.moonRockKind"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "MMPGeyserVentPlacement.disableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "MMPGeyserVentPlacement.unknown20"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 387)",
+  "size": 36,
+  "tu": "src/dlls/objects/387_MMP_gyserve/MMP_gyserve.c",
+  "type": "MMPGeyserVentPlacement"
+ },
+ "mmpMoonRock_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const MMPMoonRockPlacement.kindGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const MMPMoonRockPlacement.unk1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const MMPMoonRockPlacement.pickupGateGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/386_MMP_moonroc/MMP_moonroc.c",
+  "type": "const MMPMoonRockPlacement"
+ },
+ "mmpTrenchFx_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const MMPTrenchFxPlacement.effectId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "const MMPTrenchFxPlacement.emitCount"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "const MMPTrenchFxPlacement.enableGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 38,
+    "path": "const MMPTrenchFxPlacement.stopGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/385_MMP_trenchF/MMP_trenchF.c",
+  "type": "const MMPTrenchFxPlacement"
+ },
+ "mmshScales_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const MMSHScalesPlacement.animDataIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const MMSHScalesPlacement.sequenceGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/397_MMSH_Scales/MMSH_Scales.c",
+  "type": "const MMSHScalesPlacement"
+ },
+ "mmshShrine_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const MMSHShrinePlacement.initialValue"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/396_MMSH_Shrine/MMSH_Shrine.c",
+  "type": "const MMSHShrinePlacement"
+ },
+ "mmshWaterSpike_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const MMSHWaterSpikePlacement.xyzAnimatorObjectIdLow"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const MMSHWaterSpikePlacement.xyzAnimatorObjectIdHigh"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/398_MMSH_WaterS/MMSH_WaterS.c",
+  "type": "const MMSHWaterSpikePlacement"
+ },
+ "moonSeedBush_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const MoonSeedBushPlacement.growthTriggerGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const MoonSeedBushPlacement.plantedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const MoonSeedBushPlacement.preemptTriggerId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/383/383.c",
+  "type": "const MoonSeedBushPlacement"
+ },
+ "nwTreeBridge_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const NwTreeBridgePlacement.initialRotY"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const NwTreeBridgePlacement.initialRotZ"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const NwTreeBridgePlacement.gameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/415_NW_treebrid/NW_treebrid.c",
+  "type": "const NwTreeBridgePlacement"
+ },
+ "pollenfragment_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/218/218.c",
+  "type": "PollenFragmentPlacement"
+ },
+ "pushable_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "PushableObjectDef.gameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "PushableObjectDef.gameBit2"
+   },
+   {
+    "bytes": 4,
+    "float": false,
+    "off": 28,
+    "path": "PushableObjectDef.unk1C"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "PushableObjectDef.scaleRaw"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/239/239.c",
+  "type": "PushableObjectDef"
+ },
+ "ring_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "RingPlacement.linkId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "RingPlacement.pullHeight"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "RingPlacement.counterGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "RingPlacement.activateBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/672/672.c",
+  "type": "RingPlacement"
+ },
+ "rollingBarrel_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "RollingBarrelPlacement.initialVerticalSpeed"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "RollingBarrelPlacement.curveSpeed"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/381/381.c",
+  "type": "RollingBarrelPlacement"
+ },
+ "sc_cloudrunnera_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const ScCloudrunnerAPlacement.animDataIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const ScCloudrunnerAPlacement.sequenceGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/441_SC_Cloudrun/SC_Cloudrun.c",
+  "type": "const ScCloudrunnerAPlacement"
+ },
+ "sc_musictree_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 28,
+    "path": "ScMusicTreePlacement.scale"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/439/439.c",
+  "type": "ScMusicTreePlacement"
+ },
+ "sc_totembond_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/443_SC_totembon/SC_totembon.c",
+  "type": "const ScTotemBondPlacement"
+ },
+ "sc_totempole_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/440_SC_totempol/SC_totempol.c",
+  "type": "const ScTotemPolePlacement"
+ },
+ "sc_totempuzzle_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/442_SC_totempuz/SC_totempuz.c",
+  "type": "const ScTotemPuzzlePlacement"
+ },
+ "sh_beacon_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "const ShBeaconPlacement.litGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "const ShBeaconPlacement.igniteGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/435_SH_Beacon/SH_Beacon.c",
+  "type": "const ShBeaconPlacement"
+ },
+ "sh_queenearthwalker_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/428_SH_queenear/SH_queenear.c",
+  "type": "QueenEarthWalkerPlacement"
+ },
+ "shopitem_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/644/644.c",
+  "type": "ShopItemDef"
+ },
+ "sideload_update": {
+  "bitfields": [],
+  "dll": 234,
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "armingGameBit"
+   }
+  ],
+  "how": "override: DLL 234 Sideload (129 placements, 28 bytes): descriptor init slot is EMPTY, so no init-time hook fires. sideload_update reads s16 armingGameBit @0x18 (SideloadPlacement); 0x1a childRotXByte is a byte",
+  "key": "update",
+  "size": 28,
+  "tu": "",
+  "type": "RAW"
+ },
+ "siderepel_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "SideRepelPlacement.minDistance"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SideRepelPlacement.moveDistance"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/235/235.c",
+  "type": "SideRepelPlacement"
+ },
+ "slidingDoor_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "SlidingDoorPlacement.openGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SlidingDoorPlacement.openedGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "SlidingDoorPlacement.preemptTriggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "SlidingDoorPlacement.gateGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/349/349.c",
+  "type": "SlidingDoorPlacement"
+ },
+ "snowclaw_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/604/604.c",
+  "type": "SnowclawPlacement"
+ },
+ "spdrape_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SpdrapeObjectDef.motionScaleNum"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/648_SPDrape/SPDrape.c",
+  "type": "SpdrapeObjectDef"
+ },
+ "spellstone_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "SpellStoneDef.completeEvent"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "SpellStoneDef.activeEvent"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 606)",
+  "size": 34,
+  "tu": "src/dlls/objects/606/606.c",
+  "type": "SpellStoneDef"
+ },
+ "spiritDoorSpirit_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "SpiritDoorSpiritPlacement.gateGameBit"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 343)",
+  "size": 36,
+  "tu": "src/dlls/objects/343_SpiritDoorS/SpiritDoorS.c",
+  "type": "SpiritDoorSpiritPlacement"
+ },
+ "spiritPrize_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "const SpiritPrizePlacement.animDataIndex"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const SpiritPrizePlacement.sequenceGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/378_SpiritPrize/SpiritPrize.c",
+  "type": "const SpiritPrizePlacement"
+ },
+ "spitembeam_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "SpitembeamPlacement.itemIndex"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 649)",
+  "size": 32,
+  "tu": "src/dlls/objects/649_SPitembeam/SPitembeam.c",
+  "type": "SpitembeamPlacement"
+ },
+ "staffactivated_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "StaffActivatedPlacement.?{union}"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "StaffActivatedPlacement.?{union}"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/284/284.c",
+  "type": "StaffActivatedPlacement"
+ },
+ "suntemple_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "SunTempleSetup.activationGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "SunTempleSetup.readyEventId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "SunTempleSetup.gateGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "SunTempleSetup.preemptSequenceId"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 40,
+  "tu": "src/dlls/objects/659/659.c",
+  "type": "SunTempleSetup"
+ },
+ "timer_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "TimerPlacementPrefix.durationSeconds"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "TimerPlacementPrefix.expiredGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "TimerPlacementPrefix.startGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/693_Timer/Timer.c",
+  "type": "TimerPlacementPrefix"
+ },
+ "tree_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/687/687.c",
+  "type": "TreePlacementPrefix"
+ },
+ "tumbleweed_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 4,
+    "float": true,
+    "off": 28,
+    "path": "TumbleweedPlacement.scale"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/209_TumbleWeedB/TumbleWeedB.c",
+  "type": "TumbleweedPlacement"
+ },
+ "warpstone_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/432_SH_swapston/SH_swapston.c",
+  "type": "const WarpStonePlacement"
+ },
+ "warpstonelift_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 28,
+  "tu": "src/dlls/objects/431_SH_swaplift/SH_swaplift.c",
+  "type": "const WarpStoneLiftPlacement"
+ },
+ "waterflowwe_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/686_WaterFlowWe/WaterFlowWe.c",
+  "type": "WaterFlowWePlacementPrefix"
+ },
+ "wcapertures_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WCAperturesSetup.openBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WCAperturesSetup.armBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/661_WCApertureS/WCApertureS.c",
+  "type": "WCAperturesSetup"
+ },
+ "wcbeacon_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WCBeaconSetup.solvedBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WCBeaconSetup.armBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/654_WCBeacon/WCBeacon.c",
+  "type": "WCBeaconSetup"
+ },
+ "wcfloortile_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WcFloorTileSetup.eventId"
+   }
+  ],
+  "how": "INFERRED from anim.placement casts (DLL 664)",
+  "size": 36,
+  "tu": "src/dlls/objects/664_WCFloorTile/WCFloorTile.c",
+  "type": "WcFloorTileSetup"
+ },
+ "wcpressures_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WCPressuresSetup.solvedBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WCPressuresSetup.activateBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/655_WCPressureS/WCPressureS.c",
+  "type": "WCPressuresSetup"
+ },
+ "wcpushblock_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WCPushBlockSetup.initialTile"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/656_WCPushBlock/WCPushBlock.c",
+  "type": "WCPushBlockSetup"
+ },
+ "wctemple_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/660/660.c",
+  "type": "WCTempleSetup"
+ },
+ "wctemplebri_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WCTempleBriSetup.solvedBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/663_WCTempleBri/WCTempleBri.c",
+  "type": "WCTempleBriSetup"
+ },
+ "wctempledia_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WCTempleDiaSetup.solvedBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/662_WCTempleDia/WCTempleDia.c",
+  "type": "WCTempleDiaSetup"
+ },
+ "wctile_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WCTileSetup.initialTile"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/657_WCTile/WCTile.c",
+  "type": "WCTileSetup"
+ },
+ "wctrexstatu_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WCTrexStatueSetup.raisedBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/658_WCTrexStatu/WCTrexStatu.c",
+  "type": "WCTrexStatueSetup"
+ },
+ "windLift107_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WindLift107Placement.cooldownParam"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WindLift107Placement.unk1E"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WindLift107Placement.leashRange"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/263/263.c",
+  "type": "WindLift107Placement"
+ },
+ "windLift_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WindLiftPlacement.pullStrength"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WindLiftPlacement.riderGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WindLiftPlacement.activationGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/329/329.c",
+  "type": "WindLiftPlacement"
+ },
+ "wmseqpoint_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WmSeqPointMapData.triggerRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WmSeqPointMapData.sequenceId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WmSeqPointMapData.conditionGameBit"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "WmSeqPointMapData.disableGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 36,
+  "tu": "src/dlls/objects/525_WM_seqpoint/WM_seqpoint.c",
+  "type": "WmSeqPointMapData"
+ },
+ "wmspiritset_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WmSpiritSetMapData.visibilityGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/527_WM_SpiritSe/WM_SpiritSe.c",
+  "type": "WmSpiritSetMapData"
+ },
+ "wmsun_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WmSunMapData.unused1A"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WmSunMapData.rootMotionScaleParam"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/526_WM_sun/WM_sun.c",
+  "type": "WmSunMapData"
+ },
+ "wmtorch_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "const WMTorchPlacementView.motionRate"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "const WMTorchPlacementView.colorIndex"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/516_WM_Torch/WM_Torch.c",
+  "type": "const WMTorchPlacementView"
+ },
+ "wmwallcrawler_init": {
+  "bitfields": [],
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "WmwallcrawlerMapData.triggerRadius"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "WmwallcrawlerMapData.heightOffset"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "WmwallcrawlerMapData.counterGameBit"
+   }
+  ],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/529/529.c",
+  "type": "WmwallcrawlerMapData"
+ },
+ "worldobj_init": {
+  "bitfields": [],
+  "fields": [],
+  "how": "typed parameter",
+  "size": 32,
+  "tu": "src/dlls/objects/467/467.c",
+  "type": "const WorldObjSetup"
+ }
+}

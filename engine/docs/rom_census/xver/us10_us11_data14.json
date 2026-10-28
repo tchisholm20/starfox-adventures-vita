@@ -1,0 +1,88 @@
+{
+ "va": "US10",
+ "vb": "US11",
+ "section": ".sdata2",
+ "norm": "data",
+ "addr_a": 2151539968,
+ "addr_b": 2151543168,
+ "regions": [
+  {
+   "kind": "INSERT",
+   "a_start": 2151555236,
+   "a_end": 2151555236,
+   "b_start": 2151558436,
+   "b_end": 2151558448,
+   "a_len": 0,
+   "b_len": 12,
+   "unit": "dlls/engine/0/0.c",
+   "unit_end": "dlls/engine/0/0.c",
+   "sym": "lbl_803E20A4+0x0",
+   "sym_end": "lbl_803E20A4+0x0"
+  },
+  {
+   "kind": "INSERT",
+   "a_start": 2151555336,
+   "a_end": 2151555336,
+   "b_start": 2151558548,
+   "b_end": 2151558552,
+   "a_len": 0,
+   "b_len": 4,
+   "unit": "dlls/engine/0/0.c",
+   "unit_end": "dlls/engine/0/0.c",
+   "sym": "gPauseMenuGridCursorScale+0x0",
+   "sym_end": "gPauseMenuGridCursorScale+0x0"
+  },
+  {
+   "kind": "RESIZE",
+   "a_start": 2151556460,
+   "a_end": 2151556500,
+   "b_start": 2151559676,
+   "b_end": 2151559720,
+   "a_len": 40,
+   "b_len": 44,
+   "unit": "dlls/objects/201_Baddie/Baddie.c",
+   "unit_end": "dlls/objects/201_Baddie/Baddie.c",
+   "sym": "lbl_803E256C+0x0",
+   "sym_end": "lbl_803E2590+0x0"
+  },
+  {
+   "kind": "INSERT",
+   "a_start": 2151556576,
+   "a_end": 2151556576,
+   "b_start": 2151559796,
+   "b_end": 2151559800,
+   "a_len": 0,
+   "b_len": 4,
+   "unit": "dlls/objects/201_Baddie/Baddie.c",
+   "unit_end": "dlls/objects/201_Baddie/Baddie.c",
+   "sym": "lbl_803E25E0+0x0",
+   "sym_end": "lbl_803E25E0+0x0"
+  },
+  {
+   "kind": "REPLACE",
+   "a_start": 2151575004,
+   "a_end": 2151575008,
+   "b_start": 2151578228,
+   "b_end": 2151578232,
+   "a_len": 4,
+   "b_len": 4,
+   "unit": "?",
+   "unit_end": "?",
+   "sym": "lbl_803E6DDC+0x0",
+   "sym_end": "lbl_803E6DDC+0x0"
+  },
+  {
+   "kind": "DELETE",
+   "a_start": 2151580712,
+   "a_end": 2151580736,
+   "b_start": 2151583936,
+   "b_end": 2151583936,
+   "a_len": 24,
+   "b_len": 0,
+   "unit": "?",
+   "unit_end": "?",
+   "sym": "lbl_803E8424+0x4",
+   "sym_end": "lbl_803E8424+0x18"
+  }
+ ]
+}

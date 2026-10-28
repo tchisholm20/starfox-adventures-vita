@@ -1,0 +1,766 @@
+=== kidx 0 (engine) DPid=1 1_cmdmenu offset=0x0 size=34000 exports=25 ===
+  +0x01889  yP!1H
+  +0x04dcd  iP!1M
+  +0x04df5  iX#1p
+  +0x079ec  qInfoShow
+  +0x079f8  qInfoShowTex
+  +0x07a08   Width %i Length %i 
+=== kidx 2 (engine) DPid=3 3_ANIM offset=0xad10 size=42784 exports=33 ===
+  +0x0a1dc   MODEL NO %i 
+  +0x0a1ec   Could Not FInd Obj %i  over %i 
+  +0x0a21c  game/anim.c: startObjSequence() seqno out of range [%d][%d]
+  +0x0a25c  game/anim.c: startObjSequence() couldn't find seqno free (ABORTED)!!
+  +0x0a2a4  endObjSequence: too many obj frees
+  +0x0a2c8  preemptSequenceTime() Overflow!!
+=== kidx 3 (engine) DPid=4 4_race offset=0x15430 size=8576 exports=15 ===
+  +0x006af  dF$0<<
+  +0x020e8  Warning: calcPosition: Stack overflow!!
+  +0x02114  racePostion: Error! (romdefno: %d) %d %i  
+=== kidx 4 (engine) DPid=5 5_AMSEQ offset=0x175b0 size=15424 exports=36 ===
+  +0x00635  bX!%l
+  +0x03668  music %08x,%d
+  +0x036b4  registered %d,%08x
+  +0x036c8  already registered %d,%08x
+  +0x0371c  amSeqPlayEx: Warning, player value '%d' out of range.
+  +0x03754  amSeqPlayEx: Warning, sequence value '%d' out of range.
+  +0x03790  amSeqStop: Warning, player value '%d' out of range.
+  +0x037c8  amSeqGetNo: Warning, player value '%d' out of range.
+  +0x03800  amSeqGetVolume: Warning, player value '%d' out of range.
+  +0x0383c  amSeqSetVolume: Warning, player value '%d' out of range.
+  +0x03878  startSequencer %d
+  +0x0388c  download sequence %d:%d
+  +0x038d0  volumes %d,%d %d
+  +0x0390c  doaction %08x,%d
+  +0x03920  play %d on player %d
+  +0x03974  cut %04x player %d otherplayer %d
+  +0x039b8  fade out %d
+  +0x039c8  already on player %d
+  +0x03a08  stop playing player %d
+  +0x03a20  amSeq: focus object deleted %08x,%d
+  +0x03a48  amSeq: seq object deleted
+  +0x03a64  determineVols %d %04x %04x %04x
+  +0x03a88  leave %d
+  +0x03a94  mute %d [0]
+  +0x03aa4  same %d
+  +0x03ab0  change %d [%d]
+  +0x03ac0  amAudio: WARNING invalid osc rate, using default.
+  +0x03af4  amAudio: WARNING invalid osc delay, using default.
+  +0x03b28  amAudio: WARNING invalid osc rise time, using default.
+  +0x03b60  amAudio: WARNING no free oscstates.
+  +0x03b88  amAudio: unsupported vibrato/tremolo type, %d
+=== kidx 5 (engine) DPid=6 6_AMSFX offset=0x1b1f0 size=11456 exports=21 ===
+  +0x02800  amSfxPlayEx failed
+  +0x02814  amSfxSetVol: Warning,sound handle '%d' out of range.
+  +0x0284c  amSfxSetVol: Warning,invalid handle '%d'.
+  +0x02878  amSfxSetPitch: Warning,sound handle '%d' out of range.
+  +0x028b0  amSfxSetPitch: Warning,invalid handle '%d'.
+  +0x028e0  amSfxStop: Warning,sound handle '%d' out of range.
+  +0x02914  amSfxIsPlaying: Warning,sound handle '%d' out of range.
+  +0x02950  amSfxGetDefault: Warning,sound effect value '%d' out of range.
+  +0x02990  amSndPlayEx: Warning,sound '%d' out of range.
+  +0x029c0  amSndPlayEx: Warning,sound handle '%d' out of range.
+  +0x029f8  game/amsfx.c
+  +0x02a0c  game/amsfx.c
+  +0x02a20  game/amsfx.c
+  +0x02a34  game/amsfx.c
+  +0x02a48  AMSFX: Software bug in object (controlfunc %d)
+  +0x02a78         amSfxStop is required to release effect %d.
+  +0x02aac  AMSFX: Software bug in object (controlfunc %d)
+  +0x02adc         amSfxStop is required to stop effect %d.
+  +0x02b10  game/amsfx.c
+  +0x02b24  amSfxSetPitch: Warning,sound handle '%d' out of range.
+  +0x02b5c  amSfxSetPitch: Warning,invalid handle '%d'.
+  +0x02b8c  game/amsfx.c
+  +0x02ba0  game/amsfx.c
+  +0x02bb4  AMSFX: Maximum sfx handles allocated,%d (from %s:%d)
+  +0x02bec  AMSFX: allocSfxHandle handle out of range, %d
+  +0x02c1c  AMSFX: freeSfxHandle invalid handle, %d
+  +0x02c48  AMSFX: freeSfxHandle not used, %d
+=== kidx 6 (engine) DPid=7 7_newday offset=0x1deb0 size=26272 exports=24 ===
+  +0x00168  '9$dD
+  +0x06260  ?fff?fffF
+  +0x062c0  ?fff?fffE
+  +0x062ec  ?fffE
+=== kidx 8 (engine) DPid=9  offset=0x26a40 size=20544 exports=8 ===
+  +0x04d1c  !!! Error non-existant cloud id - %i - in snowKillSnowCloud
+  +0x04e1c  !!! Error non-existant cloud id - %i - in snowReposSnowCloud
+  +0x04e5c  !!! Error non-existant cloud id - %i - in snowPrintSnowCloud
+  +0x04e9c  !!! Error non-existant cloud id - %i - in snowFreeSnowCloud
+  +0x04edc  !!! Error non-existant cloud id - %i - in snowFreeSnowCloud
+=== kidx 9 (engine) DPid=10  offset=0x2ba80 size=5456 exports=3 ===
+  +0x00fd1  uP!$Y
+=== kidx 10 (engine) DPid=11  offset=0x2cfd0 size=9536 exports=7 ===
+  +0x024d4   Warning .. ! no spare palettes in dll newlfx.c
+=== kidx 11 (engine) DPid=12  offset=0x2f510 size=16624 exports=10 ===
+  +0x03e6c  minic error %d null
+=== kidx 12 (engine) DPid=13 13_expgfx offset=0x33600 size=22448 exports=11 ===
+  +0x01e48  5kKT5
+  +0x05548  expgfx.c: invalid tabindex
+  +0x05564  expgfx.c: scale overflow
+  +0x05580  expgfx.c: Error on owner free
+  +0x055a1   exp x %f
+  +0x055ad   exp z %f
+  +0x055b8  expgfx.c: addToTable usage overflow
+  +0x055e0  expgfx.c: exptab is FULL
+  +0x055fc  expgfx.c: mismatch in add/remove in exptab
+=== kidx 13 (engine) DPid=14 14_modgfx offset=0x38db0 size=29360 exports=22 ===
+  +0x071f9   modgfx x %f
+  +0x07209   modgfx z %f
+=== kidx 14 (engine) DPid=15  offset=0x40060 size=21952 exports=8 ===
+  +0x041f8  ERRROR 3 %d 
+  +0x04208  ERRROR 1 %d
+  +0x04218  ERRROR 2 %d  a1 %f a2 %f
+=== kidx 16 (engine) DPid=17 17_partfx offset=0x469b0 size=50320 exports=3 ===
+  +0x0b9a0  alpha %d
+=== kidx 21 (engine) DPid=22 22_subtitles offset=0x55fa0 size=9392 exports=10 ===
+  +0x0239c  subtitles error: sentence has a delay less than %d ms
+=== kidx 24 (engine) DPid=25 25 offset=0x5a530 size=13264 exports=15 ===
+  +0x02f64  Error in isPointWithinPatchGroup
+=== kidx 25 (engine) DPid=26 26_curves offset=0x5d900 size=24368 exports=42 ===
+  +0x03741  iP!&1
+  +0x05e48  curves.c: MAX_ROMCURVES exceeded!!
+  +0x05e6c  addCurveDef: max curves reached %d/%d
+  +0x05e94   Curve Id %i 
+  +0x05ea4   CI %i 
+  +0x05eb4  link:(%d) %d
+  +0x05ec4  Found: %d
+  +0x05ed4   list Branch No %i 
+  +0x05ee8   list Branch %i Max %i Branch No %i 
+=== kidx 26 (engine) DPid=27 27 offset=0x63830 size=10576 exports=9 ===
+  +0x02179  bH!3(
+  +0x028d4  Error findBounds obj romdefno %d  lastpolyworld %f %f %f
+=== kidx 28 (engine) DPid=29 29_gplay offset=0x678d0 size=8960 exports=49 ===
+  +0x01ecc  gplayLoadGame error: savegame and backup failed to load.
+  +0x01f08  gplayLoadOptions error: saveoptions failed to load.
+  +0x01f9c  gameplay.c: gplayGetCurrentPlayerLactions: playerno overflow
+  +0x01fdc  gameplay.c: gplayGetCurrentPlayerEnvactions: playerno overflow
+  +0x0201c  gplayAddTime: MAX_TIMESAVES reached
+  +0x02044  Error in gplaySetObjGroupStatus (mapno %d, groupno %d)
+=== kidx 30 (engine) DPid=31 31_flash offset=0x6a110 size=3920 exports=2 ===
+  +0x00cc8  Savegame size in pages: %d %d
+  +0x00ce8  flashLoadGame: dest=%x slotno=%d size=%d
+  +0x00d49  loaded:     XOR %x %x 
+  +0x00d60  SUM %x %x
+  +0x00d6d  calculated: XOR %x %x 
+  +0x00d84  SUM %x %x
+  +0x00da9  loaded:     XOR %x %x 
+  +0x00dc0  SUM %x %x
+  +0x00dcd  calculated: XOR %x %x 
+  +0x00de4  SUM %x %x
+  +0x00df0  Error in loading game number:%d
+  +0x00e14  flashSaveGame: slotno %d
+  +0x00e8c  Flash saved worked: %d
+  +0x00ea4  Checksum: XOR %x %x, 
+  +0x00ebc  SUM %x %x
+=== kidx 32 (engine) DPid=33 33_BaddieControl offset=0x6e9e0 size=10672 exports=24 ===
+  +0x02910  %s hit by type %d for %d points
+=== kidx 52 (engine) DPid=53 53_movelib offset=0x90bb0 size=9136 exports=13 ===
+  +0x0089d  hH!Y 
+  +0x02284   PathId %i Loc id %i 
+  +0x0229c   Tangent 1 %f %f %f 
+  +0x022b4   Tangent 2 %f %f %f 
+  +0x022cc  t value %f 
+  +0x022d8  WARNING: Max CreatePoint is Exceeded 
+=== kidx 55 (engine) DPid=56 56_putdown offset=0x94080 size=3184 exports=10 ===
+  +0x00bd8  about to place object %d
+=== kidx 63 (engine) DPid=64 64_nameentry offset=0x9d780 size=4608 exports=3 ===
+  +0x002d1  iX#$c
+=== kidx 64 (engine) DPid=65 65_options offset=0x9e980 size=16704 exports=3 ===
+  +0x03848  %2d: %s
+  +0x03858  %2d: %s
+=== kidx 73 (engine) DPid=74 74_picmenu offset=0xa7c30 size=6736 exports=13 ===
+  +0x01990  UPLINK overflow=%d
+  +0x019a4  DOWNLINK overflow=%d
+  +0x019bc  LEFTLINK overflow=%d
+  +0x019d4  RIGHTLINK overflow=%d
+=== kidx 75 (engine) DPid=76  offset=0xaa520 size=11248 exports=3 ===
+  +0x02285  cX#%k
+  +0x023d1  cX#%k
+=== kidx 83 (engine) DPid=84 84_camnormal offset=0xb0010 size=11696 exports=9 ===
+  +0x02d84  ?fffG
+=== kidx 94 (engine) DPid=95 95_camtalk offset=0xbb750 size=1616 exports=4 ===
+  +0x00634   ctype %i 
+=== kidx 95 (engine) DPid=96 96_cam1stperson2 offset=0xbbda0 size=5440 exports=4 ===
+  +0x014e4   %x %i 
+=== kidx 187 (projgfx) DPid=187  offset=0xe0f20 size=1472 exports=1 ===
+  +0x0054c  was from %f %f %f to %f %f %f
+  +0x0056c  now from %f %f %f to %f %f %f
+=== kidx 210 (objects) DPid=210 210_player offset=0xe8a20 size=129968 exports=84 ===
+  +0x0033c  %JBt%kF
+  +0x003b0  %)nd%JxP%kx
+  +0x0080d  @(%'9rL
+  +0x02978  '9rLF
+  +0x045b3  4'9rL
+  +0x06267  $'9rL
+  +0x0deb1   (%'9rL
+  +0x0ec0e  (%'9rL
+  +0x0f07d   (%'9rL
+  +0x15f2d  @(%'9rLF
+  +0x160b5  @(%'9rLF
+  +0x161a5    %'9rLF
+  +0x16295    %'9rLF
+  +0x16fa5   (%'9rL
+  +0x1e6a8  zbuft %f %f
+  +0x1e6e4  UNKNOWN mainGet VALUE %d
+  +0x1e700   Fireing Object Mind Read Bit %i 
+  +0x1e754   ang %i 
+  +0x1e794   ang %i 
+  +0x1e7a0  power %d
+  +0x1e7d0  krystal.c: objGetAnimChange Error
+  +0x1e830   Have Lock %i  
+  +0x1e868  throwdist %d
+  +0x1f304  ?333?FffD
+=== kidx 211 (objects) DPid=211 211_Tricky offset=0x1085d0 size=42512 exports=27 ===
+  +0x07798  5kKp5J,
+  +0x0993c  %d %d %d %d
+  +0x0994c  hits: %d %d %d %d %d %d %d %d
+  +0x0996d  Energy: %d, Skill %d
+  +0x099d4  sideCommandEnable error, command number too high
+  +0x09a08  sideFind 1
+  +0x09a14  sideFind 2
+  +0x09c48  BADDIEALERT_BARK %d %d
+  +0x09cd4  tricky wg %d->%d target wg %d, dest wg %d
+  +0x09d00  tricky last walk group is zero. Has he been loaded within a walk group? %f %f %f
+  +0x09d54  target is within a walkGroup or its patch
+  +0x09d80  target is not within a walkGroup or any patches
+  +0x09db4  target is within patch group %d
+  +0x09dd8  Patch %d: Last xyz %f %f %f
+  +0x09df8  Last Patch Point %f %f %f
+  +0x09e14  tricky error, target patch %d, targetWalkGroup %d, trickyWalkGroup %d, tricky last walkGroup %d, tricky in patch %d
+  +0x09f28  walk to node %d %d
+  +0x09f3c  walk types are %d %d %d
+  +0x0a010  i before %d
+  +0x0a020  i now %d
+  +0x0a1d4  Reached end of network, curve %d at (%f,%f)
+  +0x0a220  Vel %f
+=== kidx 212 (objects) DPid=212  offset=0x112be0 size=19120 exports=27 ===
+  +0x04400   Enable Dis %i 
+  +0x04424  sideCommandEnable error, command number too high
+  +0x04499  Initialising On Flight Group %i 
+  +0x044bd   Starting On Flight Group %i 
+  +0x04528  curve %d, flightGroup %d, dir %d
+  +0x0458c  4.) Staying on the flight group %i 
+  +0x045b4  setting the flight group to %d
+  +0x045ec  6.) Next node of standard type (flightGroup %d)
+  +0x04674  kyte error!, unable to find next curve node from %d!
+  +0x046c4  Route finding, start %d finish %d
+  +0x046e8  routeFindNode error: couldn't find route between %d %d, return val %d
+  +0x04730  Node exists in curve network, that isn't Kyte AI, from curvenode %d
+  +0x04798   Perching %f 
+  +0x047a8  vel %f  dir %f 
+  +0x04850   LocK Activated 
+=== kidx 215 (objects) DPid=215  offset=0x117cb0 size=23088 exports=9 ===
+  +0x0018c  %kDp%
+  +0x00200  %JJP%kL
+=== kidx 216 (objects) DPid=216 216_SnowWorm offset=0x11d6e0 size=17008 exports=9 ===
+  +0x04088  BADDIE:SnowWorm Unknown message [%d]
+=== kidx 217 (objects) DPid=217 217_GuardClaw offset=0x121950 size=13024 exports=11 ===
+  +0x0317c  BADDIE:GuardClaw Unknown message [%d]
+=== kidx 220 (objects) DPid=220 220_Chuka offset=0x128780 size=2560 exports=8 ===
+  +0x009b0  BADDIE:Chuka Unknown message [%d]
+=== kidx 221 (objects) DPid=221 221_ChukaChuck offset=0x129180 size=2288 exports=7 ===
+  +0x008d6  \)?xQ
+=== kidx 222 (objects) DPid=222 222_SnowWormSmall offset=0x129a70 size=10752 exports=9 ===
+  +0x028a4  BADDIE:SnowWorm Unknown message [%d]
+=== kidx 226 (objects) DPid=226 226_tumbleweedbush offset=0x131a80 size=2848 exports=8 ===
+  +0x00a70  TumbleWeed cannot determin control type because of an incorrect object number.
+=== kidx 228 (objects) DPid=228 228_Caictua offset=0x134870 size=7968 exports=9 ===
+  +0x01e34  BADDIE:Caictua Unknown message [%d]
+=== kidx 230 (objects) DPid=230  offset=0x139940 size=4768 exports=7 ===
+  +0x01228   Loack Range %f 
+  +0x0123c   Attack Anim %i 
+=== kidx 231 (objects) DPid=231  offset=0x13abe0 size=10976 exports=7 ===
+  +0x02a10  New State [%s]
+  +0x02a20  normalState
+  +0x02a2c  New AI State [%s]
+  +0x02a40  aiTop
+  +0x02a48  New AI State [%s]
+  +0x02a5c  aiIdle
+  +0x02a64  New AI State [%s]
+  +0x02a78  aiFlailAtPlayer
+=== kidx 253 (objects) DPid=253 253_CannonBall offset=0x158740 size=1072 exports=7 ===
+  +0x00422  \)?xQ
+=== kidx 271 (objects) DPid=271 271_InfoPoint offset=0x160350 size=1792 exports=7 ===
+  +0x0069c   Name %s Time %i 
+  +0x006b4   Anim %i 
+=== kidx 274 (objects) DPid=274 274_pushpull offset=0x162a40 size=11600 exports=11 ===
+  +0x02ca4  handle is %d
+=== kidx 275 (objects) DPid=275 275_WarpPoint offset=0x165790 size=2592 exports=7 ===
+  +0x009ad  bit %d  set %d %d %d %d %d %f %f %x
+  +0x009d5  doseq warp %x %d
+  +0x009e9  dowarp warp %x %d
+=== kidx 276 (objects) DPid=276  offset=0x1661b0 size=2816 exports=7 ===
+  +0x00a4c  OBJ_InvHit: warning INVHIT_TYPE_FULL, t0 deleted
+  +0x00a80  OBJ_InvHit: warning INVHIT_TYPE_FULL, t0 deleted
+=== kidx 287 (objects) DPid=287 287_pressureswitch offset=0x16b400 size=2304 exports=7 ===
+  +0x008b4  PRESSURESWITCH.c: modelno out of range romdefno=%d
+=== kidx 297 (objects) DPid=297 297_scarab offset=0x1736d0 size=6384 exports=7 ===
+  +0x01878  fy %f %f
+=== kidx 304 (objects) DPid=304 304_LanternFireFly offset=0x177c90 size=4064 exports=10 ===
+  +0x00f78   Num Part %i 
+  +0x00f88   Sending FireFly 
+=== kidx 305 (objects) DPid=305 305_PortalSpellDoor offset=0x178c70 size=1584 exports=7 ===
+  +0x00620   t %i 
+=== kidx 308 (objects) DPid=308 308_USEOBJ offset=0x17a8e0 size=1648 exports=7 ===
+  +0x00634  USEOBJ.c: modelno out of range romdefno=%d
+=== kidx 309 (objects) DPid=309 309_SEQOBJ offset=0x17af50 size=1664 exports=7 ===
+  +0x00648  SEQOBJ.c: modelno out of range romdefno=%d
+=== kidx 310 (objects) DPid=310  offset=0x17b5d0 size=1840 exports=7 ===
+  +0x0050c  newseqobj %d: Need Bit %d, Used Bit %d
+  +0x00534  newseqobj %d: need bit clear before preempting sequence
+  +0x00570  newseqobj %d: used bit set before preempting sequence
+  +0x005a8  newseqobj %d: about to prempt the sequence - objs %d
+  +0x005e0  newseqobj %d: need bit clear after sequence
+  +0x00610  newseqobj %d: used bit set after sequence
+  +0x0063c  newseqobj %d: need bit clear before sequence
+  +0x0066c  newseqobj %d: used bit set before sequence
+  +0x00698  newseqobj %d: about to start the sequence
+  +0x006c4  newseqobj %d: need bit clear during sequence
+  +0x006f4  newseqobj %d: used bit set during sequence
+=== kidx 311 (objects) DPid=311 311_IMMultiSeq offset=0x17bd00 size=1344 exports=7 ===
+  +0x00504  SEQOBJ.c: modelno out of range romdefno=%d
+=== kidx 313 (objects) DPid=313 313_pickobj offset=0x17c800 size=672 exports=7 ===
+  +0x00270  SEQOBJ.c: modelno out of range romdefno=%d
+=== kidx 314 (objects) DPid=314 314_foodbag offset=0x17caa0 size=3296 exports=17 ===
+  +0x00bdc   Food Type Found %i : Obj %i 
+=== kidx 315 (objects) DPid=315 315_sidefoodbag offset=0x17d780 size=1872 exports=13 ===
+  +0x006a0  submenu %d
+  +0x006ac  add food %d
+=== kidx 316 (objects) DPid=316  offset=0x17ded0 size=7424 exports=10 ===
+  +0x01c38  Fruit info: nextY %f, acc %f, water acc %f, startHeight %f, yStart %f, obj->fy %f
+  +0x01c8c  Fruit upwardsBounceVelocity %f movementFdt %f
+=== kidx 325 (objects) DPid=325 325_trigger offset=0x1847b0 size=13888 exports=7 ===
+  +0x02e50  triggers: unknown trigger object %d.
+  +0x02e9c  Trigger [%d], Gamplay Vulnerable
+  +0x02ec0  Trigger [%d], Music Action,       Action Num [%d] Free
+  +0x02ef8  Trigger [%d], Music Action,       Action Num [%d] Set
+  +0x02f30  Trigger [%d], Sound FX,           Action Num [%d],Handle Num [%d]
+  +0x02f74  Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]
+  +0x02fc4  Trigger [%d], Track Sky On
+  +0x02fe0  Trigger [%d], Track Sky Off
+  +0x02ffc  Trigger [%d], Track AntiAlias On
+  +0x03020  Trigger [%d], Track AntiAlias Off
+  +0x03044  Trigger [%d], Track SkyObjects On
+  +0x03068  Trigger [%d], Track SkyObjects Off
+  +0x0308c  Trigger [%d], Track Dome On
+  +0x030a8  Trigger [%d], Track Dome Off
+  +0x030c8  Trigger [%d], Track MrSheen On %d
+  +0x030ec  Trigger [%d], Track MrSheen Off
+  +0x0310c  Trigger [%d], Environment Effect, Action Num [%d], Range [%d]
+  +0x0314c  Trigger [%d], Lighting,           Action      [%d], Range [%d], PassDir [%d]
+  +0x0319c  Trigger [%d], Anim Sequence,      SequenceID [%d], Activate
+  +0x031d8  Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 1
+  +0x03214  Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 0
+  +0x03250  Trigger [%d], Trigger,            Local ID   [%d]
+  +0x032b0  Trigger [%d], LOD Model [%d]
+  +0x032d0  Trigger [%d], Setup Point,        Level      [%d], SetupPoint [%d]
+  +0x03314  Trigger [%d], Bits
+  +0x03328  Trigger [%d], Object Load
+  +0x03344  Trigger [%d], Object Free
+  +0x03360  Trigger [%d], Object Toggle
+  +0x03380  Trigger [%d], Tex Load
+  +0x03398  Trigger [%d], Tex Free
+  +0x033d4  Script [%d], Subscript [%d]
+  +0x033f4  Trigger [%d], Object Load
+  +0x03410  Trigger [%d], Object Free
+  +0x0342c  Restart Set [%d]
+  +0x03440  Restart Clear [%d]
+  +0x03454  Restart Goto [%d]
+  +0x0347c  findobj %i 
+  +0x0348c  Trigger [%d], amSfxWaterFallsSetFlags,   Action [%d], PassDir [%d]
+=== kidx 331 (objects) DPid=331 331_genprops offset=0x1899b0 size=9040 exports=7 ===
+  +0x02119  MoonSeed Mound
+  +0x02159  NoPass Vine
+  +0x02185  NoPass Vine
+=== kidx 343 (objects) DPid=343 343_LightPole offset=0x191940 size=848 exports=7 ===
+  +0x00330   Set bit %i 
+=== kidx 344 (objects) DPid=344 344_SpellOverlay offset=0x191c90 size=2064 exports=8 ===
+  +0x00794   Anim %i 
+  +0x007a0   Anim %i 
+  +0x007ac  WARNING: UnKnown Texture Animation Command Input 
+=== kidx 347 (objects) DPid=347 347_texscroll2 offset=0x1929e0 size=1408 exports=8 ===
+  +0x00544  TEXSCROLL: cannot find texture '%d' %f %f %f %d
+=== kidx 348 (objects) DPid=348 348_texscroll offset=0x192f60 size=1904 exports=7 ===
+  +0x00730  TEXSCROLL: cannot find texture '%d'
+=== kidx 350 (objects) DPid=350  offset=0x194a80 size=3968 exports=7 ===
+  +0x00f58  %d:%d,%d %d:%d
+=== kidx 353 (objects) DPid=353 353_HitAnimator offset=0x197f90 size=1328 exports=7 ===
+  +0x0051c  id %d on %d
+=== kidx 360 (objects) DPid=360  offset=0x19ccf0 size=3328 exports=7 ===
+  +0x00c15   tex s %i t %i 
+  +0x00c28   Vec %i %i %i 
+  +0x00c38   tex t %f tex s %f 
+  +0x00c4d  T  Vec %f %f %f 
+  +0x00c61  S  Vec %f %f %f 
+=== kidx 361 (objects) DPid=361 361_TexFrameAnimator offset=0x19d9f0 size=1072 exports=7 ===
+  +0x003fc   TEXFRAMEANIM %i 
+  +0x00410   Set bit %i 
+=== kidx 362 (objects) DPid=362 362_portaltexanimator offset=0x19de20 size=1424 exports=7 ===
+  +0x00578  %d:%d,%d %d:%d
+=== kidx 369 (objects) DPid=369  offset=0x1a09f0 size=12240 exports=8 ===
+  +0x02aec   Initalise Guardian State %i 
+  +0x02b0c   GUARDIAN POS : %f %f %f 
+  +0x02b54   UpWind Lift 
+  +0x02b70  Guardian Out of WindLIft Boyo !!! 
+  +0x02b94   Xvel %f Zvel %f 
+  +0x02bec  Guardian Out of WindLIft 
+  +0x02c24   animnum %i 
+  +0x02c44   Set State %i 
+  +0x02c7c   PathId %i Loc id %i 
+  +0x02c94   Tangent 1 %f %f %f 
+  +0x02cac   Tangent 2 %f %f %f 
+  +0x02cc4  t value %f 
+=== kidx 372 (objects) DPid=372  offset=0x1a4ff0 size=5104 exports=7 ===
+  +0x0137c  Setting  FY %f 
+  +0x01390   Cry action %d
+  +0x013a0   Cry action %d
+=== kidx 373 (objects) DPid=373  offset=0x1a63e0 size=9488 exports=9 ===
+  +0x0236c  Bird Timer %i 
+  +0x0238c  about to do dist check on %d
+  +0x023c4   PathId %i Loc id %i 
+  +0x023f8   PathId %i Loc id %i 
+  +0x02410   Tangent 1 %f %f %f 
+  +0x02428   Tangent 2 %f %f %f 
+  +0x02440  t value %f 
+=== kidx 375 (objects) DPid=375  offset=0x1a94c0 size=2896 exports=7 ===
+  +0x00afc   State %i 
+=== kidx 377 (objects) DPid=377  offset=0x1aab70 size=1680 exports=7 ===
+  +0x00604   used flag %i 
+=== kidx 381 (objects) DPid=381  offset=0x1af200 size=14560 exports=7 ===
+  +0x03804  RobotAnimPatrol Beam Error!!
+  +0x03824   ROBO overriden %x 
+  +0x03838   Override Man %x 
+=== kidx 386 (objects) DPid=386  offset=0x1b35a0 size=1360 exports=7 ===
+  +0x00514   Setting Wait Bit %i 
+  +0x0052c   Setting Wait Bit %i 
+=== kidx 387 (objects) DPid=387  offset=0x1b3af0 size=896 exports=7 ===
+  +0x00368   Preempt %i 
+=== kidx 388 (objects) DPid=388 388_CFbarrel offset=0x1b3e70 size=7648 exports=8 ===
+  +0x01ca8   Should has Set position  %i %f %f 
+  +0x01cdc   Line IDNO %i 
+  +0x01d1c   ob Obj %x  Defno %i 
+  +0x01d50   Force Applied x %f y %f z%f 
+=== kidx 389 (objects) DPid=389  offset=0x1b5c50 size=1696 exports=7 ===
+  +0x00648   AnimGroup %i 
+  +0x00658   Found Group  G1 %i 
+  +0x00670   Current Flag %i 
+=== kidx 390 (objects) DPid=390  offset=0x1b62f0 size=4336 exports=7 ===
+  +0x00fd4   Warning : DefNumber Lists in Exploder DLL is not set up correctly for this object
+=== kidx 392 (objects) DPid=392  offset=0x1b7c20 size=3936 exports=7 ===
+  +0x00f30   Side %x ObHit %x Romdef %i
+=== kidx 397 (objects) DPid=397  offset=0x1ba7d0 size=8288 exports=7 ===
+  +0x01ecc   Asking to Stand Aside %i 
+  +0x01f8c   PathId %i Loc id %i 
+  +0x01fc0   PathId %i Loc id %i 
+=== kidx 399 (objects) DPid=399  offset=0x1bcd50 size=1728 exports=7 ===
+  +0x0068c   Bit %i Set
+=== kidx 400 (objects) DPid=400 400_CFLevelControl offset=0x1bd410 size=6000 exports=7 ===
+  +0x014c4   Layer NO %i : 
+  +0x014d4   Loading Group %i 
+  +0x014e8   Cnt %i V %i 
+  +0x014f8   cnt %i v %i 
+  +0x015ac   Couldn't find romdef %i 
+  +0x015c8   STart Seq Val %i 
+=== kidx 401 (objects) DPid=401  offset=0x1beb80 size=6256 exports=7 ===
+  +0x017ac   nx %f ny %f hz %f
+  +0x017c0   nx %f ny %f hz %f
+  +0x017d4   PathId %i Loc id %i 
+  +0x01808   PathId %i Loc id %i 
+=== kidx 402 (objects) DPid=402  offset=0x1c03f0 size=3440 exports=7 ===
+  +0x00be8   Pitch inc %i 
+  +0x00bf8   Hieght %f Pitch %i 
+  +0x00c10   OverFlow with number of Barrels 
+=== kidx 404 (objects) DPid=404  offset=0x1c16c0 size=2832 exports=8 ===
+  +0x00abc  phys %i 
+  +0x00ae0   Hieght From Ground %i 
+=== kidx 407 (objects) DPid=407  offset=0x1c2cd0 size=2848 exports=7 ===
+  +0x00aec   tex s %i t %i 
+  +0x00b00   start %i End %i 
+=== kidx 433 (objects) DPid=433 433_DFSH_Shrine offset=0x1d2ad0 size=5360 exports=7 ===
+  +0x01474  TIMER %d
+=== kidx 454 (objects) DPid=454 454_CCgrub offset=0x1e1410 size=4928 exports=7 ===
+  +0x01264  msg %d
+=== kidx 457 (objects) DPid=457 457_CCkrazoabright offset=0x1e31b0 size=5984 exports=7 ===
+  +0x009e1  qP!3(
+=== kidx 461 (objects) DPid=461 461_CCsandwormBoss offset=0x1e55f0 size=8016 exports=7 ===
+  +0x01d38  worm %d, barrel %d
+  +0x01d4c  kyte dist %d interest range 50.0F
+  +0x01d70  setting flight group to %d
+  +0x01d8c  setting flight group to %d
+  +0x01e08  barrel %x put to %f %f %f
+  +0x01e24  worm at %f %f %f
+=== kidx 462 (objects) DPid=462  offset=0x1e7540 size=1056 exports=7 ===
+  +0x003ec  obj mapno is %d
+=== kidx 472 (objects) DPid=472 472_GPSH_Shrine offset=0x1ed2a0 size=5776 exports=7 ===
+  +0x015b4  scale %f %f  %f
+  +0x015c8  scale %f %f  %f
+  +0x015dd  time %d
+=== kidx 473 (objects) DPid=473 473_GPSH_ObjCreator offset=0x1ee930 size=1488 exports=7 ===
+  +0x005b0  type %d
+=== kidx 483 (objects) DPid=483  offset=0x1f4d90 size=1328 exports=7 ===
+  +0x004f4  fx->rate %d class %d
+=== kidx 488 (objects) DPid=488 488_WGSH_Shrine offset=0x1f74c0 size=4640 exports=7 ===
+  +0x011ac  time %d
+=== kidx 492 (objects) DPid=492  offset=0x1f9e30 size=3328 exports=7 ===
+  +0x00ca4  first %d door %d
+=== kidx 496 (objects) DPid=496 496_snowhorn offset=0x1fb810 size=10176 exports=7 ===
+  +0x023f4  noweeds=%d
+=== kidx 497 (objects) DPid=497 497_NWtricky offset=0x1fdfd0 size=2512 exports=7 ===
+  +0x00994  menu cbuttons %d
+=== kidx 547 (objects) DPid=546 546_DIMBikeDoor offset=0x21e3f0 size=448 exports=7 ===
+  +0x001a8  id %d angle %d
+=== kidx 549 (objects) DPid=548  offset=0x21ed30 size=6560 exports=7 ===
+  +0x0175c   Initalise Guardian State %i 
+  +0x0177c   GUARDIAN POS : %f %f %f 
+  +0x01798   GUARDIAN FEET %i %f %f %f 
+  +0x017ed   Object Given %i Prob %i 
+  +0x01808   animnum %i 
+=== kidx 550 (objects) DPid=549 549_GP_ShrinePillar offset=0x2206d0 size=1760 exports=7 ===
+  +0x00684   PREMPT %i seqtime %i 
+  +0x006a0  override %d
+=== kidx 553 (objects) DPid=551  offset=0x2216f0 size=1504 exports=7 ===
+  +0x0058c   PREMPT %i seqtime %i 
+  +0x005a8  override %d
+  +0x005b8  dist %d
+=== kidx 554 (objects) DPid=552 552_WGboulder offset=0x221cd0 size=1536 exports=7 ===
+  +0x005c8  state %d
+  +0x005da  \)?xQ
+=== kidx 572 (objects) DPid=570 570_DIM_BossSpit offset=0x22e8c0 size=2480 exports=7 ===
+  +0x009a2  \)?xQ
+=== kidx 600 (objects) DPid=598 598_WM_Wizard offset=0x23f6f0 size=5952 exports=7 ===
+  +0x0156c  diff %d
+=== kidx 611 (objects) DPid=609 609_WLFireFly offset=0x246410 size=3088 exports=8 ===
+  +0x00bc4   Sending FireFly 
+=== kidx 613 (objects) DPid=611 611_WL_seqpoint offset=0x2476c0 size=6304 exports=7 ===
+  +0x012c8  starting seq %d
+  +0x01612  King EarthWalker, Begging Us To Help Him.
+=== kidx 617 (objects) DPid=615 615_crawler offset=0x24b5b0 size=7536 exports=7 ===
+  +0x01cac   Range %f  
+=== kidx 621 (objects) DPid=619 619_VFP_LevelControl offset=0x24e330 size=3088 exports=7 ===
+  +0x00bec  ACT %d 
+=== kidx 627 (objects) DPid=625  offset=0x250f00 size=1312 exports=7 ===
+  +0x004e4  bit %d %d set %d %d
+  +0x004fc  bit %d %d set %d %d
+=== kidx 628 (objects) DPid=626  offset=0x251420 size=6496 exports=7 ===
+  +0x018f4  lift state %d
+=== kidx 646 (objects) DPid=644 644_DFP_floorbar offset=0x25b9e0 size=1952 exports=7 ===
+  +0x00764  needbit %d
+=== kidx 652 (objects) DPid=650  offset=0x25f1c0 size=4560 exports=7 ===
+  +0x0115c  move %f %f
+  +0x01168  2was %f %f %f   now %f %f %f
+=== kidx 655 (objects) DPid=653  offset=0x261530 size=1760 exports=7 ===
+  +0x006b4  to %d range %f
+=== kidx 660 (objects) DPid=658 658_DBPointMum offset=0x2658d0 size=10560 exports=7 ===
+  +0x025f4   ACt Number %i 
+  +0x02614   Set OPERATION BIT %i  
+  +0x0262c   Menu operation Activated  %i 
+  +0x02658   No Bits Drowned %i 
+  +0x02698   KeyPressy 
+  +0x0270c   PathId %i Loc id %i 
+  +0x02724   Tangent 1 %f %f %f 
+  +0x0273c   Tangent 2 %f %f %f 
+  +0x02754  t value %f 
+  +0x02760  Turning %i 
+=== kidx 661 (objects) DPid=659 659_DBTrigger offset=0x268210 size=2048 exports=7 ===
+  +0x007d0   Max X %f Y %f Z %f 
+=== kidx 664 (objects) DPid=662 662_DBEgg offset=0x269420 size=8768 exports=9 ===
+  +0x0211c   Message Op State %i %i 
+  +0x02138   Op State %i 
+  +0x02158   EGG X %f Y %f Z %f  
+=== kidx 665 (objects) DPid=663 663_DBlevelControl offset=0x26b660 size=1232 exports=7 ===
+  +0x00470   NO EGGS %i 
+  +0x00480  Flood Level  %i 
+=== kidx 668 (objects) DPid=666  offset=0x26d800 size=5168 exports=11 ===
+  +0x01234   dx %f dy %f 
+  +0x01244   y %f 
+  +0x0124c   dx %f dy %f 
+  +0x0125c   Amount %i 
+  +0x01268  r %i 
+  +0x01270  ->i %i 
+=== kidx 671 (objects) DPid=669  offset=0x26fae0 size=7856 exports=7 ===
+  +0x01a6c   Romdef %i 
+  +0x01ab0   FinalSetPosList for ident %i 
+  +0x01ad4   {%f,%f,%f},
+  +0x01aec   No pieaces %i Not Equal Amt %i 
+=== kidx 673 (objects) DPid=671  offset=0x271ba0 size=2992 exports=7 ===
+  +0x00b04  %i r %i g %i b %i 
+  +0x00b18   Beam Cont %i 
+  +0x00b28   Add vtx %i vertno %i  
+  +0x00b40  %i x %i y %i z %i 
+  +0x00b54   Add polys %i 
+=== kidx 675 (objects) DPid=673 673_DBbignest offset=0x2736a0 size=1888 exports=7 ===
+  +0x00700   Egg Count %i 
+=== kidx 677 (objects) DPid=675  offset=0x2742f0 size=4352 exports=7 ===
+  +0x00d54   noverts %i 
+  +0x00ef3  %>e`B>bM
+  +0x01090  >;dZ>/
+=== kidx 679 (objects) DPid=677  offset=0x275930 size=5360 exports=10 ===
+  +0x01450   Flow %f 
+=== kidx 680 (objects) DPid=678 678_DBbridgeanim offset=0x276e20 size=1376 exports=7 ===
+  +0x004ec   Creating Step Number %i 
+  +0x00508   Removing Step %i 
+=== kidx 683 (objects) DPid=681  offset=0x278e90 size=1408 exports=7 ===
+  +0x00528   Shield Han no %i 
+=== kidx 684 (objects) DPid=682  offset=0x279410 size=3552 exports=7 ===
+  +0x00d68   KILLBOT State %i Amt %i 
+=== kidx 686 (objects) DPid=684 684_DBDustGeezer offset=0x27a3c0 size=3600 exports=10 ===
+  +0x00d80   Creating BoneDust
+  +0x00d94   Firing %i 
+  +0x00da0  WARNING: BoneDust Buffer Full 
+=== kidx 688 (objects) DPid=686  offset=0x27b850 size=3408 exports=12 ===
+  +0x00ca0   weight %f 
+  +0x00cbc   Killing Boulder y  %f  yvel %f 
+=== kidx 690 (objects) DPid=688 688_DBstealerworm offset=0x27caa0 size=23152 exports=9 ===
+  +0x00130  %JCl%kC
+  +0x04fd8   IN STATE: %i %x 
+  +0x04fec  BADDIE:SnowWorm Unknown message [%d]
+  +0x05104   Sy %f  Uy %f  XZ %f Uz %f T %f : g %f 
+  +0x05130  New State [%s]
+  +0x05140  popOutOfGround
+  +0x05150  New State [%s]
+  +0x05160  burstIntoGround
+  +0x05170  New State [%s]
+  +0x05180  biteAttack
+  +0x0518c  New State [%s]
+  +0x0519c  standStill
+  +0x051a8  New State [%s]
+  +0x051b8  standAndSpit
+  +0x051c8  New State [%s]
+  +0x051d8  hitFightMain
+  +0x051e8  New State [%s]
+  +0x05204  New State [%s]
+  +0x05224  New State [%s]
+  +0x0525c  New State [%s]
+  +0x0527c  New State [%s]
+  +0x052a0  New State [%s]
+  +0x052f0   Sending Off to pick up EGG %x 
+  +0x05328  New State [%s]
+  +0x0534c   HAS BALL : %x= %x
+  +0x05378   THROW CHANCE %i 
+  +0x053a0  New State [%s]
+  +0x053c0  New State [%s]
+  +0x053e0  New State [%s]
+  +0x05400  New AI State [%s]
+  +0x05414  aiTop
+  +0x0541c  New AI State [%s]
+  +0x05430  aiIveBeenHit
+  +0x05440  New AI State [%s]
+  +0x05454  aiIamDying
+  +0x05460  New AI State [%s]
+  +0x05474  aiIamDead
+  +0x05480  New AI State [%s]
+  +0x05494  aiDormant
+  +0x054a0  New AI State [%s]
+  +0x054b4  aiL2_MainEngageControl
+  +0x054cc  New AI State [%s]
+  +0x054e0  aiL2_MainEngageStackControl
+  +0x055f0  %i : %s : Opand %i 
+  +0x05824  popOutOfGround
+  +0x05833  burstIntoGroun
+  +0x05842  biteAttack    
+  +0x05851  standStill    
+  +0x05860  standAndSpit  
+  +0x0586f  hitFightMain  
+  +0x0589c  runto_ThrowObj
+  +0x058ba  throw_AtObject
+  +0x058c9  wait_forObject
+  +0x058d8  Wait_for_throw
+  +0x058e7  try_to_catch  
+=== kidx 691 (objects) DPid=689  offset=0x282510 size=1664 exports=7 ===
+  +0x00638   Sending it backward %i 
+  +0x00654   Frame %i  fract %i fr %i
+=== kidx 692 (objects) DPid=690 690_DB_SuperSymbol offset=0x282b90 size=2864 exports=7 ===
+  +0x00a8c  def bits %d %d %d
+  +0x00aa0  USEOBJ.c: modelno out of range romdefno=%d
+=== kidx 693 (objects) DPid=691 691_DB_FakeHorizon offset=0x2836c0 size=736 exports=7 ===
+  +0x002b4   Found Vertex With No Alpha %i 
+=== kidx 694 (objects) DPid=None KIOSK-ONLY offset=0x2839a0 size=2320 exports=7 ===
+  +0x008a8  Sending Out A Sand Thief  %i 
+  +0x008e0   %x Active 
+=== kidx 706 (objects) DPid=703 703_KT_RexFloorSwitch offset=0x28db70 size=3072 exports=7 ===
+  +0x00bc0  Could not find node [%d]
+=== kidx 710 (objects) DPid=707 707_KamerianBoss offset=0x28f820 size=8928 exports=7 ===
+  +0x021fc  health:%d
+=== kidx 716 (objects) DPid=713 713_DR_EarthWarrior offset=0x29b7b0 size=14416 exports=21 ===
+  +0x03680   EARTHWALK ENERGY : %i 
+  +0x03698   num %i 
+=== kidx 729 (objects) DPid=726  offset=0x2a8170 size=1808 exports=11 ===
+  +0x006e8   DURATION %i 
+  +0x006f8   AVG %f 
+=== kidx 730 (objects) DPid=727  offset=0x2a8880 size=4160 exports=7 ===
+  +0x00ab8  REMOVED %i 
+  +0x00ad4   %i : Ident %i 
+  +0x00ae4   REmove Obj %i 
+  +0x00af4  U %i 
+=== kidx 735 (objects) DPid=732 732_CRSnowBike offset=0x2ab6f0 size=20384 exports=21 ===
+  +0x04d5c   FUEL AMT %i 
+  +0x04d80   HIT OBJECT %i 
+  +0x04d94   Bike Can Mount %i 
+  +0x04da8  tracks %d
+  +0x04db4  ident %d
+  +0x04dc0   YJOY %i 
+=== kidx 736 (objects) DPid=733  offset=0x2b0690 size=4464 exports=7 ===
+  +0x010e8   Turret Timer %i 
+  +0x010fc   HHITS %i %i 
+  +0x0110c   DTIME %i 
+  +0x01140   Anim %i 
+=== kidx 737 (objects) DPid=734 734_DR_PushCart offset=0x2b1800 size=10688 exports=8 ===
+  +0x02830  speed %f 
+  +0x0283d   Brake Message %i 
+  +0x02878  Creating  BarrelCnt Is %i 
+  +0x028d0   list Branch No %i 
+  +0x028e4   list Branch %i Max %i Branch No %i 
+=== kidx 740 (objects) DPid=737 737_DRLavaControl offset=0x2b53a0 size=2432 exports=7 ===
+  +0x0090c   bit set %i 
+  +0x0091c   WAVE OBJ %x 
+  +0x0092c   Creating LIGHT %i  x %f z %f 
+=== kidx 741 (objects) DPid=738  offset=0x2b5d20 size=2272 exports=7 ===
+  +0x00840   Time %i 
+  +0x0084c   Time %i 
+  +0x00890   Time %i 
+=== kidx 742 (objects) DPid=739 739_DR_SupGuardClaw offset=0x2b6600 size=4400 exports=7 ===
+  +0x0104c   Edanble FoodType %i 
+  +0x01066   Have Set Bit %i 
+  +0x0107c   FoodType %i 
+  +0x0108c   Edanble FoodType %i 
+  +0x010a4   FoodType %i 
+=== kidx 743 (objects) DPid=740 740_DR_tube offset=0x2b7730 size=1776 exports=7 ===
+  +0x006bc   Anim %i 
+=== kidx 747 (objects) DPid=744  offset=0x2b8e00 size=1456 exports=8 ===
+  +0x00584   TIME %i 
+=== kidx 748 (objects) DPid=745  offset=0x2b93b0 size=3936 exports=8 ===
+  +0x00f38  ?333?xQ
+=== kidx 750 (objects) DPid=747  offset=0x2baae0 size=2384 exports=9 ===
+  +0x00934   Rope id %i 
+=== kidx 751 (objects) DPid=748  offset=0x2bb430 size=1824 exports=7 ===
+  +0x006a0   bellstopcnt %i 
+  +0x006b4   VOL %f 
+=== kidx 756 (objects) DPid=753  offset=0x2bfd10 size=2528 exports=7 ===
+  +0x0096c   Speed %i 
+=== kidx 757 (objects) DPid=754  offset=0x2c06f0 size=1488 exports=7 ===
+  +0x005a0   Wait bit %i %i 
+=== kidx 758 (objects) DPid=755  offset=0x2c0cc0 size=1376 exports=7 ===
+  +0x00528   HIT BY THING %i %i 
+  +0x00540   pos %i 
+=== kidx 761 (objects) DPid=758  offset=0x2c2220 size=960 exports=7 ===
+  +0x003a8   COLL TIMER %i 
+=== kidx 762 (objects) DPid=759  offset=0x2c25e0 size=3104 exports=7 ===
+  +0x00bd8   CaveIn Speed : %f %i  
+=== kidx 763 (objects) DPid=760  offset=0x2c3200 size=1072 exports=7 ===
+  +0x00408   ScROLL %i 
+=== kidx 769 (objects) DPid=766  offset=0x2c4f10 size=1472 exports=7 ===
+  +0x00594  starting sequence %d
+=== kidx 784 (objects) DPid=781 781_WCpressureswitch offset=0x2ce020 size=2224 exports=7 ===
+  +0x00860  PRESSURESWITCH.c: modelno out of range romdefno=%d
+  +0x00894   Avitvate %i 
+=== kidx 788 (objects) DPid=785  offset=0x2d05d0 size=2288 exports=7 ===
+  +0x008a4  USEOBJ.c: modelno out of range romdefno=%d
+=== kidx 790 (objects) DPid=787 787_WCApertureSymbol offset=0x2d1250 size=2144 exports=7 ===
+  +0x00844  dpos=%f dt=%f
+=== kidx 796 (objects) DPid=793 793_BWlog offset=0x2d4340 size=10624 exports=21 ===
+  +0x028a4  [%d]=%f
+  +0x02904  ?333?xQ
+=== kidx 797 (objects) DPid=794  offset=0x2d6cc0 size=1168 exports=7 ===
+  +0x00458  Error: BWalphaanim.c : MAX_SPEEDS exceeded!
+=== kidx 799 (objects) DPid=796 796_AMLevelControl offset=0x2d7340 size=768 exports=7 ===
+  +0x002d3  fFFM3

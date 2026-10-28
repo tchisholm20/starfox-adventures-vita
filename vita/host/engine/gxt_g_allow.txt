@@ -1,0 +1,173 @@
+# gxt_g_allow.txt -- the committed lists behind gxt_lint.py (RT_THREAD.md 6.2).  Every entry needs a reason after `|`; the PLANNER approves additions.
+# [nm]          name status   -- nm T (strong) / W (weak) of every boundary symbol in the linked ELF (G-M1 (i)).  Regenerate with `gxt_lint.py snapshot-nm`
+#               and READ the diff: a W that became a T (or the reverse) means a no-op stub became real code (or the reverse) and its row must be re-classified.
+# [boot-only]   L/E roots whose bodies run on G only BEFORE the threaded transition (the transition happens at a frame edge, after the first present), so
+#               they are not G-resident while R exists.
+# [data-allow]  mutable data that a G-resident body and R's replay may both reference (instrument counters, state that is dead in threaded mode).
+# [shared]      HAL data the GAME also references, besides {gFogColor} (G-M1 (iv)): written by G / read by R only for instruments the threaded start REFUSES.
+# [r-os-allow] [r-game-allow]   OS*/os_* symbols and game-defined symbols R's closure may reference (none today).
+[nm]
+GXBegin T
+GXBeginDisplayList T
+GXCallDisplayList T
+GXClearVtxDesc T
+GXCopyDisp W
+GXCopyTex T
+GXDisableBreakPt T
+GXDrawTorus T
+GXEnableBreakPt T
+GXEnableTexOffsets W
+GXEndDisplayList T
+GXFlush W
+GXFlush_ T
+GXGetFifoPtrs W
+GXGetGPStatus W
+GXGetLightAttnK T
+GXGetScissor T
+GXGetTexBufferSize T
+GXGetTexObjData T
+GXGetTexObjFmt T
+GXGetTexObjHeight T
+GXGetTexObjUserData T
+GXGetTexObjWidth T
+GXInit W
+GXInitFifoBase W
+GXInitFifoLimits W
+GXInitLightAttn T
+GXInitLightAttnA T
+GXInitLightAttnK T
+GXInitLightColor T
+GXInitLightDir T
+GXInitLightDistAttn T
+GXInitLightPos T
+GXInitLightSpot T
+GXInitSpecularDir T
+GXInitTexObj T
+GXInitTexObjLOD T
+GXInitTexObjUserData T
+GXInvalidateTexAll W
+GXInvalidateVtxCache W
+GXLoadLightObjImm T
+GXLoadNrmMtxImm T
+GXLoadPosMtxImm T
+GXLoadTexMtxImm T
+GXLoadTexObj T
+GXLoadTexObjPreLoaded T
+GXPeekZ T
+GXPixModeSync T
+GXPreLoadEntireTexture T
+GXReadDrawSync T
+GXReadXfRasMetric W
+GXResetWriteGatherPipe T
+GXSetAlphaCompare T
+GXSetAlphaUpdate T
+GXSetArray T
+GXSetBlendMode T
+GXSetBreakPtCallback T
+GXSetCPUFifo W
+GXSetChanAmbColor T
+GXSetChanCtrl T
+GXSetChanMatColor T
+GXSetColorUpdate T
+GXSetCopyClear T
+GXSetCopyFilter W
+GXSetCullMode T
+GXSetCurrentMtx T
+GXSetDispCopyDst W
+GXSetDispCopyGamma W
+GXSetDispCopySrc W
+GXSetDispCopyYScale W
+GXSetDither W
+GXSetDrawSync T
+GXSetFieldMode W
+GXSetFog T
+GXSetGPFifo W
+GXSetGPMetric W
+GXSetIndTexCoordScale T
+GXSetIndTexMtx T
+GXSetIndTexOrder T
+GXSetLineWidth T
+GXSetMisc W
+GXSetNumChans T
+GXSetNumIndStages T
+GXSetNumTevStages T
+GXSetNumTexGens T
+GXSetPixelFmt W
+GXSetPointSize T
+GXSetProjection T
+GXSetScissor T
+GXSetTevAlphaIn T
+GXSetTevAlphaOp T
+GXSetTevColor T
+GXSetTevColorIn T
+GXSetTevColorOp T
+GXSetTevColorS10 T
+GXSetTevDirect T
+GXSetTevIndRepeat T
+GXSetTevIndirect T
+GXSetTevKAlphaSel T
+GXSetTevKColor T
+GXSetTevKColorSel T
+GXSetTevOp T
+GXSetTevOrder T
+GXSetTevSwapMode T
+GXSetTevSwapModeTable T
+GXSetTexCoordGen2 T
+GXSetTexCopyDst T
+GXSetTexCopySrc T
+GXSetViewport T
+GXSetViewportJitter T
+GXSetVtxAttrFmt T
+GXSetVtxDesc T
+GXSetZCompLoc T
+GXSetZMode T
+GXStfxSkinBind T
+GXTexModeSync T
+VIConfigure T
+VIFlush T
+VIGetDTVStatus T
+VIGetNextField T
+VIGetTvFormat T
+VIInit T
+VISetBlack T
+VISetNextFrameBuffer T
+VISetPostRetraceCallback T
+VISetPreRetraceCallback T
+VIWaitForRetrace T
+gx_breakpoint_deliver T
+gx_dlk_event T
+gx_draw_setAlphaMode T
+gx_draw_setForceLayout T
+gx_draw_setJointMatrices T
+gx_draw_setJointOffsets T
+gx_draw_setRealSkin T
+gx_draw_setShadowRecv T
+gx_draw_setSourceBounds T
+gx_draw_setTexture T
+gx_tex_invalidate T
+gx_tex_release T
+gx_tex_yuv_register T
+gx_tex_yuv_register_x T
+gxfifo_push_f32 T
+gxfifo_push_s16 T
+gxfifo_push_s32 T
+gxfifo_push_s8 T
+gxfifo_push_u16 T
+gxfifo_push_u32 T
+gxfifo_push_u8 T
+os_ext_poll T
+rhi_beginFrame T
+rhi_clear T
+rhi_endFrame T
+vi_set_clear_color T
+[boot-only]
+VIInit | game boot (vi_shim.c VIInit -> gx_draw_init, rhi_create ...): called once before the first frame; gxt_frame_edge cannot switch to threaded before the first present, so no R exists while it runs
+[data-allow]
+gRt | rt_timer.h state shared by gx_draw.o / rhi_vita.c.o / vi_shim.o; D12: rt_stats.txt=1 is REFUSED in threaded mode (gxts_refuse_reason), so nothing accumulates into it
+gRealSkin | R2: read by GXLoadPosMtxImm's sanity clamp (its G variant gxh_g_GXLoadPosMtxImm, on G) and by the draw path on R; written only by gx_draw_setRealSkin, a viewer-only T extra that gxt_viewer_trap counts and the threaded gates fail on, so in a threaded run it is read-only on both sides (approved by the orchestrator 2026-10-23, R2 review)
+[shared]
+gStfxDbgObjTag | written by the game (objprint_dolphin.c), read by R only in the draw census; the census is REFUSED in threaded mode (RT_THREAD.md section 2, D12)
+gx_draw_static_hint | written by G (shader.c:1911-1914), read by R at gx_draw.c:2058,3320 only for perf arm 3 and the census; both REFUSED in threaded mode (RT_THREAD.md section 2)
+gGxSkinCtr | R8 census counters (gx_skin.h GXSK_*): G (objprint_dolphin.c) increments BLEND_SKIPPED / REF_TABLE / REF_MORPH, R (gx_skin.c GXStfxSkinBind, gx_draw.c) increments BINDS / DRAWS / REF_HAL / PAL_BYTES -- disjoint u32 elements, instrument-only, read by the [r8] print on G (a window delta may be off by in-flight frames); never a control input (R8_GPUSKIN.md T2)
+gGxSkinChkCpu | R8 HAL ORACLE instrument (gx_skin.h): objprint (G) stores the CPU-blended vtxBuf pointer, gx_draw.c reads it at a skinned draw; only meaningful in DIRECT mode (gx_thread.txt 0, R == G) with marker gx_skin_check.txt; in threaded mode it is a diagnostic-only race, never a control input
+[r-os-allow]

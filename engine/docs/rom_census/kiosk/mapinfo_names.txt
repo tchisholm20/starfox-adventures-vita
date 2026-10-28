@@ -1,0 +1,118 @@
+# demo MAPINFO.bin (3744 B, same size as retail): idx type name
+0	0	Ship Battle
+1	3	ZNot Used - Front End2
+2	0	Dragon Rock - Top
+3	0	ZNot Used - Krazoa Palace
+4	0	Volcano Force Point
+5	0	Rolling Demo - Just In Case
+6	0	ZNot Used - Discovery Falls
+7	0	ThornTail Hollow
+8	0	ThornTail Hollow - Undergro
+9	0	MazeTest
+10	0	SnowHorn Wastes
+11	0	Krazoa Palace
+12	0	CloudRunner Fortress
+13	0	Walled City
+14	0	LightFoot Village
+15	0	ZNot Used - CloudRunner - T
+16	0	CloudRunner - Dungeon
+17	0	ZNot Used - CloudRunner - T
+18	0	Moon Mountain Pass
+19	0	DarkIce Mines - Top
+20	0	ZNot Used - Krazoa Shrine
+21	0	Ocean Force Point - Bottom
+22	0	krazchamber
+23	0	Ice Mountain
+24	0	ZNot Used - Ice Mountain 2
+25	0	ZNot Used - Ice Mountain 3
+26	0	Animtest
+27	0	DarkIce Mines - Bottom
+28	0	BOSS DarkIce
+29	0	Cape Claw
+30	0	ZNot Used - Inside Galleon
+31	0	Test Of Combat
+32	0	Test Of Fear
+33	0	Test Of Skill
+34	0	Test Of Knowledge
+35	0	ZNot Used - Diamond Bay
+36	0	ZNot Used - EarthWalker Tem
+37	0	ZNot Used - Willow Grove
+38	4	ArWing Level - Andross
+39	0	Test Of Strength
+40	0	BOSS Scales
+41	4	World Map
+42	0	ZNot Used - WGShrine
+43	0	CloudRunner - Race
+44	0	BOSS Drakor
+45	0	ZNot Used - WMinsert
+46	0	ZNot Used - DarkIce Mines -
+47	0	ZNot Used - DarkIce Mines -
+48	0	BOSS TRex
+49	0	ZNot Used - MikesLava
+50	0	Ocean Force Point - Top
+51	0	Shop
+52	0	Dragon Rock - Bottom
+53	0	ZNot Used - BOSS Kamerian D
+54	0	Magic Cave - Small\Big
+55	0	ZNot Used - Duster Cave
+56	0	LinkB - Ice2Wastes
+57	0	ZNot Used - CloudRunner2Rac
+58	4	Arwing to Planet
+59	4	Arwing Darkice
+60	4	Arwing Cloud
+61	4	Arwing City
+62	4	Arwing Dragon
+63	4	Game Front
+64	0	LinkK - Nik Test
+65	0	Great Fox
+66	0	LinkA - Warpstone to Others
+67	0	LinkC - Wastes to Hollow
+68	0	LinkD - Darkmines top 2 bot
+69	0	LinkE - hollow to moon pass
+70	0	LinkF - moonpass to volcano
+71	0	LinkG - hollow to lightfoot
+72	0	LinkH - lightfoot to capecl
+73	0	LinkJ - capeclaw 2 ocean fo
+74	0	LinkI - CloudRunner2Race 
+75	1	dfpodium
+76	1	dfcradle
+77	1	dfcavehatch1
+78	1	dfcavehatch2
+79	1	scstatue
+80	1	galleonship
+81	1	cfgalleon
+82	1	cfgangplank
+83	1	nwtreebridge
+84	1	cfdungeonblock
+85	1	cloudrunnermap
+86	1	ccBridge
+87	1	cfcolumn
+88	1	nwboulder
+89	1	cfprisondoor
+90	1	cfprisoncage
+91	1	nwtreebridge2
+92	1	dim2 ice block1
+93	1	dimpushblock
+94	1	dim2 ice block2
+95	1	dimhornplinth
+96	1	nwshcolpush
+97	1	dim2lift
+98	1	dim2icefloe
+99	1	dim2icefloe1
+100	1	dim2icefloe2
+101	1	cfliftplat
+102	1	imspacecraft
+103	1	dimbossgut
+104	1	shlily
+105	1	vfpslide1
+106	1	vfpslide2
+107	1	drpushcart
+108	1	drliftplat
+109	1	dim2stonepillar
+110	1	bossdrakorrock
+111	1	wcbouncycrate
+112	1	wcpushblock
+113	1	wctemplelift
+114	1	kameriancolumn
+115	1	dbstepstone
+116	1	vfppushblock

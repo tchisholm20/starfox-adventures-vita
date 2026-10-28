@@ -1,0 +1,53 @@
+--- a/source/gxm.c
++++ b/source/gxm.c
+@@ -575,6 +575,12 @@
+ 		dirty_query = GL_FALSE;
+ 		needs_scene_reset = GL_FALSE;
+ 		in_use_framebuffer = active_write_fb;
++
++		// glEnable(GL_SCISSOR_TEST) and glScissor no longer re-arm the scissor mask when nothing changed,
++		// so an active scissor is drawn again once per scene instead of relying on the app to repeat itself
++		if (scissor_test_state)
++			dirty_scissor_state = GL_TRUE;
++
+ 		is_fbo_float = in_use_framebuffer ? in_use_framebuffer->is_float : GL_FALSE;
+ 
+ 		// Ending drawing scene
+--- a/source/misc.c
++++ b/source/misc.c
+@@ -418,8 +418,10 @@
+ 		adjust_color_material_state();
+ 		break;
+ 	case GL_SCISSOR_TEST:
++		// A redundant enable must not re-draw the scissor mask (see update_scissor_test)
++		if (!scissor_test_state)
++			dirty_scissor_state = GL_TRUE;
+ 		scissor_test_state = GL_TRUE;
+-		dirty_scissor_state = GL_TRUE;
+ 		break;
+ 	case GL_CULL_FACE:
+ 		cull_face_state = GL_TRUE;
+@@ -550,8 +552,9 @@
+ 		blend_state = GL_FALSE;
+ 		break;
+ 	case GL_SCISSOR_TEST:
++		if (scissor_test_state)
++			dirty_scissor_state = GL_TRUE;
+ 		scissor_test_state = GL_FALSE;
+-		dirty_scissor_state = GL_TRUE;
+ 		break;
+ 	case GL_CULL_FACE:
+ 		cull_face_state = GL_FALSE;
+--- a/source/tests.c
++++ b/source/tests.c
+@@ -382,6 +382,10 @@
+ 	}
+ #endif
+ 
++	// Same rectangle as the one in use: nothing to re-draw
++	if (region.gl_x == x && region.gl_y == y && region.gl_w == width && region.gl_h == height)
++		return;
++
+ 	region.gl_x = x;
+ 	region.gl_y = y;
+ 	region.gl_w = width;

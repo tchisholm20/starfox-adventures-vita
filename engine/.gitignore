@@ -1,0 +1,50 @@
+# IDE folders
+.idea/
+.vs/
+
+# Caches
+__pycache__
+.mypy_cache
+.cache/
+
+# Original files
+orig/*/*
+!orig/*/.gitkeep
+*.dol
+*.rel
+*.elf
+*.o
+*.map
+*.MAP
+
+# Build files
+build/
+temp/
+.ninja_*
+build.ninja
+
+# Fetched matching-help corpus (large, regeneratable via tools/decompme_fetch.py)
+reference_projects/decompme_scratches.jsonl
+
+# Reference projects
+reference_projects/
+reference_projects/*
+resources/*/reference_projects/
+resources/*/reference_projects/*
+
+# decompctx output
+ctx.*
+*.ctx
+
+# Generated configs
+objdiff.json
+compile_commands.json
+
+# Miscellaneous
+/*.txt
+*.exe
+
+.claude/worktrees/
+
+# Per-lane scratch dirs (never part of the source tree)
+/scratchpad*/
