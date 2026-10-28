@@ -78,14 +78,16 @@ pipeline of up to 16 stages that mixes textures, vertex colours and constants. G
 such hardware, so every distinct TEV setup the game uses is turned into a generated Cg
 shader, compiled on the Vita by the system shader compiler (`libshacccg`) and cached on the
 memory card. The release ships 274 pre-compiled programs. A setup the cache has never seen
-compiles on a low-priority background thread while a slower CPU path draws the object, so
-a new shader no longer stops the game: before that change, one play session logged 45
+compiles on a low-priority background thread while a slower CPU path draws in its place
+(a GPU-skinned character is skipped until its shader is ready), so a new shader no longer
+stops the game: before that change, one play session logged 45
 compiles of 1.5 to 8.2 seconds each, every one of them a freeze.
 
 **Two threads, two cores.** The game thread runs the game and records its GX calls into a
 ring buffer; a render thread on another CPU core replays them into GXM, so game logic and
-GPU submission overlap instead of taking turns. A lint runs on every build to prove the two
-threads share no mutable state, and the build refuses to package if it finds any.
+GPU submission overlap instead of taking turns. A lint on every build checks that the code each
+thread runs touches no mutable state the other owns, and the build refuses to package if it
+finds any.
 
 **Display lists are converted once.** GameCube models are drawn from display lists, a
 big-endian command format the GPU reads directly. The backend turns each list into Vita
