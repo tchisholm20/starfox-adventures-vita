@@ -37,6 +37,7 @@
 #include "port/plat_window.h"
 
 #include <psp2/io/fcntl.h>
+#include <psp2/io/stat.h>   /* sceIoMkdir (first-boot release settings) */
 #include <psp2/kernel/processmgr.h>
 #include <psp2/kernel/threadmgr.h>
 #include <psp2/kernel/cpu.h>   /* sceKernelGetCpuId, SCE_KERNEL_CPU_MASK_USER_n: the T0-d co-runner */
@@ -1453,8 +1454,39 @@ static void vt_stop(const char *why)
 }
 #endif
 
+/* FIRST-BOOT RELEASE SETTINGS (2026-10-28, the public release). The game's behaviour is set by marker files in ux0:data/stairfax/ (backend,
+ * GPU vertex path, frame cap, render size, clocks, ...), and an ABSENT marker means the dev default, not the release one. A player who installs
+ * only the vpk would run a different game. So on the first boot (no stamp file) every release marker that is missing is written with the
+ * release package's exact bytes; files that exist are never touched. After that the stamp stops it, so a marker the player deletes on purpose
+ * (frame_cap.txt, to run uncapped) stays deleted. Runs before anything reads a marker; the counts are printed after the [build] line. */
+typedef struct { const char *path; const char *bytes; int n; } StfxReleaseDefault;
+static const StfxReleaseDefault kStfxReleaseDefaults[] = {
+#include "stfx_release_defaults.inc"
+};
+#define STFX_DEFAULTS_STAMP "ux0:data/stairfax/defaults_v1.txt"
+static int stfx_install_release_defaults(int *written, int *kept, int *failed)
+{
+    *written = *kept = *failed = 0;
+    SceUID s = sceIoOpen(STFX_DEFAULTS_STAMP, SCE_O_RDONLY, 0);
+    if (s >= 0) { sceIoClose(s); return 0; }
+    sceIoMkdir("ux0:data/stairfax", 0777);
+    sceIoMkdir("ux0:data/STFX00001", 0777);
+    for (unsigned i = 0; i < sizeof kStfxReleaseDefaults / sizeof kStfxReleaseDefaults[0]; ++i) {
+        const StfxReleaseDefault *d = &kStfxReleaseDefaults[i];
+        SceUID f = sceIoOpen(d->path, SCE_O_RDONLY, 0);
+        if (f >= 0) { sceIoClose(f); ++*kept; continue; }
+        f = sceIoOpen(d->path, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
+        if (f >= 0 && sceIoWrite(f, d->bytes, (SceSize) d->n) == d->n) ++*written; else ++*failed;
+        if (f >= 0) sceIoClose(f);
+    }
+    if (!*failed) { s = sceIoOpen(STFX_DEFAULTS_STAMP, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777); if (s >= 0) { sceIoWrite(s, "1\n", 2); sceIoClose(s); } }
+    return 1;
+}
+
 int main(void)
 {
+    int dflt_w, dflt_k, dflt_f;
+    const int dflt_ran = stfx_install_release_defaults(&dflt_w, &dflt_k, &dflt_f);   /* FIRST: before the log or any marker is read */
     /* THE LOG IS ROTATED, NOT REMOVED (run 246). Runs 243-245: the `[mapbank] mapUnload ... caller` line of three staff attempts
      * was lost, each time because the next launch deleted the log before it was pulled. The last three runs stay on the card as
      * LOG.1 (the previous run) .. LOG.3; the return codes are printed so a rotation that did not happen is visible in the log. */
@@ -1470,6 +1502,9 @@ int main(void)
 #endif
     printf("[log] rotate: previous log -> %s.1 %s (rc %x; .1->.2 rc %x, .2->.3 rc %x; 80010002 = there was none)\n", LOG, rot0 < 0 ? "NOT KEPT" : "kept",
            (unsigned) rot0, (unsigned) rot1, (unsigned) rot2);
+    if (dflt_ran) printf("[defaults] first boot: %d release setting file(s) written, %d already present, %d failed%s\n", dflt_w, dflt_k, dflt_f,
+                         dflt_f ? " (no stamp written: retried next boot)" : " (stamp " STFX_DEFAULTS_STAMP " written)");
+    else printf("[defaults] stamp present (%s): settings files left as they are\n", STFX_DEFAULTS_STAMP);
     /* CLOCKS (run 217+). The port asked for nothing, so every frame time before this ran at whatever the console
      * happened to be set to: Tyler's overlay toggles an overclock by hand, and the same build measured 20 fps
      * GPU-bound (runs 212/213) and 30-60 fps (play217). Request the maximum the OS grants and PRINT what was read

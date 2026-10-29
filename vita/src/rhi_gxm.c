@@ -34,11 +34,13 @@ void stfx_backend_select(void)
     memset(b, 0, sizeof b);
     SceUID fd = sceIoOpen(BACKEND_FILE, SCE_O_RDONLY, 0777);
     if (fd >= 0) { sceIoRead(fd, b, sizeof b - 1); sceIoClose(fd); }
-    g_stfx_backend = (fd >= 0 && !strncmp(b, "gxm", 3) && (b[3] == 0 || b[3] == '\n' || b[3] == '\r' || b[3] == ' ')) ? STFX_BK_GXM : STFX_BK_VITAGL;
+    /* GXM IS THE DEFAULT (2026-10-28, the public release): the native backend is the shipping renderer, so a player who installs the vpk without
+     * the ux0 folder's backend.txt must still get it. Only an explicit first word "vitagl" selects the old vitaGL path (a dev comparison arm). */
+    g_stfx_backend = (fd >= 0 && !strncmp(b, "vitagl", 6) && (b[6] == 0 || b[6] == '\n' || b[6] == '\r' || b[6] == ' ')) ? STFX_BK_VITAGL : STFX_BK_GXM;
     if (g_stfx_backend == STFX_BK_GXM) printf("[backend] gxm\n");
     else printf("[backend] vitagl\n");
     printf("[backend] chosen once, before any vitaGL call, from %s (%s)\n", BACKEND_FILE,
-           fd < 0 ? "absent: the default" : g_stfx_backend == STFX_BK_GXM ? "first word gxm" : "present but not 'gxm': the default");
+           fd < 0 ? "absent: the default, gxm" : g_stfx_backend == STFX_BK_VITAGL ? "first word vitagl" : "present, not 'vitagl': the default, gxm");
 }
 
 /* ---- ops local to the shell ----------------------------------------------------------------------------------- */
