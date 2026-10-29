@@ -9,6 +9,8 @@ with a graphics backend written for the Vita's GPU.
 image you make from your own copy of the game. Nothing from the game is included or
 downloaded.
 
+Video of it running on a real Vita: https://youtu.be/RpsG4do0GE8
+
 Download the latest build from **[Releases](../../releases)**. The source is in this
 repository; [BUILDING.md](BUILDING.md) explains how to build it yourself.
 
@@ -18,36 +20,32 @@ repository; [BUILDING.md](BUILDING.md) explains how to build it yourself.
 - `libshacccg.suprx` at `ur0:data/libshacccg.suprx` (the shader compiler that many
   Vita homebrew ports also need). Without it the game still runs, but shaders that are not
   included in the package draw through a slower fallback.
-- Your own copy of **Star Fox Adventures for GameCube, USA, Rev 1** (game id `GSAE01`,
-  disc version 1), dumped to a full `.iso` (about 1.4 GB).
-
-## Making the disc image (from your own disc)
-
-- Wii (models that play GameCube discs) + Homebrew Channel: CleanRip.
-- GameCube + Swiss: dump the disc to SD.
-- Already have a Dolphin image? `.rvz` / `.gcz` / `.ciso`: in Dolphin, right-click the game
-  -> Convert File -> ISO. NKit images must be restored to a full ISO.
+- A disc image of your own copy of **Star Fox Adventures for GameCube, USA, Rev 1** (game id
+  `GSAE01`, disc version 1), as a full, uncompressed `.iso` (about 1.4 GB).
 
 When it starts, the port checks the image and shows a message on screen if it's missing,
 unreadable, a different game, or a different version of this one.
 
 ## Install
 
-1. Copy the `ux0` folder from the download to the root of `ux0:` on the Vita (it creates
-   `ux0:data/stairfax` and `ux0:data/STFX00001`: settings and 274 pre-compiled shaders).
-2. Put your disc image at `ux0:data/stairfax/sfa_rev1.iso`.
-3. Install `StarFoxAdventures.vpk` with VitaShell, then launch it.
+1. Install `StarFoxAdventures.vpk` with VitaShell.
+2. Copy your disc image to `ux0:data/stairfax/sfa_rev1.iso` (create the `stairfax` folder if
+   it isn't there).
+3. Launch the game.
+
+The first launch writes the game's settings files to `ux0:data/stairfax/`. The download
+includes 274 pre-compiled shaders inside the vpk.
 
 ## What to expect
 
 - Renders at 640x368, upscaled to the screen, capped at 30 fps. Most areas hold a steady
   30; ThornTail Hollow, the busiest area, can dip below it. To run uncapped, delete
-  `ux0:data/stairfax/frame_cap.txt`.
-- The Vita runs at its highest clock speeds (CPU 444 MHz, GPU 222 MHz) while the game is
-  open.
-- The first time an area needs a shader that is not in the package, it compiles in the
-  background: the game keeps running while it does, and the shader is saved to the
-  memory card for next time.
+  `ux0:data/stairfax/frame_cap.txt` after the first launch.
+- The game sets the Vita to its highest standard clock speeds (CPU 444 MHz, GPU 222 MHz).
+- **It's meant to be played overclocked.** The video was recorded with the CPU at 500 MHz
+  using an overclocking plugin. Without one, the game runs at 444 MHz.
+- If an area needs a shader that isn't included, it compiles in the background: the game
+  keeps running while it does, and the shader is saved to the memory card for next time.
 
 ## Known issues
 

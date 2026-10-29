@@ -102,6 +102,10 @@ From the top of this tree, pack it into an installable VPK and install that with
 bash vita/host/engine/package_vpk.sh "$OUT/game/eboot.bin" StarFoxAdventures.vpk
 ```
 
+An optional third argument is a folder holding `pack.bin` and `gxm/*.gxp`, pre-compiled shaders that are
+packed into the vpk as `shaders/` (the release vpk's `shaders/` folder is one). Without it the game compiles
+every shader on the console the first time it needs it, in the background.
+
 Put your disc image on the
 console at `ux0:data/stairfax/sfa_rev1.iso`. The app shows an on-screen message if the image is missing, is a
 different game, the wrong revision, or unreadable. Runtime options are marker files in `ux0:data/stairfax/`.

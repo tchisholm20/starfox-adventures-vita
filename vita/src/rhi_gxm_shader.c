@@ -327,6 +327,12 @@ GXS_PURE int gxs_gxpc_valid(const uint8_t *img, uint32_t n, const void *k1, unsi
 #define GXS_SENT_CG    GXS_DIR "gxm_compiling.cg"
 #define GXS_BADFILE    GXS_DIR "GXM_BAD"
 #define GXS_GXPDIR     GXS_DIR "gxm/"
+/* THE APP'S OWN SHADERS (2026-10-28, the public release): the vpk carries the release pack and GXP cache under app0:shaders/, read-only.
+ * A key the memory-card cache does not have is looked up there next, so "vpk + disc image" is the whole install. New compiles are still
+ * written to the memory card (GXS_GXPDIR); a card copy wins over the app's, so a later shader fix only needs the card file deleted. */
+#define GXS_APP_DIR    "app0:shaders/"
+#define GXS_APP_PACK   GXS_APP_DIR "pack.bin"
+#define GXS_APP_GXPDIR GXS_APP_DIR "gxm/"
 #define GXS_FASTFILE   "ux0:data/stairfax/tev_fast.txt"
 #define GXS_PERSPFILE  GXS_DIR "texgen_persp_off.txt"
 #define GXS_DEDUPEFILE GXS_DIR "tev_dedupe_off.txt"
@@ -360,7 +366,7 @@ static uint32_t g_bad[GXS_BAD_MAX]; static unsigned g_bad_n;
 static GxsPkIdx g_pk; static SceUID g_pk_fd = -1; static uint32_t g_pk_size;
 static int g_shark_on;
 static int g_pack_on;
-static unsigned c_pack_hit, c_pack_miss, c_pack_stale, c_pack_reads, c_pack_bad, c_shark_compiles, c_shark_fail, c_gxpc_hit, c_vp_made, c_fp_made, c_vp_fail, c_fp_fail;
+static unsigned c_pack_hit, c_pack_miss, c_pack_stale, c_pack_reads, c_pack_bad, c_shark_compiles, c_shark_fail, c_gxpc_hit, c_gxpc_app, c_vp_made, c_fp_made, c_vp_fail, c_fp_fail;
 static unsigned c_unmapped_unif, c_unmapped_attr, c_missing_samplers, c_refused_gen, c_noprog_bad, c_prog_full, c_arm_noprog, c_sent_fail, c_gxpc_write, c_noop;
 static unsigned c_compile_fail, c_split_fail;
 static char g_unmapped_log[8][40]; static unsigned g_unmapped_logged;
@@ -433,8 +439,11 @@ static int gxs_pk_rd(void *ctx, uint32_t off, void *dst, uint32_t n)
 static void gxs_pack_open(void)
 {
     if (gxs_exists(GXS_NOPACK)) { gxm_log("[gxm-shader] pack: OFF (NOPACK marker)"); return; }
-    g_pk_fd = sceIoOpen(GXS_PACK, SCE_O_RDONLY, 0777);
-    if (g_pk_fd < 0) { gxm_log("[gxm-shader] pack: none (%s absent)", GXS_PACK); return; }
+    const char *pk_path = GXS_PACK;
+    g_pk_fd = sceIoOpen(pk_path, SCE_O_RDONLY, 0777);
+    if (g_pk_fd < 0) { pk_path = GXS_APP_PACK; g_pk_fd = sceIoOpen(pk_path, SCE_O_RDONLY, 0777); }
+    if (g_pk_fd < 0) { gxm_log("[gxm-shader] pack: none (%s and %s absent)", GXS_PACK, GXS_APP_PACK); return; }
+    gxm_log("[gxm-shader] pack: %s", pk_path);
     const SceOff sz = sceIoLseek(g_pk_fd, 0, SCE_SEEK_END);
     if (sz <= 0 || sz > (SceOff) 0x7fffffff) { gxm_log("[gxm-shader] pack: %lld bytes, not used", (long long) sz); sceIoClose(g_pk_fd); g_pk_fd = -1; return; }
     g_pk_size = (uint32_t) sz;
@@ -643,6 +652,8 @@ static int gxs_try_gxpc(GxmProg *p, GxsPriv *pv, char kind, uint32_t h, const vo
 {
     char path[96]; gxs_gxpc_path(path, sizeof path, kind, h);
     SceUID f = sceIoOpen(path, SCE_O_RDONLY, 0777);
+    int from_app = 0;
+    if (f < 0) { snprintf(path, sizeof path, GXS_APP_GXPDIR "%c%08x.gxp", kind, (unsigned) h); f = sceIoOpen(path, SCE_O_RDONLY, 0777); from_app = 1; }
     if (f < 0) return 0;
     const SceOff sz = sceIoLseek(f, 0, SCE_SEEK_END);
     if (sz < 20 || sz > (SceOff) (1 << 20)) { sceIoClose(f); return 0; }
@@ -655,7 +666,7 @@ static int gxs_try_gxpc(GxmProg *p, GxsPriv *pv, char kind, uint32_t h, const vo
     const int r = gxs_register_copy(p, pv, v, vl, fr, fl);
     free(buf);
     if (r) return -1;
-    ++c_gxpc_hit; p->from = GXM_FROM_GXPCACHE;
+    ++c_gxpc_hit; if (from_app) ++c_gxpc_app; p->from = GXM_FROM_GXPCACHE;
     return 1;
 }
 static void gxs_save_gxpc(char kind, uint32_t h, const void *k1, unsigned n1, const void *k2, unsigned n2, const void *v, uint32_t vl, const void *f, uint32_t fl)
@@ -943,7 +954,7 @@ int gxm_shader_init(void)
     memset(&g_td, 0, sizeof g_td);
     g_np = 0; g_bad_n = 0; memset(g_tab, 0, sizeof g_tab); memset(g_chunk, 0, sizeof g_chunk);
     g_pack_on = 0; g_shark_on = 0; g_pk_fd = -1; g_pk_size = 0;
-    c_pack_hit = c_pack_miss = c_pack_stale = c_pack_reads = c_pack_bad = c_shark_compiles = c_shark_fail = c_gxpc_hit = c_vp_made = c_fp_made = c_vp_fail = c_fp_fail = 0;
+    c_pack_hit = c_pack_miss = c_pack_stale = c_pack_reads = c_pack_bad = c_shark_compiles = c_shark_fail = c_gxpc_hit = c_gxpc_app = c_vp_made = c_fp_made = c_vp_fail = c_fp_fail = 0;
     c_unmapped_unif = c_unmapped_attr = c_missing_samplers = c_refused_gen = c_noprog_bad = c_prog_full = c_arm_noprog = c_sent_fail = c_gxpc_write = c_noop = 0;
     c_compile_fail = c_split_fail = 0; g_unmapped_logged = 0;
     g_neg = (GxsNeg *) calloc(GXS_NEG_N, sizeof *g_neg);
@@ -1367,10 +1378,10 @@ int gxm_shader_report(char *buf, int cap)
 {
     if (!buf || cap <= 0) return 0;
     int n = snprintf(buf, (size_t) cap,
-                     "pack_records=%u pack_hit=%u pack_miss=%u pack_stale=%u pack_reads=%u shark_online=%d shark_compiles=%u shark_fail=%u gxpc_hit=%u prog_live=%d "
+                     "pack_records=%u pack_hit=%u pack_miss=%u pack_stale=%u pack_reads=%u shark_online=%d shark_compiles=%u shark_fail=%u gxpc_hit=%u gxpc_app=%u prog_live=%d "
                      "vp_made=%u fp_made=%u unmapped_unif=%u unmapped_attr=%u missing_samplers=%u refused_gen=%u noprog_bad=%u "
                      "pack_bad=%u split_fail=%u compile_fail=%u vp_fail=%u fp_fail=%u prog_full=%u arm_noprog=%u sent_fail=%u gxpc_write=%u shader_noop=%u ",
-                     g_pk.n, c_pack_hit, c_pack_miss, c_pack_stale, c_pack_reads, g_shark_on, c_shark_compiles, c_shark_fail, c_gxpc_hit, g_np,
+                     g_pk.n, c_pack_hit, c_pack_miss, c_pack_stale, c_pack_reads, g_shark_on, c_shark_compiles, c_shark_fail, c_gxpc_hit, c_gxpc_app, g_np,
                      c_vp_made, c_fp_made, c_unmapped_unif, c_unmapped_attr, c_missing_samplers, c_refused_gen, c_noprog_bad,
                      c_pack_bad, c_split_fail, c_compile_fail, c_vp_fail, c_fp_fail, c_prog_full, c_arm_noprog, c_sent_fail, c_gxpc_write, c_noop);
     if (n > 0 && n < cap) n += snprintf(buf + n, (size_t) (cap - n), "async_on=%d async_queued=%u async_installed=%u async_failed=%u async_full=%u async_pending_hits=%u async_inflight_max=%u async_ms_max=%u async_ms_sum=%u ",
