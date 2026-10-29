@@ -5,6 +5,9 @@ A native PS Vita port of Star Fox Adventures (GameCube), built on the
 port branch ([`Cassieandstuff/SFA-Decomp@pc-port-continued`](https://github.com/Cassieandstuff/SFA-Decomp/tree/pc-port-continued)),
 with a graphics backend written for the Vita's GPU.
 
+> **Work in progress.** This is an early build. It's playable, but expect bugs, and not every
+> part of the game has been tested yet.
+
 **This repository and its downloads contain no game data.** The port runs from a disc
 image you make from your own copy of the game. Nothing from the game is included or
 downloaded.
