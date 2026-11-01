@@ -232,6 +232,7 @@ typedef struct DrawState {
     int sc[4];                                           /* GL rect, same */
     int clip[4]; int sc_empty;                           /* region clip, top-origin inclusive, already intersected with M */
     int zb_on, zb_f, zb_u;
+    int cur_cull;            /* GX cull (2026-10-31): the SceGxmCullMode the context holds, -1 = unknown (re-set at the next draw) */
     int zb_faces, sh_cull;   /* shadow receivers (2026-10-27 dotted-shadow A/B): shadow_zbias_faces.txt 2 = bias BACK faces too; shadow_cull.txt 1 = CW, 2 = CCW */
     int vp_dirty, sc_dirty, zb_dirty;
     unsigned applied_epoch;
@@ -319,6 +320,7 @@ static void apply_zbias(void)
        front-only bias never reaches; and the port never culls, so the faces retail drops are drawn too. Both behind markers until a shot pair decides. */
     sceGxmSetBackDepthBias(g_gx.ctx, s_d.zb_faces == 2 ? f : 0, s_d.zb_faces == 2 ? u : 0);
     sceGxmSetCullMode(g_gx.ctx, s_d.zb_on && s_d.sh_cull == 1 ? SCE_GXM_CULL_CW : s_d.zb_on && s_d.sh_cull == 2 ? SCE_GXM_CULL_CCW : SCE_GXM_CULL_NONE);
+    s_d.cur_cull = -1;
 }
 /* inside an open scene: re-apply everything when the epoch moved, else only what a setter changed */
 /* GXM_SCENE_STATE_BEGIN */
@@ -326,6 +328,7 @@ static void apply_scene_state(void)
 {
     if (s_d.applied_epoch != g_gx.epoch) {
         sceGxmSetCullMode(g_gx.ctx, SCE_GXM_CULL_NONE);                              /* vitaGL never culls (rhi_vita.c:1082) */
+        s_d.cur_cull = -1;                                                            /* the per-draw GX cull below re-sets it */
         apply_viewport(); apply_clip(); apply_zbias();
         s_d.cur_vp = NULL; s_d.cur_fp = NULL;
         gxm_sh_reset(&s_d.sh); ++s_d.sh_resets;                                       /* R3a C2 invalidation (1): a new scene / a target quad changed the context behind our back */
@@ -347,6 +350,7 @@ static void apply_depth(const GxmDepthRes *r)
 }
 /* GXM_SCENE_STATE_END */
 
+int g_gxm_cull_off; unsigned g_gxm_cull_sets;   /* GX cull (2026-10-31): cull_off.txt 1 = never cull (the old port); sets = SetCullMode calls */
 static void zbias_load(void)
 {
     char b[64]; int len = 0;
@@ -364,6 +368,10 @@ static void zbias_load(void)
         gxm_log("[gxm-draw] shadow receivers: bias on %s face(s) (shadow_zbias_faces.txt) | cull %s (shadow_cull.txt)",
                 s_d.zb_faces == 2 ? "BOTH" : "the front", s_d.sh_cull == 1 ? "CW" : s_d.sh_cull == 2 ? "CCW" : "none");
     }
+    {   char c = 0; SceUID g = sceIoOpen("ux0:data/stairfax/cull_off.txt", SCE_O_RDONLY, 0777);
+        if (g >= 0) { if (sceIoRead(g, &c, 1) == 1 && c == '1') g_gxm_cull_off = 1; sceIoClose(g); }
+        gxm_log("[gxm-draw] GX cull mode: %s", g_gxm_cull_off ? "IGNORED (cull_off.txt 1: the old port)" : "honoured (GX_CULL_BACK = CCW, GX_CULL_FRONT = CW)");
+    }
     gxm_log("[gxm-draw] shadow-zbias factor %d units %d%s%s", s_d.zb_f, s_d.zb_u, (s_d.zb_f || s_d.zb_u) ? "" : " (OFF)",
             f < 0 ? " (no shadow_zbias.txt: default)" : ok ? " (shadow_zbias.txt)" : " (shadow_zbias.txt unparsable: default)");
 }
@@ -373,6 +381,7 @@ void rhi_gxm_setDepthState(int test, int func, int write)
 {
     ++s_d.state_calls;
     s_d.depth = (test & 1) | ((func & 7) << 1) | ((write & 1) << 4);                  /* rhi_vita.c:228 */
+    s_d.depth |= ((func >> 3) & 3) << 5;                                              /* GX cull mode (gx_draw.c packs it in func bits 3-4): bits 5-6 */
 }
 void rhi_gxm_setViewport(float x, float y, float w, float h)
 {
@@ -849,6 +858,17 @@ static int run_draw(const Draw *d)
 #endif
         if (!c2 || gxm_sh_depth_need(&s_d.sh, (unsigned) (dr.func & 7), (unsigned) (dr.write != 0))) apply_depth(&dr);   /* R3a C2: the four depth calls only when the pair changed */
         else ++s_d.dep_skipped;
+    }
+    {   /* GX CULL (2026-10-31, DarkIce Mines grey cube): the game's GXSetCullMode was never applied, so faces retail culls were drawn -- the
+           placeholder sky boxes (model 0) around the camera drew their inside faces, wrote depth and hid the cave. MEASURED on the Vita and in
+           Vita3K (build 06cee975, ThornTail + DIM): GX_CULL_BACK = CW removed the faces you SEE (ground gone, ramp inside-out), so GX_CULL_BACK =
+           CCW and GX_CULL_FRONT = CW for these draws. The shadow receivers' rule (FRONT = CCW, 2026-10-28) is NOT this mapping and stays as it
+           was. GX_CULL_ALL is left uncull.
+           Shadow receivers keep their own rule (apply_zbias). cull_off.txt 1 = the old no-cull port (A/B). */
+        int want = SCE_GXM_CULL_NONE;
+        if (s_d.zb_on) want = s_d.sh_cull == 1 ? SCE_GXM_CULL_CW : s_d.sh_cull == 2 ? SCE_GXM_CULL_CCW : SCE_GXM_CULL_NONE;
+        else if (d->depth >= 0 && !g_gxm_cull_off) { const int c = (d->depth >> 5) & 3; want = c == 2 ? SCE_GXM_CULL_CCW : c == 1 ? SCE_GXM_CULL_CW : SCE_GXM_CULL_NONE; }
+        if (want != s_d.cur_cull) { sceGxmSetCullMode(g_gx.ctx, (SceGxmCullMode) want); s_d.cur_cull = want; ++g_gxm_cull_sets; }
     }
     if (vp != s_d.cur_vp) { sceGxmSetVertexProgram(g_gx.ctx, vp); s_d.cur_vp = vp; }
     if (fp != s_d.cur_fp) { sceGxmSetFragmentProgram(g_gx.ctx, fp); s_d.cur_fp = fp; gxm_sh_reset_tex(&s_d.sh); }   /* invalidation (2): a new fragment program re-issues every texture */

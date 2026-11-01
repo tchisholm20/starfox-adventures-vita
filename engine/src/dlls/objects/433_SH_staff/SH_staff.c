@@ -94,9 +94,6 @@ int sh_staff_getExtraSize(void) {
     return sizeof(ShStaffState);
 }
 
-#if defined(TARGET_PC)
-static f32 gStfxStaffUnloadHold;   /* defined with the hold, below */
-#endif
 void sh_staff_free(GameObject* obj, int freeArg) {
     ShStaffState* state = obj->extra;
     GameObject* child;
@@ -105,20 +102,6 @@ void sh_staff_free(GameObject* obj, int freeArg) {
     if (freeArg != 0) {
         return;
     }
-#if defined(TARGET_PC)
-    /* STFX map-bank (run 257). Run 256: the staff was picked up, the 60 s hold (run 245) was still counting when Fox walked
-       away and this object was freed -- so the PICKUP-phase unload never ran, swapholbot stayed in bank B for the rest of the
-       session, and the store's own map could not load at the bottom of its ladder ("[mapbank] file 0x25 map 16 (shop) -> NOT
-       LOADED (no free bank)": the store area was simply missing). Do the unload the hold was deferring. */
-    if (state->pickupMapLoaded != 0 && gStfxStaffUnloadHold > 0.0f) {
-        extern void stfx_seq_log(const char* fmt, ...);
-        gStfxStaffUnloadHold = 0.0f;
-        state->pickupMapLoaded = 0;
-        mapUnload(SHSTAFF_PICKUP_MAP_CELL, SHSTAFF_PICKUP_MAP_LOAD_FLAGS);
-        mainSetBits(GAMEBIT_STAFF_PICKUP_MAP_UNLOADED, 1);
-        stfx_seq_log("[mapbank] SH_staff freed with the hold still running: the pickup map is unloaded now\n");
-    }
-#endif
 
     i = 0;
     for (; i < SHSTAFF_HAZE_CHILD_COUNT; i++) {
@@ -412,20 +395,6 @@ void sh_staff_deactivate(GameObject* obj, ShStaffState* state, int clearChildren
     state->phase = SHSTAFF_PHASE_DONE;
 }
 
-#if defined(TARGET_PC)
-#include <stdio.h>
-static f32 gStfxStaffUnloadHold;
-static int stfx_staff_hold_on(void) {
-    static int on = -1;
-    if (on < 0) {
-        FILE* f = fopen("ux0:data/stairfax/staff_unload_now.txt", "r");
-        on = !(f && fgetc(f) == '1');
-        if (f) fclose(f);
-        fprintf(stderr, "[mapbank] SH_staff pickup-map hold: %s\n", on ? "ON (default)" : "OFF (staff_unload_now.txt)");
-    }
-    return on;
-}
-#endif
 void sh_staff_update(GameObject* obj) {
     ShStaffState* state = obj->extra;
     ShStaffPlacement* placement = (ShStaffPlacement*)obj->anim.placementData;
@@ -461,27 +430,6 @@ void sh_staff_update(GameObject* obj) {
     } else if (currentPhase == SHSTAFF_PHASE_ARMED) {
         if (ObjTrigger_IsSet(obj) != 0) {
             GameObject* target = objGetNearestTypeTo(SHSTAFF_TARGET_OBJGROUP, obj, 0);
-#if defined(TARGET_PC)
-            /* STFX map-bank (run 242): the GetStaff sequence started here reads its 13 cast scripts and its models from
-               the pickup map (swapholbot), bank B. On hardware bank B was already EMPTY when the cast loaded its data
-               (log: animcurv owners A 12 B -1), so every actor got the hub's 44-byte placeholder and the scene ended
-               after 268 frames. Which unload emptied it is not established yet (see [mapbank] mapUnload lines), so:
-               make the map resident before the sequence is asked for, and hold the PICKUP-phase unload below for a
-               minute of game time. staff_unload_now.txt starting with 1 = the original timing. */
-            if (stfx_staff_hold_on()) {
-                /* Run 246: the unload is the DISC's -- plane trigger ident 290725 (hollow.romlist, one of three gates
-                   around the well clearing) runs TRIGGER_COMMAND_UNLOAD_MAP 19 on an outward crossing, 294.c. It leaves
-                   pickupMapLoaded at 1, so the run 245 test of that flag never reloaded. Ask the bank table instead. */
-                extern s32 mapCheckCurBlocks(int v);
-                if (state->pickupMapLoaded == 0 || mapCheckCurBlocks(SHSTAFF_PICKUP_MAP_CELL) == -1) {
-                    fprintf(stderr, "[mapbank] SH_staff: pickup map was not resident at the trigger (flag %d, bank %d) -- loaded now\n",
-                            (int)state->pickupMapLoaded, (int)mapCheckCurBlocks(SHSTAFF_PICKUP_MAP_CELL));
-                    state->pickupMapLoaded = 1;
-                    loadMapAndParent(SHSTAFF_PICKUP_MAP_ID);
-                }
-                gStfxStaffUnloadHold = 3600.0f;
-            }
-#endif
             (*gObjectTriggerInterface)->runSequence(0, (void*)target, -1);
             state->phase = SHSTAFF_PHASE_PICKUP;
             state->hazeFadeTimer = 60.0f;
@@ -497,11 +445,6 @@ void sh_staff_update(GameObject* obj) {
                 loadMapAndParent(SHSTAFF_PICKUP_MAP_ID);
             }
         }
-#if defined(TARGET_PC)
-    } else if (state->pickupMapLoaded != 0 && gStfxStaffUnloadHold > 0.0f) {
-        gStfxStaffUnloadHold -= timeDelta;   /* STFX map-bank: see the trigger above */
-        if (gStfxStaffUnloadHold <= 0.0f) fprintf(stderr, "[mapbank] SH_staff: hold over, the pickup map unloads now\n");
-#endif
     } else if (state->pickupMapLoaded != 0) {
         state->pickupMapLoaded = 0;
         mapUnload(SHSTAFF_PICKUP_MAP_CELL, SHSTAFF_PICKUP_MAP_LOAD_FLAGS);

@@ -724,6 +724,9 @@ s32 thp_decode_planes(int fast, const void* file, void* tileY, void* tileU, void
 int thp_arm_fast = 1;           // host tests set these; on the Vita the marker files do
 static int gArmsRead, gThreadOff;
 extern unsigned stfx_mv_skipped __attribute__((weak));     // hal/stfx_audio.c (THPVideoDecode.c's skip arm)
+// Launch timeline (vita/src/vita_tool_main.c): [boot] first_movie_frame, and the per-second [boot-io] movie counters. Weak: host test builds link without them.
+extern void stfx_boot_mark(const char* name) __attribute__((weak));
+extern void stfx_boot_movie_decode(unsigned long long decUs, unsigned long long waitUs) __attribute__((weak));
 
 #if defined(__vita__)
 #include <psp2/kernel/threadmgr.h>
@@ -923,12 +926,17 @@ s32 THPVideoDecode(void* file, void* tileY, void* tileU, void* tileV, void* work
             dec = THP_NOW() - t0;
         }
         statsAdd(dec, THP_NOW() - t0);
+        if (stfx_boot_movie_decode) stfx_boot_movie_decode(dec, THP_NOW() - t0);
     }
 #else
     (void)gArmsRead; (void)gThreadOff;
     err = thp_decode_planes(thp_arm_fast, file, tileY, tileU, tileV, &w, &h, NULL);
 #endif
     if (err) { ++thp_video_decode_errors; return err; }
+    {   // the first movie frame that decoded (handed to GX below; not necessarily on screen yet)
+        static int sBootMarked;
+        if (!sBootMarked) { sBootMarked = 1; if (stfx_boot_mark) stfx_boot_mark("first_movie_frame"); }
+    }
     // the planes are GX textures the game re-inits every frame: their texels changed (gx_draw.c's
     // texture cache re-decodes them on the next load; weak -- the host test links without gx_draw)
     if (gx_tex_invalidate) {

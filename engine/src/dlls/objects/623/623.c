@@ -84,7 +84,7 @@ void drgenerator_hitDetect(GameObject* obj)
         return;
     }
     ((char*)state)[0x19a] = state->hitsRemaining - hitVolume;
-    Obj_SpawnHitLightAndFade(obj, (const Vec3f*)&hitPosX, 6.0f);
+    { /* PORT: the three scalars are not an array on GCC's stack */ Vec3f hitPos = {hitPosX, hitPosY, hitPosZ}; Obj_SpawnHitLightAndFade(obj, &hitPos, 6.0f); }
     objfx_shakeCameraByDistance(obj, 300.0f);
     if (((char*)state)[0x19a] > 0)
     {

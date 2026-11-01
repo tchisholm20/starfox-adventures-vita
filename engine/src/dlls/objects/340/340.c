@@ -92,8 +92,9 @@ void cfPrisonCage_hitDetect(GameObject* obj) {
     f32 hitX;
 
     if (ObjHits_GetPriorityHitWithPosition(obj, 0, 0, 0, &hitX, &hitY, &hitZ) != 0) {
-        objfx_spawnHitEmitterAtPos(&hitX, CFPRISONCAGE_HIT_EFFECT_ID, CFPRISONCAGE_HIT_EFFECT_RED,
-                                   CFPRISONCAGE_HIT_EFFECT_GREEN, CFPRISONCAGE_HIT_EFFECT_BLUE);
+        { /* PORT: the three scalars are not an array on GCC's stack */ f32 hitPos[3]; hitPos[0] = hitX; hitPos[1] = hitY; hitPos[2] = hitZ;
+        objfx_spawnHitEmitterAtPos(hitPos, CFPRISONCAGE_HIT_EFFECT_ID, CFPRISONCAGE_HIT_EFFECT_RED,
+                                   CFPRISONCAGE_HIT_EFFECT_GREEN, CFPRISONCAGE_HIT_EFFECT_BLUE); }
     }
 }
 

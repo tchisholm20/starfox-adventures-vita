@@ -226,3 +226,24 @@ unsigned __wrap_sndSeqPlayEx(unsigned short sgid, unsigned short sid, void *arrf
     return __real_sndSeqPlayEx(sgid, sid, arrfile, para, studio);
 }
 
+
+/* The launch timeline (vita_tool_main.c "LAUNCH TIMELINE"), every present: title_ready = the first present at which the title menu accepts input
+ * (n_attractmode.c sets gTitleMenuReadyForInput = 1 at :526, the flag the [title] line prints). `gameplay` is NOT placed: no flag in the code marks "a save
+ * is loaded and the first gameplay frame ran" without reading game code this build may not touch; stfx_boot_mark("gameplay") is accepted and waits for a hook. */
+void vt_game_frame_tick(void)
+{
+    extern unsigned char gTitleMenuReadyForInput;
+    static int s_done;
+    if (!s_done && gTitleMenuReadyForInput) { s_done = 1; stfx_boot_mark("title_ready"); }
+    { extern void vt_start_at_frame(void) __attribute__((weak)); if (vt_start_at_frame) vt_start_at_frame(); }   /* start_at: "game did" on the first frame with a player */
+    {   /* PAUSE MARK (2026-10-30): every change of the game's pauseMenuState, with the present, so a log's frame-time
+         * windows can be split into pause menu vs play (dips.py). Weak: viewer builds have no pause menu. */
+        extern unsigned char pauseMenuState __attribute__((weak));
+        extern int vt_presents_now(void) __attribute__((weak));
+        static int s_last = -1;
+        if (&pauseMenuState && (int) pauseMenuState != s_last) {
+            printf("[pause] state %d -> %d at present %d\n", s_last, (int) pauseMenuState, vt_presents_now ? vt_presents_now() : -1);
+            s_last = pauseMenuState;
+        }
+    }
+}

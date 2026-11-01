@@ -159,6 +159,64 @@ GXS_PURE uint8_t *gxs_pk_fetch(const GxsPk *e, GxsReadFn rd, void *ctx, int *bad
     if (gxs_pk_sum((const uint32_t *) (const void *) buf, pl / 4u) != e->sum) { free(buf); *bad = 1; return NULL; }   /* malloc'd: 4-aligned */
     return buf;
 }
+/* ---- the saved pack index (2026-10-29): the scan above costs ~1.4 s of every launch (226 window reads of a 15 MB pack), so a clean scan is saved and the next
+ * launch loads it instead. LITTLE-ENDIAN file: { char magic[8] = "STFXPIDX"; u32 version = 1, pack_size, n, dups, head_h, head_kind, head_len, tail_h, tail_kind,
+ * tail_len } then n x GxsPk (5 x u32), in scan order, duplicates already dropped. head / tail = the first and last indexed records. A loaded index is only
+ * ever a hint: gxs_pk_fetch re-checks every record's payload sum on first use, so a stale index can cost a compile (a sum mismatch is a miss), never a wrong shader. */
+#define GXS_PIDX_VERSION 1u
+#define GXS_PIDX_HDR     48u                                         /* 8 magic bytes + 10 u32 */
+static const char gxs_pidx_magic[8] = { 'S', 'T', 'F', 'X', 'P', 'I', 'D', 'X' };
+static void gxs_wr32(uint8_t *p, uint32_t v) { memcpy(p, &v, 4); }
+GXS_PURE uint32_t gxs_pidx_bytes(unsigned n) { return GXS_PIDX_HDR + (uint32_t) n * (uint32_t) sizeof(GxsPk); }
+/* Serialise `ix` into `out` (gxs_pidx_bytes(ix->n) bytes). Returns the byte count, 0 when there is nothing worth saving (no records). */
+GXS_PURE uint32_t gxs_pidx_save(const GxsPkIdx *ix, uint32_t pack_size, uint8_t *out)
+{
+    if (!ix->n) return 0;
+    const GxsPk *h = &ix->e[0], *t = &ix->e[ix->n - 1u];
+    memcpy(out, gxs_pidx_magic, 8);
+    gxs_wr32(out + 8, GXS_PIDX_VERSION); gxs_wr32(out + 12, pack_size); gxs_wr32(out + 16, ix->n); gxs_wr32(out + 20, ix->dups);
+    gxs_wr32(out + 24, h->h); gxs_wr32(out + 28, h->kind); gxs_wr32(out + 32, h->len);
+    gxs_wr32(out + 36, t->h); gxs_wr32(out + 40, t->kind); gxs_wr32(out + 44, t->len);
+    for (unsigned i = 0; i < ix->n; ++i) {
+        uint8_t *q = out + GXS_PIDX_HDR + (size_t) i * sizeof(GxsPk);
+        gxs_wr32(q, ix->e[i].h); gxs_wr32(q + 4, ix->e[i].kind); gxs_wr32(q + 8, ix->e[i].off); gxs_wr32(q + 12, ix->e[i].len); gxs_wr32(q + 16, ix->e[i].sum);
+    }
+    return gxs_pidx_bytes(ix->n);
+}
+/* does the 20-byte record header just before `e->off`, re-read from the pack, say what the index says? 0 yes */
+static int gxs_pidx_check_rec(const GxsPk *e, GxsReadFn rd, void *ctx)
+{
+    uint8_t b[GXS_PK_HDR];
+    if (e->off < GXS_PK_HDR || rd(ctx, e->off - GXS_PK_HDR, b, GXS_PK_HDR) != (int) GXS_PK_HDR) return 1;
+    return !(gxs_rd32(b) == GXS_PK_MAGIC && gxs_rd32(b + 4) == e->h && gxs_rd32(b + 8) == e->kind && gxs_rd32(b + 12) == e->len);
+}
+/* Load the index file image `f` (flen bytes) for a pack of `pack_size` bytes read through `rd`. NULL = accepted, `ix` filled and hashed (the table is rebuilt in
+ * file order, so the first record of a key wins, as in the scan). Otherwise the REASON (a static string) and `ix` is empty. */
+GXS_PURE const char *gxs_pidx_load(GxsPkIdx *ix, const uint8_t *f, uint32_t flen, uint32_t pack_size, GxsReadFn rd, void *ctx)
+{
+    memset(ix, 0, sizeof *ix);
+    if (flen < GXS_PIDX_HDR) return "file shorter than its header";
+    if (memcmp(f, gxs_pidx_magic, 8) != 0) return "bad magic";
+    if (gxs_rd32(f + 8) != GXS_PIDX_VERSION) return "unknown version";
+    if (gxs_rd32(f + 12) != pack_size) return "pack size differs";
+    const uint32_t n = gxs_rd32(f + 16);
+    if (!n || n > (flen - GXS_PIDX_HDR) / (uint32_t) sizeof(GxsPk) || flen != gxs_pidx_bytes(n)) return "length does not match the record count";
+    GxsPk *e = (GxsPk *) malloc((size_t) n * sizeof *e);
+    if (!e) return "out of memory";
+    for (uint32_t i = 0; i < n; ++i) {
+        const uint8_t *q = f + GXS_PIDX_HDR + (size_t) i * sizeof(GxsPk);
+        e[i].h = gxs_rd32(q); e[i].kind = gxs_rd32(q + 4); e[i].off = gxs_rd32(q + 8); e[i].len = gxs_rd32(q + 12); e[i].sum = gxs_rd32(q + 16);
+        if (e[i].off < GXS_PK_HDR || !e[i].len || e[i].off > pack_size || gxs_pad4(e[i].len) > pack_size - e[i].off) { free(e); return "a record lies outside the pack"; }
+    }
+    if (e[0].h != gxs_rd32(f + 24) || e[0].kind != gxs_rd32(f + 28) || e[0].len != gxs_rd32(f + 32) ||
+        e[n - 1u].h != gxs_rd32(f + 36) || e[n - 1u].kind != gxs_rd32(f + 40) || e[n - 1u].len != gxs_rd32(f + 44)) { free(e); return "head/tail disagree with the records"; }
+    if (gxs_pidx_check_rec(&e[0], rd, ctx)) { free(e); return "head record header differs in the pack"; }
+    if (gxs_pidx_check_rec(&e[n - 1u], rd, ctx)) { free(e); return "tail record header differs in the pack"; }
+    ix->e = e; ix->n = ix->cap = n;
+    if (gxs_pk_rehash(ix, n)) { free(e); memset(ix, 0, sizeof *ix); return "out of memory"; }
+    ix->dups = gxs_rd32(f + 20); ix->bytes = pack_size;
+    return NULL;
+}
 /* The vitaGL program binary inside a record image: the image is valid for these key bytes (shc_queue.h:137, the device's own check) and where the binary is. 0 = no. */
 GXS_PURE int gxs_img_binary(const uint8_t *img, uint32_t len, const void *k1, unsigned n1, const void *k2, unsigned n2, const uint8_t **bin, uint32_t *binlen)
 {
@@ -326,6 +384,7 @@ GXS_PURE int gxs_gxpc_valid(const uint8_t *img, uint32_t n, const void *k1, unsi
 #define GXS_SENT       GXS_DIR "GXM_COMPILING"
 #define GXS_SENT_CG    GXS_DIR "gxm_compiling.cg"
 #define GXS_BADFILE    GXS_DIR "GXM_BAD"
+#define GXS_SUSPECT    GXS_DIR "GXM_SUSPECT"                    /* one strike: the key a boot died compiling (see gxs_sentinel_recover) */
 #define GXS_GXPDIR     GXS_DIR "gxm/"
 /* THE APP'S OWN SHADERS (2026-10-28, the public release): the vpk carries the release pack and GXP cache under app0:shaders/, read-only.
  * A key the memory-card cache does not have is looked up there next, so "vpk + disc image" is the whole install. New compiles are still
@@ -408,13 +467,26 @@ static void gxs_bad_add(uint32_t h, int persist)
     SceUID f = sceIoOpen(GXS_BADFILE, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
     if (f >= 0) { char b[16]; const int n = snprintf(b, sizeof b, "%08x\n", (unsigned) h); sceIoWrite(f, b, (unsigned) n); sceIoClose(f); }
 }
+/* TWO STRIKES (2026-10-29). A sentinel left behind means the process ended mid-compile, and closing the game from the home screen
+ * does that as often as a compiler crash does (Tyler's card, twice in one day). One strike only makes the key a SUSPECT
+ * (GXM_SUSPECT); it is compiled again. It is banned when the next boot ALSO died compiling it, and a compile of it that finishes
+ * clears the suspicion. */
+static uint32_t g_suspect, g_armed;
 static void gxs_sentinel_recover(void)
 {
     char b[24];
+    if (gxs_read_small(GXS_SUSPECT, b, sizeof b) > 0) g_suspect = (uint32_t) strtoul(b, NULL, 16);
     if (gxs_read_small(GXS_SENT, b, sizeof b) > 0 || gxs_exists(GXS_SENT)) {
         const uint32_t h = (uint32_t) strtoul(b, NULL, 16);
         sceIoRemove(GXS_SENT);
-        if (h) { gxs_bad_add(h, 1); gxm_log("[gxm-shader] the previous boot died compiling key %08x: marked bad (GXM_BAD); its Cg is %s", (unsigned) h, GXS_SENT_CG); }
+        if (h && h == g_suspect) {
+            gxs_bad_add(h, 1); sceIoRemove(GXS_SUSPECT); g_suspect = 0;
+            gxm_log("[gxm-shader] the previous boot died compiling key %08x for the SECOND boot running: marked bad (GXM_BAD); its Cg is %s", (unsigned) h, GXS_SENT_CG);
+        } else if (h) {
+            const int n = snprintf(b, sizeof b, "%08x", (unsigned) h);
+            gxs_write_file(GXS_SUSPECT, b, (unsigned) n, NULL, 0, NULL, 0); g_suspect = h;
+            gxm_log("[gxm-shader] the previous boot ended while compiling key %08x (a crash or a normal close): first strike, SUSPECT, compiled again", (unsigned) h);
+        }
     }
     static char lb[GXS_BAD_MAX * 9 + 16];
     const int n = gxs_read_small(GXS_BADFILE, lb, (int) sizeof lb);
@@ -436,17 +508,52 @@ static int gxs_pk_rd(void *ctx, uint32_t off, void *dst, uint32_t n)
     if (sceIoLseek(g_pk_fd, (SceOff) off, SCE_SEEK_SET) != (SceOff) off) return -1;
     return sceIoRead(g_pk_fd, dst, n);
 }
-static void gxs_pack_open(void)
+#define GXS_NOIDX      "ux0:data/stairfax/pack_noidx.txt"      /* first byte '1': always scan the pack, and neither load nor write the saved index (A/B switch) */
+#define GXS_IDX_MAX    (32u * 1024u * 1024u)
+static uint8_t *gxs_idx_read(const char *path, uint32_t *len)       /* the whole file, malloc'd; NULL when absent / unreadable / absurd */
+{
+    SceUID f = sceIoOpen(path, SCE_O_RDONLY, 0777);
+    if (f < 0) return NULL;
+    const SceOff sz = sceIoLseek(f, 0, SCE_SEEK_END);
+    uint8_t *buf = NULL;
+    if (sz > 0 && sz <= (SceOff) GXS_IDX_MAX && sceIoLseek(f, 0, SCE_SEEK_SET) == 0 && (buf = (uint8_t *) malloc((size_t) sz))) {
+        if (sceIoRead(f, buf, (unsigned) sz) != (int) sz) { free(buf); buf = NULL; }
+    }
+    sceIoClose(f);
+    if (buf) *len = (uint32_t) sz;
+    return buf;
+}
+static void gxs_pack_open_body(void)
 {
     if (gxs_exists(GXS_NOPACK)) { gxm_log("[gxm-shader] pack: OFF (NOPACK marker)"); return; }
     const char *pk_path = GXS_PACK;
+    int is_app = 0;
     g_pk_fd = sceIoOpen(pk_path, SCE_O_RDONLY, 0777);
-    if (g_pk_fd < 0) { pk_path = GXS_APP_PACK; g_pk_fd = sceIoOpen(pk_path, SCE_O_RDONLY, 0777); }
+    if (g_pk_fd < 0) { pk_path = GXS_APP_PACK; is_app = 1; g_pk_fd = sceIoOpen(pk_path, SCE_O_RDONLY, 0777); }
     if (g_pk_fd < 0) { gxm_log("[gxm-shader] pack: none (%s and %s absent)", GXS_PACK, GXS_APP_PACK); return; }
     gxm_log("[gxm-shader] pack: %s", pk_path);
     const SceOff sz = sceIoLseek(g_pk_fd, 0, SCE_SEEK_END);
     if (sz <= 0 || sz > (SceOff) 0x7fffffff) { gxm_log("[gxm-shader] pack: %lld bytes, not used", (long long) sz); sceIoClose(g_pk_fd); g_pk_fd = -1; return; }
     g_pk_size = (uint32_t) sz;
+    /* the saved index: next to the pack (read-only app0 copy shipped in the vpk) or on the card (the only place written) */
+    const int use_idx = !gxs_marker_is_1(GXS_NOIDX);
+    char idx_a[96], idx_b[96];
+    snprintf(idx_a, sizeof idx_a, "%s.idx", pk_path);
+    snprintf(idx_b, sizeof idx_b, GXS_DIR "shc/%s.idx", is_app ? "app" : "card");
+    if (!use_idx) gxm_log("[gxm-shader] pack: saved index OFF (pack_noidx.txt 1): scanning, nothing written");
+    const char *cand[2] = { idx_a, idx_b };
+    for (int ci = 0; use_idx && ci < 2; ++ci) {
+        const uint64_t ti = gxm_now_us();
+        uint32_t flen = 0;
+        uint8_t *fb = gxs_idx_read(cand[ci], &flen);
+        if (!fb) continue;                                           /* absent: the normal first launch */
+        const char *why = gxs_pidx_load(&g_pk, fb, flen, g_pk_size, gxs_pk_rd, NULL);
+        free(fb);
+        if (why) { gxm_log("[gxm-shader] pack: index %s rejected (%s): scanning", cand[ci], why); continue; }
+        g_pack_on = 1;
+        gxm_log("[gxm-shader] pack: %u records from index %s in %u ms", g_pk.n, cand[ci], (unsigned) ((gxm_now_us() - ti) / 1000u));
+        return;
+    }
     uint8_t *win = (uint8_t *) malloc(GXS_WIN);
     if (!win) { gxm_log("[gxm-shader] pack: no memory for the index window"); sceIoClose(g_pk_fd); g_pk_fd = -1; return; }
     const uint64_t t0 = gxm_now_us();
@@ -455,7 +562,19 @@ static void gxs_pack_open(void)
     g_pack_on = 1;
     gxm_log("[gxm-shader] pack: %u records (%u duplicates skipped), %u bytes, %u window reads, stop=%d at %u, indexed in %u ms (informational)",
             g_pk.n, g_pk.dups, (unsigned) g_pk_size, g_pk.reads, g_pk.stop, (unsigned) g_pk.stop_off, (unsigned) ((gxm_now_us() - t0) / 1000u));
+    if (use_idx && g_pk.stop == 0 && g_pk.n) {                       /* a clean scan only: a partial index would be accepted by the next launch */
+        const uint32_t nb = gxs_pidx_bytes(g_pk.n);
+        uint8_t *ob = (uint8_t *) malloc(nb);
+        if (ob && gxs_pidx_save(&g_pk, g_pk_size, ob) == nb) {
+            sceIoMkdir("ux0:data/STFX00001", 0777); sceIoMkdir("ux0:data/STFX00001/shc", 0777);
+            if (gxs_write_file(idx_b, ob, nb, NULL, 0, NULL, 0) == 0) gxm_log("[gxm-shader] pack: index saved to %s (%u records, %u bytes)", idx_b, g_pk.n, (unsigned) nb);
+            else gxm_log("[gxm-shader] pack: index NOT saved (cannot write %s)", idx_b);
+        }
+        free(ob);
+    }
 }
+extern void stfx_boot_mark(const char *name) __attribute__((weak));  /* vita_tool_main.c: the launch timeline */
+static void gxs_pack_open(void) { gxs_pack_open_body(); if (stfx_boot_mark) stfx_boot_mark("pack_ready"); }
 
 /* ---- the compiler ---- */
 static SceUID g_shark_lock = -1;                                 /* every compile holds it (the async worker, the synchronous path, util_cg): vitaShaRK is not reentrant */
@@ -469,7 +588,7 @@ static void gxs_shark_log(const char *msg, shark_log_level lvl, int line)
     if (g_shark_logged < 40) gxm_log("[gxm-shader] shark[%d] line %d: %.200s", (int) lvl, line, msg ? msg : "(null)");
     ++g_shark_logged;
 }
-static void gxs_shark_start(void)
+static void gxs_shark_start_body(void)
 {
     if (gxs_marker_is_1(GXS_NOSHARK)) { gxm_log("[gxm-shader] shark: OFF (gxm_noshark.txt 1)"); return; }
     shark_install_log_cb(gxs_shark_log);
@@ -480,6 +599,7 @@ static void gxs_shark_start(void)
     if (g_shark_on) gxm_log("[gxm-shader] shark: ONLINE (SHARK_OPT_FAST, fastmath 1, fastprecision 0, fastint 1 = vitaGL's defaults)");
     else gxm_log("[gxm-shader] shark: OFF (shark_init 0x%08X; expected on an emulator): a key not in the pack gets NOPROG", (unsigned) rc);
 }
+static void gxs_shark_start(void) { gxs_shark_start_body(); if (stfx_boot_mark) stfx_boot_mark("shark_ready"); }
 /* One stage -> a 16-byte-aligned private copy of the GXP, or NULL. `size` is IN/OUT: in, the SOURCE LENGTH (never 0: S1 run 1, 31 of 31 programs died on 0 [M]). */
 static SceGxmProgram *gxs_compile_stage(const char *src, int frag, uint32_t *outsz)
 {
@@ -497,11 +617,20 @@ static int gxs_sentinel_arm(uint32_t h, const char *hdr, const char *vs, const c
 {
     char b[16]; const int n = snprintf(b, sizeof b, "%08x", (unsigned) h);
     if (gxs_write_file(GXS_SENT, b, (unsigned) n, NULL, 0, NULL, 0)) { ++c_sent_fail; return -1; }
+    g_armed = h;
     gxs_write_file(GXS_SENT_CG, hdr, (unsigned) strlen(hdr), vs, (unsigned) strlen(vs), "//----\n", 7);     /* best effort: the text about to be compiled */
     { SceUID f = sceIoOpen(GXS_SENT_CG, SCE_O_WRONLY | SCE_O_APPEND, 0777); if (f >= 0) { sceIoWrite(f, fs, (unsigned) strlen(fs)); sceIoClose(f); } }
     return 0;
 }
-static void gxs_sentinel_clear(void) { sceIoRemove(GXS_SENT); }
+static void gxs_sentinel_clear(void)
+{
+    sceIoRemove(GXS_SENT);
+    if (g_suspect && g_armed == g_suspect) {   /* the suspect compiled to the end: it was a close, not a crash */
+        sceIoRemove(GXS_SUSPECT); g_suspect = 0;
+        gxm_log("[gxm-shader] suspect key %08x compiled without dying: suspicion cleared", (unsigned) g_armed);
+    }
+    g_armed = 0;
+}
 
 /* ---- registering a vertex + fragment GXP pair ---- */
 static void gxs_unreg(GxsPriv *pv, GxmProg *p)

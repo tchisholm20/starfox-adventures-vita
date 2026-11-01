@@ -27,10 +27,23 @@ NGXP=0
 if [ -n "$SHD" ]; then
   [ -f "$SHD/pack.bin" ] || { echo "package_vpk: $SHD/pack.bin missing"; exit 3; }
   ARGS+=(-a "$SHD/pack.bin=shaders/pack.bin")
-  for g in "$SHD"/gxm/*.gxp; do ARGS+=(-a "$g=shaders/gxm/$(basename "$g")"); NGXP=$((NGXP + 1)); done
+  # the saved pack index (the launch skips its 1.4 s scan); optional: absent = the game scans once and saves it to the card
+  if [ -f "$SHD/pack.bin.idx" ]; then ARGS+=(-a "$SHD/pack.bin.idx=shaders/pack.bin.idx"); fi
+  for g in "$SHD"/gxm/*.gxp; do NGXP=$((NGXP + 1)); done
   [ "$NGXP" -gt 0 ] || { echo "package_vpk: no .gxp files in $SHD/gxm"; exit 3; }
 fi
 vita-pack-vpk -s "$TMP/param.sfo" -b "$EBOOT" "${ARGS[@]}" "$VPK"
+# The .gxp files are appended to the zip here, not passed to vita-pack-vpk: one `-a` per file overflowed the Windows command line at
+# 855 shaders (2026-10-29, "Argument list too long"). A .vpk is a plain zip; the read-back below counts what actually landed.
+if [ "$NGXP" -gt 0 ]; then
+  python - "$VPK" "$SHD/gxm" <<'EOF'
+import os, sys, zipfile
+vpk, d = sys.argv[1], sys.argv[2]
+with zipfile.ZipFile(vpk, 'a', zipfile.ZIP_DEFLATED) as z:
+    for n in sorted(os.listdir(d)):
+        if n.endswith('.gxp'): z.write(os.path.join(d, n), 'shaders/gxm/' + n)
+EOF
+fi
 python - "$VPK" "$TITLE" "$TITLE_ID" "$NGXP" "${SHD:+1}" <<'EOF'
 import sys, struct, zipfile
 vpk, want, want_id, ngxp, want_pack = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5] == '1'

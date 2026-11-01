@@ -3541,12 +3541,14 @@ void pauseMenuUpdate(void) {
         } else {
             u8 i;
             for (i = 0; i < 0x2d; i++) {
-                if (cell == *(u16*)((u8*)&tbl->cellMap[0].cell + i * 4)) {
+                /* STFX endian: cellMap[] is the big-endian tail of gHudButtonIcons (+0x74); read as host u16 no cell matched, the
+                 * raw map cell then indexed the 13-entry pause grid out of bounds and the 0xF10+region visited bits were never set */
+                if (cell == stfx_be_u16((u8*)&tbl->cellMap[0].cell + i * 4)) {
                     break;
                 }
             }
             if (i != 0x2d) {
-                int code = tbl->cellMap[i].code;
+                int code = stfx_be_u16(&tbl->cellMap[i].code);
                 gPauseMenuPlayerMapCell = code;
                 mainSetBits(code + 0xf10, 1);
             }
@@ -3870,7 +3872,9 @@ void pauseMenuUpdate(void) {
                     int bit;
                     i = 0;
                     k = 0;
-                    while ((bit = *(int*)((u8*)&tbl->list740[0] + (idx = k) * 4)) > -1) {
+                    /* STFX endian: list740 is lbl_8031B560, big-endian ints {221,37,900,581,900,-1}; read host-order the first was
+                     * negative and none of the Tricky-ability icons loaded */
+                    while ((bit = stfx_be_s32((u8*)&tbl->list740[0] + (idx = k) * 4)) > -1) {
                         s16 texId = 0xbf0;
                         if (mainGetBit(bit)) {
                             texId = *(s16*)((u8*)&tbl->alts[0].alt + idx * 16);
@@ -4037,10 +4041,10 @@ void pauseMenuUpdate(void) {
                     gPauseMenuPlayerMapCell = coordsToMapCell(player->anim.localPosX, player->anim.localPosZ);
                     if (gPauseMenuPlayerMapCell == 7) {
                         for (gPauseMenuTokenIndex = 0; gPauseMenuTokenIndex < 4;) {
-                            if (!mainGetBit(*(s16*)((u8*)&tbl->tokens[0].bitA + gPauseMenuTokenIndex * 8))) {
+                            if (!mainGetBit(tbl->tokens[gPauseMenuTokenIndex].bitA)) {
                                 break;
                             }
-                            if (mainGetBit(*(s16*)((u8*)&tbl->tokens[0].bitB + gPauseMenuTokenIndex * 8)) == 0) {
+                            if (mainGetBit(tbl->tokens[gPauseMenuTokenIndex].bitB) == 0) {
                                 if (have >= tbl->tokens[gPauseMenuTokenIndex].thresh) {
                                     gPauseMenuTokenPromptState = 2;
                                 } else {
@@ -4871,7 +4875,6 @@ void pauseMenuDraw(int boxDrawParamA, int boxDrawParamB, int boxDrawParamC) {
     ObjModel* model;
     s32 x;
     s16 panelAlpha;
-    s16* taskTextIds;
     s32 taskTextY;
     s32 stringIndex;
     s32 textY;
@@ -5205,9 +5208,8 @@ void pauseMenuDraw(int boxDrawParamA, int boxDrawParamB, int boxDrawParamC) {
             gameTextShowAt(0x441, 0, tokenTextY + 0x78);
             gameTextMeasureById(0x441, 0, 0, &tokenLeft, &tokenRight, &tokenTop, &tokenBottom);
             tokenTextY += tokenBottom - tokenTop;
-            taskTextIds = &statusTable->tokens[0].alt;
-            gameTextShowAt(taskTextIds[gPauseMenuTokenIndex * 4], 0, tokenTextY + 0x78);
-            gameTextMeasureById(taskTextIds[gPauseMenuTokenIndex * 4], 0, 0, &tokenLeft, &tokenRight, &tokenTop,
+            gameTextShowAt(statusTable->tokens[gPauseMenuTokenIndex].alt, 0, tokenTextY + 0x78);
+            gameTextMeasureById(statusTable->tokens[gPauseMenuTokenIndex].alt, 0, 0, &tokenLeft, &tokenRight, &tokenTop,
                                 &tokenBottom);
             tokenTextY += (tokenBottom - tokenTop) + 0xa;
             gameTextShowAt(0x442, 0, tokenTextY + 0x78);
@@ -5220,9 +5222,8 @@ void pauseMenuDraw(int boxDrawParamA, int boxDrawParamB, int boxDrawParamC) {
             gameTextShowAt(0x443, 0, 0xa0);
             gameTextMeasureById(0x443, 0, 0, &tokenLeft, &tokenRight, &tokenTop, &tokenBottom);
             taskTextY = (tokenBottom - tokenTop) + 5;
-            taskTextIds = &statusTable->tokens[0].alt;
-            gameTextShowAt(taskTextIds[gPauseMenuTokenIndex * 4], 0, taskTextY + 0xa0);
-            gameTextMeasureById(taskTextIds[gPauseMenuTokenIndex * 4], 0, 0, &tokenLeft, &tokenRight, &tokenTop,
+            gameTextShowAt(statusTable->tokens[gPauseMenuTokenIndex].alt, 0, taskTextY + 0xa0);
+            gameTextMeasureById(statusTable->tokens[gPauseMenuTokenIndex].alt, 0, 0, &tokenLeft, &tokenRight, &tokenTop,
                                 &tokenBottom);
             taskTextY += (tokenBottom - tokenTop) + 0xa;
             gameTextShowAt(0x444, 0, taskTextY + 0xa0);

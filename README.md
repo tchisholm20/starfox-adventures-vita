@@ -37,12 +37,12 @@ unreadable, a different game, or a different version of this one.
 3. Launch the game.
 
 The first launch writes the game's settings files to `ux0:data/stairfax/`. The download
-includes 274 pre-compiled shaders inside the vpk.
+includes 1003 pre-compiled shaders inside the vpk.
 
 ## What to expect
 
 - Renders at 640x368, upscaled to the screen, capped at 30 fps. Most areas hold a steady
-  30; ThornTail Hollow, the busiest area, can dip below it. To run uncapped, delete
+  30; ThornTail Hollow and SnowHorn Wastes can dip below it. To run uncapped, delete
   `ux0:data/stairfax/frame_cap.txt` after the first launch.
 - The game sets the Vita to its highest standard clock speeds (CPU 444 MHz, GPU 222 MHz).
 - **It's meant to be played overclocked.** The video was recorded with the CPU at 500 MHz
@@ -52,13 +52,16 @@ includes 274 pre-compiled shaders inside the vpk.
 
 ## Known issues
 
-- The camera can fly away from Fox during some fights.
+- The first visit to an area whose shaders are not included can show missing or dark objects
+  for a minute or two while they compile.
+- ThornTail Hollow and SnowHorn Wastes run below 30 fps in places.
 - Fox and Tricky do not cast the soft round shadow under their feet that the original game
   draws.
 - Short pauses when loading a new area or starting some cutscenes; the opening cutscene
   stutters for its first few seconds.
 - The boot logos are not shown yet.
 - Holding L to recentre the camera can briefly dip the view.
+- Distant foliage can look white.
 
 ## Reporting a problem
 
@@ -74,7 +77,7 @@ backend that turns those GX calls into GXM, the Vita's own graphics API.
 
 - **Shaders.** The GameCube colours pixels with a configurable fixed-function unit called
   TEV. The backend writes a shader for each TEV setup the game uses, compiles it on the Vita
-  and saves it to the memory card. The release includes 274 already-compiled shaders.
+  and saves it to the memory card. The release includes 1003 already-compiled shaders.
 - **Two threads.** The game's main loop runs on one CPU core and a separate render thread on
   another core sends the drawing work to the GPU, so the two overlap.
 - **Models.** GameCube models are stored as display lists. Each one is converted to Vita

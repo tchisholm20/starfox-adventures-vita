@@ -106,7 +106,7 @@ void drakord_thornbush_hitDetect(GameObject* obj)
                 arrayIndexOf(inner->hitTable, 2, hit) != -1)
             {
                 inner->lastHitObj = (int)hitObj;
-                Obj_SpawnHitLightAndFade(obj, (const Vec3f*)&hitPosX, 50.0f);
+                { /* PORT: the three scalars are not an array on GCC's stack */ Vec3f hitPos = {hitPosX, hitPosY, hitPosZ}; Obj_SpawnHitLightAndFade(obj, &hitPos, 50.0f); }
                 inner->health -= damage;
                 if (inner->health <= 0)
                 {

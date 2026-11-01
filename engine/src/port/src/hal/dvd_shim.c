@@ -16,6 +16,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Launch timeline (vita/src/vita_tool_main.c). Weak: the viewer / host builds define neither and link unchanged.
+extern void stfx_boot_mark(const char* name) __attribute__((weak));
+#if defined(__vita__)
+#include <psp2/kernel/processmgr.h>
+#include <psp2/io/fcntl.h>
+extern void stfx_boot_disc_read(unsigned bytes, unsigned long long us) __attribute__((weak));
+static void disc_probe(const char* isoPath);
+#endif
+
 #define DVD_MAX_FILE_ID 2048
 
 // --- disc root -------------------------------------------------------------
@@ -32,6 +41,7 @@ typedef struct IsoEntry { char* path; unsigned offset; unsigned size; } IsoEntry
 static struct {
     int       mounted;
     FILE*     fp;
+    int       fd;          // Vita: a sceIo descriptor on the same image, read with sceIoPread (-1 = none: stdio)
     char      gameCode[8];
     IsoEntry* entries;
     int       count, cap;
@@ -128,10 +138,69 @@ static int mountIso(const char* isoPath) {
 
     free(fst);
     gIso.fp = fp;
+    gIso.fd = -1;
+#if defined(__vita__)
+    /* DISC READS THROUGH sceIoPread (2026-10-30). Measured on the console (build 14082124, disc_probe.txt, 4 MB regions):
+     * fseek + fread on this FILE 3.93 / 3.86 MB/s, sceIoPread 15.39 (1 MB chunks) / 15.71 (one call) MB/s -- the
+     * card is not the limit, newlib's stdio is. A pread also carries its own offset, so the threads that read the
+     * image (game, movie, audio stream) no longer share one FILE position. ux0:data/stairfax/disc_stdio.txt starting
+     * with 1 = the old stdio path (A/B). */
+    {
+        int useStdio = 0;
+        FILE* m = fopen("ux0:data/stairfax/disc_stdio.txt", "r");
+        if (m) { useStdio = fgetc(m) == '1'; fclose(m); }
+        if (!useStdio) gIso.fd = sceIoOpen(isoPath, SCE_O_RDONLY, 0);
+        printf("[dvd] ISO reads: %s\n", gIso.fd >= 0 ? "sceIoPread (own offset per read)" :
+               useStdio ? "stdio fseek+fread (disc_stdio.txt)" : "stdio fseek+fread (sceIoOpen FAILED)");
+        if (gIso.fd < 0) gIso.fd = -1;
+    }
+#endif
     gIso.mounted = 1;
     printf("[dvd] mounted ISO %s: game=%s, %d files\n", isoPath, gIso.gameCode, gIso.count);
+    if (stfx_boot_mark) stfx_boot_mark("iso_mounted");
+#if defined(__vita__)
+    disc_probe(isoPath);   /* disc_probe.txt only */
+#endif
     return 1;
 }
+
+#if defined(__vita__)
+#include <psp2/io/fcntl.h>
+/* DISC READ PROBE (2026-10-30, launch speed): launch reads the ISO at ~4 MB/s through stdio, the shader pack on the same card
+ * read at ~11 MB/s through sceIo. ux0:data/stairfax/disc_probe.txt present = before the game starts, read four 4 MB regions
+ * of the image (different regions, so no arm reads what another cached), arms A B C A:
+ *   A  the game's path: fseek + one fread on the shared stdio handle
+ *   B  sceIoPread in 1 MB chunks on a fresh descriptor
+ *   C  one sceIoPread of the whole 4 MB
+ * and log MB/s for each. Absent = nothing runs. */
+static void disc_probe(const char* isoPath) {
+    FILE* m = fopen("ux0:data/stairfax/disc_probe.txt", "r");
+    if (!m) return;
+    fclose(m);
+    const unsigned SZ = 4u << 20;
+    unsigned char* buf = (unsigned char*)malloc(SZ);
+    if (!buf) { printf("[disc-probe] no 4 MB buffer: skipped\n"); return; }
+    SceUID fd = sceIoOpen(isoPath, SCE_O_RDONLY, 0);
+    static const char arms[4] = { 'A', 'B', 'C', 'A' };
+    for (int k = 0; k < 4; ++k) {
+        const long long off = (long long)(256 + 192 * k) << 20;   /* 256, 448, 640, 832 MB into the image */
+        unsigned long long t0 = sceKernelGetProcessTimeWide();
+        long long got = 0;
+        if (arms[k] == 'A') {
+            if (fseek(gIso.fp, (long)off, SEEK_SET) == 0) got = (long long)fread(buf, 1, SZ, gIso.fp);
+        } else if (fd >= 0 && arms[k] == 'B') {
+            for (unsigned o = 0; o < SZ; o += 1u << 20) { int r = sceIoPread(fd, buf + o, 1u << 20, off + o); if (r <= 0) break; got += r; }
+        } else if (fd >= 0) {
+            int r = sceIoPread(fd, buf, SZ, off); got = r > 0 ? r : 0;
+        }
+        unsigned long long us = sceKernelGetProcessTimeWide() - t0;
+        printf("[disc-probe] arm %c at %lld MB: %lld bytes in %.1f ms = %.2f MB/s\n", arms[k], off >> 20, got, us / 1000.0,
+               us ? (double)got / (double)us : 0.0);
+    }
+    if (fd >= 0) sceIoClose(fd);
+    free(buf);
+}
+#endif
 
 static const IsoEntry* isoFind(const char* path) {
     while (*path == '/' || *path == '\\') ++path;
@@ -211,7 +280,11 @@ void dvd_shim_shutdown(void) {
         free(gIso.entries);
     }
     if (gIso.fp) fclose(gIso.fp);
+#if defined(__vita__)
+    if (gIso.fd >= 0) sceIoClose(gIso.fd);
+#endif
     memset(&gIso, 0, sizeof(gIso));
+    gIso.fd = -1;
 }
 
 // --- disc introspection ----------------------------------------------------
@@ -291,6 +364,7 @@ int stfx_retail_load(const char* iso, char* why, int cap) {
                 ++done;
             }
             if (!rc) printf("[retail] %u objects filled from the player's main.dol (%u bytes, fingerprint ok)%s\n", done, end, n ? "" : " -- NO TABLE LINKED");
+            if (!rc && stfx_boot_mark) stfx_boot_mark("retail_dol");
         }
         free(img);
     }
@@ -388,7 +462,13 @@ int32_t DVDClose(DVDFileInfo* info) {
 }
 
 extern void stfx_mldf_on_read(void* buf, int size) __attribute__((weak));
+void* gStfxDvdCaller;        /* launch probe [boot-idle] (vita_tool_main.c): who read the disc last */
+void* gStfxDvdAsyncCaller;
+unsigned gStfxDvdReads;
+const char* volatile gStfxCrumb;   /* launch probe: the innermost bracketed region the game thread is in (save/restore) */
+volatile int gStfxCrumbArg;
 int32_t DVDRead(DVDFileInfo* info, void* buf, int32_t size, int32_t offset) {
+    gStfxDvdCaller = __builtin_return_address(0); ++gStfxDvdReads;
     if (!info || !buf || size < 0) return -1;
     FILE* f;
     long base;
@@ -401,8 +481,27 @@ int32_t DVDRead(DVDFileInfo* info, void* buf, int32_t size, int32_t offset) {
     } else {
         return -1;
     }
-    if (fseek(f, base + offset, SEEK_SET) != 0) return -1;
-    size_t got = fread(buf, 1, (size_t)size, f);
+#if defined(__vita__)
+    unsigned long long bootT0 = stfx_boot_disc_read ? (unsigned long long)sceKernelGetProcessTimeWide() : 0;
+#endif
+    size_t got = 0;
+#if defined(__vita__)
+    if (!hostGet(info) && gIso.fd >= 0) {
+        long long pos = (long long)(unsigned)base + offset;
+        while (got < (size_t)size) {
+            int r = sceIoPread(gIso.fd, (char*)buf + got, (SceSize)((size_t)size - got), pos + (long long)got);
+            if (r <= 0) break;
+            got += (size_t)r;
+        }
+    } else
+#endif
+    {
+        if (fseek(f, base + offset, SEEK_SET) != 0) return -1;
+        got = fread(buf, 1, (size_t)size, f);
+    }
+#if defined(__vita__)
+    if (stfx_boot_disc_read) stfx_boot_disc_read((unsigned)size, (unsigned long long)sceKernelGetProcessTimeWide() - bootT0);   // launch timeline [boot-io]: time in the ISO read
+#endif
     if ((int32_t)got < size) memset((char*)buf + got, 0, (size_t)size - got); // pad past EOF
     // A read at offset 0 may be filling one of the game's RESIDENT file buffers
     // (gResourceFileBuffers[id]): the endian layer swaps it by that file's rule. Weak, so the
@@ -413,6 +512,7 @@ int32_t DVDRead(DVDFileInfo* info, void* buf, int32_t size, int32_t offset) {
 
 int32_t DVDReadAsyncPrio(DVDFileInfo* info, void* buf, int32_t size, int32_t offset, DVDCallback cb, int32_t prio) {
     (void)prio;
+    gStfxDvdAsyncCaller = __builtin_return_address(0);
     int32_t r = DVDRead(info, buf, size, offset);
     if (cb) cb(r, info);
     return r < 0 ? 0 : 1;
@@ -571,3 +671,40 @@ int DVDGetStreamPlayAddrAsync(DVDCommandBlock* block, DVDCBCallbackPort cb) {   
     if (cb) cb((int32_t)st, block);
     return 1;
 }
+
+#if defined(__vita__)
+/* PROCTEX CACHE (2026-10-30): main/newshadows.c's 16 water-noise frames, saved once per placement key. File:
+ * ux0:data/STFX00001/proctex.bin = { "STFXPTX1", u32 key, u32 frameSize, u32 n } + n * frameSize bytes.
+ * ux0:data/stairfax/proctex_nocache.txt starting with 1 = always compute, never read or write (A/B). */
+#include <psp2/io/stat.h>
+#define PTX_PATH "ux0:data/STFX00001/proctex.bin"
+static int ptx_off(void) {
+    FILE* m = fopen("ux0:data/stairfax/proctex_nocache.txt", "r");
+    int off = 0;
+    if (m) { off = fgetc(m) == '1'; fclose(m); }
+    return off;
+}
+int stfx_proctex_load(unsigned key, unsigned frameSize, int n, void* const* frames) {
+    if (ptx_off()) { printf("[proctex] cache OFF (proctex_nocache.txt): computing" "\n"); return 0; }
+    FILE* f = fopen(PTX_PATH, "rb");
+    if (!f) { printf("[proctex] cache: no " PTX_PATH ": computing" "\n"); return 0; }
+    struct { char magic[8]; unsigned key, frameSize, n; } h;
+    int ok = fread(&h, sizeof h, 1, f) == 1 && !memcmp(h.magic, "STFXPTX1", 8) && h.key == key && h.frameSize == frameSize && (int)h.n == n;
+    for (int i = 0; ok && i < n; ++i) ok = fread(frames[i], 1, frameSize, f) == frameSize;
+    fclose(f);
+    printf(ok ? "[proctex] cache: HIT key %08x, %d frames loaded" "\n" : "[proctex] cache: MISS key %08x (stale or short file): computing" "\n", key, n);
+    return ok;
+}
+void stfx_proctex_save(unsigned key, unsigned frameSize, int n, void* const* frames) {
+    if (ptx_off()) return;
+    sceIoMkdir("ux0:data/STFX00001", 0777);
+    FILE* f = fopen(PTX_PATH ".tmp", "wb");
+    if (!f) { printf("[proctex] cache: cannot write " PTX_PATH ".tmp" "\n"); return; }
+    struct { char magic[8]; unsigned key, frameSize, n; } h = { { 'S','T','F','X','P','T','X','1' }, key, frameSize, (unsigned)n };
+    int ok = fwrite(&h, sizeof h, 1, f) == 1;
+    for (int i = 0; ok && i < n; ++i) ok = fwrite(frames[i], 1, frameSize, f) == frameSize;
+    ok = (fclose(f) == 0) && ok;
+    if (ok) { sceIoRemove(PTX_PATH); ok = sceIoRename(PTX_PATH ".tmp", PTX_PATH) >= 0; }
+    printf("[proctex] cache: %s key %08x (%d frames x %u bytes)" "\n", ok ? "saved" : "save FAILED", key, n, frameSize);
+}
+#endif

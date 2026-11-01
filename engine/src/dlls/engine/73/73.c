@@ -108,9 +108,7 @@ static void CameraModeCombat_traceMove(f32* prevPos, CameraObject* camera, Track
 
 void CameraModeCombat_update(CameraObject* camera) {
     Vec movement;
-    f32 prevZ;
-    f32 prevY;
-    f32 prevX;
+    f32 prevPos[3];   /* PORT: was three scalars passed as &prevX (an array on MWCC's stack layout, not on GCC's) */
     f32 dy;
     f32 ty;
     f32 dx;
@@ -241,7 +239,7 @@ void CameraModeCombat_update(CameraObject* camera) {
                                 ->setMode(CAMCONTROL_ACTION_DEFAULT, 0, 1, 0, NULL,
                                           CAMERA_MODE_COMBAT_EXIT_BLEND_FRAMES, CAMCONTROL_QUEUE_SENTINEL);
                         } else {
-                            cameraGetPrevPos2(focus, &prevX, &prevY, &prevZ);
+                            cameraGetPrevPos2(focus, &prevPos[0], &prevPos[1], &prevPos[2]);
                             px = CAMERA_MODE_COMBAT_TARGET_LEAD_SCALE * dx + focus->anim.worldPosX;
                             py = CAMERA_MODE_COMBAT_LOOK_TARGET_Y_OFFSET + ty;
                             pz = CAMERA_MODE_COMBAT_TARGET_LEAD_SCALE * dz + focus->anim.worldPosZ;
@@ -327,7 +325,7 @@ void CameraModeCombat_update(CameraObject* camera) {
                             }
                             PSVECScale(&movement, &movement, (mag < 0.0f) ? 0.0f : ((mag > 20.0f) ? 20.0f : mag));
                             PSVECAdd(&camera->anim.worldPos, &movement, &camera->anim.worldPos);
-                            CameraModeCombat_traceMove(&prevX, camera, &traceWork);
+                            CameraModeCombat_traceMove(prevPos, camera, &traceWork);
                             t = 0.1f * dz + focus->anim.worldPosZ;
                             fb = currentView->x - (0.1f * dx + focus->anim.worldPosX);
                             dy = currentView->y - py;

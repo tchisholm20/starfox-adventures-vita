@@ -562,7 +562,7 @@ void bossdrakor_hitDetect(GameObject* obj) {
                 (*gMapEventInterface)->setMapAct(BOSSDRAKOR_MAP_ARENA, 3);
                 mainSetBits(GAMEBIT_ITEM_WaterSpellStone2_Got, 1);
             } else {
-                Obj_SpawnHitLightAndFade(obj, (const Vec3f*)&hx, 5.0f);
+                { /* PORT: the three scalars are not an array on GCC's stack */ Vec3f hitPos = {hx, hy, hz}; Obj_SpawnHitLightAndFade(obj, &hitPos, 5.0f); }
             }
             if (s->hitSfxCooldown <= 0.0f) {
                 s->hitSfxCooldown = 300.0f;
@@ -825,7 +825,7 @@ void bossdrakor_update(GameObject* obj) {
             f32 hxsq;
             f32 hzsq;
             ObjPath_GetPointWorldPosition(obj, 4, &hx, &hy, &hz, 0);
-            PSVECSubtract(&player->anim.localPos, (Vec*)&hx, (Vec*)&hx);
+            hx = player->anim.localPos.x - hx; hy = player->anim.localPos.y - hy; hz = player->anim.localPos.z - hz;   /* PORT: the three scalars are not an array on GCC's stack (was PSVECSubtract into &hx) */
             hxsq = hx * hx;
             hzsq = hz * hz;
             d = (s16)getAngle(hy, sqrtf(hxsq + hzsq)) - (u16)vec[0];

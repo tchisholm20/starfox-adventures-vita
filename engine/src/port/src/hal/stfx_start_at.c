@@ -350,3 +350,11 @@ int stfx_seq_skip_requested(void)
     return 0;
 #endif
 }
+
+/* Called every present (vt_game.c vt_game_frame_tick, weak): the FIRST "game did" line as soon as the player exists, not at the next 600-frame status
+   block -- on Vita3K the heavy places run ~1 fps and never reached one, so the smoke tour could not tell "arrived" from "stuck" (2026-10-29). */
+void vt_start_at_frame(void)
+{
+    if (G.state != 3 || G.reported != 0 || !Obj_GetPlayerObject()) return;
+    vt_print_start_at();
+}

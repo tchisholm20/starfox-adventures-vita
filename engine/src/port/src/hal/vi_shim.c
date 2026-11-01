@@ -147,7 +147,10 @@ void VIFlush(void) {
 unsigned long long vi_w_us[5];
 #include "port/rt_timer.h"   /* Task 3: the retrace is the frame boundary and the WAIT category */
 extern int gStfxPresented;
+void* gStfxViCaller;         /* launch probe [boot-idle] (vita_tool_main.c): who waited for a retrace last */
+unsigned gStfxViWaits;
 void VIWaitForRetrace(void) {
+    gStfxViCaller = __builtin_return_address(0); ++gStfxViWaits;
     if (!gVi.initialized) return;
     RT_EDGE(); RT_ENTER(RT_WAIT);   /* rt_stats.txt: close the frame that just ended, open the next if sampled; everything below is "wait" except the backend calls inside it */
     unsigned long long v0 = VIT_NOW(), v1;

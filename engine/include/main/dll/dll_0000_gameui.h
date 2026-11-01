@@ -4,6 +4,7 @@
 #include "types.h"
 #include "main/dll/dll_0000_gameui_api.h"
 #include "main/texture.h"
+#include "main/be_data.h"
 
 /* Shared struct layouts for the in-game GameUI / HUD / C-menu subsystem
  * exposed through DLL 0. Field offsets are recovered from the EN v1.0 asm. */
@@ -45,7 +46,10 @@ typedef struct {
     u16 titleId;
 } HighScoreTitleIdEntry;
 
-typedef struct {
+/* STFX endian: tokens[] is laid over the last 0x20 PowerPC bytes of gHeadDisplayEntryTable
+ * (lbl_8031AE20 + 0x210); read little-endian, bitA 2660 became 25610 and the Arwing never
+ * offered the Fuel Cell trade, so DarkIce Mines stayed locked (2026-10-30). */
+typedef struct STFX_BE_STRUCT {
     s16 bitA;
     s16 bitB;
     u8 thresh;

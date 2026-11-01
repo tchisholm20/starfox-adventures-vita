@@ -697,7 +697,9 @@ void allocLotsOfTextures(void) {
     mmSetForceHeap3Only(saved);
 }
 
+extern void stfx_boot_mark(const char* name) __attribute__((weak)); extern int printf(const char*, ...);   /* launch timeline (vita_tool_main.c) */
 void newshadows_initProceduralTextures(void) {
+    unsigned stfxTries = 0;   /* launch probe: total placement attempts */
     int placementAttempts;
     u8 overlaps;
     int i;
@@ -708,6 +710,7 @@ void newshadows_initProceduralTextures(void) {
     u8 savedHeap;
     u32 noisePlacementCount;
 
+    if (stfx_boot_mark) stfx_boot_mark("proctex_start");
     savedHeap = mmSetForceHeap3Only(1);
     placementAttempts = 0;
     placedCount = 0;
@@ -754,13 +757,38 @@ void newshadows_initProceduralTextures(void) {
                 }
             }
             placementAttempts++;
+            stfxTries++;
         } while (overlaps && placementAttempts < 10000u);
         placedCount++;
     }
 
     noisePlacementCount = placedCount;
-    for (i = 0; i < NEW_SHADOW_NOISE_FRAME_COUNT; i++) {
-        gNewShadowNoiseTexFrames[i] = textureAlloc(0x40, 0x40, 3, 0, 0, 1, 1, 1, 1);
+    if (stfx_boot_mark) { printf("[proctex] %d placements, %u attempts in all\n", placedCount, stfxTries); stfx_boot_mark("proctex_placed"); }
+    /* PROCTEX CACHE (port, 2026-10-30): the 16 noise frames below cost 2.92 s of a console launch (build 14082124) and
+     * depend only on the placements above, which still run every launch (same random-number draws). Key = a hash of
+     * the placements; a hit copies the saved frames (bit-identical to computing them), a miss computes and saves.
+     * Weak: builds without the HAL helpers (hal/dvd_shim.c) always compute. */
+    {
+        extern int stfx_proctex_load(unsigned key, unsigned frameSize, int n, void* const* frames) __attribute__((weak));
+        extern void stfx_proctex_save(unsigned key, unsigned frameSize, int n, void* const* frames) __attribute__((weak));
+        unsigned key = 2166136261u;
+        const u8* kp = (const u8*)gNewShadowNoiseData.placements;
+        unsigned kn = (unsigned)sizeof(NewShadowNoisePlacement) * (unsigned)noisePlacementCount, kb;
+        void* frameData[NEW_SHADOW_NOISE_FRAME_COUNT];
+        int cached;
+        for (kb = 0; kb < kn; kb++) key = (key ^ kp[kb]) * 16777619u;
+        key ^= noisePlacementCount * 0x9E3779B9u;
+        for (i = 0; i < NEW_SHADOW_NOISE_FRAME_COUNT; i++) {   /* same allocations, same order */
+            gNewShadowNoiseTexFrames[i] = textureAlloc(0x40, 0x40, 3, 0, 0, 1, 1, 1, 1);
+            frameData[i] = gNewShadowNoiseTexFrames[i] + 1;
+        }
+        cached = stfx_proctex_load ? stfx_proctex_load(key, gNewShadowNoiseTexFrames[0]->dataSize, NEW_SHADOW_NOISE_FRAME_COUNT, frameData) : 0;
+        if (cached) {
+            for (i = 0; i < NEW_SHADOW_NOISE_FRAME_COUNT; i++)
+                DCFlushRange(gNewShadowNoiseTexFrames[i] + 1, gNewShadowNoiseTexFrames[i]->dataSize);
+            goto stfx_proctex_noise_done;
+        }
+        for (i = 0; i < NEW_SHADOW_NOISE_FRAME_COUNT; i++) {
         for (x = 0; x < 0x40; x++) {
             int z;
             for (z = 0; z < 0x40; z++) {
@@ -782,8 +810,12 @@ void newshadows_initProceduralTextures(void) {
             }
         }
         DCFlushRange(gNewShadowNoiseTexFrames[i] + 1, gNewShadowNoiseTexFrames[i]->dataSize);
+        }
+        if (stfx_proctex_save) stfx_proctex_save(key, gNewShadowNoiseTexFrames[0]->dataSize, NEW_SHADOW_NOISE_FRAME_COUNT, frameData);
     }
+stfx_proctex_noise_done:
 
+    if (stfx_boot_mark) stfx_boot_mark("proctex_noise");
     gNewShadowCausticTexture = textureAlloc(0x40, 0x40, 3, 0, 0, 1, 1, 1, 1);
     for (x = 0; x < 0x40; x++) {
         for (y = 0; y < 0x40; y++) {
@@ -814,6 +846,7 @@ void newshadows_initProceduralTextures(void) {
     gNewShadowReflectionScrollX = 0.0f;
     gNewShadowReflectionScrollY = 0.0f;
     mmSetForceHeap3Only(savedHeap);
+    if (stfx_boot_mark) stfx_boot_mark("proctex_done");
 }
 
 static void evalNoisePlacements(f32 sampleX, f32 sampleZ, f32 frame, const NewShadowNoisePlacement* placements,

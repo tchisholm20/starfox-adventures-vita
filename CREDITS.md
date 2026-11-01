@@ -43,6 +43,13 @@ License texts: [`licenses/LGPL-3.0.txt`](licenses/LGPL-3.0.txt) (which builds on
 - `libshacccg.suprx`, Sony's shader compiler, which the player supplies at
   `ur0:data/libshacccg.suprx`. Nothing from it is in this repository or the release.
 
+## Artwork
+
+- The LiveArea artwork (the home-screen icon, the background behind the bubble and the logo on
+  the start button), from v0.1.1: prepared by Reddit user
+  [u/Either-Version-9577](https://www.reddit.com/user/Either-Version-9577/). The illustration and
+  logo are the original game's box art, a trademark and copyright of Nintendo.
+
 ## References
 
 - [Aurora](https://github.com/encounter/aurora) by encounter: a GX implementation for PC.

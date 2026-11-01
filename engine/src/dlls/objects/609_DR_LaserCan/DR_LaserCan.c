@@ -220,7 +220,7 @@ void DR_LaserCannon_hitDetect(GameObject* obj) {
                hitObject->anim.romDefNo != state->hitExcludeType) {
         state->lastHitObject = hitObject;
         state->health -= hitVolume;
-        Obj_SpawnHitLightAndFade(obj, (const Vec3f*)&hitPosX, 6.0f);
+        { /* PORT: the three scalars are not an array on GCC's stack */ Vec3f hitPos = {hitPosX, hitPosY, hitPosZ}; Obj_SpawnHitLightAndFade(obj, &hitPos, 6.0f); }
         objfx_shakeCameraByDistance(obj, 300.0f);
         Sfx_PlayFromObject(obj, SFXTRIG_ar_awghitobj16);
         if (state->health <= 0) {

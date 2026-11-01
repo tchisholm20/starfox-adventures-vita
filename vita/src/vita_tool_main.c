@@ -381,13 +381,81 @@ RhiInstance *__real_rhi_create(const RhiCreateInfo *info);
 static RhiInstance *g_vt_rhi;   /* the instance the tool created */
 bool         __real_rhi_present(RhiInstance *rhi, RhiSwapchain *sc);
 
+/* ---- LAUNCH TIMELINE (2026-10-29) ---------------------------------------------------------------------------------------------------------------
+ * One line per milestone, once each:  [boot] t=<ms since the process started, 1 decimal> <name>   (sceKernelGetProcessTimeWide: microseconds since launch).
+ * Names, in order: main iso_mounted retail_dol backend_init_start backend_init_done pack_ready shark_ready first_present first_movie_frame title_ready gameplay.
+ * stfx_boot_mark is called from the HAL (dvd_shim.c, thp_decode.c; weak there) and the GXM backend (rhi_gxm_shader.c; weak there).
+ * For the first 20 s after main, once a second:
+ *   [boot-io] t=<ms> disc reads <n> <KB> KB avg <ms> ms max <ms> | movie decoded <n> skipped <n> decode avg <ms> max <ms> ms | game waited max <ms> ms
+ * disc reads = time inside DVDRead's fseek+fread of the ISO (every caller); movie = THPVideoDecode calls; "game waited" = the game thread's wait for a decode.
+ * The line is driven by the hooks and by every present, so a boot that is stuck in a disc read still prints (from the next read / present). */
+static const char *const k_boot_names[] = { "main", "iso_mounted", "retail_dol", "backend_init_start", "backend_init_done", "pack_ready", "shark_ready",
+                                            "first_present", "first_movie_frame", "title_ready", "gameplay",
+                                            "proctex_start", "proctex_placed", "proctex_noise", "proctex_done" };
+static unsigned g_boot_seen;
+static SceUID g_boot_mtx = -1;   /* a kernel mutex, not a spin lock: threads are pinned to cores, and a higher-priority thread spinning on the
+                                     holder's core would never let it run (the game, movie and disc threads all report here) */
+static unsigned long long g_boot_main_us, g_boot_next_us;
+static volatile int g_boot_io_done;
+static struct { unsigned dn; unsigned long long dbytes, dus, dmax; unsigned mn; unsigned long long mdec, mdecmax, mwaitmax; unsigned skipped0; } g_bio;
+extern unsigned stfx_mv_skipped __attribute__((weak));   /* hal/stfx_audio.c */
+static void boot_lock(void) { if (g_boot_mtx >= 0) sceKernelLockMutex(g_boot_mtx, 1, NULL); }
+static void boot_unlock(void) { if (g_boot_mtx >= 0) sceKernelUnlockMutex(g_boot_mtx, 1); }
+void stfx_boot_mark_at(const char *name, unsigned long long us)
+{
+    for (unsigned i = 0; i < sizeof k_boot_names / sizeof *k_boot_names; ++i) {
+        if (strcmp(name, k_boot_names[i])) continue;
+        if (__atomic_fetch_or(&g_boot_seen, 1u << i, __ATOMIC_ACQ_REL) & (1u << i)) return;
+        printf("[boot] t=%.1f %s\n", (double) us / 1000.0, name);
+        return;
+    }
+}
+void stfx_boot_mark(const char *name) { stfx_boot_mark_at(name, (unsigned long long) sceKernelGetProcessTimeWide()); }
+static void boot_io_tick(unsigned long long now)
+{
+    if (g_boot_io_done || !g_boot_main_us || now < g_boot_next_us) return;
+    boot_lock();
+    if (g_boot_io_done || now < g_boot_next_us) { boot_unlock(); return; }
+    const unsigned dn = g_bio.dn, mn = g_bio.mn;
+    const unsigned long long kb = g_bio.dbytes / 1024u, dus = g_bio.dus, dmax = g_bio.dmax, mdec = g_bio.mdec, mdmax = g_bio.mdecmax, mwmax = g_bio.mwaitmax;
+    const unsigned skipped = &stfx_mv_skipped ? stfx_mv_skipped : 0u, sk = skipped - g_bio.skipped0;
+    memset(&g_bio, 0, sizeof g_bio); g_bio.skipped0 = skipped;
+    g_boot_next_us = now + 1000000u;
+    if (now - g_boot_main_us >= 20000000ull) g_boot_io_done = 1;
+    boot_unlock();
+    printf("[boot-io] t=%.1f disc reads %u %llu KB avg %.2f ms max %.2f ms | movie decoded %u skipped %u decode avg %.2f max %.2f ms | game waited max %.2f ms\n",
+           (double) now / 1000.0, dn, kb, dn ? dus / 1000.0 / dn : 0.0, dmax / 1000.0, mn, sk, mn ? mdec / 1000.0 / mn : 0.0, mdmax / 1000.0, mwmax / 1000.0);
+}
+void stfx_boot_disc_read(unsigned bytes, unsigned long long us)   /* hal/dvd_shim.c DVDRead, around fseek+fread */
+{
+    if (g_boot_io_done || !g_boot_main_us) return;
+    boot_lock(); ++g_bio.dn; g_bio.dbytes += bytes; g_bio.dus += us; if (us > g_bio.dmax) g_bio.dmax = us; boot_unlock();
+    boot_io_tick((unsigned long long) sceKernelGetProcessTimeWide());
+}
+void stfx_boot_movie_decode(unsigned long long dec_us, unsigned long long wait_us)   /* hal/thp_decode.c THPVideoDecode */
+{
+    if (g_boot_io_done || !g_boot_main_us) return;
+    boot_lock(); ++g_bio.mn; g_bio.mdec += dec_us; if (dec_us > g_bio.mdecmax) g_bio.mdecmax = dec_us; if (wait_us > g_bio.mwaitmax) g_bio.mwaitmax = wait_us; boot_unlock();
+    boot_io_tick((unsigned long long) sceKernelGetProcessTimeWide());
+}
+void stfx_boot_tick(void) { boot_io_tick((unsigned long long) sceKernelGetProcessTimeWide()); }
+static void boot_main_begin(unsigned long long t_main)   /* main(), once the log is open: `main` carries the time of main's FIRST line */
+{
+    g_boot_mtx = sceKernelCreateMutex("stfx_boot", 0, 0, NULL);     /* before g_boot_main_us: the hooks do nothing until it is set */
+    g_boot_next_us = t_main + 1000000u;
+    __atomic_store_n(&g_boot_main_us, t_main, __ATOMIC_RELEASE);
+    stfx_boot_mark_at("main", t_main);
+}
+
 RhiInstance *__wrap_rhi_create(const RhiCreateInfo *info)
 {
     RhiCreateInfo ci = *info;
     printf("[vita] rhi_create: requested %s -> routed to AUTO (the one Vita backend)\n",
            rhi_backendName(info->backend));
     ci.backend = RHI_BACKEND_AUTO;
+    stfx_boot_mark("backend_init_start");
     RhiInstance *r = __real_rhi_create(&ci);
+    stfx_boot_mark("backend_init_done");
     printf("[vita] rhi_create: got %s\n", r ? rhi_backendName(rhi_getBackend(r)) : "NULL");
     g_vt_rhi = r;   /* for tool-specific instruments (vt_map.c's display-list cache) */
     return r;
@@ -439,6 +507,7 @@ static void grade_frame(void)
 }
 
 static int g_presents;
+int vt_presents_now(void) { return g_presents; }   /* vt_game.c [pause] marks */
 static SceUInt64 g_t_first, g_t_from, g_t_after_capture;
 /* GX progress counters (hal/gx_draw.c in the game build; weak, so the viewers link unchanged). */
 extern unsigned gStfxGxDlCalls __attribute__((weak)), gStfxGxDlBytes __attribute__((weak));
@@ -1325,6 +1394,11 @@ bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
         extern void scene_gpu_report(int present) __attribute__((weak));
         /* THE PRESENT (RT_THREAD D2): gxt_present is the real present when DIRECT (and counts the frame), a PRESENT record + the frame-ahead wait when THREADED. Weak: absent = the real one. */
         bool pr = gxt_present ? (gxt_present(rhi, sc) != 0) : __real_rhi_present(rhi, sc);
+        if (g_presents == 1) stfx_boot_mark("first_present");
+        {   extern void vt_game_frame_tick(void) __attribute__((weak));   /* vt_game.c: title_ready / gameplay */
+            stfx_boot_tick();
+            if (vt_game_frame_tick) vt_game_frame_tick();
+        }
         if (scene_gpu_present) scene_gpu_present(g_presents);
         if (scene_gpu_report && g_presents % 600 == 0) scene_gpu_report(g_presents);
         {   /* gxm_stall.c (docs/54 R15). Same function, same present as vt_perf_ab(), which ran above: gStfxAb already holds this present's arm. The two calls are
@@ -1423,6 +1497,45 @@ static void vt_watchdog_start(void)
 }
 #endif
 
+/* LAUNCH PROBE (2026-10-29): launch has a ~3 s stretch with no present and no disc read (after TEX0.bin, ~12-15 s). Every
+ * 250 ms for the first 30 s, a quarter-second with neither prints the last callers of padUpdate / VIWaitForRetrace /
+ * DVDRead(+Async) and how often each ran, so the log names the loop (or shows none ran: straight CPU work).
+ * Addresses are runtime: subtract (main's runtime - main's link address). */
+#include <psp2/kernel/threadmgr.h>
+static int vt_boot_idle(SceSize args, void *argp)
+{
+    (void) args; (void) argp;
+    extern void *gStfxPadCaller __attribute__((weak)), *gStfxViCaller __attribute__((weak)),
+                *gStfxDvdCaller __attribute__((weak)), *gStfxDvdAsyncCaller __attribute__((weak));
+    extern unsigned gStfxPadReads __attribute__((weak)), gStfxViWaits __attribute__((weak)), gStfxDvdReads __attribute__((weak));
+    extern const char *volatile gStfxCrumb __attribute__((weak)); extern volatile int gStfxCrumbArg __attribute__((weak));
+#define VBI_U(x) (&(x) ? (x) : 0u)
+#define VBI_P(x) (&(x) ? (x) : (void *) 0)
+    int lastP = -1; unsigned lastD = ~0u, lastPad = 0, lastVi = 0;
+    for (;;) {
+        sceKernelDelayThread(250 * 1000);
+        const unsigned long long now = (unsigned long long) sceKernelGetProcessTimeWide();
+        if (now - g_boot_main_us > 30000000ull) break;
+        const int p = g_presents; const unsigned d = VBI_U(gStfxDvdReads), pad = VBI_U(gStfxPadReads), vi = VBI_U(gStfxViWaits);
+        if (p == lastP && d == lastD) {
+            char b[400];
+            int n = snprintf(b, sizeof b, "[boot-idle] t=%.1f in %s (0x%x) | presents %d | pad +%u caller %p | vi +%u caller %p | dvd caller %p async %p | main %p\n",
+                             (double) now / 1000.0, (&gStfxCrumb && gStfxCrumb) ? gStfxCrumb : "-", &gStfxCrumbArg ? (unsigned) gStfxCrumbArg : 0u, p, pad - lastPad, VBI_P(gStfxPadCaller), vi - lastVi, VBI_P(gStfxViCaller),
+                             VBI_P(gStfxDvdCaller), VBI_P(gStfxDvdAsyncCaller), (void *) &main);
+            log_write(b, n);
+        }
+        lastP = p; lastD = d; lastPad = pad; lastVi = vi;
+    }
+#undef VBI_U
+#undef VBI_P
+    return 0;
+}
+static void vt_boot_idle_start(void)
+{
+    SceUID t = sceKernelCreateThread("stfx_bootidle", vt_boot_idle, 0x10000100, 0x4000, 0, 0, NULL);
+    if (t >= 0) sceKernelStartThread(t, 0, NULL);
+}
+
 #ifdef VT_EXIT_ON_STOP
 void plat_window_vita_set_stop_hook(void (*fn)(const char *why));
 /* The game never returns from main(): end the process from the pump, with the same
@@ -1485,6 +1598,7 @@ static int stfx_install_release_defaults(int *written, int *kept, int *failed)
 
 int main(void)
 {
+    const unsigned long long t_main_us = (unsigned long long) sceKernelGetProcessTimeWide();   /* the launch timeline's `main` */
     int dflt_w, dflt_k, dflt_f;
     const int dflt_ran = stfx_install_release_defaults(&dflt_w, &dflt_k, &dflt_f);   /* FIRST: before the log or any marker is read */
     /* THE LOG IS ROTATED, NOT REMOVED (run 246). Runs 243-245: the `[mapbank] mapUnload ... caller` line of three staff attempts
@@ -1497,6 +1611,7 @@ int main(void)
     if (rot0 < 0) sceIoRemove(LOG);   /* could not be kept: start clean, as before, and say so below */
 
     printf("stairfax %s (Vita)\n", VT_NAME);
+    boot_main_begin(t_main_us);
 #ifdef STFX_BUILD_ID
     printf("[build] id=%s (build_game_vita.sh stamps it; build_id.txt next to the eboot holds the same id and the eboot's sha256)\n", STFX_BUILD_ID);
 #endif
@@ -1551,6 +1666,7 @@ int main(void)
 #ifdef VT_WATCHDOG
     vt_watchdog_start();
 #endif
+    vt_boot_idle_start();
     plat_window_vita_set_frame_limit(RUN_FRAMES);
     int rc = VT_TOOL(argc, argv);
 

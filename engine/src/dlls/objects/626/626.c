@@ -882,7 +882,7 @@ void HighTop_hitDetect(GameObject* obj) {
     if (runtime->airMeterRemaining == 0) {
         return;
     }
-    Obj_SpawnHitLightAndFade(obj, (const Vec3f*)&l8, 20.0f);
+    { /* PORT: the three scalars are not an array on GCC's stack */ Vec3f hitPos = {l8, lc, l10}; Obj_SpawnHitLightAndFade(obj, &hitPos, 20.0f); }
     objSoundStartFromDef(obj, &runtime->modelSoundState,
                          (ObjSoundDef*)(gHighTopAmbientSoundDef + randomGetRange(0, 0) * 6), 1);
     st = runtime->baddie.controlMode;

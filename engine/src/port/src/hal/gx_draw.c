@@ -1057,7 +1057,7 @@ static int decodePrim(const unsigned char* src, GXVtxFmt fmt, u8 prim, int nvert
             gVerts[vi].rgba = pxChannelColour(gVerts[vi].rgba, haveClr, &gVerts[vi], gVertN[vi], gVertHaveN[vi]);
         pxJournalLit(v0in, haveClr, gVerts[0].rgba, gVertHaveN[0]);
         if (gRhi) rhi_setAlphaMode(gRhi, pxAlphaMode());
-        if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc, gZUpdate);
+        if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc | ((gCullMode & 3) << 3), gZUpdate);
     }
     if (timed) { t2 = GXT_NOW(); gx_t_light += t2 - t1; }
     if (gRhi) {
@@ -2221,7 +2221,7 @@ static int dlkCall(const unsigned char* dl, u32 nbytes, const struct GxSkinTable
     const int am = gPxActive ? pxAlphaMode() : RHI_ALPHA_OPAQUE;
     if (r->ntri == 0 || nprim == 0) {                         /* lines/points/empty: no draw, but the state calls happen as before */
         if (nprim) {
-            if (gPxActive) { rhi_setAlphaMode(gRhi, am); if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc, gZUpdate); }
+            if (gPxActive) { rhi_setAlphaMode(gRhi, am); if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc | ((gCullMode & 3) << 3), gZUpdate); }
             rhi_setColorTransform(gRhi, mvp);
         }
         gx_prims += nprim; gx_prim_verts += r->declaredSum;
@@ -2314,7 +2314,7 @@ static int dlkCall(const unsigned char* dl, u32 nbytes, const struct GxSkinTable
             if (!r->gpuMesh) { ++gDlkGpu.noMesh; sSkinWhy = 11; }
             else {
                 rtT = RT_T0();
-                if (gPxActive) { rhi_setAlphaMode(gRhi, am); if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc, gZUpdate); }
+                if (gPxActive) { rhi_setAlphaMode(gRhi, am); if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc | ((gCullMode & 3) << 3), gZUpdate); }
                 rhi_setColorTransform(gRhi, mvp);
                 RT_SUBSL(RT_S_STATE, rtT);
                 const dlk64 gs_ = GXT_NOW(); gDlkGpu.stUs += gs_ - gm_;   /* hw_Rsplit: per-draw state to the backend */
@@ -2414,7 +2414,7 @@ static int dlkCall(const unsigned char* dl, u32 nbytes, const struct GxSkinTable
     for (u32 p = 0; p < nprim; ++p) { u32 m = dlkExpand(r, &r->prim[p], dtv, gDlkOut + n); n += m; triPrims += m != 0; }
     t7 = GXT_NOW();
     // ---- the state calls the per-primitive loop makes, then ONE backend call -----------------------------------
-    if (gPxActive) { rhi_setAlphaMode(gRhi, am); if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc, gZUpdate); }
+    if (gPxActive) { rhi_setAlphaMode(gRhi, am); if (rhi_vita_setDepthState) rhi_vita_setDepthState(gZCompare, gZFunc | ((gCullMode & 3) << 3), gZUpdate); }
     rhi_setColorTransform(gRhi, mvp);
     int drawn = rhi_vita_drawTev(&k, &u, tx, gDlkOut, (uint32_t)n, mvp, am);
     t8 = GXT_NOW();
@@ -2698,6 +2698,8 @@ void GXGetScissor(u32* left, u32* top, u32* wd, u32* ht) {
 // (run 24: white; runs 28-32: 1 colour with depth on, 108,994 with the depth test forced off).
 // Passed per draw to the backend (weak: the viewers and builds without the Vita backend link as before).
 // (gZCompare, gZFunc, gZUpdate: gx_hal.px, initial 1 / GX_LEQUAL / 1)
+/* GX cull (2026-10-31, DarkIce Mines grey cube): the draws pass gCullMode in func bits 3-4; the GXM backend applies it
+   (rhi_gxm_draw.c, GX_CULL_BACK = CCW there). Before this the port never culled. */
 extern void rhi_vita_setDepthState(int test, int func, int write) __attribute__((weak));
 GXH_INLINE void gxh_b_GXSetZMode(GxHal* h, const int mark, u8 compare_enable, int func, u8 update_enable) {
     RT_COUNT(RT_S_SETTERS);   /* Task 3: count only */

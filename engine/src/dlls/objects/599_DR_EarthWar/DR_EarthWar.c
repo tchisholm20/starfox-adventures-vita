@@ -771,7 +771,7 @@ void DR_EarthWarrior_hitDetect(GameObject* obj) {
             if (objGetFlagsE5_2((u8*)obj) != 0 && state->sub.mountState == VEHICLE_Mounted) {
                 return;
             }
-            Obj_SpawnHitLightAndFade(obj, (const Vec3f*)&hx, 5.0f);
+            { /* PORT: the three scalars are not an array on GCC's stack */ Vec3f hitPos = {hx, hy, hz}; Obj_SpawnHitLightAndFade(obj, &hitPos, 5.0f); }
             if (hit == 0x1a || hitObj == Obj_GetPlayerObject() ||
                 hitObj->anim.romDefNo == DREARTHWARRIOR_ATTACKER_SEQID_SWORD) {
                 return;
