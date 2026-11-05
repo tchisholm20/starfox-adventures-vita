@@ -234,6 +234,7 @@ typedef struct DrawState {
     int zb_on, zb_f, zb_u;
     int cur_cull;            /* GX cull (2026-10-31): the SceGxmCullMode the context holds, -1 = unknown (re-set at the next draw) */
     int zb_faces, sh_cull;   /* shadow receivers (2026-10-27 dotted-shadow A/B): shadow_zbias_faces.txt 2 = bias BACK faces too; shadow_cull.txt 1 = CW, 2 = CCW */
+    int sh_cycle, sh_last;   /* shadow_cull.txt "cycle N" (2026-11-01, blob A/B in one boot): sh_cull steps CCW, CW, none every N frames (sh_cull_now) */
     int vp_dirty, sc_dirty, zb_dirty;
     unsigned applied_epoch;
     SceGxmVertexProgram *cur_vp; SceGxmFragmentProgram *cur_fp;
@@ -312,6 +313,19 @@ static void apply_clip(void)
     if (s_d.sc_empty) return;                                                        /* a draw never reaches here with an empty box */
     sceGxmSetRegionClip(g_gx.ctx, SCE_GXM_REGION_CLIP_OUTSIDE, (unsigned) s_d.clip[0], (unsigned) s_d.clip[1], (unsigned) s_d.clip[2], (unsigned) s_d.clip[3]);
 }
+/* the M scene for a draw: it can write only inside its region clip, so that is its extent (an M sub-target scene stays one while the clip is inside it) */
+static inline int scene_for_draw(void)
+{
+    return s_d.sc_empty ? gxm_target_scene_m() : gxm_target_scene_m_ext(s_d.clip[2] + 1, s_d.clip[3] + 1);
+}
+static int sh_cull_now(void)   /* the receiver cull in force: shadow_cull.txt's value, or under "cycle N" CCW / CW / none by frame (logged on change) */
+{
+    if (!s_d.sh_cycle) return s_d.sh_cull;
+    static const int k[3] = { 2, 1, 0 };
+    const int sc = k[(g_gx.frames / (unsigned) s_d.sh_cycle) % 3u];
+    if (sc != s_d.sh_last) { s_d.sh_last = sc; gxm_log("[shcull] frame %u: shadow receivers cull %s", g_gx.frames, sc == 2 ? "CCW (the release rule)" : sc == 1 ? "CW (the general GX_CULL_FRONT rule)" : "none"); }
+    return sc;
+}
 static void apply_zbias(void)
 {
     const int f = s_d.zb_on ? s_d.zb_f : 0, u = s_d.zb_on ? s_d.zb_u : 0;
@@ -319,7 +333,8 @@ static void apply_zbias(void)
     /* Dotted-shadow A/B (2026-10-27): objDrawShadowCasterMesh draws its receivers with GX_CULL_FRONT, i.e. retail keeps their BACK faces, which a
        front-only bias never reaches; and the port never culls, so the faces retail drops are drawn too. Both behind markers until a shot pair decides. */
     sceGxmSetBackDepthBias(g_gx.ctx, s_d.zb_faces == 2 ? f : 0, s_d.zb_faces == 2 ? u : 0);
-    sceGxmSetCullMode(g_gx.ctx, s_d.zb_on && s_d.sh_cull == 1 ? SCE_GXM_CULL_CW : s_d.zb_on && s_d.sh_cull == 2 ? SCE_GXM_CULL_CCW : SCE_GXM_CULL_NONE);
+    { const int sc = sh_cull_now();
+      sceGxmSetCullMode(g_gx.ctx, s_d.zb_on && sc == 1 ? SCE_GXM_CULL_CW : s_d.zb_on && sc == 2 ? SCE_GXM_CULL_CCW : SCE_GXM_CULL_NONE); }
     s_d.cur_cull = -1;
 }
 /* inside an open scene: re-apply everything when the epoch moved, else only what a setter changed */
@@ -359,12 +374,21 @@ static void zbias_load(void)
     if (f >= 0) { len = sceIoRead(f, b, (SceSize) (sizeof b - 1)); sceIoClose(f); if (len < 0) len = 0; }
     const int ok = zb_parse(b, len, &s_d.zb_f, &s_d.zb_u);
     {   char c = 0; SceUID g;
-        /* DEFAULT CCW (2026-10-28, eboot 6f49a3dc, hub shots vs retail_ch2_frame.png): GX_CULL_FRONT on the receivers = CCW here. It removes the dotted
-           lines AND the phantom Arwing ground shadow that retail never draws; CW and no-cull keep both. shadow_cull.txt 0 = none (the old port), 1 = CW. */
-        s_d.zb_faces = 1; s_d.sh_cull = 2;
+        /* DEFAULT CW (2026-11-01; was CCW from 2026-10-28). GX_CULL_FRONT on the receivers = CW, the same mapping as every other draw (the 2026-10-31
+           GX cull rule). CCW removed the dotted lines and the phantom Arwing shadow, but it culled the faces retail KEEPS, so Fox's and Tricky's
+           shadows were never drawn (hw shots, eboot 509869f6, ThornTail ch2: CW and none show Fox's shadow, CCW does not). The dots came from the
+           R8 cast copy mixing caster bits (rhi_gxm_target.c g_tex_m_pt). shadow_cull.txt 0 = none, 1 = CW, 2 = CCW (the 10-28 rule), "cycle N". */
+        s_d.zb_faces = 1; s_d.sh_cull = 1;
         if ((g = sceIoOpen("ux0:data/stairfax/shadow_zbias_faces.txt", SCE_O_RDONLY, 0777)) >= 0) { if (sceIoRead(g, &c, 1) == 1 && c == '2') s_d.zb_faces = 2; sceIoClose(g); }
         c = 0;
-        if ((g = sceIoOpen("ux0:data/stairfax/shadow_cull.txt", SCE_O_RDONLY, 0777)) >= 0) { if (sceIoRead(g, &c, 1) == 1 && (c == '0' || c == '1' || c == '2')) s_d.sh_cull = c - '0'; sceIoClose(g); }
+        if ((g = sceIoOpen("ux0:data/stairfax/shadow_cull.txt", SCE_O_RDONLY, 0777)) >= 0) {
+            char cb[24]; int n = sceIoRead(g, cb, sizeof cb - 1); sceIoClose(g);
+            if (n > 0) { cb[n] = 0; c = cb[0];
+                if (c == '0' || c == '1' || c == '2') s_d.sh_cull = c - '0';
+                else if (!strncmp(cb, "cycle", 5)) { s_d.sh_cycle = atoi(cb + 5); if (s_d.sh_cycle < 1) s_d.sh_cycle = 0; } }
+        }
+        s_d.sh_last = -1;
+        if (s_d.sh_cycle) gxm_log("[gxm-draw] shadow receivers: cull CYCLES every %d frames: CCW, CW, none, CCW, ... (frame / %d mod 3; shadow_cull.txt)", s_d.sh_cycle, s_d.sh_cycle);
         gxm_log("[gxm-draw] shadow receivers: bias on %s face(s) (shadow_zbias_faces.txt) | cull %s (shadow_cull.txt)",
                 s_d.zb_faces == 2 ? "BOTH" : "the front", s_d.sh_cull == 1 ? "CW" : s_d.sh_cull == 2 ? "CCW" : "none");
     }
@@ -534,7 +558,7 @@ static int fill_vub(const GxmProg *p, const Draw *d, void *vub)
             n = 4; break;
         case GU_POS: if (!vu || !vk) continue; src = &vu->pm[0][0][0]; n = (vk->hasMtxIdx ? 30u : 3u) * 4u; break;
         case GU_NRM: if (!vu || !vk) continue; src = &vu->nm[0][0][0]; n = (vk->hasMtxIdx ? 30u : 3u) * 4u; break;
-        case GU_TMX: if (!vu) continue; src = &vu->tmx[0][0][0]; n = 120; break;
+        case GU_TMX: if (!vu || !vk) continue; src = &vu->tmx[0][0][0]; n = tev_vs_tmi_wide(vk) ? 252u : 120u; break;   /* VS_TMI_WIDE: the 63-row XF table */
         case GU_BONE: if (!d->skin_pal) continue; src = d->skin_pal; n = 4u * VS_SKIN_PAL_VEC4; break;   /* R8: the bone palette + scale row (gx_tev_key.h), only a hasSkin program declares it */
         case GU_MAT: if (!vu) continue; src = vu->mat; n = 4; break;
         case GU_AMB: if (!vu) continue; src = vu->amb; n = 4; break;
@@ -599,7 +623,7 @@ static void fill_vub_off(const GxmProg *p, const Draw *d, void *vub)
             n = 4; break;
         case GU_POS: if (!vu || !vk) continue; src = &vu->pm[0][0][0]; n = (vk->hasMtxIdx ? 30u : 3u) * 4u; break;
         case GU_NRM: if (!vu || !vk) continue; src = &vu->nm[0][0][0]; n = (vk->hasMtxIdx ? 30u : 3u) * 4u; break;
-        case GU_TMX: if (!vu) continue; src = &vu->tmx[0][0][0]; n = 120; break;
+        case GU_TMX: if (!vu || !vk) continue; src = &vu->tmx[0][0][0]; n = tev_vs_tmi_wide(vk) ? 252u : 120u; break;   /* VS_TMI_WIDE: the 63-row XF table */
         case GU_BONE: if (!d->skin_pal) continue; src = d->skin_pal; n = 4u * VS_SKIN_PAL_VEC4; break;   /* R8: the bone palette + scale row (gx_tev_key.h), only a hasSkin program declares it */
         case GU_MAT: if (!vu) continue; src = vu->mat; n = 4; break;
         case GU_AMB: if (!vu) continue; src = vu->amb; n = 4; break;
@@ -721,7 +745,15 @@ static void r7_note(const void *mesh, const TevKey *tk, const VsKey *vk, const T
  * off = one load and an untaken branch.  Content "2" = the BREAK arm: on frames whose (frame / 600) is odd, the state hash takes the frame number,
  * so every matched draw must read STATE there (watched failing: the census can report a change). */
 #define R9_CAP 4096u
-typedef struct { const void *mesh; uint32_t occ, upd, fr; uint64_t hs, hc, ht, hm; } R9E;
+/* COLOUR SPLIT (2026-11-01, emu_R9's open question: does the game animate colours, or does the census hash bytes the draw never uploads?): a COLOUR
+ * draw is also split by which part of hc changed -- [0] TEV colours (reg, konst, acRef), [1] fog numbers, [2] indirect matrices, [3] mat + amb,
+ * [4] the USED lights (lt[ch][0 .. nLights-1] of an enabled channel), [5] the UNUSED light slots.  32-bit sub-hashes (a census, not a proof).
+ * Counted per part (a draw can count in several), plus [6] COLOUR draws whose ONLY change is unused light slots (an instrument artifact if large),
+ * [7] only fog, and [8] COLOUR draws with NO part changed (must stay 0: the parts cover exactly hc's bytes -- the split's way to fail). */
+#define R9X_N 6
+typedef struct { const void *mesh; uint32_t occ, upd, fr; uint64_t hs, hc, ht, hm; uint32_t hx[R9X_N]; } R9E;
+static unsigned s_r9_x[9];
+void rhi_gxm_r9_colour(unsigned o[9]) { memcpy(o, s_r9_x, sizeof s_r9_x); }
 typedef struct { const void *mesh; uint32_t n, fr; } R9O;
 static R9E *s_r9t;                   /* [2][R9_CAP]: this frame's table and the previous frame's, by frame parity; an entry is live iff its fr is that frame's tag */
 static R9O *s_r9o;                   /* [R9_CAP]: draws of each mesh so far this frame */
@@ -772,6 +804,22 @@ static void r9_note(const GxmMesh *m, const TevKey *tk, const VsKey *vk, const T
     const uint64_t ht = r9_h(0xcbf29ce484222325ull, (const char *) vu + tm0, sizeof *vu - tm0);
     uint64_t hm = r9_h(0xcbf29ce484222325ull, vu, mat0);
     if (skin_pal) hm = r9_h(hm, skin_pal, VS_SKIN_PAL_VEC4 * 4u * sizeof(float));
+    uint32_t hx[R9X_N];
+    {   /* COLOUR SPLIT: the same bytes as hc, cut into parts (TevUniforms in three ranges that tile it; VsUniforms mat..tm = mat, amb, lt) */
+        const size_t f0 = offsetof(TevUniforms, fogStart), i0 = offsetof(TevUniforms, indM);
+        hx[0] = (uint32_t) r9_h(0xcbf29ce484222325ull, u, f0);
+        hx[1] = (uint32_t) r9_h(0xcbf29ce484222325ull, (const char *) u + f0, i0 - f0);
+        hx[2] = (uint32_t) r9_h(0xcbf29ce484222325ull, (const char *) u + i0, sizeof *u - i0);
+        const size_t lt0 = offsetof(VsUniforms, lt);
+        hx[3] = (uint32_t) r9_h(0xcbf29ce484222325ull, (const char *) vu + mat0, lt0 - mat0);
+        uint64_t hu = 0xcbf29ce484222325ull, hn = 0xcbf29ce484222325ull;
+        for (int ch = 0; ch < 2; ++ch) {
+            const int nl = vk->ch[ch].enable ? (vk->ch[ch].nLights < VS_MAX_LIGHTS ? vk->ch[ch].nLights : VS_MAX_LIGHTS) : 0;
+            hu = r9_h(hu, vu->lt[ch], (size_t) nl * sizeof vu->lt[ch][0]);
+            hn = r9_h(hn, vu->lt[ch] + nl, (size_t) (VS_MAX_LIGHTS - nl) * sizeof vu->lt[ch][0]);
+        }
+        hx[4] = (uint32_t) hu; hx[5] = (uint32_t) hn;
+    }
     const R9E *t = s_r9t + (pf & 1u) * R9_CAP, *p = NULL;
     for (uint32_t k = 0, i = r9_slot(m, occ); k < R9_CAP; ++k, i = (i + 1u) & (R9_CAP - 1u)) {
         if (t[i].fr != pf) break;
@@ -779,11 +827,37 @@ static void r9_note(const GxmMesh *m, const TevKey *tk, const VsKey *vk, const T
     }
     const int cls = !p ? 0 : p->upd != m->upd ? 1 : p->hs != hs ? 2 : p->hc != hc ? 3 : p->ht != ht ? 4 : p->hm != hm ? 5 : 6;
     ++s_r9_c[1 + cls];
+    if (cls == 3) {
+        unsigned diff = 0;
+        for (int j = 0; j < R9X_N; ++j) if (p->hx[j] != hx[j]) { diff |= 1u << j; ++s_r9_x[j]; }
+        if (diff == (1u << 5)) ++s_r9_x[6];
+        if (diff == (1u << 1)) ++s_r9_x[7];
+        if (!diff) ++s_r9_x[8];
+    }
     R9E *c = s_r9t + (fr & 1u) * R9_CAP;
     for (uint32_t k = 0, i = r9_slot(m, occ); k < R9_CAP; ++k, i = (i + 1u) & (R9_CAP - 1u))
-        if (c[i].fr != fr) { c[i] = (R9E) { m, occ, m->upd, fr, hs, hc, ht, hm }; break; }
+        if (c[i].fr != fr) { c[i] = (R9E) { m, occ, m->upd, fr, hs, hc, ht, hm, { hx[0], hx[1], hx[2], hx[3], hx[4], hx[5] } }; break; }
     ++s_r9_used;
 }
+
+/* gpud arms D / E (gxm_gpud.h): the edit applied to a COPY of the TEV key before the program lookup.  D: no fog. E: alpha compare ALWAYS / AND / ALWAYS (GX_ALWAYS = 7, GX_AOP_AND = 0) -> no clip() */
+static inline void gpud_edit_key(TevKey *dst, const TevKey *src)
+{
+    *dst = *src;
+    if (g_gpud_arm == 'D') dst->fogType = 0;
+    else { dst->acComp0 = 7; dst->acComp1 = 7; dst->acOp = 0; }
+}
+/* gpud shader-variant arms (F H G L X) and the draw census: the program lookup of this draw, and which KIND of program answered it.  `var` is the arm's generator variant (0 for A..E and when OFF).
+ * kc: 0 TEV fast ('f'), 1 GX fast ('h'), 2 TEV exact ('t'), 3 GX exact ('g'), 4 other = no usable program (the HAL draws it another way, or not at all).  Counted per lookup, i.e. per draw
+ * request that reached the program lookup -- the M scene's TEV / TEVGX draws (the copy and display scenes draw util programs). */
+static inline void gpud_census(const GxmProg *p, int tevgx)
+{
+    unsigned c = 4u;
+    if (p && p->ok) c = (unsigned) ((p->fast ? 0 : 2) + (tevgx ? 1 : 0));
+    ++g_gpud_kc[c];
+}
+/* the arm flipped: the next draw re-binds every texture and re-sets the fragment program (the shadow must not carry the old arm's stand-in / real textures across) */
+void gxm_gpud_invalidate(void) { s_d.cur_fp = NULL; gxm_sh_reset_tex(&s_d.sh); }
 
 static int run_draw(const Draw *d)
 {
@@ -818,6 +892,11 @@ static int run_draw(const Draw *d)
     if (!vp) return GXM_SK_COMPILE;
     SceGxmFragmentProgram *fp = fp_get(p, d->alpha);
     if (!fp) return GXM_SK_COMPILE;
+    int gp_b = 0, gp_c = 0;                              /* gpud (gxm_gpud.h): arm B / arm C of the A/B in this boot. OFF: this one branch on a global, nothing else */
+    if (__builtin_expect(g_gpud_on, 0) && (d->kind == GXM_K_TEV || d->kind == GXM_K_TEVGX)) {
+        gp_b = g_gpud_arm == 'B' && g_gpud_tex_ok; gp_c = g_gpud_arm == 'C' && g_gpud_const;
+        if (gp_c) { fp = gxm_shader_fp_foreign(g_gpud_const, p, d->alpha); if (!fp) return GXM_SK_COMPILE; }   /* the constant fragment program, this draw's blend key, this draw's vertex program */
+    }
     PT_STEP(pk_, 2);
     for (int i = 0; i < d->ntex; ++i) if (d->tex[i] && !d->tex[i]->mem.p) return GXM_SK_NOTEXMEM;
     if (s_d.sc_empty) return GXM_SK_SCISSOR_EMPTY;
@@ -843,7 +922,7 @@ static int run_draw(const Draw *d)
     }
 
     PT_STEP(pk_, 3);
-    if (gxm_target_scene_m()) return GXM_SK_SCENE;       /* LAST before any sceGxm state call */
+    if (scene_for_draw()) return GXM_SK_SCENE;           /* LAST before any sceGxm state call */
     PT_STEP(pk_, 4);
 
     /* R3A_GLUE_BEGIN */
@@ -862,22 +941,23 @@ static int run_draw(const Draw *d)
     {   /* GX CULL (2026-10-31, DarkIce Mines grey cube): the game's GXSetCullMode was never applied, so faces retail culls were drawn -- the
            placeholder sky boxes (model 0) around the camera drew their inside faces, wrote depth and hid the cave. MEASURED on the Vita and in
            Vita3K (build 06cee975, ThornTail + DIM): GX_CULL_BACK = CW removed the faces you SEE (ground gone, ramp inside-out), so GX_CULL_BACK =
-           CCW and GX_CULL_FRONT = CW for these draws. The shadow receivers' rule (FRONT = CCW, 2026-10-28) is NOT this mapping and stays as it
-           was. GX_CULL_ALL is left uncull.
+           CCW and GX_CULL_FRONT = CW for these draws. The shadow receivers now follow the same mapping by default (CW since 2026-11-01; the
+           10-28 CCW rule hid Fox's shadow), still through their own marker (apply_zbias / sh_cull_now). GX_CULL_ALL is left uncull.
            Shadow receivers keep their own rule (apply_zbias). cull_off.txt 1 = the old no-cull port (A/B). */
         int want = SCE_GXM_CULL_NONE;
-        if (s_d.zb_on) want = s_d.sh_cull == 1 ? SCE_GXM_CULL_CW : s_d.sh_cull == 2 ? SCE_GXM_CULL_CCW : SCE_GXM_CULL_NONE;
+        if (s_d.zb_on) { const int sc = sh_cull_now(); want = sc == 1 ? SCE_GXM_CULL_CW : sc == 2 ? SCE_GXM_CULL_CCW : SCE_GXM_CULL_NONE; }
         else if (d->depth >= 0 && !g_gxm_cull_off) { const int c = (d->depth >> 5) & 3; want = c == 2 ? SCE_GXM_CULL_CCW : c == 1 ? SCE_GXM_CULL_CW : SCE_GXM_CULL_NONE; }
         if (want != s_d.cur_cull) { sceGxmSetCullMode(g_gx.ctx, (SceGxmCullMode) want); s_d.cur_cull = want; ++g_gxm_cull_sets; }
     }
     if (vp != s_d.cur_vp) { sceGxmSetVertexProgram(g_gx.ctx, vp); s_d.cur_vp = vp; }
     if (fp != s_d.cur_fp) { sceGxmSetFragmentProgram(g_gx.ctx, fp); s_d.cur_fp = fp; gxm_sh_reset_tex(&s_d.sh); }   /* invalidation (2): a new fragment program re-issues every texture */
-    for (int s = 0; s < d->ntex && s < TEVK_TEX; ++s) {  /* AFTER the fragment program: Vita3K keeps texture state across a program change (gxmprobe round 3) */
+    for (int s = 0; s < d->ntex && s < TEVK_TEX && !gp_c; ++s) {  /* AFTER the fragment program: Vita3K keeps texture state across a program change (gxmprobe round 3). gpud arm C: the program reads no texture */
         const int unit = p->texunit[s];
         if (unit < 0 || !d->tex[s]) continue;
-        if (c2 && !gxm_sh_tex_need(&s_d.sh, (unsigned) unit, (const uint32_t *) &d->tex[s]->t)) { ++s_d.tex_skipped; continue; }   /* R3a C2: this unit already holds these control words */
-        if (GXM_CHK(sceGxmSetFragmentTexture(g_gx.ctx, (unsigned) unit, &d->tex[s]->t))) return GXM_SK_NOTEXMEM;
-        if (c2) gxm_sh_tex_set(&s_d.sh, (unsigned) unit, (const uint32_t *) &d->tex[s]->t);                               /* invalidation (4): only after the call succeeded */
+        const SceGxmTexture *tx = gp_b ? &g_gpud_tex : &d->tex[s]->t;   /* gpud arm B: every unit gets the one 4x4 stand-in (its control words go through the shadow like any texture's) */
+        if (c2 && !gxm_sh_tex_need(&s_d.sh, (unsigned) unit, (const uint32_t *) tx)) { ++s_d.tex_skipped; continue; }   /* R3a C2: this unit already holds these control words */
+        if (GXM_CHK(sceGxmSetFragmentTexture(g_gx.ctx, (unsigned) unit, tx))) return GXM_SK_NOTEXMEM;
+        if (c2) gxm_sh_tex_set(&s_d.sh, (unsigned) unit, (const uint32_t *) tx);                               /* invalidation (4): only after the call succeeded */
     }
     /* R3A_GLUE_END */
     if (d->src == SRC_MESH && d->mesh->nslots) d->mesh->slot_seq[d->mesh->cur] = g_gx.nval + 1u;   /* the open scene reads this slot */
@@ -908,7 +988,7 @@ static int run_draw(const Draw *d)
             if (c1_fast) fill_vub_off(p, d, vub);
             else if (fill_vub(p, d, vub)) { ++s_d.ub_fail; return GXM_SK_UB; }
         }
-        if (p->fub_bytes) {
+        if (p->fub_bytes && !gp_c) {                     /* gpud arm C: the constant program has no fragment uniforms */
             if (GXM_CHK(sceGxmReserveFragmentDefaultUniformBuffer(g_gx.ctx, &fub)) || !fub) { ++s_d.ub_fail; return GXM_SK_UB; }
             if (c1_fast) fill_fub_off(p, d, fub);
             else if (fill_fub(p, d, fub)) { ++s_d.ub_fail; return GXM_SK_UB; }
@@ -1054,7 +1134,7 @@ static int c6_tev(Draw *d, const TevUniforms *u, const TevVertex *verts, uint32_
         int texok = 1;
         for (int t = 0; t < d->ntex; ++t) if (d->tex[t] && !d->tex[t]->mem.p) texok = 0;
         if (texok) {
-            if (gxm_target_scene_m()) return GXM_SK_SCENE;   /* a held run lives inside an open scene: nobody can begin another with it held */
+            if (scene_for_draw()) return GXM_SK_SCENE;       /* a held run lives inside an open scene: nobody can begin another with it held */
             c6_open(m, d->prog, d->alpha, d->depth, d->ntex, d->tex, u, mvp, stride, 1);
             m->count = 0;
             if (c6_stage(m, verts, count)) { g_gxm_c6_pending = 1; return -1; }
@@ -1118,7 +1198,11 @@ int rhi_gxm_drawTev(const TevKey *k, const TevUniforms *u, RhiTexture *const tex
     if (!admit(GXM_K_TEV)) return 1;
     int why = GXM_SK_NOPROG;
     (void) pt_on(); uint32_t pt0_ = PT_NOW();
-    GxmProg *p = gxm_shader_tev(k, &why);
+    TevKey gk_;                                          /* gpud arms D / E: a COPY of the key, edited just before the program lookup; the HAL's key is never touched */
+    const TevKey *kl_ = k;
+    if (__builtin_expect(g_gpud_on, 0) && (g_gpud_arm == 'D' || g_gpud_arm == 'E')) { gpud_edit_key(&gk_, k); kl_ = &gk_; }
+    GxmProg *p = __builtin_expect(g_gpud_on, 0) && g_gpud_var ? gxm_shader_tev_v(kl_, g_gpud_var, &why) : gxm_shader_tev(kl_, &why);   /* gpud F / H / G / L / X: the variant program */
+    if (__builtin_expect(g_gpud_on, 0)) gpud_census(p, 0);
     PT_STEP(0, 0);
     if (!p || !p->ok) {
         why = why > 0 && why < GXM_SK_N ? why : GXM_SK_NOPROG;
@@ -1337,7 +1421,12 @@ int rhi_gxm_drawTevGx_h(const TevKey *tk, const TevUniforms *u, RhiTexture *cons
     if (!admit(GXM_K_TEVGX)) return 1;
     int why = GXM_SK_NOPROG;
     (void) pt_on(); uint32_t pt0_ = PT_NOW();
-    GxmProg *p = gxm_shader_gx_hint(vk, tk, (r3a_now() & (R3A_C3 | R3A_C5)) ? hint : 0ull, &why);   /* a C3 hint (bit 63) or a C5 key id (bit 62): either names the raw key pair */
+    TevKey gk_;                                          /* gpud arms D / E: an edited COPY of the TEV key (and no hint: a hint names the unedited pair); the HAL's key is never touched */
+    const TevKey *tkl_ = tk; unsigned long long hint_ = (r3a_now() & (R3A_C3 | R3A_C5)) ? hint : 0ull;
+    if (__builtin_expect(g_gpud_on, 0) && (g_gpud_arm == 'D' || g_gpud_arm == 'E')) { gpud_edit_key(&gk_, tk); tkl_ = &gk_; hint_ = 0ull; }
+    GxmProg *p = __builtin_expect(g_gpud_on, 0) && g_gpud_var ? gxm_shader_gx_hint_v(vk, tkl_, 0ull, g_gpud_var, &why)   /* gpud F / H / G / L / X: the variant program (no hint: it names the shipping pair) */
+                                                               : gxm_shader_gx_hint(vk, tkl_, hint_, &why);   /* a C3 hint (bit 63) or a C5 key id (bit 62): either names the raw key pair */
+    if (__builtin_expect(g_gpud_on, 0)) gpud_census(p, 1);
     PT_STEP(1, 0);
     if (!p || !p->ok) {
         why = why > 0 && why < GXM_SK_N ? why : GXM_SK_NOPROG;

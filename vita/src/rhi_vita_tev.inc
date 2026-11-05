@@ -1659,7 +1659,7 @@ int rhi_vita_drawTevGx(const TevKey *tk, const TevUniforms *u, RhiTexture *const
     const int nm = vk->hasMtxIdx ? 3 * VS_MAX_SLOTS : 3;
     if (g->uPos >= 0) glUniform4fv(g->uPos, nm, &vu->pm[0][0][0]);
     if (g->uNrm >= 0) glUniform4fv(g->uNrm, nm, &vu->nm[0][0][0]);
-    if (g->uTMX >= 0 && AB_ARM != 1) glUniform4fv(g->uTMX, 30, &vu->tmx[0][0][0]);
+    if (g->uTMX >= 0 && AB_ARM != 1) glUniform4fv(g->uTMX, vk && tev_vs_tmi_wide(vk) ? 63 : 30, &vu->tmx[0][0][0]);   /* VS_TMI_WIDE: the XF table */
     if (g->uMat >= 0) glUniform4fv(g->uMat, 1, vu->mat);
     if (g->uAmb >= 0) glUniform4fv(g->uAmb, 1, vu->amb);
     for (int c = 0; c < 2; ++c) {

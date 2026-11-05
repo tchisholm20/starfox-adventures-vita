@@ -44,7 +44,12 @@
 
 #define ARM_FILE        "ux0:data/stairfax/gxm_arm.txt"
 #define RINGS_FILE      "ux0:data/stairfax/gxm_rings.txt"
-#define COPYFILTER_FILE "ux0:data/stairfax/copyfilter_off.txt"
+/* COPY FILTER (FIX B: the game's sampler on copy textures + the copy-format quantiser) DEFAULT ON for GXM since 2026-11-01. v0.1.0/v0.1.1 installed
+ * copyfilter_off.txt = 1 on every card ("built, OFF", never judged), so copy textures sampled LINEAR whatever the game asked; the shadow cast texture
+ * is a BIT FIELD the game samples NEAREST (newshadows.c textureAlloc min/mag 0), and LINEAR made stray shadow dots. Hw ThornTail shots (eboot 803d9a73,
+ * prof_20261101): dots gone with the filter on; cost +0.2 ms R / +0.7 ms GPU cross-boot (indicative). The old marker is
+ * therefore IGNORED (it is on every installed card); copyfilter_old.txt = '1' is the way back. */
+#define COPYFILTER_FILE "ux0:data/stairfax/copyfilter_old.txt"
 #define NOTIF_SLOT_V    100           /* notification region slots (rhi_gxm.c M1 used 100 for its single fence) */
 #define NOTIF_SLOT_F    101
 #define SMOKE_MS        3000u
@@ -462,6 +467,7 @@ static int read_small(const char *path, char *buf, int cap);
 #define GG_N 8192u
 static volatile uint32_t gg_sub[GG_N], gg_done[GG_N]; static volatile uint8_t gg_kind[GG_N];
 volatile uint32_t g_gg_dur[GG_N];   /* per scene seq: GPU us (the copy log prints one frame of them) */
+volatile uint32_t g_gg_busy_total_us;   /* 2026-11-03: cumulative GPU busy (modular u32), the same figure gg_poll adds to `busy`; vita_tool_main.c's frames_log.inc reads its per-present delta */
 char g_gxm_end_kind;   /* set by the target module before each end_scene: m main, c copy, d display */
 static volatile int gg_on, gg_quit; static SceUID gg_tid = -1;
 static int gg_poll(SceSize a, void *b)
@@ -479,7 +485,7 @@ static int gg_poll(SceSize a, void *b)
             while (last != v) {
                 ++last; gg_done[last % GG_N] = now;
                 if (done0) { const uint32_t st = gg_sub[last % GG_N], prev = gg_done[(last - 1u) % GG_N];
-                             const uint32_t start = (int32_t) (st - prev) > 0 ? st : prev; busy += (uint32_t) (now - start); ++nsc;
+                             const uint32_t start = (int32_t) (st - prev) > 0 ? st : prev; busy += (uint32_t) (now - start); g_gg_busy_total_us += (uint32_t) (now - start); ++nsc;
                              const uint8_t kc = gg_kind[last % GG_N]; const int ki = kc == 'm' ? 0 : kc == 'c' ? 1 : kc == 'd' ? 2 : 3;
                              bk[ki] += (uint32_t) (now - start); ++nk[ki]; g_gg_dur[last % GG_N] = (uint32_t) (now - start); }
                 done0 = 1;
@@ -832,7 +838,7 @@ int gxm_frame_init(const RhiCreateInfo *info)
     }
     {   const int n = read_small(COPYFILTER_FILE, mb, sizeof mb);
         g_gx.copyfilter_on = !(n > 0 && mb[0] == '1');
-        gxm_log("[gxm] copy filter %s (copyfilter_off.txt %s)", g_gx.copyfilter_on ? "ON" : "OFF", n >= 0 ? "present" : "absent");
+        gxm_log("[gxm] copy filter %s (copyfilter_old.txt %s; copyfilter_off.txt is ignored since 2026-11-01)", g_gx.copyfilter_on ? "ON" : "OFF", n >= 0 ? "present" : "absent");
     }
 
     /* ---- sceGxmInitialize ---- */
@@ -1088,6 +1094,7 @@ void gxm_frame_present_end(int presented_ok)
     if (presented_ok) { if (g_gx.arm & GXM_ARM_NOPRESENT) ++t_present_skipped; else ++g_gx.queued; }
     ++g_gx.frames;
     if (!g_gx.dead) defer_poll(0);          /* dead: the GPU may still read what is queued */
+    rhi_gxm_keys_tick();                    /* the shader key log / harvest replay (rhi_gxm_shader.c): once per present, on the thread that draws (NOT rhi_gxm_asc_tick: G calls that) */
 
     if (g_gx.frames % PERIOD == 0) { periodic_line(); acct_line(""); }
     if (g_gx.frames % MEM_PERIOD == 0) mem_line("periodic");

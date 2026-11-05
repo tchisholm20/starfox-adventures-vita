@@ -1030,11 +1030,53 @@
    {
     "bytes": 2,
     "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
     "off": 44,
     "path": "DIMbossPlacementView.eventId"
    }
   ],
-  "how": "INFERRED from anim.placement casts (DLL 480)",
+  "how": "INFERRED from anim.placement casts (DLL 480) + also: DLL 480 Galdon: eventId @0x2c already swaps",
   "size": 48,
   "tu": "src/dlls/objects/480_DIM_Boss/DIM_Boss.c",
   "type": "DIMbossPlacementView"
@@ -1066,11 +1108,53 @@
    {
     "bytes": 2,
     "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
     "off": 44,
     "path": "DIMbosstonsilPlacementView.eventId"
    }
   ],
-  "how": "INFERRED from anim.placement casts (DLL 482)",
+  "how": "INFERRED from anim.placement casts (DLL 482) + also: DLL 482: eventId @0x2c already swaps",
   "size": 48,
   "tu": "src/dlls/objects/482_DIM_BossTon/DIM_BossTon.c",
   "type": "DIMbosstonsilPlacementView"
@@ -2272,6 +2356,12 @@
    {
     "bytes": 2,
     "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
     "off": 26,
     "path": "const LightfootPlacement.?{union}"
    },
@@ -2284,11 +2374,41 @@
    {
     "bytes": 2,
     "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "respawnDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
     "off": 48,
     "path": "const LightfootPlacement.activeGameBit"
    }
   ],
-  "how": "typed parameter",
+  "how": "typed parameter + also: DLL 437: 0x1a/0x1c/0x30 already swap",
   "size": 52,
   "tu": "src/dlls/objects/437/437.c",
   "type": "const LightfootPlacement"
@@ -5958,6 +6078,42 @@
    {
     "bytes": 2,
     "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
     "off": 36,
     "path": "DllCBPlacement.trackYieldId"
    },
@@ -5968,23 +6124,121 @@
     "path": "DllCBPlacement.gameBitId"
    }
   ],
-  "how": "typed parameter",
+  "how": "typed parameter + also: DLL 203: trackYieldId @0x24 and gameBitId @0x2c already swap",
   "size": 48,
   "tu": "src/dlls/objects/203/203.c",
   "type": "DllCBPlacement"
  },
  "dll_CE_init": {
   "bitfields": [],
-  "fields": [],
-  "how": "typed parameter",
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "respawnDelay"
+   }
+  ],
+  "how": "typed parameter + also: DLL 206, 48 bytes",
   "size": 48,
   "tu": "src/dlls/objects/206/206.c",
   "type": "DllCEPlacement"
  },
  "dll_D3_init": {
   "bitfields": [],
-  "fields": [],
-  "how": "typed parameter",
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "respawnDelay"
+   }
+  ],
+  "how": "typed parameter + also: DLL 211, 48 bytes",
   "size": 48,
   "tu": "src/dlls/objects/211/211.c",
   "type": "DllD3Placement"
@@ -6894,8 +7148,57 @@
  },
  "kaldachom_init": {
   "bitfields": [],
-  "fields": [],
-  "how": "typed parameter",
+  "fields": [
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "respawnDelay"
+   }
+  ],
+  "how": "typed parameter + also: DLL 213, 48 bytes",
   "size": 48,
   "tu": "src/dlls/objects/213_Kaldachom/Kaldachom.c",
   "type": "KaldachomPlacement"
@@ -6946,6 +7249,60 @@
   "bitfields": [],
   "fields": [
    {
+    "bytes": 2,
+    "float": false,
+    "off": 24,
+    "path": "gameBitA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 26,
+    "path": "gameBitC"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 28,
+    "path": "gameBitD"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 30,
+    "path": "soundIdB"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 32,
+    "path": "soundIdA"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 34,
+    "path": "triggerId"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 36,
+    "path": "unk24"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 44,
+    "path": "respawnDelay"
+   },
+   {
+    "bytes": 2,
+    "float": false,
+    "off": 48,
+    "path": "gameBitB"
+   },
+   {
     "bytes": 4,
     "float": true,
     "off": 56,
@@ -6964,7 +7321,7 @@
     "path": "KtrexPlacement.laneSpeeds[2]"
    }
   ],
-  "how": "override: DLL 592: reads ((KtrexPlacement*)p)->laneSpeeds[], p = obj->anim.placementData, so no direct cast for the generator to see",
+  "how": "override: DLL 592: reads ((KtrexPlacement*)p)->laneSpeeds[], p = obj->anim.placementData, so no direct cast for the generator to see + also: DLL 592, 68 bytes: laneSpeeds @0x38.. already swap",
   "size": 68,
   "tu": "src/dlls/objects/592_KT_Rex/KT_Rex.c",
   "type": "KtrexPlacement"

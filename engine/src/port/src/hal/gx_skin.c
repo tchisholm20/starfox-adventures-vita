@@ -1,6 +1,10 @@
 // gx_skin.c -- R8 GPU skinning, T1 (host/engine/R8_GPUSKIN.md): skin table, palette pack, reference of the VS math, S3 dump.
 // Proved bit-for-bit against the REAL kernels (hal/model_asm_twins.c) by host/tests/gx_skin_test.c.
+#include <stdio.h>
+FILE* stfxMarkerOpen(const char* name) __attribute__((weak));   /* gx_draw.c (RC6): absent markers cost no card I/O */
+static FILE* stfxMk(const char* name) { if (stfxMarkerOpen) return stfxMarkerOpen(name); { char p[96]; snprintf(p, sizeof p, "ux0:data/stairfax/%s", name); return fopen(p, "r"); } }   /* host tests link no gx_draw.c */
 #include "port/gx_skin.h"
+#include "port/gx_tev_key.h"   /* VS_SKIN_MAX_BONES / VS_SKIN_PAL_VEC4: R8b ext bits and the HAL helpers below */
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -76,6 +80,11 @@ void gx_skin_ref_nrm(const GxSkinTable* t, const float* palette, u32 idx, const 
     for (k = 0; k < 3; k++) { outQ[k] = (s8)q[k]; outF[k] = q[k] * inv; }
 }
 
+void gx_skin_ref_nrm_nbt(const GxSkinTable* t, const float* palette, u32 idx, const u8* src, float outF[9], s8 outQ[9]) {
+    int v;
+    for (v = 0; v < 3; v++) gx_skin_ref_nrm(t, palette, idx, src + 3 * v, outF + 3 * v, outQ + 3 * v);   /* 2026-11-03 R8b: the kernel runs the SAME body on N, B, T with ONE weight pair and ONE matrix pair */
+}
+
 /* ---------------- palette ---------------- */
 int gx_skin_palette_pack(const GxSkinTable* t, const void* boneMtxBuffer, float* out) {
     int s, r, c;
@@ -95,19 +104,25 @@ static u32 vbyte(u32 v, u32 stride) { return v * stride; }
 /* owner: 0 untouched, 0xFFFFFFFF raw block copy of the source, i+1 = transformed by chunk i; rel = byte offset inside that chunk's run */
 typedef struct { u32 owner; u32 rel; } Own;
 
+/* 2026-11-03 R8b refusal probe: hw 57c40de1 at Galdon showed model 0084 never building a table (refused table 60/60, ext 0) for an
+   unrecorded reason.  Every ADDR refusal records its source line; gx_skin_table_get prints one [r8-ref] line per refused model. */
+int gx_skin_nbt_strict;   /* gx_skin.h: 0 = NBT raw-restored bytes are skinned (counted in nbtRaw) */
+static int sRefLine, sRefStream;
+static struct { u32 v, first, j, o, rel, ownJ, relJ, n; } sRefAt;   /* the triplet / vertex that failed the ownership check, and who owns its byte j */
+#define REF_ADDR (sRefLine = __LINE__, GX_SKIN_REFUSE_ADDR)
 static int build_stream(const ModelVtxAnimJob* job, u32 count, u32 stride, GxSkinEntry* ent, u8* slotOf, GxSkinTable* t) {
     u32 total = count * stride, i, v, j, b;
     Own* ow;
     int why = GX_SKIN_OK;
-    if (count == 0) return GX_SKIN_REFUSE_ADDR;
+    if (count == 0) return REF_ADDR;
     ow = (Own*)calloc(total ? total : 1, sizeof(Own));
-    if (!ow) return GX_SKIN_REFUSE_ADDR;
+    if (!ow) return REF_ADDR;
     for (v = 0; v < count; v++) { ent[v].a = ent[v].b = GX_SKIN_NONE; ent[v].w0 = ent[v].w1 = 0; }
     for (i = 0; i < job->chunkCount && why == GX_SKIN_OK; i++) {
         const ModelVtxAnimChunk* c = &job->chunks[i];
         u32 blockBytes = (u32)c->vtxBlocks * BLOCK, run = (u32)c->vtxCount * stride, dst = c->dstByteOffset;
-        if (c->srcDataOffset < 0 || dst + run > blockBytes) { why = GX_SKIN_REFUSE_ADDR; break; }
-        if (c->vtxCount && (!c->weightStream || 2u * c->vtxCount > (u32)c->weightBlocks * BLOCK)) { why = GX_SKIN_REFUSE_ADDR; break; }
+        if (c->srcDataOffset < 0 || dst + run > blockBytes) { why = REF_ADDR; break; }
+        if (c->vtxCount && (!c->weightStream || 2u * c->vtxCount > (u32)c->weightBlocks * BLOCK)) { why = REF_ADDR; break; }
         for (b = 0; b < blockBytes; b++) {
             u32 a = (u32)c->srcDataOffset + b;
             if (a >= total) break;
@@ -122,21 +137,27 @@ static int build_stream(const ModelVtxAnimJob* job, u32 count, u32 stride, GxSki
         o = ow[first].owner;
         if (o == 0 || o == 0xFFFFFFFFu) {                       /* untouched or raw copy of the source: unskinned */
             for (j = 0; j < stride; j++)
-                if (ow[first + j].owner != 0 && ow[first + j].owner != 0xFFFFFFFFu) { why = GX_SKIN_REFUSE_ADDR; break; }
+                if (ow[first + j].owner != 0 && ow[first + j].owner != 0xFFFFFFFFu) { why = REF_ADDR; break; }
         } else {
             const ModelVtxAnimChunk* c = &job->chunks[o - 1];
             u32 rel = ow[first].rel;
             u8 idxs[2], sl[2], slotA, slotB;
             GxSkinEntry e;
             int w;
-            if (rel % stride) { why = GX_SKIN_REFUSE_ADDR; break; }
+            if (rel % stride) { why = REF_ADDR; sRefAt.v = v; sRefAt.first = first; sRefAt.j = 0; sRefAt.o = o; sRefAt.rel = rel; sRefAt.ownJ = o; sRefAt.relJ = rel; break; }
+            /* 2026-11-03 R8b (hw 88637007, Galdon model 0054): the game's NBT chunks overlap -- chunk 32 skins triplet 3000 (bytes 27000..27008) and the
+               NEXT chunk's 32-byte block copy then writes the rest-pose byte back over 27008 (T.z), on the GameCube as here.  A table entry cannot say
+               "skinned except one byte", so for NBT ONLY a triplet whose first byte is owned by chunk o is skinned whole by o, and every byte a later raw
+               block copy restored is counted in t->nbtRaw (the GPU then differs from the CPU blend in exactly those bytes: tangent / binormal components,
+               which feed only bump lighting).  Plain normals and positions keep the strict check, so every non-NBT table is unchanged. */
             for (j = 0; j < stride; j++)
-                if (ow[first + j].owner != o || ow[first + j].rel != rel + j) { why = GX_SKIN_REFUSE_ADDR; break; }
+                if (stride == 9 && j > 0 && ow[first + j].owner == 0xFFFFFFFFu && !gx_skin_nbt_strict) ++t->nbtRaw;
+                else if (ow[first + j].owner != o || ow[first + j].rel != rel + j) { why = REF_ADDR; sRefAt.v = v; sRefAt.first = first; sRefAt.j = j; sRefAt.o = o; sRefAt.rel = rel; sRefAt.ownJ = ow[first + j].owner; sRefAt.relJ = ow[first + j].rel; break; }
             if (why != GX_SKIN_OK) break;
             idxs[0] = c->mtxIdxA; idxs[1] = c->mtxIdxB;
             for (w = 0; w < 2; w++) {
                 if (slotOf[idxs[w]] == GX_SKIN_NONE) {
-                    if (t->nb >= GX_SKIN_MAX_BONES) { why = GX_SKIN_REFUSE_BONES; break; }
+                    if (t->nb >= GX_SKIN_MAX_BONES) { why = GX_SKIN_REFUSE_BONES; sRefLine = __LINE__; break; }
                     t->bones[t->nb] = idxs[w]; slotOf[idxs[w]] = t->nb++;
                 }
                 sl[w] = slotOf[idxs[w]];
@@ -162,30 +183,33 @@ GxSkinTable* gx_skin_table_build(const ModelFileHeader* m, int* whyOut) {
     u8 slotOf[256];
     int why = GX_SKIN_OK, hasP = m->vertexAnimJob.chunkCount != 0, hasN = m->normalAnimJob.chunkCount != 0;
     if (whyOut) *whyOut = GX_SKIN_OK;
+    sRefLine = 0; sRefStream = 0;
     if (!hasP && !hasN) why = GX_SKIN_REFUSE_NOJOBS;
-    else if (hasN && (m->flags24 & MODEL_FLAGS24_NBT_NORMALS)) why = GX_SKIN_REFUSE_NBT;
-    else if ((hasP && (m->vertexAnimJob.quantShift & 0x3f) > 30) || (hasN && (m->normalAnimJob.quantShift & 0x3f) > 30)) why = GX_SKIN_REFUSE_ADDR;
+    else if ((hasP && (m->vertexAnimJob.quantShift & 0x3f) > 30) || (hasN && (m->normalAnimJob.quantShift & 0x3f) > 30)) why = REF_ADDR;
     t = (GxSkinTable*)calloc(1, sizeof(*t));
     if (!t) { if (whyOut) *whyOut = GX_SKIN_REFUSE_ADDR; return NULL; }
     t->key = m; t->id = mint_table_id(); t->vertices = (const void*)m->vertices; t->normals = (const void*)m->normals;
     memset(slotOf, GX_SKIN_NONE, sizeof(slotOf));
+    t->nrmStride = 3;
+    if (hasN && (m->flags24 & MODEL_FLAGS24_NBT_NORMALS)) { t->nrmStride = 9; t->ext |= GX_SKIN_EXT_NBT; }   /* R8b: one entry per NBT triplet (= per NRM index); chunk vtxCount counts triplets */
     if (why == GX_SKIN_OK && hasP) {
         t->nPos = m->vertexCount;
         t->posQ = (u8)(m->vertexAnimJob.quantShift & 0x3f);
         t->pos = (GxSkinEntry*)calloc(t->nPos ? t->nPos : 1, sizeof(GxSkinEntry));
-        why = t->pos ? build_stream(&m->vertexAnimJob, t->nPos, 6, t->pos, slotOf, t) : GX_SKIN_REFUSE_ADDR;
+        sRefStream = 1; why = t->pos ? build_stream(&m->vertexAnimJob, t->nPos, 6, t->pos, slotOf, t) : REF_ADDR;
     }
     if (why == GX_SKIN_OK && hasN) {
         t->nNrm = m->normalCount;
         t->nrmQ = (u8)(m->normalAnimJob.quantShift & 0x3f);
         t->nrm = (GxSkinEntry*)calloc(t->nNrm ? t->nNrm : 1, sizeof(GxSkinEntry));
-        why = t->nrm ? build_stream(&m->normalAnimJob, t->nNrm, 3, t->nrm, slotOf, t) : GX_SKIN_REFUSE_ADDR;
+        sRefStream = 2; why = t->nrm ? build_stream(&m->normalAnimJob, t->nNrm, t->nrmStride, t->nrm, slotOf, t) : REF_ADDR;
     }
     if (why != GX_SKIN_OK) {
         gx_skin_table_free(t);
         if (whyOut) *whyOut = why;
         return NULL;
     }
+    if (t->nb > VS_SKIN_MAX_BONES) t->ext |= GX_SKIN_EXT_BONES;   /* the draw palette's slot count */
     /* a stream without chunks: one NONE entry so the reference always has an array to index */
     if (!t->pos) { t->pos = (GxSkinEntry*)calloc(1, sizeof(GxSkinEntry)); if (t->pos) t->pos[0].a = t->pos[0].b = GX_SKIN_NONE; }
     if (!t->nrm) { t->nrm = (GxSkinEntry*)calloc(1, sizeof(GxSkinEntry)); if (t->nrm) t->nrm[0].a = t->nrm[0].b = GX_SKIN_NONE; }
@@ -322,7 +346,29 @@ const GxSkinTable* gx_skin_table_get(const ModelFileHeader* m, int* why) {
         u32 k, ps = 0, pb = 0, ns = 0, nbad = 0, mx = 0;
         for (k = 0; k < t->nPos; k++) if (t->pos[k].a != GX_SKIN_NONE) { ++ps; if (t->pos[k].w0 + t->pos[k].w1 != 128) ++pb; if (t->pos[k].a > mx) mx = t->pos[k].a; if (t->pos[k].b > mx) mx = t->pos[k].b; }
         for (k = 0; k < t->nNrm; k++) if (t->nrm[k].a != GX_SKIN_NONE) { ++ns; if (t->nrm[k].w0 + t->nrm[k].w1 != 128) ++nbad; if (t->nrm[k].a > mx) mx = t->nrm[k].a; if (t->nrm[k].b > mx) mx = t->nrm[k].b; }
-        printf("[r8-tab] model %04x nb %u: pos skinned %u (w-sum != 128: %u), nrm skinned %u (w-sum != 128: %u), max slot %u\n", (unsigned) m->modelId, (unsigned) t->nb, (unsigned) ps, (unsigned) pb, (unsigned) ns, (unsigned) nbad, (unsigned) mx);
+        printf("[r8-tab] model %04x nb %u: pos skinned %u (w-sum != 128: %u), nrm skinned %u (w-sum != 128: %u), max slot %u | nbt raw bytes %u\n", (unsigned) m->modelId, (unsigned) t->nb, (unsigned) ps, (unsigned) pb, (unsigned) ns, (unsigned) nbad, (unsigned) mx, (unsigned) t->nbtRaw);
+    }
+    if (!t) {   /* R8b refusal probe: one line per refused model (at most 32 per boot) */
+        static u32 nRef;
+        if (nRef++ < 32) printf("[r8-ref] model %04x why %d (1 NBT 2 BONES 3 ADDR 4 NOJOBS) at gx_skin.c:%d stream %d (1 pos 2 nrm) | nbt %d | pos chunks %u q %u verts %u | nrm chunks %u q %u normals %u\n",
+            (unsigned) m->modelId, w, sRefLine, sRefStream, (m->flags24 & MODEL_FLAGS24_NBT_NORMALS) != 0, (unsigned) m->vertexAnimJob.chunkCount, (unsigned) (m->vertexAnimJob.quantShift & 0x3f),
+            (unsigned) m->vertexCount, (unsigned) m->normalAnimJob.chunkCount, (unsigned) (m->normalAnimJob.quantShift & 0x3f), (unsigned) m->normalCount);
+        if (nRef <= 32 && sRefLine >= 140 && sRefLine <= 150 && sRefStream) {   /* the ownership check: which chunks claim the failing entry */
+            const ModelVtxAnimJob* jb = sRefStream == 1 ? &m->vertexAnimJob : &m->normalAnimJob;
+            u32 k, ks[2]; ks[0] = sRefAt.o; ks[1] = sRefAt.ownJ;
+            printf("[r8-ref]   entry %u bytes %u.. owner chunk %u rel %u | byte +%u owner %u%s rel %u\n", (unsigned) sRefAt.v, (unsigned) sRefAt.first, (unsigned) sRefAt.o - 1, (unsigned) sRefAt.rel,
+                   (unsigned) sRefAt.j, (unsigned) sRefAt.ownJ - 1, sRefAt.ownJ == 0 ? " (untouched)" : sRefAt.ownJ == 0xFFFFFFFFu ? " (raw block copy)" : "", (unsigned) sRefAt.relJ);
+            for (k = 0; k < 2; k++) if (ks[k] != 0 && ks[k] != 0xFFFFFFFFu && ks[k] <= jb->chunkCount && (k == 0 || ks[1] != ks[0])) {
+                const ModelVtxAnimChunk* c = &jb->chunks[ks[k] - 1];
+                printf("[r8-ref]   chunk %u: src %d dst %u vtxCount %u vtxBlocks %u (run %u of %u bytes) mtx %u/%u\n", (unsigned) ks[k] - 1, (int) c->srcDataOffset, (unsigned) c->dstByteOffset,
+                       (unsigned) c->vtxCount, (unsigned) c->vtxBlocks, (unsigned) c->vtxCount * (sRefStream == 1 ? 6u : (m->flags24 & MODEL_FLAGS24_NBT_NORMALS) ? 9u : 3u), (unsigned) c->vtxBlocks * 32u, (unsigned) c->mtxIdxA, (unsigned) c->mtxIdxB);
+            }
+            for (k = 0; k < jb->chunkCount && k < 6; k++) {   /* the first chunks: are the dst runs 9-aligned in the output buffer? */
+                const ModelVtxAnimChunk* c = &jb->chunks[k];
+                printf("[r8-ref]   chunk %u: src %d dst %u vtxCount %u vtxBlocks %u -> out bytes %d..%d\n", (unsigned) k, (int) c->srcDataOffset, (unsigned) c->dstByteOffset, (unsigned) c->vtxCount,
+                       (unsigned) c->vtxBlocks, (int) c->srcDataOffset + c->dstByteOffset, (int) c->srcDataOffset + c->dstByteOffset + (int) c->vtxCount * 9);
+            }
+        }
     }
     if (!e) e = ent_new(m);
     if (!e) { if (t) retire_table(t); if (why) *why = GX_SKIN_REFUSE_ADDR; return NULL; }   /* out of memory: never hand out a table nothing can retire later */
@@ -351,7 +397,7 @@ void gx_skin_note_cpu_user(const ModelFileHeader* m) {
     if (!e) return;
     sLastMarked = m;
     if (e->cpuUse) return;
-    if (e->gets) printf("[r8-cpu] model %04x marked CPU vtxBuf user after %u GPU-skinned frames\n", (unsigned) m->modelId, (unsigned) e->gets);
+    { static u32 nCpu; if (e->gets || nCpu++ < 16) printf("[r8-cpu] model %04x marked CPU vtxBuf user after %u GPU-skinned frames\n", (unsigned) m->modelId, (unsigned) e->gets); }   /* R8b probe: also when it never GPU-skinned (a CPUUSE refusal is otherwise silent) */
     e->cpuUse = 1;
     ent_drop_table(e);   /* G stops handing it out; objprint's slot sees it dead through gx_skin_table_alive, and the free is deferred */
 }
@@ -432,7 +478,7 @@ void gx_skin_dump_once(const ModelFileHeader* m, const u8* outVtx, const u8* out
     FILE* f;
     if (armed == 0) return;
     if (armed < 0) {
-        f = fopen("ux0:data/stairfax/skin_dump.txt", "rb");
+        f = stfxMk("skin_dump.txt");
         armed = f != NULL;
         if (f) fclose(f);
         if (!armed) return;
@@ -458,7 +504,7 @@ int gGxSkinOn;
 u32 gGxSkinCtr[GXSK_N];
 void GXStfxSkinBind(const GxSkinTable* t, const f32* palette, u32 nb)
 {
-    if (!t || !palette || nb == 0 || nb > GX_SKIN_MAX_BONES || nb != t->nb) { gGxSkin.t = NULL; gGxSkin.nb = 0; }
+    if (!t || !palette || nb == 0 || nb > GX_SKIN_MAX_BONES || nb != t->nb) {   /* R8b: 128 (the table's own cap), not the VS's 32: the HAL refuses what it cannot draw (gx_skin_vs_palette / gx_skin_hal_attr) */ gGxSkin.t = NULL; gGxSkin.nb = 0; }
     else { ++gGxSkinCtr[GXSK_BINDS]; gGxSkinCtr[GXSK_PAL_BYTES] += nb * 48u; gGxSkin.t = t; gGxSkin.nb = nb; memcpy(gGxSkin.pal, palette, (size_t) nb * 12u * sizeof(float)); }
     ++gGxSkin.serial;
 }
@@ -466,8 +512,6 @@ void GXStfxSkinBind(const GxSkinTable* t, const f32* palette, u32 nb)
 /* ---------------- R8 T2a: the HAL side (declared in port/gx_tev_key.h) ----------------
    Pure helpers, so host/tests/gx_skin_test.c can hold them to the real data and mutate them: what a skinned mesh vertex carries (aSk), when a mesh
    may be reused, which arrays a list must read, and the uTMX image the backend uploads.  gx_draw.c calls these; it does not repeat their rules. */
-#include "port/gx_tev_key.h"
-
 const struct GxSkinTable* gx_skin_hal_table(const void* posBase)
 {
     const GxSkinTable* t = gGxSkin.t;
@@ -501,22 +545,88 @@ int gx_skin_hal_attr(const struct GxSkinTable* tt, uint32_t pi, uint32_t ni, int
     return 1;
 }
 
+/* 2026-11-03, R8b T2: the table slots of one record -> local slots 0..31 (gx_skin.h).  gx_skin_hal_attr above answers in TABLE slots (no 32 limit now); the draw side never writes those into aSk for a table of > 32 bones. */
+int gx_skin_hal_map(const GxSkinTable* t, const u32* fidx, u32 ndist, int hasNrm, u8* n, u8* list)
+{
+    u8 inv[GX_SKIN_MAX_BONES];
+    u32 d, cnt = 0, s;
+    int tooMany = 0;
+    if (t->nb <= VS_SKIN_MAX_BONES) { for (s = 0; s < t->nb; s++) list[s] = (u8)s; *n = t->nb; return 1; }   /* identity: a hub model's bytes do not change */
+    memset(inv, 0xFF, sizeof inv);
+    for (d = 0; d < ndist; d++) {
+        const GxSkinEntry* e[2]; int ne = 0, q;
+        if (fidx[2 * d] >= t->nPos) return 0;
+        e[ne++] = &t->pos[fidx[2 * d]];
+        if (hasNrm) { if (fidx[2 * d + 1] >= t->nNrm) return 0; e[ne++] = &t->nrm[fidx[2 * d + 1]]; }
+        for (q = 0; q < ne; q++) {
+            u32 w;
+            if (e[q]->a == GX_SKIN_NONE) continue;   /* an unskinned entry names no bone (its b is NONE too) */
+            for (w = 0u; w < 2u; w++) {
+                const u8 slot = w ? e[q]->b : e[q]->a;
+                if (slot == GX_SKIN_NONE) continue;
+                if (slot >= t->nb) return 0;
+                if (inv[slot] != 0xFF) continue;
+                if (cnt >= VS_SKIN_MAX_BONES) { tooMany = 1; continue; }   /* keep scanning: an index outside the table is the stronger verdict */
+                inv[slot] = (u8)cnt; list[cnt++] = slot;
+            }
+        }
+    }
+    *n = (u8)cnt;
+    return tooMany ? 2 : 1;
+}
+
+int gx_skin_hal_attr_local(const GxSkinTable* t, uint32_t pi, uint32_t ni, int hasNrm, uint8_t out[8], uint32_t n, const uint8_t* list)
+{
+    static const int q[4] = { 0, 1, 4, 5 };
+    int i;
+    if (!gx_skin_hal_attr(t, pi, ni, hasNrm, out)) return 0;
+    if (t->nb <= VS_SKIN_MAX_BONES) return 1;   /* identity */
+    for (i = 0; i < 4; i++) {
+        u32 j;
+        if (out[q[i]] == GX_SKIN_NONE) continue;
+        for (j = 0; j < n && list[j] != out[q[i]]; j++) {}
+        if (j == n) return 0;   /* a slot the record's map does not hold: the map was built for other vertices */
+        out[q[i]] = (u8)j;
+    }
+    return 1;
+}
+
+u32 gx_skin_hal_nrm_stride(const GxSkinTable* t) { return t->nrmStride; }
+void gx_skin_hal_bones(void) { ++gGxSkinCtr[GXSK_REF_BONES]; }
+
 int gx_skin_mesh_reusable_id(uint32_t meshId, uint32_t wantId)
 {
     return meshId == wantId;   /* ids are never reused; a table POINTER can be (freed, then a new table lands at the same address) and would reuse a mesh built for the old one */
 }
 
+u32 gGxSkinPalGather;
+static const u8* sSelList;   /* gx_skin_vs_select: the draw's local->table slot list (NULL = the bound palette as it is) */
+static u32 sSelN;
+void gx_skin_vs_select(const u8* list, u32 n) { sSelList = list; sSelN = list ? n : 0; }
 const float* gx_skin_vs_palette(void)
 {
     static float img[4 * VS_SKIN_PAL_VEC4];
-    static u32 serial = ~0u;
+    static u32 serial = ~0u, gn = ~0u;
+    static u8 gl[VS_SKIN_MAX_BONES];
     static const GxSkinTable* tab;
     const GxSkinTable* t = gGxSkin.t;
+    const u8* sel = sSelList; const u32 sn = sel ? sSelN : ~0u;
     if (!t) return NULL;
-    if (serial != gGxSkin.serial || tab != t) {
-        const u32 nf = gGxSkin.nb * 12u;
+    /* R8b T2 (B2): a draw with a selection gets the rows of ITS local slots gathered from the bound palette (<= 32 of them, whatever the table's size); cached on (table, bind serial, list).  Without one the bound palette
+       is copied as it is, and only a table of <= 32 bones can be: the image holds 32 slots, copying more would overrun it -> NULL, the HAL takes its CPU fallback. */
+    if (sel ? sn > VS_SKIN_MAX_BONES : gGxSkin.nb > VS_SKIN_MAX_BONES) return NULL;
+    if (serial != gGxSkin.serial || tab != t || gn != sn || (sel && memcmp(gl, sel, sn))) {
+        const u32 nf = (gGxSkin.nb > VS_SKIN_MAX_BONES ? VS_SKIN_MAX_BONES : gGxSkin.nb) * 12u;   /* (defence in depth: the guard above already returned NULL for a bind of more) */
         memset(img, 0, sizeof img);
-        memcpy(img, gGxSkin.pal, (size_t)nf * sizeof(float));
+        if (sel) {
+            u32 i;
+            for (i = 0; i < sn; i++) {
+                if (sel[i] >= gGxSkin.nb) { serial = ~0u; return NULL; }   /* a list naming a slot the bound palette does not have */
+                memcpy(img + 12u * i, gGxSkin.pal + 12u * sel[i], 12u * sizeof(float));
+            }
+            memcpy(gl, sel, sn);
+        } else memcpy(img, gGxSkin.pal, (size_t)nf * sizeof(float));
+        gn = sn; ++gGxSkinPalGather;
         img[4 * (VS_SKIN_PAL_VEC4 - 1) + 0] = skin_scale(t->posQ);
         img[4 * (VS_SKIN_PAL_VEC4 - 1) + 1] = 1.0f / skin_scale(t->posQ);
         img[4 * (VS_SKIN_PAL_VEC4 - 1) + 2] = skin_scale(t->nrmQ);
@@ -541,8 +651,8 @@ int gx_skin_fallback_fill(const GxSkinTable* tc, const void* nrmBase, const u8**
     if (!t) return 0;
     fp = (const u8*)t->vertices; fn = (const u8*)t->normals;
     if (gGxSkin.t != tc || !t->nPos || !fp) return 0;
-    if (!t->fb) { t->fb = (u8*)malloc((size_t)t->nPos * 6u + (size_t)t->nNrm * 3u); if (!t->fb) return 0; t->fbId = 0; }
-    dp = t->fb; dn = t->fb + (size_t)t->nPos * 6u;
+    if (!t->fb) { t->fb = (u8*)malloc((size_t)t->nPos * 6u + (size_t)t->nNrm * t->nrmStride); if (!t->fb) return 0; t->fbId = 0; }
+    dp = t->fb; dn = t->fb + (size_t)t->nPos * 6u;   /* R8b: the normal copy is nNrm * nrmStride bytes (9 per triplet for NBT) */
     if (t->fbId != t->id || t->fbSerial != gGxSkin.serial) {
         for (i = 0; i < t->nPos; i++) {
             float f[3]; s16 q[3];
@@ -552,9 +662,10 @@ int gx_skin_fallback_fill(const GxSkinTable* tc, const void* nrmBase, const u8**
             dp[6 * i + 4] = (u8)((u16)q[2] >> 8); dp[6 * i + 5] = (u8)q[2];
         }
         if (t->nNrm && fn) for (i = 0; i < t->nNrm; i++) {
-            float f[3]; s8 q[3];
-            gx_skin_ref_nrm(t, gGxSkin.pal, i, fn + (size_t)i * 3u, f, q);
-            dn[3 * i] = (u8)q[0]; dn[3 * i + 1] = (u8)q[1]; dn[3 * i + 2] = (u8)q[2];
+            float f[9]; s8 q[9]; u32 k;
+            if (t->nrmStride == 9) gx_skin_ref_nrm_nbt(t, gGxSkin.pal, i, fn + (size_t)i * 9u, f, q);
+            else gx_skin_ref_nrm(t, gGxSkin.pal, i, fn + (size_t)i * 3u, f, q);
+            for (k = 0; k < t->nrmStride; k++) dn[(size_t)i * t->nrmStride + k] = (u8)q[k];
         }
         t->fbId = t->id; t->fbSerial = gGxSkin.serial; ++gGxSkinFb[1];
     }
@@ -566,6 +677,43 @@ u32 gGxSkinWhy[32];   /* R8 instrument: refusal reasons (gx_draw.c dlkSkinPrep c
 void gx_skin_hal_why(int w) { ++gGxSkinWhy[(unsigned) w & 31u]; }
 void gx_skin_hal_draw(void) { ++gGxSkinCtr[GXSK_DRAWS]; }
 
+/* R8b switch (2026-11-03; gx_skin.h): marker ux0:data/stairfax/skin_ext.txt, read once.  "1" on; absent / "0" / anything else off; "ab <N>" on/off alternating
+   every N presents (N rounded UP to a multiple of 60, ON first) by the weak rhi_vita_presents the HAL already counts (gx_draw.c copyNow). */
+extern int rhi_vita_presents __attribute__((weak));
+static int sExtMode = -2;        /* -2 marker not read; 0 off, 1 on, 2 ab */
+static u32 sExtN;                /* ab: presents per arm, a multiple of 60 */
+static u32 ext_round(u32 n) { return n < 60u ? 60u : (n + 59u) / 60u * 60u; }
+void gx_skin_ext_set(int mode, u32 n) { sExtMode = mode < 0 ? -2 : mode; sExtN = ext_round(n); }
+int gx_skin_ext_parse(const char* b, u32* n) {
+    unsigned v = 0; int len;
+    while (*b == ' ' || *b == '\t') ++b;
+    len = (int) strlen(b);
+    while (len > 0 && (b[len - 1] == '\n' || b[len - 1] == '\r' || b[len - 1] == ' ' || b[len - 1] == '\t')) --len;
+    if (len == 1 && b[0] == '1') return 1;
+    if (len > 3 && b[0] == 'a' && b[1] == 'b' && b[2] == ' ' && sscanf(b + 3, "%u", &v) == 1) { if (n) *n = ext_round(v); return 2; }
+    return 0;
+}
+int gx_skin_ext_gate(const GxSkinTable* t) {
+    if (!t->ext || gx_skin_ext_on()) return 1;
+    ++gGxSkinCtr[GXSK_REF_EXT];
+    return 0;
+}
+int gx_skin_ext_on(void) {
+    if (sExtMode == -2) {
+        sExtMode = 0; sExtN = 0;
+#if defined(__vita__)
+        {   FILE* f = stfxMk("skin_ext.txt");
+            char b[32] = {0}; u32 n = 0;
+            if (f) { size_t got = fread(b, 1, sizeof(b) - 1, f); b[got] = 0; fclose(f); sExtMode = gx_skin_ext_parse(b, &n); if (sExtMode == 2) sExtN = n; }
+            printf("[r8b] skin_ext.txt: %s\n", !f ? "absent -> extended tables (NBT / > 32 bones) OFF" : sExtMode == 2 ? "ab: ON first, alternating" : sExtMode == 1 ? "1 -> extended tables ON" : "not 1 -> extended tables OFF");
+            if (sExtMode == 2) printf("[r8b] skin_ext ab: %u presents per arm\n", (unsigned) sExtN);
+        }
+#endif
+    }
+    if (sExtMode == 2) return (&rhi_vita_presents ? (u32) rhi_vita_presents : 0u) / sExtN % 2u == 0u;
+    return sExtMode == 1;
+}
+
 /* R8 isolation instrument (2026-10-26, hw_R8 look check): marker ux0:data/stairfax/gx_skin_only.txt = a hex modelId -> only that model is
    GPU-skinned (gx_skin_model_allowed); absent = every model.  Read once. */
 int gx_skin_model_allowed(const ModelFileHeader* m) {
@@ -573,7 +721,7 @@ int gx_skin_model_allowed(const ModelFileHeader* m) {
     if (only == -2) {
         only = -1;
 #if defined(__vita__)
-        { FILE* f = fopen("ux0:data/stairfax/gx_skin_only.txt", "rb");
+        { FILE* f = stfxMk("gx_skin_only.txt");
           if (f) { char b[16] = {0}; if (fread(b, 1, sizeof(b) - 1, f) > 0) only = (int)strtoul(b, NULL, 16); fclose(f); printf("[r8] gx_skin_only: model %04x\n", (unsigned)only); } }
 #endif
     }
@@ -591,6 +739,7 @@ void gx_skin_hal_oracle(const GxSkinTable* t, const float* pos, const u32* fidx,
         const u32 pi = fidx[2 * d]; u8 sk[8]; int k;
         if (pi == ~0u || pi >= t->nPos) continue;
         if (!gx_skin_hal_attr(t, pi, fidx[2 * d + 1], hasNrm, sk)) continue;
+        if (t->nb > VS_SKIN_MAX_BONES && !gx_skin_hal_attr_local(t, pi, fidx[2 * d + 1], hasNrm, sk, sSelN, sSelList)) continue;   /* R8b: the image is indexed by LOCAL slots */
         { const float a = (float)sk[0], b = (float)sk[1], w0 = (float)sk[2], w1 = (float)sk[3];   /* the U8x4 aSkP the VS reads */
           const float* p = pos + 3 * d; float o[3];
           if (a > 254.5f) { o[0] = p[0]; o[1] = p[1]; o[2] = p[2]; }

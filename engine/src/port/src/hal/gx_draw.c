@@ -25,6 +25,45 @@ uint8_t* gxTexDecodeYUV(const uint8_t* y, const uint8_t* u, const uint8_t* v, in
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+/* MARKERS WITHOUT CARD I/O (RC6, 2026-11-04). The HAL read its A/B marker files lazily, at the FIRST use of a feature (first bump-mapped draw, first fog,
+ * first indirect stage, first filtered bind, ...), on R, mid-play -- one card open each, and a busy SD card answers an open in 20-650 ms (hw, RC4 VFP).
+ * stfxMarkerOpen lists ux0:data/stairfax ONCE (dlkInitOnce, at boot) and opens only a marker that exists; an absent one (nearly all, in a release) is NULL
+ * at no cost. A listing that overflows the table falls back to plain fopen. */
+#if defined(__vita__)
+#include <psp2/io/dirent.h>
+#define STFX_MK_MAX 384
+static char gStfxMk[STFX_MK_MAX][48];
+static int gStfxMkN = -1, gStfxMkAll;
+void stfxMarkerScan(void) {
+    if (gStfxMkN >= 0) return;
+    gStfxMkN = 0;
+    SceUID d = sceIoDopen("ux0:data/stairfax");
+    if (d < 0) { gStfxMkAll = 1; return; }
+    SceIoDirent e;
+    memset(&e, 0, sizeof e);
+    while (sceIoDread(d, &e) > 0) {
+        if (gStfxMkN >= STFX_MK_MAX || strlen(e.d_name) >= sizeof gStfxMk[0]) { gStfxMkAll = 1; break; }
+        strcpy(gStfxMk[gStfxMkN++], e.d_name);
+        memset(&e, 0, sizeof e);
+    }
+    sceIoDclose(d);
+    printf("[markers] ux0:data/stairfax listed once: %d entries%s\n", gStfxMkN, gStfxMkAll ? " (table full or unreadable: every marker opens the file)" : "");
+}
+FILE* stfxMarkerOpen(const char* name) {
+    char path[96];
+    if (gStfxMkN < 0) stfxMarkerScan();
+    if (!gStfxMkAll) {
+        int i;
+        for (i = 0; i < gStfxMkN; ++i) if (!strcmp(gStfxMk[i], name)) break;
+        if (i == gStfxMkN) return NULL;
+    }
+    snprintf(path, sizeof path, "ux0:data/stairfax/%s", name);
+    return fopen(path, "r");
+}
+#else
+void stfxMarkerScan(void) {}
+FILE* stfxMarkerOpen(const char* name) { char path[96]; snprintf(path, sizeof path, "ux0:data/stairfax/%s", name); return fopen(path, "r"); }
+#endif
 /* R2: the statics GX state setters write now live in gx_hal (port/gx_hal_state.h, defined in gx_tev.c). The draw path keeps reading the old names through these macros; the
    setter bodies (gxh_b_*) use ONLY their `h` parameter (host/engine/gxh_lint.py enforces it). */
 #define gDesc        (gx_hal.desc)
@@ -101,7 +140,7 @@ static int vpDepthOff(void) {
     return 1;
 #endif
     if (gVpDepthOff < 0) {
-        FILE* f = fopen("ux0:data/stairfax/vp_depth_off.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+        FILE* f = stfxMarkerOpen("vp_depth_off.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
         gVpDepthOff = c == 49; printf("[viewport] depth range %s\n", gVpDepthOff ? "IGNORED (vp_depth_off.txt = the old behaviour)" : "folded into the projection (GX near/far, incl. the game's negative-near z bias)");
     }
     return gVpDepthOff;
@@ -553,6 +592,8 @@ static int inCopyDst(const void* p);
 static RhiTexture* copyDstTex(const void* p);   // the backend copy texture of the destination holding p, or NULL
 static void copyDstWanted(const void* p);       // the destination holding p was bound as a texture this present
 static void copyDstRelease(const void* p, u32 n);
+static void b8Release(const void* p, u32 n);     // the deferred B8 readback forgets destinations inside a freed block
+extern int gx_shadow_probe; static int gShpRecv;  // SHADOW PROBE (see gx_draw_setShadowRecv)
 static const void* gMapImg[8]; static u16 gMapW[8], gMapH[8]; static u8 gMapFmt[8];   // journal: what each map holds
 static void journalCopyHit(int k);
 static int gCopyDstN;   // EFB-copy destinations recorded (GXCopyTex)
@@ -748,7 +789,7 @@ void gx_draw_setTexMtxIdxOld(int on) { gTmiOld = on ? 1 : 0; }   /* host-test ho
 // generator names them; the default follows its TransformUnit + the SDK). The Arwing's env bump streaks along the hull on run 264.
 static int gNbtSwap = -1;
 static int nbtSwap(void) {
-    if (gNbtSwap < 0) { FILE* f = fopen("ux0:data/stairfax/nbt_swap.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+    if (gNbtSwap < 0) { FILE* f = stfxMarkerOpen("nbt_swap.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
                         gNbtSwap = c == 49; printf("[texgen] NBT order: %s\n", gNbtSwap ? "SWAPPED (nbt_swap.txt): BINRM = 3rd vector, TANGENT = 2nd" : "BINRM = 2nd vector, TANGENT = 3rd"); }
     return gNbtSwap;
 }
@@ -757,7 +798,7 @@ static int tmiOld(void) {
     return 0;
 #endif
     if (gTmiOld < 0) {
-        FILE* f = fopen("ux0:data/stairfax/texmtxidx_off.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+        FILE* f = stfxMarkerOpen("texmtxidx_off.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
         gTmiOld = c == 49; printf("[texgen] per-vertex texture matrix index + binormal/tangent sources %s\n", gTmiOld ? "OFF (texmtxidx_off.txt = the old behaviour)" : "ON");
     }
     return gTmiOld;
@@ -765,7 +806,7 @@ static int tmiOld(void) {
 static int gTgPnOld = -1;
 static int tgPnOld(void) {
     if (gTgPnOld < 0) {
-        FILE* f = fopen("ux0:data/stairfax/texgen_pnmtx_old.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+        FILE* f = stfxMarkerOpen("texgen_pnmtx_old.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
         gTgPnOld = c == 49; printf("[texgen] position-matrix texgens %s\n", gTgPnOld ? "OFF (texgen_pnmtx_old.txt = identity, the old behaviour)" : "ON");
     }
     return gTgPnOld;
@@ -862,7 +903,7 @@ unsigned gx_fog_drawn, gx_fog_nd_ortho, gx_fog_nd_notev, gx_fog_nd_off, gx_fog_n
 static int fogWant(void) { int t = gFogType; return t == 2 || (t >= 4 && t <= 7) || (t >= 10 && t <= 15); }
 static int fogKilled(void) {
     static int s = -1;
-    if (s < 0) { FILE* f = fopen("ux0:data/stairfax/nofog.txt", "r"); s = f ? 1 : 0; if (f) fclose(f);
+    if (s < 0) { FILE* f = stfxMarkerOpen("nofog.txt"); s = f ? 1 : 0; if (f) fclose(f);
                  printf("[fog] fog %s\n", s ? "OFF (nofog.txt)" : "ON"); }
     return s;
 }
@@ -909,7 +950,18 @@ static int drawTev(int nverts, u8 prim, const float mvp[16]) {
     }
     RhiTexture* tx[TEVK_TEX] = { 0 };
     for (int sl = 0; sl < k.numTex; ++sl) {
-        if (gCopyMaps >> sm[sl] & 1) { ++gx_tev_fb_copytex; return 0; }   // an EFB copy nobody filled
+        if (gCopyMaps >> sm[sl] & 1) {   // an EFB copy nobody filled
+            /* CPYHIT PROBE (2026-11-02, Galdon 10 fps): which map / image / copy destination makes a draw refuse here. At most 16 distinct (map, image) lines a boot. */
+            static const void* seen[16]; static int nSeen;
+            const int m = sm[sl]; const unsigned char* im = (const unsigned char*)gMapImg[m]; int dup = 0;
+            for (int q = 0; q < nSeen; ++q) if (seen[q] == (const void*)(im + m)) dup = 1;
+            if (!dup && nSeen < 16) {
+                seen[nSeen++] = im + m;
+                printf("[cpyhit] slot %d map %d stages %d ind %d | image %p %ux%u fmt %u |", sl, m, gx_tev_num_stages(), gx_tev_uses_indirect(), (const void*)im, gMapW[m], gMapH[m], gMapFmt[m]);
+                journalCopyHit(m);
+            }
+            ++gx_tev_fb_copytex; return 0;
+        }
         tx[sl] = gTexMap[sm[sl]];
         if (!tx[sl]) { ++gx_tev_fb_notex; return 0; }
     }
@@ -1141,7 +1193,18 @@ static int decodePrim(const unsigned char* src, GXVtxFmt fmt, u8 prim, int nvert
 static void decodeAndDrawImpl(void);
 static void decodeAndDraw(void) { RT_SUBS(RT_S_ENTRY_IMM); unsigned long long t = GXT_NOW(); RT_ENTER(RT_SHIM); decodeAndDrawImpl(); RT_LEAVE(); gx_w_imm_us += GXT_NOW() - t; }
 static void decodeAndDrawImpl(void) { ++gx_imm_prims; gx_imm_verts += (unsigned)gPrimN; if (STFX_ARM5()) return;   /* arm 5 (see gStfxPerfArm): counters first */
-    decodePrim(gFifo, gPrimFmt, gPrim, gPrimN, gExpectBytes); }
+    if (gx_shadow_probe && gShpRecv) gLastDecoded = -1;   /* SHADOW PROBE: -1 = decodePrim never reached its vertex count */
+    decodePrim(gFifo, gPrimFmt, gPrim, gPrimN, gExpectBytes);
+    if (gx_shadow_probe && gShpRecv) {
+        const RhiTexVertex* v = gLastDecoded > 0 ? &gVerts[0] : NULL;
+        printf("[shp-draw] prim %02x fmt %u n %u bytes %u decoded %d | blend %u %u %u cupd %u | z %u %u %u cull %u | tev %u gens %u ind %u | map0 %p %ux%u f%u map1 %p f%u copyBound %x absent %x"
+               " | v0 %.2f %.2f %.2f uv %.3f %.3f rgba %08x\n",
+               (unsigned)gPrim, (unsigned)gPrimFmt, (unsigned)gPrimN, (unsigned)gExpectBytes, gLastDecoded, (unsigned)gBlendType, (unsigned)gBlendSrc, (unsigned)gBlendDst,
+               (unsigned)gColorUpdate, (unsigned)gZCompare, (unsigned)gZFunc, (unsigned)gZUpdate, (unsigned)gCullMode, (unsigned)gx_hal.tev.numStages,
+               (unsigned)gx_hal.tev.numGens, (unsigned)gx_hal.tev.numInd, gMapImg[0], (unsigned)gMapW[0], (unsigned)gMapH[0], (unsigned)gMapFmt[0], gMapImg[1],
+               (unsigned)gMapFmt[1], gFilledCopyMaps, gCopyMaps, v ? v->x : 0.f, v ? v->y : 0.f, v ? v->z : 0.f, v ? v->u : 0.f, v ? v->v : 0.f, v ? (unsigned)v->rgba : 0u);
+    }
+}
 
 // --- docs/47 fast path, STAGE 1 (2026-10-08): the per-display-list cache --------------------------------
 // WHY: per frame ~100 GXCallDisplayList calls carry ~5,000 primitives / ~36,000 strip vertices, and decodePrim
@@ -1178,7 +1241,8 @@ typedef struct DlkRec {
     u32 evSeq, dynGen; u8 okList, okArr, dyn;   /* run 165, validation by events: events seen up to; calls in a row the list / the arrays matched */
     u32 nprim, nstrip, ndist, ntri, stripVTri, declaredSum, bytes;
     u8 hasNrm, hasClr, hasPnm, ntex; u8 texAttr[8]; signed char texIdx[8];
-    u8 tmiMask, ntmi, tmiBad; signed char tmiIdx[8];   /* 2026-10-13: TEXnMTXIDX in the descriptor (bit n), how many, bit n = some distinct vertex's byte is not a texture-matrix row 30,33..57; texcoord n -> its byte's column (-1 none) */
+    u8 tmiMask, ntmi, tmiBad, tmiWide; signed char tmiIdx[8];   /* tmiWide (2026-11-02, Galdon): bit n = some distinct vertex's byte is a LEGAL row outside 30..57 -- a position matrix 0,3..27 or the identity (60 and up): the VsKey's wide palette (VS_TMI_WIDE) */
+      /* 2026-10-13: TEXnMTXIDX in the descriptor (bit n), how many, bit n = some distinct vertex's byte is not a texture-matrix row 30,33..57; texcoord n -> its byte's column (-1 none) */
     DlkPrim* prim; u16* map; float* pos; float* nrm; float* nbt; u8* tmi; float* tex; u32* clr; u32* voff; u8* fl; u8* pnm;   /* nbt: binormal, tangent (6 floats a vertex; NULL when no distinct vertex has an NBT normal); tmi: ntmi bytes a vertex */
     u32* runs; u32 runOff[GX_VA_MAX_ATTR], runN[GX_VA_MAX_ATTR]; signed char runState;   /* the index runs dlkArrChanged hashes: 0 untried / 1 built / -1 whole spans */
     dlk64 hA[GX_VA_MAX_ATTR]; u32* fidx; signed char fastState; u8 fastChecked;   /* per-attribute span hashes; the fast refresh's indices (dlkFastIdx), 0 untried / 1 usable / -1 never */
@@ -1190,6 +1254,7 @@ typedef struct DlkRec {
     const struct GxSkinTable* skinT;    /* R8 GPU skinning: the table gpuMesh's aSk was built for (NULL = an unskinned image).  Only dereferenced right after it is (re)assigned from the BOUND table; never compared */
     uint32_t skinId;                    /* ... and its id (0 = unskinned): the mesh is rebuilt when a draw wants another id (gx_skin_mesh_reusable_id).  R8-MF A2: ids are never reused, a table address can be */
     uint32_t skinChkId; u8 skinChkOk;   /* R8: the id of the table dlkSkinPrep last judged this record against (0 = none yet), and its verdict */
+    u8 skinN; u8 skinList[VS_SKIN_MAX_BONES];   /* 2026-11-03, R8b: the record's local palette -- local slot i = table slot skinList[i], skinN of them (gx_skin_hal_map; identity for a table of <= 32 bones).  Built by dlkSkinPrep for the table skinChkId, so it belongs to whatever mesh that table's id built */
 } DlkRec;
 /* R8 GPU skinning (host/engine/R8_GPUSKIN.md): the rules live in hal/gx_skin.c (host/tests/gx_skin_test.c holds them).  These WEAK defaults mean "no skin is ever bound" so a host test that links gx_draw.c without
    gx_skin.c still builds and behaves exactly as before; the real definitions override them. */
@@ -1199,6 +1264,11 @@ extern const unsigned char* gGxSkinChkCpu __attribute__((weak));   /* R8 HAL ora
 GXD_WEAK void gx_skin_hal_oracle(const struct GxSkinTable* t, const float* pos, const uint32_t* fidx, uint32_t ndist, int hasNrm, const float* img) { (void)t; (void)pos; (void)fidx; (void)ndist; (void)hasNrm; (void)img; }
 GXD_WEAK int gx_skin_hal_check(const struct GxSkinTable* t, const void* a, const void* b, int c, int d, int e, int f, int g) { (void)t; (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; return 1; }
 GXD_WEAK int gx_skin_hal_attr(const struct GxSkinTable* t, uint32_t pi, uint32_t ni, int hasNrm, uint8_t out[8]) { (void)t; (void)pi; (void)ni; (void)hasNrm; (void)out; return 0; }
+GXD_WEAK int gx_skin_hal_map(const struct GxSkinTable* t, const uint32_t* fidx, uint32_t ndist, int hasNrm, uint8_t* n, uint8_t* list) { (void)t; (void)fidx; (void)ndist; (void)hasNrm; (void)list; *n = 0; return 0; }   /* R8b */
+GXD_WEAK int gx_skin_hal_attr_local(const struct GxSkinTable* t, uint32_t pi, uint32_t ni, int hasNrm, uint8_t out[8], uint32_t n, const uint8_t* list) { (void)n; (void)list; return gx_skin_hal_attr(t, pi, ni, hasNrm, out); }
+GXD_WEAK void gx_skin_vs_select(const uint8_t* list, uint32_t n) { (void)list; (void)n; }
+GXD_WEAK uint32_t gx_skin_hal_nrm_stride(const struct GxSkinTable* t) { (void)t; return 3u; }
+GXD_WEAK void gx_skin_hal_bones(void) {}
 GXD_WEAK int gx_skin_mesh_reusable_id(uint32_t a, uint32_t b) { return a == b; }
 GXD_WEAK uint32_t gx_skin_table_id(const struct GxSkinTable* t) { (void)t; return 0u; }
 GXD_WEAK const float* gx_skin_vs_palette(void) { return NULL; }
@@ -1301,20 +1371,22 @@ static int gDlkHashOld;     /* dl_hash_old.txt 1 = the single-chain hash (run 16
 static int gDlkDynOld;      /* dlk_dyn_old.txt 1 = the 512-slot never-forgetting dyn table (pre-2026-10-12 A/B) */
 static void dlkInitOnce(void) {   /* ux0:data/stairfax/dl_nocache.txt present = the cache off (A/B on the device); read once, logged once */
     gDlkInit = 1;
+    stfxMarkerScan();   /* RC6: one listing; every marker below and every lazy one later costs no card I/O when absent */
+    { extern void gx_tev_markers_init(void) __attribute__((weak)); if (gx_tev_markers_init) gx_tev_markers_init(); }   /* tev_ind_off.txt ships: read it now, not at the first indirect draw */
     (void)tmiOld();   /* texmtxidx_off.txt: read and logged here with the other markers (it is also read lazily by the first draw that needs it) */
-    { FILE* ef = fopen("ux0:data/stairfax/dl_events.txt", "r"); int c = ef ? fgetc(ef) : 0; if (ef) fclose(ef); gDlkEvt = c == 49 ? 1 : c == 50 ? 2 : 0; }
-    { FILE* df = fopen("ux0:data/stairfax/dlk_dyn_old.txt", "r"); gDlkDynOld = df && fgetc(df) == 49;   /* default = the new set; dlk_dyn_old.txt starting with 1 = the 512-slot table of runs 165-237 */ if (df) fclose(df);
+    { FILE* ef = stfxMarkerOpen("dl_events.txt"); int c = ef ? fgetc(ef) : 0; if (ef) fclose(ef); gDlkEvt = c == 49 ? 1 : c == 50 ? 2 : 0; }
+    { FILE* df = stfxMarkerOpen("dlk_dyn_old.txt"); gDlkDynOld = df && fgetc(df) == 49;   /* default = the new set; dlk_dyn_old.txt starting with 1 = the 512-slot table of runs 165-237 */ if (df) fclose(df);
       printf("[dlk] dyn-buffer set: %s\n", gDlkDynOld ? "OLD 512-slot table, never retired (dlk_dyn_old.txt 1)" : "sorted intervals, retired on free, never full (cap 1024; free ring 256)"); }
-    { FILE* hf = fopen("ux0:data/stairfax/dl_hash_old.txt", "r"); gDlkHashOld = hf && fgetc(hf) == 49; if (hf) fclose(hf);
+    { FILE* hf = stfxMarkerOpen("dl_hash_old.txt"); gDlkHashOld = hf && fgetc(hf) == 49; if (hf) fclose(hf);
       printf("[dlk] span hash: %s\n", gDlkHashOld ? "single chain (dl_hash_old.txt)" : "four lanes"); }
     /* both markers must START WITH 1 (a 0 written over them turns them off without a delete) */
-    FILE* f = fopen("ux0:data/stairfax/dl_nocache.txt", "r"); int off = f && fgetc(f) == 49;
+    FILE* f = stfxMarkerOpen("dl_nocache.txt"); int off = f && fgetc(f) == 49;
     if (f) fclose(f);
     if (off) gStfxDlCacheArm = 0;
     printf("[dlk] display-list cache %s\n", off ? "OFF (dl_nocache.txt)" : "ON");
     /* gx_gpu.txt: 1 = lists whose arrays never change; 2 = also the lists whose arrays DO change (the morphed models): their
        vertex buffer is re-uploaded whenever the array hash changes. 2 is the A/B arm for that upload; anything else = off. */
-    f = fopen("ux0:data/stairfax/gx_gpu.txt", "r"); { int c = f ? fgetc(f) : 0; gStfxGpuArm = c == 49 ? 1 : c == 50 ? 2 : 0; } if (f) fclose(f);
+    f = stfxMarkerOpen("gx_gpu.txt"); { int c = f ? fgetc(f) : 0; gStfxGpuArm = c == 49 ? 1 : c == 50 ? 2 : 0; } if (f) fclose(f);
     printf("[dlk] GPU vertex path %s\n", gStfxGpuArm == 2 ? "ON, changing arrays too (gx_gpu.txt 2)" : gStfxGpuArm ? "ON, static lists only (gx_gpu.txt 1)" : "off");
 }
 // Word-at-a-time hash, 64 bits of state (two 32-bit lanes): runs on every call over the list and the array spans.
@@ -1460,7 +1532,13 @@ static DlkRec* dlkBuild(const unsigned char* dl, u32 nbytes) {
                 gDs.clr[d] = clr; gDs.voff[d] = i + (u32)c0; gDs.vlen[d] = len; gDs.fmt[d] = fmt;
                 gDs.fl[d] = (u8)((posOk ? 1 : 0) | (haveN ? 2 : 0) | (haveNbt ? 8 : 0) | (fmt << 4)); gDs.pnm[d] = (u8)pn;
                 memcpy(gDs.nbt + 6 * (size_t)d, nbtv, sizeof nbtv); memcpy(gDs.tmi + 8 * (size_t)d, tmiv, 8); anyNbt |= haveNbt;
-                for (int q = 0; q < 8; ++q) if (h.tmiMask >> q & 1) { const unsigned r_ = tmiv[q]; if (r_ < 30 || r_ > 57 || (r_ - 30) % 3) h.tmiBad |= (u8)(1u << q); }
+                for (int q = 0; q < 8; ++q) if (h.tmiMask >> q & 1) { const unsigned r_ = tmiv[q];
+#ifdef BREAK_VS_TMIWIDE   /* host negative control: the old rule, every row outside 30..57 refused (the wide palette is never used) */
+                    if (r_ < 30 || r_ > 57 || (r_ - 30) % 3) h.tmiBad |= (u8)(1u << q);
+#else   /* XF rows (tgMtxRow): 0..27 position matrices, 30..57 texture matrices, 60 and up identity. Only a row that is not the first of a matrix (r < 60, r % 3 != 0) stays on the CPU path */
+                    if (r_ < 60 && r_ % 3) h.tmiBad |= (u8)(1u << q); else if (r_ < 30 || r_ > 57) h.tmiWide |= (u8)(1u << q);
+#endif
+                }
                 gDs.next[d] = gDlkHeadGen[bk] == gDlkGenNow ? gDlkHead[bk] : 0xffffffffu; gDlkHead[bk] = d; gDlkHeadGen[bk] = gDlkGenNow;
             }
             gDs.map[nStrip + (u32)vi] = d;
@@ -1828,26 +1906,34 @@ static void dlkMeshVert(const DlkRec* r, const GxMeshLayout* Lp, int nt, u32 d, 
         memcpy(v + L.offTmi[g], tf, 16);
     }
     for (int j = 0; j < nt; ++j) memcpy(v + L.offTex[r->texAttr[j]], r->tex + ((size_t)d * nt + j) * 2, 8);
-    if (L.offSk >= 0) { uint8_t sk[8] = { 255, 255, 0, 0, 255, 255, 0, 0 }; (void)gx_skin_hal_attr(r->skinT, r->fidx[2 * d], r->fidx[2 * d + 1], r->nrm != NULL, sk); float f[8]; for (int q = 0; q < 8; ++q) f[q] = (float)sk[q]; memcpy(v + L.offSk, f, 32); }   /* R8: dlkSkinPrep proved every index in range */
+    if (L.offSk >= 0) { uint8_t sk[8] = { 255, 255, 0, 0, 255, 255, 0, 0 }; (void)gx_skin_hal_attr_local(r->skinT, r->fidx[2 * d], r->fidx[2 * d + 1], r->nrm != NULL, sk, r->skinN, r->skinList); float f[8]; for (int q = 0; q < 8; ++q) f[q] = (float)sk[q]; memcpy(v + L.offSk, f, 32); }   /* R8: dlkSkinPrep proved every index in range */
 }
 /* R8: may record r be drawn skinned by table t?  Once per (record, table).  Everything the vertex program assumes about the arrays is checked here, because the G side has already skipped the CPU blend and the
-   model is wrong if drawn unskinned: the list reads t's model's FILE vertices (and normals) through indices, s16 positions at frac == posQ, s8 normals (decoded at 2^-6) with nrmQ == 6, no NBT, every index inside the table. */
+   model is wrong if drawn unskinned: the list reads t's model's FILE vertices (and normals) through indices, s16 positions at frac == posQ, s8 normals (decoded at 2^-6) with nrmQ == 6, every index inside the table.
+   2026-11-03, R8b: an NBT list (9-component normals) is skinned only by an NBT table (nrmStride 9) and the list's NRM array must be bound at that stride; and the record's local palette is built here
+   (gx_skin_hal_map): a record that needs more than VS_SKIN_MAX_BONES (32) slots is refused with reason 14 and drawn from the CPU-skinned copy. */
 /* R8 refusal reasons (instrument, 2026-10-26 hw_R8 smoke: ThornTails skipped): skinChkOk 1 = OK, >= 2 = refused with that reason --
    2 POS base, 3 NRM base, 4 POS format / frac, 5 NRM format / scale, 6 index outside the table, 7 NBT, 8 no POS / no fast index,
-   9 tev_vs_check, 10 gx_vs_build refused, 11 no mesh, 12 backend refused, 13 an earlier dlkCall return (fallback, validation). */
+   9 tev_vs_check, 10 gx_vs_build refused, 11 no mesh, 12 backend refused, 13 an earlier dlkCall return (fallback, validation), 14 (R8b) more than 32 palette slots in one record. */
 static int sSkinWhy;
 static int dlkSkinPrep(DlkRec* r, const struct GxSkinTable* t) {
     const uint32_t tid = gx_skin_table_id(t);
-    if (r->skinChkId == tid) { if (r->skinChkOk != 1) sSkinWhy = r->skinChkOk; return r->skinChkOk == 1; }   /* by id: a new table at a freed one's address must be judged afresh (R8-MF A2) */
+    if (r->skinChkId == tid) { if (r->skinChkOk != 1) { sSkinWhy = r->skinChkOk; if (r->skinChkOk == 14) gx_skin_hal_bones(); } return r->skinChkOk == 1; }   /* by id: a new table at a freed one's address must be judged afresh (R8-MF A2) */
     r->skinChkId = tid; r->skinChkOk = 13;
-    if (r->nbt || !r->pos || !dlkFastIdx(r)) { sSkinWhy = r->skinChkOk = r->nbt ? 7 : 8; return 0; }
+    const uint32_t nst_ = gx_skin_hal_nrm_stride(t);   /* 3, or 9 for an NBT table */
+    if ((r->nbt && nst_ != 9) || !r->pos || !dlkFastIdx(r)) { sSkinWhy = r->skinChkOk = (r->nbt && nst_ != 9) ? 7 : 8; return 0; }
+    if (r->nrm && (uint32_t)r->key.stride[GX_VA_NRM] != nst_) { sSkinWhy = r->skinChkOk = 5; return 0; }   /* R8b: the NRM array must be bound at the table's stride (an NBT model's normals are 9 bytes a triplet) */
     for (int f = 0; f < DLK_FMTS; ++f) if (r->fmtMask >> f & 1) {
         const VatAttr* vp = &r->vat[f][GX_VA_POS]; const VatAttr* vn = &r->vat[f][GX_VA_NRM];
         const int nrmExp = vn->type == GX_S8 ? 6 : vn->type == GX_S16 ? 14 : 0;   /* buildOps: a normal's scale comes from its type, not the VAT frac */
-        const int c_ = gx_skin_hal_check(t, r->key.base[GX_VA_POS], r->key.base[GX_VA_NRM], r->nrm != NULL, vp->frac, vp->type == GX_S16 && vp->cnt == GX_POS_XYZ, nrmExp, vn->type == GX_S8 && vn->cnt == GX_NRM_XYZ);
+        const int c_ = gx_skin_hal_check(t, r->key.base[GX_VA_POS], r->key.base[GX_VA_NRM], r->nrm != NULL, vp->frac, vp->type == GX_S16 && vp->cnt == GX_POS_XYZ, nrmExp, vn->type == GX_S8 && vn->cnt == (nst_ == 9 ? GX_NRM_NBT : GX_NRM_XYZ));
         if (c_) { sSkinWhy = r->skinChkOk = (u8)(1 + c_); return 0; }
     }
     for (u32 d = 0; d < r->ndist; ++d) { uint8_t sk[8]; if (!gx_skin_hal_attr(t, r->fidx[2 * d], r->fidx[2 * d + 1], r->nrm != NULL, sk)) { sSkinWhy = r->skinChkOk = 6; return 0; } }
+    {   uint8_t n_ = 0; const int m_ = gx_skin_hal_map(t, r->fidx, r->ndist, r->nrm != NULL, &n_, r->skinList);
+        if (m_ == 2) { sSkinWhy = r->skinChkOk = 14; gx_skin_hal_bones(); return 0; }
+        if (m_ != 1) { sSkinWhy = r->skinChkOk = 6; return 0; }
+        r->skinN = n_; }
     r->skinChkOk = 1;
     return 1;
 }
@@ -1961,7 +2047,7 @@ uint32_t gx_vs_key_serial;                             /* moves when a rebuilt V
  * The generation kinds are COARSE (one CHAN flag covers the mat / amb colours that change at every object): a kind whose generation moved is therefore re-examined BY VALUE (the fields above against the snapshot
  * the last examination took) and bumps the epoch only when a program input really changed.  A kind that is a pure program input (TEV, SWAP, IND, GEN) is examined the same way (a setter that stores the same
  * values again does not bump).  Over-bumping is safe (the full path runs); under-bumping is a wrong picture: GX_C5_SELFCHECK (host tests) rebuilds everything the plain way on every clean draw and compares BYTES. */
-typedef struct { u8 state, why, haveNrm, nbAll, hasPnm, hasClr, hasNbt, tmiBad; signed char texIdx[8], tmiIdx[8]; } VsShape;   /* the parts of a record the VsKey reads (also keyed by the C3 memo, below) */
+typedef struct { u8 state, why, haveNrm, nbAll, hasPnm, hasClr, hasNbt, tmiBad, tmiWide; signed char texIdx[8], tmiIdx[8]; } VsShape;   /* the parts of a record the VsKey reads (also keyed by the C3 memo, below) */
 static int vsShapeOf(const DlkRec* r, VsShape* s);
 extern int gStfxLightArm;   /* defined with the pixel state, below */
 static void vsBuildUniforms(const VsKey* k, const TevKey* tk, const u8 sc[TEVK_TEX], const float* mvpIn, VsUniforms* u);
@@ -2301,7 +2387,7 @@ static int dlkCall(const unsigned char* dl, u32 nbytes, const struct GxSkinTable
                 if (skinT) {
                     if (!dlkSkinPrep(r, skinT)) return 0;
                     vks = vk; vks.hasSkin = 1;
-                    if (&gGxSkinChkCpu && gGxSkinChkCpu) gx_skin_hal_oracle(skinT, r->pos, r->fidx, r->ndist, r->nrm != NULL, gx_skin_vs_palette());   /* R8 HAL oracle (direct + gx_skin_check.txt) */
+                    if (&gGxSkinChkCpu && gGxSkinChkCpu) { gx_skin_vs_select(r->skinList, r->skinN); gx_skin_hal_oracle(skinT, r->pos, r->fidx, r->ndist, r->nrm != NULL, gx_skin_vs_palette()); gx_skin_vs_select(NULL, 0); }   /* R8 HAL oracle (direct + gx_skin_check.txt) */
                     { const int vc_ = tev_vs_check(&vks); if (vc_) { sSkinWhy = 9; gx_skin_hal_why(16 + vc_); return 0; } }   /* 16 + the VSW_* code: [r8-why] columns 16..31 */
                     vkd = &vks;
                 }
@@ -2322,7 +2408,9 @@ static int dlkCall(const unsigned char* dl, u32 nbytes, const struct GxSkinTable
                  * skips its compare / hash when the hint equals the last call's (rhi_gxm_shader.c).  0 = no hint.  Consumed (and cleared) by rhi_gxm_drawTevGx. */
                 gx_prog_hint = skinT ? 0ull : ((r3a & GX_R3A_C5) && gC5.valid) ? (1ull << 62) | (unsigned long long)gC5.keyId   /* R3c C5: bit 62 | the base's key id (it moves at every full build, so equal ids mean the same raw keys) */
                              : (r3a & GX_R3A_C3) ? (1ull << 63) | ((unsigned long long)(gx_tev_key_serial & 0xFFFFFFu) << 39) | ((unsigned long long)(gx_vs_key_serial & 0x7FFFFFFFu) << 8) | k.fogType : 0ull;   /* bit 63 | tev serial 24 bits | vs serial 31 bits | fog type 8 bits */
+                if (skinT) gx_skin_vs_select(r->skinList, r->skinN);   /* R8b (B2): the backend's uBone image (gx_skin_vs_palette) is gathered from THIS record's local palette */
                 rtT = RT_T0(); rtOk = rhi_vita_drawTevGx(&k, &u, tx, vkd, &vu, r->gpuMesh, am); RT_SUB(drawUs, drawN, rtT);
+                if (skinT) gx_skin_vs_select(NULL, 0);
                 gDlkGpu.drUs += GXT_NOW() - gs_;   /* hw_Rsplit: the backend draw (rhi_gxm_drawTevGx) */
                 if (rtOk) {
                     if (skinT) gx_skin_hal_draw();   /* R8: GXSK_DRAWS */
@@ -2567,12 +2655,12 @@ static void dlPrimLoop(const unsigned char* dl, unsigned nbytes) {
 /* R8-FB: draw a skinned list that dlkCall(.., skinT) refused, exactly as the CPU blend would have: POS / NRM are pointed at a CPU-skinned copy of the
    model's arrays (gx_skin_fallback_fill: gx_skin_ref_pos / _nrm with the BOUND palette, in the file's format -- what ObjModel_Blend*Stream writes into
    vtxBuf), the list is drawn with NO skin (dlkCall(NULL), else the per-primitive loop), and the bases are put back.  gGxSkin is never touched, so the
-   bound skin survives for the model's next list.  Returns 0 when the copy cannot serve this list (strides other than the file's 6 / 3, no memory). */
+   bound skin survives for the model's next list.  Returns 0 when the copy cannot serve this list (strides other than the file's 6 / 3 (9 for an NBT model), no memory). */
 static int dlSkinFallback(const unsigned char* dl, unsigned nbytes, const struct GxSkinTable* t) {
     const unsigned char *cp = NULL, *cn = NULL;
     ArrayDef sp = gArray[GX_VA_POS], sn = gArray[GX_VA_NRM];
     if (sp.stride != 6) return 0;
-    if (!gx_skin_fallback_fill(t, sn.stride == 3 ? sn.base : NULL, &cp, &cn) || !cp) return 0;   /* cn stays NULL unless the list's NRM array IS the model's normals */
+    if (!gx_skin_fallback_fill(t, sn.stride == (int)gx_skin_hal_nrm_stride(t) ? sn.base : NULL, &cp, &cn) || !cp) return 0;   /* R8b: 3, or 9 for an NBT table (the copy has the file's layout) */   /* cn stays NULL unless the list's NRM array IS the model's normals */
     gArray[GX_VA_POS].base = cp;
     if (cn) gArray[GX_VA_NRM].base = cn;
     ++gVtxGen;
@@ -2598,7 +2686,7 @@ static void gxCallDisplayListImpl(void* listv, u32 nbytes) {
     {
         static int sIndSkip = -1;
         if (sIndSkip < 0) {
-            FILE* sf = fopen("ux0:data/stairfax/ind_skip.txt", "r");
+            FILE* sf = stfxMarkerOpen("ind_skip.txt");
             sIndSkip = sf && fgetc(sf) == '1';
             if (sf) fclose(sf);
             fprintf(stderr, "[indskip] display lists with an indirect TEV stage: %s\n", sIndSkip ? "NOT DRAWN (ind_skip.txt 1)" : "drawn by the fallback (default)");
@@ -2745,7 +2833,14 @@ void GXInitTexObj(void* obj, void* image, u16 width, u16 height, int fmt,
 // STFX shadow-zbias (2026-10-12): the game says it is inside the shadow receiver (shadow_dolphin.c objDrawShadowCasterMesh); the backend applies a depth bias to
 // draws made while it is set (ux0:data/stairfax/shadow_zbias.txt). Weak: absent on the host.
 extern void rhi_vita_setShadowZBias(int on) __attribute__((weak));
-void gx_draw_setShadowRecv(int on) { if (rhi_vita_setShadowZBias) rhi_vita_setShadowZBias(on); }
+// SHADOW PROBE (2026-11-01, the missing Fox/Tricky blob; retail Dolphin oracle). gx_shadow_probe != 0 (set each present
+// by vita_tool_main.c from ux0:data/stairfax/shadow_probe.txt; 0 = off, one load per site) logs the port's side of what retail measured:
+//   [shp-draw] each immediate primitive drawn inside the shadow receiver (shadow_dolphin.c objDrawShadowCasterMesh): blend, z, cull, TEV/texgen counts,
+//              maps 0/1 (image, GPU-copy bound bit, absent-copy bit), vertices declared and decoded, the first decoded vertex
+//   [shp-copy] every R4 / R8 copy (newshadows.c: the cast textures), with a histogram of the copied texels' red bits (a synchronous read: probe only)
+int gx_shadow_probe;
+static int gShpRecv;
+void gx_draw_setShadowRecv(int on) { gShpRecv = on; if (rhi_vita_setShadowZBias) rhi_vita_setShadowZBias(on); }
 // Filtering/LOD: the RHI samples one level, bilinear, for every ordinary texture (counted, not applied). The min/mag FILTER is now
 // RECORDED in the object (PortTexObj.mipmap bits 1-6) so that a GPU EFB copy -- the shadow maps -- can be sampled the way the game
 // asked (gxLoadTexObjImpl -> rhi_vita_copyTexSetSampler). max_lod and the LOD bias reach the backend since run 273; min_lod, the
@@ -2830,7 +2925,7 @@ extern void rhi_vita_texSetWrap(RhiTexture*, int wrapS, int wrapT) __attribute__
 static int gWrapOld = -1;
 static u8 texWrapKey(const PortTexObj* t) {
     if (gWrapOld < 0) {
-        FILE* f = fopen("ux0:data/stairfax/tex_wrap_old.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+        FILE* f = stfxMarkerOpen("tex_wrap_old.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
         gWrapOld = c == 49; printf("[wrap] texture wrap modes %s\n", gWrapOld ? "OFF (tex_wrap_old.txt: everything REPEAT, the old behaviour)" : "ON");
     }
 #ifdef BREAK_15   /* host negative control: the wrap is left out of the cache key and never reaches the backend */
@@ -2861,12 +2956,12 @@ static int gLodBiasOff = -1;
 unsigned gx_tex_lodbias_binds;
 static void texFilterApply(RhiTexture* tex, const PortTexObj* t) {
     if (gFilterOld < 0) {
-        FILE* f = fopen("ux0:data/stairfax/tex_filter_old.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+        FILE* f = stfxMarkerOpen("tex_filter_old.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
         gFilterOld = c == 49; printf("[filter] texture min/mag filter from the game %s\n", gFilterOld ? "OFF (tex_filter_old.txt: everything linear, the old behaviour)" : "ON");
     }
     if (!tex || gFilterOld || !rhi_vita_texSetFilter) return;
     if (gMipsOff < 0) {
-        FILE* f = fopen("ux0:data/stairfax/tex_mips_off.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+        FILE* f = stfxMarkerOpen("tex_mips_off.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
         gMipsOff = c == 49; printf("[filter] mipmaps for textures the game filters with them %s\n", gMipsOff ? "OFF (tex_mips_off.txt)" : "ON (built by the backend on first use)");
     }
     int mn = texObjMinFilt(t), mg = texObjMagFilt(t);
@@ -2895,7 +2990,7 @@ static void texFilterApply(RhiTexture* tex, const PortTexObj* t) {
     if (wantMips) ++gx_tex_mip_binds;
     rhi_vita_texSetFilter(tex, wantMips ? mn : (mnNear ? 0 : 1), mgNear, wantMips);
     if (gLodBiasOff < 0) {
-        FILE* f = fopen("ux0:data/stairfax/tex_lodbias_off.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+        FILE* f = stfxMarkerOpen("tex_lodbias_off.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
         gLodBiasOff = c == 49; printf("[filter] the game's texture LOD bias %s\n", gLodBiasOff ? "OFF (tex_lodbias_off.txt)" : "ON");
     }
 #ifdef BREAK_28
@@ -2969,6 +3064,7 @@ void gx_tex_invalidate(const void* addr, u32 n) {
 unsigned gx_tex_released;
 void gx_tex_release(const void* addr, u32 n) {
     uintptr_t a = (uintptr_t)addr, b = a + (n ? n : 1);
+    b8Release(addr, n ? n : 1);
     copyDstRelease(addr, n ? n : 1);
     if (!gTcN) return;
     for (uintptr_t pg = a >> 16; pg <= (b - 1) >> 16; pg++) {
@@ -3076,7 +3172,7 @@ extern int rhi_vita_texSetMips(RhiTexture* t, int nlev, unsigned char* const* rg
 unsigned gx_tex_authored_chains, gx_tex_authored_levels;
 static void texUploadAuthoredMips(RhiTexture* tex, const PortTexObj* t) {
     static int sOff = -1;
-    if (sOff < 0) { FILE* f = fopen("ux0:data/stairfax/tex_mips_authored_off.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+    if (sOff < 0) { FILE* f = stfxMarkerOpen("tex_mips_authored_off.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
                     sOff = c == 49; printf("[filter] the game's own mip levels %s\n", sOff ? "OFF (tex_mips_authored_off.txt: generated chains, run 258)" : "ON (run 264)"); }
     if (sOff || !tex || !rhi_vita_texSetMips || !(t->mipmap & 1)) return;
     int levels = texLodLevels(t->image, NULL);
@@ -3261,7 +3357,7 @@ unsigned gx_peekz_real, gx_peekz_near, gx_bp_delivered;
 void GXPeekZ(u16 x, u16 y, u32* z) {
     unsigned v = 0xFFFFFFu, raw = 0;
     ++gx_peekz_calls;
-    if (gPeekZMode < 0) { FILE* f = fopen("ux0:data/stairfax/peekz.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+    if (gPeekZMode < 0) { FILE* f = stfxMarkerOpen("peekz.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
                           gPeekZMode = c == 49 ? 1 : c == 50 ? 2 : 0;
                           printf("[peekz] mode %d (%s)\n", gPeekZMode, gPeekZMode == 2 ? "depth memory after a glFinish" : gPeekZMode == 1 ? "depth memory as it stands" : "far plane: every probe visible"); }
     if (gPeekZMode && rhi_vita_peekZ) {
@@ -3288,7 +3384,7 @@ StfxBpCb GXSetBreakPtCallback(StfxBpCb cb) { StfxBpCb o = gBpCb; gBpCb = cb; ret
 void GXEnableBreakPt(void* breakPt) { (void)breakPt; gBpArmed = 1; }
 void GXDisableBreakPt(void) { gBpArmed = 0; }
 int gx_breakpoint_deliver(void) {
-    if (gBpMode < 0) { FILE* f = fopen("ux0:data/stairfax/gx_bp.txt", "r"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
+    if (gBpMode < 0) { FILE* f = stfxMarkerOpen("gx_bp.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f);
                        gBpMode = c == 48 ? 0 : 1;
                        printf("[bp] GX FIFO breakpoint: %s\n", gBpMode ? "DELIVERED at the retrace" : "not delivered (gx_bp.txt 0): the movie duty alone"); }
     if (!gBpMode) return 0;
@@ -3415,7 +3511,10 @@ static void copyDstRecord(const unsigned char* lo) {
     if (!inCopyDst(lo)) {
         if (gCopyDstN < GX_COPY_DSTS) { gCopyDst[gCopyDstN].lo = lo; gCopyDst[gCopyDstN].hi = lo + (n ? n : 32);
                                         gCopyDst[gCopyDstN].w = gCopyDstW; gCopyDst[gCopyDstN].h = gCopyDstH; gCopyDst[gCopyDstN].fmt = gCopyDstFmt;
-                                        gCopyDst[gCopyDstN].tex = NULL; gCopyDst[gCopyDstN].want = -1000; ++gCopyDstN; }
+                                        gCopyDst[gCopyDstN].tex = NULL; gCopyDst[gCopyDstN].want = -1000; ++gCopyDstN;
+                                        {   static int nRec; if (nRec < 24) { ++nRec;   /* CPYHIT PROBE: who made each range */
+                                            printf("[cpyrec] present %d dest %p..%p dst %ux%u fmt 0x%x src %d,%d %dx%d live %d\n", copyNow(), (const void*)lo, (const void*)(lo + (n ? n : 32)),
+                                                   (unsigned)gCopyDstW, (unsigned)gCopyDstH, (unsigned)gCopyDstFmt, gCopySrc[0], gCopySrc[1], gCopySrc[2], gCopySrc[3], gCopyDstN); } } }
     }
 }
 // Mode 1, a colour format: one GPU quad into the destination's own texture. The record keeps it and
@@ -3432,6 +3531,68 @@ static int copyGpu(const unsigned char* dest) {
     gCopyDst[i].tex = t; gCopyDst[i].w = gCopyDstW; gCopyDst[i].h = gCopyDstH; gCopyDst[i].fmt = gCopyDstFmt;
     ++gx_copy_gpu;
     return 1;
+}
+// THE DEFERRED B8 READBACK (2026-11-01). The game's one B8 copy is renderObjectShadowTexture (newshadows.c): it copies a silhouette into
+// ring slot I and blurs slot (I+1)%3 on the CPU, a slot copied by an EARLIER call (two frames earlier while the index advances once a frame).
+// copyReal answered every such copy with a readback of THIS frame's picture: end the scene, wait for the GPU to drain, read 50 KB back.
+// Tyler's 2026-11-01 log (eboot 01fb897c): 72,369 readbacks at 12.6 ms each, one a frame while the pause menu is open (its R 37.8 ms, 25 fps).
+// Deferred: the copy is one GPU quad into a staging copy texture, like every other format (b8Issue). At the NEXT B8 copy every other
+// destination's staging texels are read where the GPU wrote them and encoded into the game's texture (b8Resolve): by then the GPU has
+// finished that copy, so no scene is ended and normally nothing is waited for. A destination is therefore resolved before the call that
+// follows its copy returns, and threaded G still waits for every B8 copy record (gx_rt_special.c gxts_G_GXCopyTex), so the game sees
+// real texels in every slot it can blur. The one assumption: the game never reads the slot it is copying into in the same call
+// (true: the blur slot is (I+1)%3, never I). gx_b8_defer = 0 (marker b8_defer.txt "0", or the b8_ab.txt toggle) = copyReal, as before.
+int gx_b8_defer = 1;
+unsigned gx_b8_issued, gx_b8_resolved, gx_b8_waited, gx_b8_superseded, gx_b8_lost, gx_b8_fallback, gx_b8_freed;
+unsigned long long gx_b8_resolve_us;
+extern int rhi_vita_copyPeekSupported(void) __attribute__((weak));
+extern int rhi_vita_copyPeek(RhiTexture* t, int wait, const unsigned char** px, int* stride, int* w, int* h) __attribute__((weak));
+#define GX_B8_N 8
+static struct { const unsigned char* dest; RhiTexture* stage; int dw, dh, pending; } gB8[GX_B8_N];
+static int gB8N;
+static int b8Find(const void* dest) { for (int i = 0; i < gB8N; ++i) if (gB8[i].dest == dest) return i; return -1; }
+static void b8Resolve(int i) {
+    if (!gB8[i].pending) return;
+    gB8[i].pending = 0;
+    unsigned long long t0 = GXT_NOW();
+    const unsigned char* px = NULL; int stride = 0, w = 0, h = 0;
+    int r = rhi_vita_copyPeek(gB8[i].stage, 0, &px, &stride, &w, &h);
+    if (r == 0) { ++gx_b8_waited; r = rhi_vita_copyPeek(gB8[i].stage, 1, &px, &stride, &w, &h); }
+    size_t n = 0;
+    if (r == 1 && px && w == gB8[i].dw && h == gB8[i].dh) {
+        unsigned char* rgba = (unsigned char*)malloc((size_t)w * h * 4);
+        if (rgba) {
+            for (int y = 0; y < h; ++y) memcpy(rgba + (size_t)y * w * 4, px + (size_t)y * stride, (size_t)w * 4);   // row 0 = the top, as copyReal's resample produces
+            n = gxTexEncodeCopy(0x2A, w, h, rgba, (unsigned char*)gB8[i].dest);
+            free(rgba);
+        }
+    }
+    if (!n) { ++gx_b8_lost; return; }   // the destination keeps its previous texels (counted)
+    gx_tex_invalidate(gB8[i].dest, (u32)n);
+    ++gx_b8_resolved; ++gx_copy_mem;
+    gx_b8_resolve_us += GXT_NOW() - t0;
+}
+static int b8Issue(const unsigned char* dest) {   // 1: the copy is on the GPU and `dest` is pending
+    if (!rhi_vita_copyPeekSupported || !rhi_vita_copyPeek || !rhi_vita_copyEfb || !rhi_vita_copyPeekSupported() || !gCopyDstW || !gCopyDstH) return 0;
+    int i = b8Find(dest);
+    if (i < 0) {
+        if (gB8N == GX_B8_N) return 0;
+        i = gB8N++; gB8[i].dest = dest; gB8[i].stage = NULL; gB8[i].pending = 0;
+    }
+    if (gB8[i].pending) { gB8[i].pending = 0; ++gx_b8_superseded; }   // copied again before anyone could read it: the newer picture wins
+    RhiTexture* t = rhi_vita_copyEfb(gB8[i].stage, gCopySrc[0], gCopySrc[1], gCopySrc[2], gCopySrc[3], gCopyDstW, gCopyDstH, 0x2A);
+    if (!t) return 0;                                   // refused (the backend has not touched the old stage)
+    gB8[i].stage = t; gB8[i].dw = gCopyDstW; gB8[i].dh = gCopyDstH; gB8[i].pending = 1;
+    ++gx_b8_issued;
+    return 1;
+}
+static void b8Release(const void* p, u32 n) {
+    const unsigned char* lo = (const unsigned char*)p; const unsigned char* hi = lo + n;
+    for (int i = 0; i < gB8N;)
+        if (gB8[i].dest >= lo && gB8[i].dest < hi) {
+            if (gB8[i].stage && rhi_vita_copyEfbFree) rhi_vita_copyEfbFree(gB8[i].stage);
+            ++gx_b8_freed; gB8[i] = gB8[--gB8N];
+        } else ++i;
 }
 static void gxCopyTexImpl(void* dest, u8 clear);
 void GXCopyTex(void* dest, u8 clear) { RT_SUBS(RT_S_ENTRY_COPY); unsigned long long t = GXT_NOW(); RT_ENTER(RT_SHIM); gxCopyTexImpl(dest, clear); RT_LEAVE(); gx_w_copy_us += GXT_NOW() - t; }
@@ -3484,13 +3645,33 @@ static void gxCopyTexImpl(void* dest, u8 clear) {
                 else if ((done = copyGpu((const unsigned char*)dest))) ++gx_copy_z;
                 else ++gx_copy_zfmt;
             }
-            else if (gCopyDstFmt == 0x2A) {                  // GX_CTF_B8: the game blurs this texture on the CPU (boxBlurTexture): memory path, read from the FBO
-                if (copyReal(dest)) {
-                    ++gx_copy_mem; done = 1;
+            else if (gCopyDstFmt == 0x2A) {                  // GX_CTF_B8: the game blurs this texture on the CPU (boxBlurTexture): memory path (see THE DEFERRED B8 READBACK)
+                for (int k = 0; k < gB8N; ++k) if (gB8[k].dest != dest) b8Resolve(k);   // every slot the game may blur after this call
+                if (gx_b8_defer && b8Issue((const unsigned char*)dest)) {
+                    done = 1;
                     copyDstRelease(dest, 1);                 // no stale GPU copy may shadow the real texels
+                } else {
+                    int k = b8Find(dest);
+                    if (k >= 0 && gB8[k].pending) { gB8[k].pending = 0; ++gx_b8_superseded; }   // the readback below is newer
+                    if (gx_b8_defer) ++gx_b8_fallback;
+                    if (copyReal(dest)) {
+                        ++gx_copy_mem; done = 1;
+                        copyDstRelease(dest, 1);
+                    }
                 }
             }
             else done = copyGpu((const unsigned char*)dest);
+            if (gx_shadow_probe && (gCopyDstFmt == 0x28 || gCopyDstFmt == 0x20)) {   // SHADOW PROBE: the cast textures (R8 shared, R4 the first caster's)
+                int i = copyDstIndex(dest); unsigned nz = 0, bit[8] = { 0 }, mx = 0; int r = -9, w = 0, h = 0, stride = 0; const unsigned char* px = NULL;
+                if (done && i >= 0 && gCopyDst[i].tex && rhi_vita_copyPeek) r = rhi_vita_copyPeek(gCopyDst[i].tex, 1, &px, &stride, &w, &h);
+                if (r == 1 && px) for (int y = 0; y < h; ++y) for (int x = 0; x < w; ++x) {
+                    unsigned c = px[(size_t)y * stride + (size_t)x * 4];
+                    if (c) { ++nz; if (c > mx) mx = c; for (int b = 0; b < 8; ++b) bit[b] += c >> b & 1; }
+                }
+                printf("[shp-copy] fmt %02x src %d,%d %dx%d -> %ux%u dest %p clear %u done %d peek %d %dx%d | red nonzero %u max %u bits0..7 %u %u %u %u %u %u %u %u\n",
+                       (unsigned)gCopyDstFmt, gCopySrc[0], gCopySrc[1], gCopySrc[2], gCopySrc[3], (unsigned)gCopyDstW, (unsigned)gCopyDstH, dest, (unsigned)clear, done, r, w, h,
+                       nz, mx, bit[0], bit[1], bit[2], bit[3], bit[4], bit[5], bit[6], bit[7]);
+            }
         }
         else if (mode == 2) done = copyReal(dest);           // today's behaviour: CPU readback
         if (!done) {
@@ -3672,7 +3853,7 @@ static u32 pxChannelColour(u32 vtx, int haveVtx, const RhiTexVertex* pos, const 
        x (ambient + 0.5) instead of vertex colour x ambient. With no normal N is zero: a light with a diffuse function
        adds nothing, one with GX_DF_NONE adds its colour, as in GX. ux0:data/stairfax/chan_oldguess.txt = the old rule (A/B). */
     static int sOldGuess = -1;
-    if (sOldGuess < 0) { FILE* f = fopen("ux0:data/stairfax/chan_oldguess.txt", "r"); sOldGuess = f ? 1 : 0; if (f) fclose(f);
+    if (sOldGuess < 0) { FILE* f = stfxMarkerOpen("chan_oldguess.txt"); sOldGuess = f ? 1 : 0; if (f) fclose(f);
                          printf("[chan] enabled channel without a normal: %s\n", sOldGuess ? "OLD ambient + 0.5 (chan_oldguess.txt)" : "lit (ambient + lights)"); }
 #ifdef BREAK_13
     sOldGuess = 1;   /* host break arm: check 13 must FAIL */
@@ -3734,7 +3915,7 @@ u32 gx_draw_litColour(u32 vtx, int haveVtx, const float pos[3], const float nrm[
 }
 static int pxAlphaMode(void) {
     static int sOld = -1;   // blend_old.txt: the old three cases (A/B arm), read once and logged
-    if (sOld < 0) { FILE* f = fopen("ux0:data/stairfax/blend_old.txt", "r"); sOld = f ? 1 : 0; if (f) fclose(f);
+    if (sOld < 0) { FILE* f = stfxMarkerOpen("blend_old.txt"); sOld = f ? 1 : 0; if (f) fclose(f);
                     printf("[blend] %s\n", sOld ? "OLD three-case blend (blend_old.txt)" : "exact GX blend factors"); }
     if (gBlendType == 1 /*GX_BM_BLEND*/ || (gBlendType == 3 /*GX_BM_SUBTRACT*/ && !sOld)) {
         int cls = gBlendType == 3 || gBlendDst == 1 /*GX_BL_ONE*/ ? RHI_ALPHA_ADD : RHI_ALPHA_BLEND;
@@ -3895,7 +4076,7 @@ static void dlcSelfTest(void) {   // the census must SEE a changed array and a c
 static int dlcOn(void) {
     if (gDlcOn < 0) {
         const char* env = getenv("STFX_DL_CENSUS");   /* the host test's switch */
-        FILE* f = fopen("ux0:data/stairfax/dl_census.txt", "r"); int c1 = f ? fgetc(f) : 0; gDlcOn = (c1 == 49 || env) ? 1 : 0; if (f) fclose(f);   /* the file must START WITH 1: a 0 turns it off without a delete */
+        FILE* f = stfxMarkerOpen("dl_census.txt"); int c1 = f ? fgetc(f) : 0; gDlcOn = (c1 == 49 || env) ? 1 : 0; if (f) fclose(f);   /* the file must START WITH 1: a 0 turns it off without a delete */
         printf("[dlc] display-list census %s\n", gDlcOn ? "ON (dl_census.txt)" : "off");
         if (gDlcOn) dlcSelfTest();
     }
@@ -4067,7 +4248,7 @@ static int vsBuildKey(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_TEX], 
     }
     const int anyLights = k->ch[0].nLights + k->ch[1].nLights > 0;
     // ---- texgens ---------------------------------------------------------------------------------------------------
-    int texNrm = 0;
+    int texNrm = 0, tmiWideK = 0;
     for (int sl = 0; sl < tk->numTex; ++sl) {
         u8 f, s, m, nm, pt; gx_tev_texgen(sc[sl], &f, &s, &m, &nm, &pt);
         VsTexKey* g = &k->tex[sl];
@@ -4076,8 +4257,9 @@ static int vsBuildKey(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_TEX], 
         /* 2026-10-13: the vertex names this texgen's matrix (TEXnMTXIDX): the 10 texture matrices go up as a palette (uTMX) and the program picks the row */
         const int tmiS = sc[sl] < 8 && r->tmiIdx[sc[sl]] >= 0 && !tmiOld();
         if (tmiS) {
-            if (r->tmiBad >> sc[sl] & 1) VS_FAIL(VSW_TMI_RANGE);   /* a row outside 30,33..57 (a position matrix, the identity, a stray byte): the CPU path takes it */
+            if (r->tmiBad >> sc[sl] & 1) VS_FAIL(VSW_TMI_RANGE);   /* a row that is not the first row of a matrix (r < 60, r % 3 != 0): the CPU path takes it */
             k->tmiSlots |= (uint8_t)(1u << sl); k->tmiCoord[sl] = sc[sl];
+            if (r->tmiWide >> sc[sl] & 1) tmiWideK = 1;
         } else g->hasTM = tgMtx(m) ? 1 : 0;
         g->hasPost = (pt >= 64 && pt < 64 + 3 * 20) ? 1 : 0; g->norm = (g->hasPost && nm) ? 1 : 0;
         if (s == 0) g->src = 0;
@@ -4089,6 +4271,7 @@ static int vsBuildKey(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_TEX], 
         else if (r->texIdx[s - 4] >= 0) { g->src = 2; g->texN = (uint8_t)(s - 4); k->texMask |= (uint8_t)(1u << (s - 4)); }
         else g->src = 3;                                                          /* a TEXn the list does not carry: (0,0,1,1) */
     }
+    if (tmiWideK) for (int sl = 0; sl < tk->numTex; ++sl) if (k->tmiSlots >> sl & 1) k->tmiCoord[sl] |= VS_TMI_WIDE;   /* the program indexes the whole XF table (vsFillTmx) */
     k->hasNrm = (haveNrm && (anyLights || texNrm)) ? 1 : 0;
     { int why = tev_vs_check(k); if (why) VS_FAIL(why); }
     return 1;
@@ -4097,6 +4280,18 @@ static int vsBuildKey(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_TEX], 
  * PIX (curMtx), plus the caller's mvp (NULL = from PROJ and the viewport depth range).  It writes only the regions the key names, so a caller that proves the key unchanged since the last build of the SAME
  * buffer may skip the 3.7 KB clear (R3a C4, R3c C5).  What the key phase derived locally (the packed light list, the matrix numbers of the texgens) is re-derived here from the key and the state: both are
  * pure functions of them (the light list from the channel's mask and the lights' colours; the texgen numbers from sc[] and the texgen table, the matrix palette flag from k->tmiSlots). */
+/* The per-vertex texture-matrix palette uTMX (VsUniforms.tmx).  A key without VS_TMI_WIDE: the 10 texture matrices in rows 0..29, the program reads row r - 30
+ * (every program compiled before 2026-11-02 has this layout).  A WIDE key (a vertex names a position matrix or the identity, Galdon's lists): the XF matrix memory
+ * as tgMtxRow reads it -- rows 0..29 the position matrices, 30..59 the texture matrices, 60..62 the identity -- and the program reads row min(r, 60). */
+static void vsFillTmx(const VsKey* k, VsUniforms* u) {
+    if (!tev_vs_tmi_wide(k)) { memcpy(u->tmx, gTexMtx, sizeof(float) * 10 * 12); return; }
+    memcpy(&u->tmx[0][0][0], gPosMtx, sizeof(float) * 10 * 12);
+#ifdef BREAK_VS_TMIPN   /* host negative control: the position-matrix rows filled from the texture matrices */
+    memcpy(&u->tmx[0][0][0], gTexMtx, sizeof(float) * 10 * 12);
+#endif
+    memcpy(&u->tmx[10][0][0], gTexMtx, sizeof(float) * 10 * 12);
+    float* id = &u->tmx[20][0][0]; memset(id, 0, sizeof(float) * 12); id[0] = id[5] = id[10] = 1.0f;
+}
 static void vsBuildUniforms(const VsKey* k, const TevKey* tk, const u8 sc[TEVK_TEX], const float* mvpIn, VsUniforms* u) {
     int lidx[2][8];
     if (k->numChans) {
@@ -4135,7 +4330,7 @@ static void vsBuildUniforms(const VsKey* k, const TevKey* tk, const u8 sc[TEVK_T
         if (k->tex[sl].hasPost) memcpy(u->pt[sl], gPostMtx[ptId[sl]], sizeof u->pt[sl]);
     }
     for (int sl = 0; sl < tk->numTex; ++sl) if (k->tex[sl].hasTM && tmPn[sl]) { ++gx_texgen_pn_gpu; break; }
-    if (k->tmiSlots) { memcpy(u->tmx, gTexMtx, sizeof u->tmx); ++gx_texgen_tmi_gpu; }
+    if (k->tmiSlots) { vsFillTmx(k, u); ++gx_texgen_tmi_gpu; }
     if (k->hasBin || k->hasTan) ++gx_texgen_nbt;
 }
 static int gx_vs_build_ref(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_TEX], VsKey* k, VsUniforms* u, const float* mvpIn, const VsKey* prevKey) {
@@ -4191,7 +4386,7 @@ static int gx_vs_build_mono(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_
     }
     const int anyLights = k->ch[0].nLights + k->ch[1].nLights > 0;
     // ---- texgens ---------------------------------------------------------------------------------------------------
-    int texNrm = 0; u8 tmId[TEVK_TEX], ptId[TEVK_TEX], tmPn[TEVK_TEX];
+    int texNrm = 0, tmiWideK = 0; u8 tmId[TEVK_TEX], ptId[TEVK_TEX], tmPn[TEVK_TEX];
     for (int sl = 0; sl < tk->numTex; ++sl) {
         u8 f, s, m, nm, pt; gx_tev_texgen(sc[sl], &f, &s, &m, &nm, &pt);
         VsTexKey* g = &k->tex[sl]; tmId[sl] = ptId[sl] = tmPn[sl] = 0;
@@ -4200,8 +4395,9 @@ static int gx_vs_build_mono(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_
         /* 2026-10-13: the vertex names this texgen's matrix (TEXnMTXIDX): the 10 texture matrices go up as a palette (uTMX) and the program picks the row */
         const int tmiS = sc[sl] < 8 && r->tmiIdx[sc[sl]] >= 0 && !tmiOld();
         if (tmiS) {
-            if (r->tmiBad >> sc[sl] & 1) VS_FAIL(VSW_TMI_RANGE);   /* a row outside 30,33..57 (a position matrix, the identity, a stray byte): the CPU path takes it */
+            if (r->tmiBad >> sc[sl] & 1) VS_FAIL(VSW_TMI_RANGE);   /* a row that is not the first row of a matrix (r < 60, r % 3 != 0): the CPU path takes it */
             k->tmiSlots |= (uint8_t)(1u << sl); k->tmiCoord[sl] = sc[sl];
+            if (r->tmiWide >> sc[sl] & 1) tmiWideK = 1;
         } else g->hasTM = tgMtx(m) ? 1 : 0;
         g->hasPost = (pt >= 64 && pt < 64 + 3 * 20) ? 1 : 0; g->norm = (g->hasPost && nm) ? 1 : 0;
         if (g->hasTM) tmId[sl] = (u8)(m < 30 ? m / 3 : (m - 30) / 3);   /* tmSrc[sl] says which table: position matrices below 30 */
@@ -4216,6 +4412,7 @@ static int gx_vs_build_mono(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_
         else if (r->texIdx[s - 4] >= 0) { g->src = 2; g->texN = (uint8_t)(s - 4); k->texMask |= (uint8_t)(1u << (s - 4)); }
         else g->src = 3;                                                          /* a TEXn the list does not carry: (0,0,1,1) */
     }
+    if (tmiWideK) for (int sl = 0; sl < tk->numTex; ++sl) if (k->tmiSlots >> sl & 1) k->tmiCoord[sl] |= VS_TMI_WIDE;   /* the program indexes the whole XF table (vsFillTmx) */
     k->hasNrm = (haveNrm && (anyLights || texNrm)) ? 1 : 0;
     { int why = tev_vs_check(k); if (why) VS_FAIL(why); }
     if (prevKey && memcmp(prevKey, k, sizeof(*k))) memset(u, 0, sizeof(*u));   /* R3a C4: a changed key re-zeroes the uniforms; an unchanged one keeps its zero regions */
@@ -4242,7 +4439,7 @@ static int gx_vs_build_mono(const DlkRec* r, const TevKey* tk, const u8 sc[TEVK_
         if (k->tex[sl].hasPost) memcpy(u->pt[sl], gPostMtx[ptId[sl]], sizeof u->pt[sl]);
     }
     for (int sl = 0; sl < tk->numTex; ++sl) if (k->tex[sl].hasTM && tmPn[sl]) { break; }
-    if (k->tmiSlots) { memcpy(u->tmx, gTexMtx, sizeof u->tmx); }
+    if (k->tmiSlots) vsFillTmx(k, u);
     return 1;
 }
 
@@ -4284,7 +4481,7 @@ static int vsShapeOf(const DlkRec* r, VsShape* s) {   /* 0 = the list is not eli
     if (!rw->vsScan) c3VsScan(rw);                       /* a pure function of the record (the same scan arm 102 keeps); done here for every arm */
     if (rw->vsWhy) return 0;
     s->state = r->state; s->why = rw->vsWhy; s->haveNrm = r->ndist && rw->vsNN == r->ndist; s->nbAll = rw->vsNB == r->ndist;
-    s->hasPnm = r->hasPnm; s->hasClr = r->hasClr; s->hasNbt = r->nbt != NULL; s->tmiBad = r->tmiBad;
+    s->hasPnm = r->hasPnm; s->hasClr = r->hasClr; s->hasNbt = r->nbt != NULL; s->tmiBad = r->tmiBad; s->tmiWide = r->tmiWide;
     memcpy(s->texIdx, r->texIdx, 8); memcpy(s->tmiIdx, r->tmiIdx, 8);
     return 1;
 }

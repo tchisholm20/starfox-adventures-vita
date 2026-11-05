@@ -231,6 +231,17 @@ int kaldachom_stateHandlerA07(GameObject* obj, GroundBaddieState* state) {
             } else {
                 linkedObj = NULL;
             }
+#ifdef TARGET_PC
+            /* STFX (2026-11-04, two hw crashes on RC5/RC6, coredumps stairfax-captures/rc5_crash_*, rc6_crash_1809; Moon Mountain Pass, the second hit on a
+               Kaldachom): spawnChild(obj, 6) returned a child whose DLL pointer is NULL (data abort at ldr r3,[r3] here; the module loads +0xC000 from the ELF,
+               so symbolise with that offset). Skip the call and say which object it was, so the missing DLL can be found. */
+            if (linkedObj != NULL && linkedObj->anim.dll == NULL) {
+                static int logged;
+                extern int printf(const char*, ...);
+                if (logged++ < 4) printf("[kaldachom] spawnChild(6) gave romDef %d with no DLL: pull-up call skipped\n", (int) linkedObj->anim.romDefNo);
+                linkedObj = NULL;
+            }
+#endif
             if (linkedObj != NULL) {
                 f32 fz = 0.0f;
                 ((void (*)(GameObject*, f32, f32, f32))linkedObj->anim.dll[0][11])(

@@ -113,6 +113,20 @@ int tev_gen_fragment_fast(const TevKey* k, char* buf, int cap);
 int tev_gen_body_fast(const TevKey* k, char* buf, int cap);
 int tev_fast_safe(const TevKey* k);
 int tev_fast_check(const TevKey* k);
+// SHADER VARIANTS (2026-11-02, in-boot gpud A/B arms; variant 0 == the functions above, byte for byte). Bits: H half precision stage code and colour varyings
+// (the exact generator is untouched); G fog tail with exp2 + one vector lerp in half; L the lerp weight without GX's c + (c >> 7) correction; F the fast program
+// also for a key the fast variant refuses ONLY for the error bound (TF_ERR; TF_IND / TF_COMPARE / TF_WRAP stay exact). H, G, L change the emitted text of the keys
+// the fast variant already accepts; F changes which keys it accepts. tev_fast_err_only: the key is refused for the error bound alone (the keys F turns fast).
+#define TEVV_H 1u
+#define TEVV_G 2u
+#define TEVV_L 4u
+#define TEVV_F 8u
+#define TEVV_X (TEVV_H | TEVV_G | TEVV_L)
+#define TEVV_ALL (TEVV_X | TEVV_F)
+int tev_gen_fragment_fast_v(const TevKey* k, unsigned variant, char* buf, int cap);
+int tev_gen_body_fast_v(const TevKey* k, unsigned variant, char* buf, int cap);
+int tev_fast_check_v(const TevKey* k, unsigned variant);
+int tev_fast_err_only(const TevKey* k);
 const char* tev_fast_why_name(int why);
 // The canonical form of a key (tev_gen.c "KEY CANONICALISATION"): the same generated program for every key that maps to it, so the
 // device keeps one GL program per distinct program text. fast = 1 for tev_gen_fragment_fast, 0 for tev_gen_fragment; the result
@@ -179,6 +193,10 @@ int tev_gen_vertex_ex(int numTex, int fogType, char* buf, int cap);
 #define VS_MAX_SLOTS 10
 #define VS_MAX_LIGHTS 8      // packed lights over both channels
 #define VS_MAX_ATTRS 8
+// 2026-11-03 R8b (hw 38ee02d3, Galdon 0054): 19 of his 21 skinned lists a frame were refused VSW_TOO_MANY_ATTRS (pos nrm bin tan + texcoords + aSkP aSkN > 8)
+// and drawn by the R-side CPU fallback, which made ON 3.5 ms SLOWER than the CPU blend.  GXM takes 16 (GXM_MAX_GPU_ATTRS).  Only skinned NBT keys (all new
+// in R8b, none compiled or packed) get the wider cap, so no existing key changes and no unskinned list newly leaves the CPU path.
+#define VS_MAX_ATTRS_SKIN_NBT 16
 
 typedef struct {             // one colour or alpha channel (all zero when it is not enabled, bar matSrc)
     uint8_t enable;
@@ -210,9 +228,16 @@ typedef struct {             // fully zero-initialised by its builder (no paddin
     // 2026-10-13: per-vertex texture matrix index (GX_VA_TEXnMTXIDX) and the BINRM / TANGENT texgen sources
     uint8_t hasBin, hasTan;  // aBin / aTan are read (VsTexKey.src 4 / 5)
     uint8_t tmiSlots;        // bit s: texcoord slot s takes its texture matrix from its vertex's TEX<tmiCoord[s]>MTXIDX (the slot's hasTM is 0 then)
-    uint8_t tmiCoord[TEVK_TEX];   // slot s's texgen (texcoord) index 0..7 -- which TEXnMTXIDX byte
+    uint8_t tmiCoord[TEVK_TEX];   // slot s's texgen (texcoord) index 0..7 -- which TEXnMTXIDX byte; | VS_TMI_WIDE (bit 7, every tmi slot or none): the wide palette
     uint8_t hasSkin;         // 2026-10-26 (R8 GPU skinning): aSk (float4) is read and the vertex program skins aPos / aNrm by the palette in uBone[VS_SKIN_PAL_VEC4]; zero in every other key
 } VsKey;
+// VS_TMI_WIDE (2026-11-02, Galdon at 10 fps): a vertex's TEXnMTXIDX may name ANY XF matrix row -- a position matrix (0,3..27), a texture matrix (30..57) or the
+// identity (60 and up) (gx_draw.c tgMtxRow, the CPU path).  Keys whose rows all lie in 30..57 are unchanged (same bytes, hash, source and cached program); a key
+// with another legal row sets this bit in every tmi slot's tmiCoord and its program declares uTMX[63] = the XF table (rows 0..29 position matrices, 30..59
+// texture matrices, 60..62 identity) and reads row min(r, 60) -- 23 of Galdon's lists a frame took the CPU path for it (VSW_TMI_RANGE).
+#define VS_TMI_WIDE 0x80
+#define VS_TMI_COORD(c) ((c) & 7)
+static inline int tev_vs_tmi_wide(const VsKey* k) { for (int s = 0; s < TEVK_TEX; ++s) if ((k->tmiSlots >> s & 1) && (k->tmiCoord[s] & VS_TMI_WIDE)) return 1; return 0; }
 // A VsKey without projFrag is hashed / saved as the old struct (every program binary saved before keeps its hash); one without the 2026-10-13
 // fields hashes as it did before them.
 static inline size_t tev_vs_key_len(const VsKey* k) { return (k->hasBin || k->hasTan || k->tmiSlots || k->hasSkin) ? sizeof *k : k->projFrag ? offsetof(VsKey, hasBin) : offsetof(VsKey, projFrag); }
@@ -228,7 +253,7 @@ typedef struct {
     float mat[4], amb[4];
     VsLight lt[2][VS_MAX_LIGHTS];            // [0] colour channel, [1] alpha channel
     float tm[TEVK_TEX][3][4], pt[TEVK_TEX][3][4];
-    float tmx[10][3][4];                     // the texture-matrix palette (GX_TEXMTX0..9), when a slot reads its matrix from the vertex
+    float tmx[21][3][4];                     // the per-vertex matrix palette (uTMX), when a slot reads its matrix from the vertex: rows 0..29 = GX_TEXMTX0..9; a VS_TMI_WIDE key: the XF table, see below
 } VsUniforms;
 
 // Why a list/key stays on the CPU path (also the generator's -2 reasons).
@@ -260,6 +285,9 @@ int tev_gen_vertex_gx_params(const VsKey* k, int cpp, char* buf, int cap);
 //     GXM binder, GU_BONE; uTMX stays the texture-matrix palette, so a skinned key may also carry per-vertex texture matrices):
 //        uBone[3 * s + r]  row r (0..2) of palette slot s (s < VS_SKIN_MAX_BONES);   uBone[VS_SKIN_PAL_VEC4 - 1] = (2^posQ, 2^-posQ, 2^nrmQ, 2^-nrmQ)
 //     A backend fills a hasSkin draw's uBone from gx_skin_vs_palette(); VsUniforms is NOT grown.
+//     2026-11-03, R8b T2: the table may have up to 128 bones but the program's palette stays VS_SKIN_MAX_BONES (32): each display-list record maps the table slots its vertices use onto local slots 0..31
+//     (aSkP / aSkN carry LOCAL slots), and gx_skin_vs_palette() returns the image gathered for the record being drawn (gx_skin_vs_select, set by gx_draw.c around the backend call).  A skinned key may also read
+//     the binormal / tangent (hasBin / hasTan, an NBT model): they are skinned with the normal's entry (aSkN), so such a key needs hasNrm.  No VsKey field was added: every existing key keeps its bytes AND its source.
 #define VS_SKIN_MAX_BONES 32
 #define VS_SKIN_PAL_VEC4  (3 * VS_SKIN_MAX_BONES + 1)
 struct GxSkinTable;

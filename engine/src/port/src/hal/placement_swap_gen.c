@@ -128,7 +128,13 @@ static void pl_iceBaddie_init(unsigned char* b) {   /* GroundBaddiePlacement, 52
     beFix16(b + 0x30);   /* GroundBaddiePlacement.gameBitB */
 }
 extern void dll_CB_init();
-static void pl_dll_CB_init(unsigned char* b) {   /* DllCBPlacement, 48 bytes; typed parameter */
+static void pl_dll_CB_init(unsigned char* b) {   /* DllCBPlacement, 48 bytes; typed parameter + also: DLL 203: trackYieldId @0x24 and gameBitId @0x2c already swap */
+    beFix16(b + 0x18);   /* gameBitA */
+    beFix16(b + 0x1a);   /* gameBitC */
+    beFix16(b + 0x1c);   /* gameBitD */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
     beFix16(b + 0x24);   /* DllCBPlacement.trackYieldId */
     beFix16(b + 0x2c);   /* DllCBPlacement.gameBitId */
 }
@@ -138,7 +144,15 @@ static void pl_ChukChuk_init(unsigned char* b) {   /* ChukChukPlacement, 56 byte
     beFix16(b + 0x22);   /* ChukChukPlacement.unk22 */
 }
 extern void dll_CE_init();
-static void pl_dll_CE_init(unsigned char* b) {   /* DllCEPlacement, 48 bytes; typed parameter */
+static void pl_dll_CE_init(unsigned char* b) {   /* DllCEPlacement, 48 bytes; typed parameter + also: DLL 206, 48 bytes */
+    beFix16(b + 0x18);   /* gameBitA */
+    beFix16(b + 0x1a);   /* gameBitC */
+    beFix16(b + 0x1c);   /* gameBitD */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
+    beFix16(b + 0x24);   /* unk24 */
+    beFix16(b + 0x2c);   /* respawnDelay */
 }
 extern void cannonclaw_init();
 static void pl_cannonclaw_init(unsigned char* b) {   /* CannonClawPlacement, 44 bytes; typed parameter */
@@ -152,13 +166,29 @@ static void pl_tumbleweed_init(unsigned char* b) {   /* TumbleweedPlacement, 32 
     beFix32(b + 0x1c);   /* TumbleweedPlacement.scale */
 }
 extern void dll_D3_init();
-static void pl_dll_D3_init(unsigned char* b) {   /* DllD3Placement, 48 bytes; typed parameter */
+static void pl_dll_D3_init(unsigned char* b) {   /* DllD3Placement, 48 bytes; typed parameter + also: DLL 211, 48 bytes */
+    beFix16(b + 0x18);   /* gameBitA */
+    beFix16(b + 0x1a);   /* gameBitC */
+    beFix16(b + 0x1c);   /* gameBitD */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
+    beFix16(b + 0x24);   /* unk24 */
+    beFix16(b + 0x2c);   /* respawnDelay */
 }
 extern void SkeetlaWall_init();
 static void pl_SkeetlaWall_init(unsigned char* b) {   /* SkeetlaWallPlacement, 32 bytes; typed parameter */
 }
 extern void kaldachom_init();
-static void pl_kaldachom_init(unsigned char* b) {   /* KaldachomPlacement, 48 bytes; typed parameter */
+static void pl_kaldachom_init(unsigned char* b) {   /* KaldachomPlacement, 48 bytes; typed parameter + also: DLL 213, 48 bytes */
+    beFix16(b + 0x18);   /* gameBitA */
+    beFix16(b + 0x1a);   /* gameBitC */
+    beFix16(b + 0x1c);   /* gameBitD */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
+    beFix16(b + 0x24);   /* unk24 */
+    beFix16(b + 0x2c);   /* respawnDelay */
 }
 extern void KaldachomMe_init();
 static void pl_KaldachomMe_init(unsigned char* b) {   /* KaldachomMePlacement, 28 bytes; typed parameter */
@@ -967,9 +997,15 @@ static void pl_SH_EmptyTumbleW_init(unsigned char* b) {   /* ShEmptyTumbleweedPl
     beFix32(b + 0x1c);   /* ShEmptyTumbleweedPlacement.scale */
 }
 extern void Lightfoot_init();
-static void pl_Lightfoot_init(unsigned char* b) {   /* const LightfootPlacement, 52 bytes; typed parameter */
+static void pl_Lightfoot_init(unsigned char* b) {   /* const LightfootPlacement, 52 bytes; typed parameter + also: DLL 437: 0x1a/0x1c/0x30 already swap */
+    beFix16(b + 0x18);   /* gameBitA */
     beFix16(b + 0x1a);   /* const LightfootPlacement.?{union} */
     beFix16(b + 0x1c);   /* const LightfootPlacement.eventGameBit */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
+    beFix16(b + 0x24);   /* unk24 */
+    beFix16(b + 0x2c);   /* respawnDelay */
     beFix16(b + 0x30);   /* const LightfootPlacement.activeGameBit */
 }
 extern void sc_musictree_init();
@@ -1828,11 +1864,25 @@ static void pl_DIM2PathGenerator_init(unsigned char* b) {   /* Dim2PathGenerator
     beFix16(b + 0x22);   /* Dim2PathGeneratorPlacementView.activeGameBit */
 }
 extern void DIMboss_init();
-static void pl_DIMboss_init(unsigned char* b) {   /* DIMbossPlacementView, 48 bytes; INFERRED from anim.placement casts (DLL 480) */
+static void pl_DIMboss_init(unsigned char* b) {   /* DIMbossPlacementView, 48 bytes; INFERRED from anim.placement casts (DLL 480) + also: DLL 480 Galdon: eventId @0x2c already swaps */
+    beFix16(b + 0x18);   /* gameBitA */
+    beFix16(b + 0x1a);   /* gameBitC */
+    beFix16(b + 0x1c);   /* gameBitD */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
+    beFix16(b + 0x24);   /* unk24 */
     beFix16(b + 0x2c);   /* DIMbossPlacementView.eventId */
 }
 extern void DIMbosstonsil_init();
-static void pl_DIMbosstonsil_init(unsigned char* b) {   /* DIMbosstonsilPlacementView, 48 bytes; INFERRED from anim.placement casts (DLL 482) */
+static void pl_DIMbosstonsil_init(unsigned char* b) {   /* DIMbosstonsilPlacementView, 48 bytes; INFERRED from anim.placement casts (DLL 482) + also: DLL 482: eventId @0x2c already swaps */
+    beFix16(b + 0x18);   /* gameBitA */
+    beFix16(b + 0x1a);   /* gameBitC */
+    beFix16(b + 0x1c);   /* gameBitD */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
+    beFix16(b + 0x24);   /* unk24 */
     beFix16(b + 0x2c);   /* DIMbosstonsilPlacementView.eventId */
 }
 extern void dimbossfire_init();
@@ -1965,7 +2015,16 @@ static void pl_dbegg_init(unsigned char* b) {   /* DbEggPlacementPrefix, 48 byte
     beFix16(b + 0x2c);   /* DbEggPlacementPrefix.counterGameBit */
 }
 extern void ktrex_init();
-static void pl_ktrex_init(unsigned char* b) {   /* KtrexPlacement, 68 bytes; override: DLL 592: reads ((KtrexPlacement*)p)->laneSpeeds[], p = obj->anim.placementData, so no direct cast for the generator to see */
+static void pl_ktrex_init(unsigned char* b) {   /* KtrexPlacement, 68 bytes; override: DLL 592: reads ((KtrexPlacement*)p)->laneSpeeds[], p = obj->anim.placementData, so no direct cast for the generator to see + also: DLL 592, 68 bytes: laneSpeeds @0x38.. already swap */
+    beFix16(b + 0x18);   /* gameBitA */
+    beFix16(b + 0x1a);   /* gameBitC */
+    beFix16(b + 0x1c);   /* gameBitD */
+    beFix16(b + 0x1e);   /* soundIdB */
+    beFix16(b + 0x20);   /* soundIdA */
+    beFix16(b + 0x22);   /* triggerId */
+    beFix16(b + 0x24);   /* unk24 */
+    beFix16(b + 0x2c);   /* respawnDelay */
+    beFix16(b + 0x30);   /* gameBitB */
     beFix32(b + 0x38);   /* KtrexPlacement.laneSpeeds[0] */
     beFix32(b + 0x3c);   /* KtrexPlacement.laneSpeeds[1] */
     beFix32(b + 0x40);   /* KtrexPlacement.laneSpeeds[2] */

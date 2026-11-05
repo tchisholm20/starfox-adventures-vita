@@ -26,6 +26,7 @@
 #include <psp2/kernel/processmgr.h>
 #include "efb_rect.h"
 #include "gxm_copyedge.h"
+#include "gxm_gpud.h"
 #include "efb_rect.h"
 #include <psp2/io/fcntl.h>
 #include <stdarg.h>
@@ -125,14 +126,26 @@ static void gxm_tgt_copy_uvr(int x0, int y0, int x1, int y1, int rw, int rh, flo
 #endif
 }
 
-/* GX copy format -> conversion constants (rhi_vita_efb.inc:593-631, verbatim except the Z8 / self-test branches: efbZMode is 0 here, there is no boot
- * self-test). 0 = not handled (every Z format included). sel/cfg feed the copy program; qlv is the quantiser (FIX B), only when cf_on. */
+/* GX copy format -> conversion constants (rhi_vita_efb.inc:593-631, verbatim except the Z8 / self-test branches; there is no boot self-test).
+ * 1 = a colour copy (samples M's colour), 2 = a DEPTH copy (samples M's depth: Z8, see "Z8 COPIES"), 0 = not handled (every other Z format).
+ * sel/cfg feed the copy program; qlv is the quantiser (FIX B), only when cf_on.
+ * Z8 (2026-11-02): the depth texture's .x is the DF32M memory value d in [0, 0.5], and GX z24 = 2d (rhi_gxm_peekZ, device-verified 2026-10-27).
+ * GX_TF_Z8 is the top byte of z24 = floor(2d * 256) (rhi_vita_efb.inc efb_z_resolve). The program writes v = d * 512/255 - 0.5/255 into an 8-bit
+ * channel, which rounds: round(255 v) = round(512 d - 0.5) = floor(512 d), and the store clamps 256 (far, d = 0.5) to 255. All four channels = v. */
 static int gxm_tgt_conv(int f, float sel[4], float cfg[4], float qlv[4], int cf_on)
 {
     sel[0] = sel[1] = sel[2] = sel[3] = 0.0f;
     cfg[0] = 0.0f; cfg[1] = 0.0f; cfg[2] = 1.0f; cfg[3] = 0.0f;
     qlv[0] = qlv[1] = qlv[2] = qlv[3] = 0.0f;
-    if (f == 0x11) return 0;                                  /* Z8: needs a depth resolve (efbZMode 0): refused */
+    if (f == 0x11) {                                          /* Z8: a depth copy */
+#ifdef GXM_TGT_BREAK_ZCONV
+        sel[0] = 2.0f;                                        /* mutant: z24's top byte scaled by 255, not 256 */
+#else
+        sel[0] = 512.0f / 255.0f;
+#endif
+        cfg[0] = -0.5f / 255.0f;
+        return 2;
+    }
     if (f & 0x10) return 0;                                   /* every other Z format */
     switch (f) {
     case 0x20: case 0x28: sel[0] = 1.0f; break;               /* R4, R8 -> (r,r,r,r) */
@@ -251,6 +264,30 @@ static void gxm_tgt_shot_stats(uint32_t *rgb, unsigned n, GxmShotStats *s)
     s->nonblack_pct = (unsigned) ((100ull * nb) / n);
 }
 
+/* M SUB-TARGET size (2026-11-01, see "M SUB-TARGETS" in Part B). pw x ph: what this scene index touched last frame (0 x 0 = unknown); x1 x y1: what
+ * the op opening the scene needs (exclusive, pixels from M's top-left). Out: *w x *h = the union, rounded UP to 32 (a GXM tile) and capped at M.
+ * Returns 1 = open a sub-target of *w x *h; 0 = open all of M (unknown, or the union is all of M). Never smaller than either input. */
+#define GXM_TGT_SUB_ALIGN 32
+static int gxm_tgt_sub_size(int pw, int ph, int x1, int y1, int rw, int rh, int *w, int *h)
+{
+    *w = rw; *h = rh;
+    if (pw <= 0 || ph <= 0) return 0;                       /* scene k did not exist last frame: no evidence it is small */
+    int uw = pw > x1 ? pw : x1, uh = ph > y1 ? ph : y1;
+#ifndef GXM_TGT_BREAK_SUBROUND
+    uw = (uw + GXM_TGT_SUB_ALIGN - 1) / GXM_TGT_SUB_ALIGN * GXM_TGT_SUB_ALIGN;
+    uh = (uh + GXM_TGT_SUB_ALIGN - 1) / GXM_TGT_SUB_ALIGN * GXM_TGT_SUB_ALIGN;
+#else
+    uw = uw / GXM_TGT_SUB_ALIGN * GXM_TGT_SUB_ALIGN; uh = uh / GXM_TGT_SUB_ALIGN * GXM_TGT_SUB_ALIGN;   /* mutant: rounds DOWN */
+#endif
+    if (uw > rw) uw = rw;
+    if (uh > rh) uh = rh;
+    if (uw < GXM_TGT_SUB_ALIGN) uw = GXM_TGT_SUB_ALIGN;
+    if (uh < GXM_TGT_SUB_ALIGN) uh = GXM_TGT_SUB_ALIGN;
+    if (uw >= rw && uh >= rh) return 0;
+    *w = uw; *h = uh;
+    return 1;
+}
+
 /* ================================================================================================================================= Part B: the module */
 #ifndef GXM_TARGET_HOST_TEST
 
@@ -354,6 +391,31 @@ static SceGxmColorSurface g_cs_m, g_cs_d[GXM_DISP_BUFS];
 static SceGxmDepthStencilSurface g_ds_m[TG_DZ_N], g_ds_d, g_ds_s;
 static SceGxmSyncObject *g_sync_d[GXM_DISP_BUFS];
 static SceGxmTexture g_tex_m;                         /* M as a sampler: LINEAR, CLAMP */
+/* M sampled POINT, for the R8 copy only (2026-11-01, the Fox/Tricky blob). newshadows.c draws each shadow caster into one EFB region as a single
+ * red BIT (1 << mode) and copies it R8 with the copy filter off; the receivers test their bit (intersect_render.c, the Channel setup). Retail's
+ * copy is exact. Here M is not 640x480, so the copy resamples, and LINEAR mixed neighbouring bits: the shadow probe found ~500 texels on each of
+ * bits 0-4 that no caster writes (eboot 1c4753e6), which pass the receivers' bit tests as stray dots. R8 has no other user in the game.
+ * ux0:data/stairfax/copy_r8_linear.txt = '1': LINEAR as before. */
+static SceGxmTexture g_tex_m_pt;
+static int g_copy_r8_linear;
+/* Z8 COPIES (2026-11-02, Galdon at 10 fps): the game's GX_TF_Z8 copies were refused here, so every draw that samples one (Galdon's 10-stage self-shadow
+ * material reads his 512x512 depth map, newshadows.c:1424, casters with flags == 2) was refused by the TEV and display-list paths and drawn per primitive on
+ * the CPU: ~77 ms of R a frame and a dark Galdon (hw, eboot bd944512 / probe 65439ee6).  M's depth is DF32M LINEAR with ForceStore, one surface per frame
+ * (the DEPTH RING), so a Z8 copy is the ordinary copy quad sampling THIS frame's depth surface as an F32M texture (POINT: no filtering of depth), width =
+ * the surface's row stride GXM_ALIGN(rw, 64).  The conversion is gxm_tgt_conv's case 2.
+ * Marker ux0:data/stairfax/zcopy.txt (read at init): absent / "1" ON; "0" OFF (refused, as before); "ab <period>" ON and OFF alternating, ON first. */
+static SceGxmTexture g_tex_mz[TG_DZ_N];
+static int g_zc_mode = 1;                             /* 0 off, 1 on, 2 A/B */
+static int g_zc_period;                               /* frames per arm (A/B) */
+static volatile int g_zc_on = 1;                      /* the arm now: read by efbZMode on any thread, flipped at present */
+static unsigned c_efb_copy_z;                         /* Z8 copies made */
+/* INTERIM (2026-11-03, Tyler's ThornTail play, log play_tt.txt): the WHOLE-SCREEN Z8 copy (newshadows ReflectionTextures, made on demand when a blur /
+ * heat / distortion filter samples it) cost the render thread 9-10.5 ms a frame where it ran (copy 2.3 normally) and its effects needed shaders the pack
+ * does not hold.  Refused again (as before Z8 COPIES: its effects skip, as in v0.1.1) until that cost is understood.  Galdon's 512x512 shadow-map copy is
+ * not whole-screen and is unaffected.  ux0:data/stairfax/zcopy_whole.txt starting with '1' = allow it (the investigation boot). */
+static int g_zc_whole;
+static unsigned c_efb_copy_refused_zwhole;
+static int tg_zc_whole_refused(int gxfmt, int w, int h) { return gxfmt == 0x11 && !g_zc_whole && (unsigned) w * (unsigned) h >= 640u * 480u; }
 static int g_built;                                   /* init got far enough that shutdown has something to free */
 
 static GxmProg *g_pclear, *g_pblit, *g_pcopy;
@@ -381,6 +443,31 @@ static unsigned c_clear, c_clear_rect, c_clear_rect_empty, c_clear_skip;
 static unsigned c_peekz, c_peekz_sync, c_peekz_noframe, c_begin_frame, c_end_frame;
 static unsigned c_scene_fail, c_end_fail, c_end_c, c_end_x, c_end_p, c_end_r, c_ring_fail, c_present_skipped, c_present_dead, c_disp_fail;
 static unsigned c_scratch_grow, c_scratch_fail, c_shots, c_shot_fail;
+
+/* ---- M SUB-TARGETS (2026-11-01, ThornTail GPU 37.3 ms; diag_20261101 copy log: 9 of the 10 EFB copies of a frame are in draws 1-53) ----
+ * The game's pre-world passes (80x46, 512x368, 256x196, 6 x 32x24 offscreen renders, each copied out and cleared before the world draws) each opened
+ * a scene on ALL of M, so each paid M's whole colour + depth tile load and store (the copy log's 16-draw world scenes put that fixed cost at ~0.3-0.45 ms).
+ * Such a scene now opens on a SMALLER render target over the SAME memory: colour surface base b_mc.p, stride rw, W x H from the top-left; depth = M's
+ * own DF32M_S8 LINEAR surface for this frame (a depth surface has a stride, no size). Viewport and region clip are pixels from the top-left, so every
+ * pixel lands where it did on M and the picture is the same; only the tiles outside W x H are not loaded and stored.
+ * SIZE (gxm_tgt_sub_size): M scene k of this frame opens at what scene k touched in the PREVIOUS frame (max x1 / y1 over its clears and draw scissors),
+ * united with the opening op. A later op reaching outside W x H ends the scene ('g') and reopens it on all of M, still as scene k, so next frame's
+ * scene k opens big enough: a misprediction costs one scene split, never a pixel.
+ * Marker ux0:data/stairfax/msub.txt (read at init): absent / "0" OFF (all of M, as before); "1" ON; "ab <period>" ON and OFF alternating in one
+ * boot every <period> frames (rounded up to 60), ON first, one [msub-ab] line per period (judge: host/engine/msub_ab.py). */
+#define TG_SUB_N 8                                     /* distinct sub-target sizes kept (a size seen beyond them opens all of M, counted) */
+#define TG_SUB_K 64                                    /* M scenes per frame the size prediction covers */
+typedef struct { int w, h; SceGxmRenderTarget *rt; SceGxmColorSurface cs; unsigned used; } TgSub;
+static TgSub s_sub[TG_SUB_N];
+static int s_sub_n;
+int gxm_msub_on;                                       /* [R] read at every M scene open; the A/B flips it at present */
+static int s_msub_period;
+static uint32_t s_sub_pred[TG_SUB_K], s_sub_seen[TG_SUB_K];   /* (w << 16) | h touched by scene k: last frame / this frame; 0 = none */
+static int s_sub_k = -1, s_sub_knext;                 /* the open (or last) M scene's index; the next index this frame */
+static int s_sub_open = -1;                            /* s_sub[] index of the open M scene, -1 = all of M */
+static int s_ext_w, s_ext_h;                           /* what the open M scene has touched */
+static unsigned c_sub_scenes, c_sub_grow, c_sub_made, c_sub_fail, c_sub_nosize, c_sub_overflow, c_full_scenes;
+static unsigned long long c_sub_px_saved;              /* M pixels a sub-scene did not load / store */
 
 /* ---- small helpers ---- */
 static int tg_fail(const char *what)
@@ -440,7 +527,9 @@ static void tg_quad_state(int w, int h, int depth_write)
     sceGxmSetBackDepthBias(g_gx.ctx, 0, 0);
     /* top-row-first: yScale < 0 (misc.c:329-332); window z = 0.5 + 0.5 * clip z */
     sceGxmSetViewport(g_gx.ctx, (float) w * 0.5f, (float) w * 0.5f, (float) h * 0.5f, -(float) h * 0.5f, 0.5f, 0.5f);
-    sceGxmSetRegionClip(g_gx.ctx, SCE_GXM_REGION_CLIP_OUTSIDE, 0, 0, (unsigned) w - 1u, (unsigned) h - 1u);
+    /* the clip never past the open scene's target: an M sub-target is smaller than the w x h a quad's pixel mapping is computed for */
+    const int cw = g_open && g_cur_w > 0 && g_cur_w < w ? g_cur_w : w, ch = g_open && g_cur_h > 0 && g_cur_h < h ? g_cur_h : h;
+    sceGxmSetRegionClip(g_gx.ctx, SCE_GXM_REGION_CLIP_OUTSIDE, 0, 0, (unsigned) cw - 1u, (unsigned) ch - 1u);
 }
 
 static int tg_draw_fan(void)
@@ -479,11 +568,53 @@ static int tg_quad_blit_m(const float rect[4], const float uv[4], int w, int h)
     return tg_draw_fan();
 }
 
+/* ---- SCENE PROFILE (2026-11-01, docs/54 "why a copy costs ~205 us on R"): ux0:data/stairfax/gxm_sprof.txt, first char '1'.  R's CPU time inside
+ * sceGxmBeginScene and the scene end (fence quad + sceGxmEndScene) by scene kind [m, c, d]; rhi_gxm_copyEfb split into its steps (end M / texture +
+ * scratch / copy scene begin + quad / end copy / tail) with the worst single copy; the staging-ring fence waits and display-queue adds (CPU blocked on
+ * the GPU) over the same window.  One [sprof] block per 600 presents.  Cross-check (its way to fail): copy total x count/frame must agree with rprof
+ * op 6 (GXCopyTex) of the same boot, and the copy steps must sum to the copy total.  Off (no file): one int compare per scene call and per copy. */
+static int s_sp_on = -1;
+static uint32_t s_sp_bn[3], s_sp_bus[3], s_sp_en[3], s_sp_eus[3];            /* scene begin / end: count, us, by kind m c d */
+static uint32_t s_sp_cn, s_sp_cus[6], s_sp_cmax, s_sp_cwait, s_sp_pres;       /* copies: count, us per step [5] = whole call, worst copy, ring wait inside copies */
+static uint32_t s_sp_w0[2];
+static int tg_sp_on(void)
+{
+    if (s_sp_on < 0) { char b[4] = { 0 }; SceUID f = sceIoOpen("ux0:data/stairfax/gxm_sprof.txt", SCE_O_RDONLY, 0); s_sp_on = 0;
+                       if (f >= 0) { sceIoRead(f, b, 1); sceIoClose(f); s_sp_on = b[0] == '1'; }
+                       gxm_log("[sprof] scene profile %s (gxm_sprof.txt %s)", s_sp_on ? "ON" : "OFF", f >= 0 ? "present" : "absent");
+                       if (s_sp_on) { extern uint32_t g_gxm_wait_us[2]; s_sp_w0[0] = g_gxm_wait_us[0]; s_sp_w0[1] = g_gxm_wait_us[1]; } }
+    return s_sp_on;
+}
+static int tg_sp_k(char kind) { return kind == 'm' ? 0 : kind == 'c' ? 1 : 2; }
+static void tg_sp_present(void)
+{
+    if (s_sp_on <= 0 || ++s_sp_pres % 600u) return;
+    extern uint32_t g_gxm_wait_us[2];
+    const double f = 600.0;
+    static const char kn[3] = { 'm', 'c', 'd' };
+    gxm_log("[sprof] 600 presents | ring wait %.3f ms/frame, display queue add %.3f ms/frame", (g_gxm_wait_us[0] - s_sp_w0[0]) / 1000.0 / f, (g_gxm_wait_us[1] - s_sp_w0[1]) / 1000.0 / f);
+    for (int k = 0; k < 3; ++k)
+        gxm_log("[sprof] scene %c: begin %.2f/frame %.1f us each = %.3f ms/frame | end %.2f/frame %.1f us each = %.3f ms/frame", kn[k],
+                s_sp_bn[k] / f, s_sp_bn[k] ? (double) s_sp_bus[k] / s_sp_bn[k] : 0.0, s_sp_bus[k] / 1000.0 / f,
+                s_sp_en[k] / f, s_sp_en[k] ? (double) s_sp_eus[k] / s_sp_en[k] : 0.0, s_sp_eus[k] / 1000.0 / f);
+    const double cn = s_sp_cn ? (double) s_sp_cn : 1.0;
+    gxm_log("[sprof] copy: %.2f/frame %.1f us each = %.3f ms/frame | steps us: endM %.1f tex+scratch %.1f begin+quad %.1f endC %.1f tail %.1f | worst %u us | ring wait inside copies %.3f ms/frame",
+            s_sp_cn / f, s_sp_cus[5] / cn, s_sp_cus[5] / 1000.0 / f, s_sp_cus[0] / cn, s_sp_cus[1] / cn, s_sp_cus[2] / cn, s_sp_cus[3] / cn, s_sp_cus[4] / cn,
+            s_sp_cmax, s_sp_cwait / 1000.0 / f);
+    memset(s_sp_bn, 0, sizeof s_sp_bn); memset(s_sp_bus, 0, sizeof s_sp_bus); memset(s_sp_en, 0, sizeof s_sp_en); memset(s_sp_eus, 0, sizeof s_sp_eus);
+    s_sp_cn = 0; memset(s_sp_cus, 0, sizeof s_sp_cus); s_sp_cmax = 0; s_sp_cwait = 0;
+    s_sp_w0[0] = g_gxm_wait_us[0]; s_sp_w0[1] = g_gxm_wait_us[1];
+}
+
 /* ---- scenes ---- */
 static int tg_begin(char kind, SceGxmRenderTarget *rt, SceGxmSyncObject *fsync, const SceGxmColorSurface *cs, const SceGxmDepthStencilSurface *ds, int w, int h)
 {
     if (g_gx.dead) return -1;
-    if (GXM_CHK(sceGxmBeginScene(g_gx.ctx, 0, rt, NULL, NULL, fsync, cs, ds))) {
+    const int sp_ = s_sp_on != 0 && tg_sp_on();
+    const uint32_t sp0_ = sp_ ? sceKernelGetProcessTimeLow() : 0u;
+    const int brc_ = GXM_CHK(sceGxmBeginScene(g_gx.ctx, 0, rt, NULL, NULL, fsync, cs, ds));
+    if (sp_) { const int k = tg_sp_k(kind); s_sp_bus[k] += sceKernelGetProcessTimeLow() - sp0_; ++s_sp_bn[k]; }
+    if (brc_) {
         ++c_scene_fail;
         if (++g_bs_fail_run >= 3) gxm_abort("sceGxmBeginScene failed %d times in a row (last: '%c' scene)", g_bs_fail_run, kind);
         return -1;
@@ -543,34 +674,254 @@ void gxm_target_scene_end(char why)
     if (g_gx.dead) { g_open = 0; return; }       /* dead: nothing more is submitted */
     const char kind0 = g_open;
     const unsigned draws0 = g_gx.scene_draws;
+    const int sp_ = s_sp_on > 0;
+    const uint32_t sp0_ = sp_ ? sceKernelGetProcessTimeLow() : 0u;
     if (g_gx.scene_draws == 0) tg_fence_quad();
     { extern char g_gxm_end_kind; g_gxm_end_kind = kind0; }   /* the [gxm-gpu] split by scene kind */
     if (gxm_frame_end_scene() != 0) ++c_end_fail;
+    else if (__builtin_expect(g_gpud_on, 0)) gxm_gpud_note_scene(g_gx.nval, kind0);
+    if (sp_) { const int k = tg_sp_k(kind0); s_sp_eus[k] += sceKernelGetProcessTimeLow() - sp0_; ++s_sp_en[k]; }   /* SCENE PROFILE */
     if (s_cl_seq0 && !s_cl_done && g_gx.nval >= s_cl_seq0) s_cl_enddraw[(g_gx.nval - s_cl_seq0) & 511u] = (uint16_t) s_cl_draws;
+    if (kind0 == 'm' && s_sub_k >= 0 && s_sub_k < TG_SUB_K) {   /* M SUB-TARGETS: what scene k touched, for next frame's scene k */
+        const uint32_t e = ((uint32_t) s_ext_w << 16) | (uint32_t) s_ext_h, o = s_sub_seen[s_sub_k];
+        const uint32_t w = (e >> 16) > (o >> 16) ? (e >> 16) : (o >> 16), h = (e & 0xffffu) > (o & 0xffffu) ? (e & 0xffffu) : (o & 0xffffu);
+        s_sub_seen[s_sub_k] = (w << 16) | h;
+    }
     g_open = 0;
     tg_trace_scene(kind0, why, draws0);
     switch (why) { case 'c': ++c_end_c; break; case 'x': ++c_end_x; break; case 'p': ++c_end_p; break; default: ++c_end_r; break; }
 }
 
-/* the M scene, init-safe (does not look at g_gx.up) */
-static int tg_scene_m(void)
+/* M SUB-TARGETS: the sub-target of w x h (made on first use, kept; a failed size stays in the table with rt NULL so it is not retried). -1 = none. */
+static int tg_sub_get(int w, int h)
+{
+    for (int i = 0; i < s_sub_n; ++i) if (s_sub[i].w == w && s_sub[i].h == h) return s_sub[i].rt ? i : -1;
+    if (s_sub_n >= TG_SUB_N) { ++c_sub_nosize; return -1; }
+    TgSub *s = &s_sub[s_sub_n++];
+    memset(s, 0, sizeof *s); s->w = w; s->h = h;
+    SceGxmRenderTargetParams rp;
+    memset(&rp, 0, sizeof rp);
+    rp.flags = 0; rp.width = (uint16_t) w; rp.height = (uint16_t) h; rp.scenesPerFrame = (uint16_t) g_rt_cap;
+    rp.multisampleMode = SCE_GXM_MULTISAMPLE_NONE; rp.multisampleLocations = 0; rp.driverMemBlock = -1;
+    if (GXM_CHK(sceGxmColorSurfaceInit(&s->cs, SCE_GXM_COLOR_FORMAT_A8B8G8R8, SCE_GXM_COLOR_SURFACE_LINEAR, SCE_GXM_COLOR_SURFACE_SCALE_NONE,
+                                       SCE_GXM_OUTPUT_REGISTER_SIZE_32BIT, (uint32_t) w, (uint32_t) h, (uint32_t) g_gx.rw, b_mc.p))
+        || GXM_CHK(sceGxmCreateRenderTarget(&rp, &s->rt))) {
+        s->rt = NULL; ++c_sub_fail;
+        gxm_log("[msub] sub-target %dx%d FAILED (frame %u): that size opens all of M", w, h, g_gx.frames);
+        return -1;
+    }
+    ++c_sub_made;
+    gxm_log("[msub] sub-target #%d %dx%d over M (stride %d, scenesPerFrame %d) made at frame %u", s_sub_n - 1, w, h, g_gx.rw, g_rt_cap, g_gx.frames);
+    return s_sub_n - 1;
+}
+
+/* the M scene, init-safe (does not look at g_gx.up). x1 x y1: the pixels the caller is about to touch (exclusive, from M's top-left; rw x rh = all) */
+static int tg_scene_m_ext(int x1, int y1)
 {
     if (g_gx.dead) return -1;
-    if (g_open == 'm') return 0;
+    if (x1 > g_gx.rw || x1 <= 0) x1 = g_gx.rw;
+    if (y1 > g_gx.rh || y1 <= 0) y1 = g_gx.rh;
+    int grow = 0;
+    if (g_open == 'm') {
+        if (s_sub_open < 0 || (x1 <= s_sub[s_sub_open].w && y1 <= s_sub[s_sub_open].h)) {
+            if (x1 > s_ext_w) s_ext_w = x1;
+            if (y1 > s_ext_h) s_ext_h = y1;
+            return 0;
+        }
+        ++c_sub_grow; grow = 1;                  /* reaches outside the sub-target: end it, reopen on all of M as the SAME scene k */
+        if (x1 > s_ext_w) s_ext_w = x1;
+        if (y1 > s_ext_h) s_ext_h = y1;
+        gxm_target_scene_end('g');
+    }
     gxm_target_scene_end('r');                   /* a copy/display scene is never left open across calls; defensive */
+    if (!grow) { s_sub_k = s_sub_knext++; s_ext_w = x1; s_ext_h = y1; }
+    int sub = -1, sw = g_gx.rw, sh = g_gx.rh;
+    if (!grow && gxm_msub_on && s_sub_k < TG_SUB_K && !(g_gx.arm & GXM_ARM_RT1)) {
+        const uint32_t p = s_sub_pred[s_sub_k];
+        if (gxm_tgt_sub_size((int) (p >> 16), (int) (p & 0xffffu), x1, y1, g_gx.rw, g_gx.rh, &sw, &sh)) sub = tg_sub_get(sw, sh);
+    }
+    if (sub >= 0) {
+        TgSub *s = &s_sub[sub];
+        if (tg_begin('m', s->rt, NULL, &s->cs, &g_ds_m[g_dz_cur], s->w, s->h)) return -1;
+        s_sub_open = sub;
+        if (++s->used > (unsigned) g_rt_cap) ++c_sub_overflow;
+        ++c_sub_scenes;
+        c_sub_px_saved += (unsigned long long) g_gx.rw * (unsigned) g_gx.rh - (unsigned long long) s->w * (unsigned) s->h;
+        return 0;
+    }
     /* scene k of the frame -> render target (k/8)%N; one served beyond its scenesPerFrame is rt_overflow (it may stall BeginScene) */
     const unsigned idx = (g_m_scene_k / (unsigned) g_rt_cap) % (unsigned) g_n_rt_m;
     if (tg_begin('m', g_rt_m[idx], NULL, &g_cs_m, &g_ds_m[g_dz_cur], g_gx.rw, g_gx.rh)) return -1;
+    s_sub_open = -1;
+    ++c_full_scenes;
     ++g_m_scene_k;
     if (++g_rt_used[idx] > (unsigned) g_rt_cap) ++g_gx.st.rt_overflow;
     if (g_rt_used[idx] > g_gx.st.rt_scenes_max) g_gx.st.rt_scenes_max = g_rt_used[idx];
     return 0;
 }
+static int tg_scene_m(void) { return tg_scene_m_ext(g_gx.rw, g_gx.rh); }
 
 int gxm_target_scene_m(void)
 {
     if (gxm_dead()) return -1;
     return tg_scene_m();
+}
+int gxm_target_scene_m_ext(int x1, int y1)
+{
+    if (gxm_dead()) return -1;
+    return tg_scene_m_ext(x1, y1);
+}
+
+/* M SUB-TARGETS, at present: this frame's sizes become the prediction, the per-frame counts restart, and the A/B flips at its period boundary */
+static void tg_sub_present(void)
+{
+    memcpy(s_sub_pred, s_sub_seen, sizeof s_sub_pred);
+    memset(s_sub_seen, 0, sizeof s_sub_seen);
+    s_sub_knext = 0; s_sub_k = -1;
+    for (int i = 0; i < s_sub_n; ++i) s_sub[i].used = 0;
+    static unsigned s0[6]; static unsigned long long px0;
+    const unsigned f = g_gx.frames;
+    const unsigned per = s_msub_period ? (unsigned) s_msub_period : 600u;
+    if (!f || f % per) return;
+    if (!s_msub_period && !gxm_msub_on && !c_sub_scenes) return;     /* OFF and never on: no line */
+    const unsigned s1[6] = { c_sub_scenes, c_full_scenes, c_sub_grow, c_sub_made, c_sub_fail + c_sub_nosize, c_sub_overflow };
+    gxm_log("[msub-ab] frames %u..%u sub %d | per frame: sub scenes %.2f full-M scenes %.2f grows %.2f | M px not loaded/stored %.0f K | made %u fail %u overflow %u",
+            f - per + 1u, f, gxm_msub_on, (double) (s1[0] - s0[0]) / per, (double) (s1[1] - s0[1]) / per, (double) (s1[2] - s0[2]) / per,
+            (double) (c_sub_px_saved - px0) / per / 1000.0, s1[3] - s0[3], s1[4] - s0[4], s1[5] - s0[5]);
+    memcpy(s0, s1, sizeof s0); px0 = c_sub_px_saved;
+    if (s_msub_period) gxm_msub_on = !gxm_msub_on;
+}
+
+/* Z8 COPIES, at present: one line a period (A/B only), then the arm flips.  "zcopies" = Z8 copies made in the period; the judge reads [gxt] R busy / wall by window. */
+static void tg_zc_present(void)
+{
+    static unsigned z0, f0;
+    const unsigned f = g_gx.frames;
+    if (g_zc_mode != 2 || !f || f % (unsigned) g_zc_period) return;
+    gxm_log("[zcopy-ab] frames %u..%u zcopy %d | Z8 copies %u (%.2f/frame) refused z %u (whole-screen %u)", f0 + 1u, f, (int) g_zc_on, c_efb_copy_z - z0,
+            (double) (c_efb_copy_z - z0) / (double) (f - f0), c_efb_copy_refused_z, c_efb_copy_refused_zwhole);
+    z0 = c_efb_copy_z; f0 = f;
+    g_zc_on = !g_zc_on;
+}
+
+/* ---- GPUD: in-boot GPU-cost A/B arms (gxm_gpud.h; marker ux0:data/stairfax/gpud.txt; judge host/engine/gpud_ab.py) ----
+ * At ThornTail the 11 M scenes cost 33.6 ms of GPU; this splits that by REMOVING one cost at a time in the same boot: B texture fetch (one 4x4 stand-in for every unit),
+ * C the whole fragment program (constant colour), D fog, E the alpha-test clip.  A is the control and brackets every test arm (A B A C A D A E).  The arms live in
+ * rhi_gxm_draw.c (run_draw / the key lookups); this file owns the marker, the window bookkeeping, the flip and the log.
+ * GPU TIME: [gxm-gpu]'s poller already writes each scene's GPU microseconds into g_gg_dur[seq % 8192] (rhi_gxm_frame.c; needs gxm_gpu.txt).  This module tags every ended
+ * scene with (kind, window) and, once per present, sums the durations of the scenes the GPU has finished (fnot - 2) into the window the scene was SUBMITTED in -- so a
+ * window's number is exactly its own scenes, whatever the GPU lag.  Because the last scenes of a window finish after its flip, a window's line is printed at the NEXT
+ * flip (its numbers are final by then).  The poller's own health (late / max gap) lives in the poller's locals: the judge reads it from the [gxm-gpu] lines. */
+int g_gpud_on; char g_gpud_arm = 'A';
+unsigned g_gpud_var; unsigned g_gpud_kc[5];                      /* the SHADER-VARIANT arms (F H G L X): the generator variant bits of the current arm; the program-kind census (rhi_gxm_draw.c gpud_census) */
+_Static_assert(GPUD_V_H == TEVV_H && GPUD_V_G == TEVV_G && GPUD_V_L == TEVV_L && GPUD_V_F == TEVV_F, "gxm_gpud.h variant bits must equal the generator's TEVV_*");
+SceGxmTexture g_gpud_tex; int g_gpud_tex_ok;
+GxmProg *g_gpud_const;
+extern volatile uint32_t g_gg_dur[8192];
+#define GD_RING 8192u
+static GpudCfg s_gd_cfg;
+static GxmBlk s_gd_blk;
+static uint8_t s_gd_kind[GD_RING], s_gd_wtag[GD_RING];
+static unsigned s_gd_win, s_gd_cons, s_gd_f0 = 1u;
+typedef struct { unsigned us[4], n[4]; } GdAcc;                  /* by scene kind: main, copy, display, other */
+typedef struct { unsigned f0, f1, win, tevgx, tev, aq, ai, ap, af; char arm; unsigned kc[5], var; } GdPend;
+static GdAcc s_gd_acc[4];
+static GdPend s_gd_pend[2];
+static unsigned s_gd_c0[6];                                      /* cumulative at the last flip: tevgx issued, tev issued, async queued / installed / pending_hits / failed */
+static unsigned s_gd_k0[5];                                      /* cumulative g_gpud_kc at the last flip */
+
+void gxm_gpud_note_scene(unsigned seq, char kind) { s_gd_kind[seq % GD_RING] = (uint8_t) kind; s_gd_wtag[seq % GD_RING] = (uint8_t) (s_gd_win & 3u); }
+
+static void gd_consume(void)
+{
+    const unsigned fn = g_gx.fnot ? *g_gx.fnot : 0u;
+    if (fn < 3u) return;
+    unsigned lim = fn - 2u;                                      /* two scenes of margin: the poller stamps g_gg_dur a poll (50 us) after the GPU's notification */
+    if ((int) (lim - g_gx.nval) > 0) lim = g_gx.nval;
+    if ((int) (lim - s_gd_cons) > (int) (GD_RING / 2)) s_gd_cons = lim - GD_RING / 2;   /* never lag half the ring (a stalled boot): skip, do not read stale slots */
+    while ((int) (lim - s_gd_cons) > 0) {
+        const unsigned i = ++s_gd_cons % GD_RING; const uint8_t k = s_gd_kind[i];
+        if (!k) continue;                                        /* not tagged (before gpud was on) */
+        const int ki = k == 'm' ? 0 : k == 'c' ? 1 : k == 'd' ? 2 : 3;
+        GdAcc *a = &s_gd_acc[s_gd_wtag[i] & 3u];
+        a->us[ki] += g_gg_dur[i]; ++a->n[ki];
+        s_gd_kind[i] = 0;
+    }
+}
+
+static void gd_print(const GdPend *w)
+{
+    GdAcc *a = &s_gd_acc[w->win & 3u];
+    const double per = (double) (w->f1 - w->f0 + 1u);
+    unsigned tot = 0; for (int k = 0; k < 4; ++k) tot += a->us[k];
+    /* kinds/frame: M-scene program lookups by the kind of program that answered -- TEV fast (f), GX fast (h), TEV exact (t), GX exact (g), other (no usable program) -- then the arm's generator variant bits */
+    gxm_log("[gpud-ab] frames %u..%u arm %c cycle %u | gpu busy %.3f main %.3f (%.2f) copy %.3f display %.3f | poller %s late -1.00 maxgap -1.00 | draws/frame %.2f %.2f | async queued %u installed %u pending_hits %u failed %u | R busy -1 | kinds/frame f %.2f h %.2f t %.2f g %.2f other %.2f | variant %u",
+            w->f0, w->f1, w->arm, (s_gd_cfg.mode == GPUD_AB || s_gd_cfg.mode == GPUD_ABOLD) ? gxm_gpud_cycle_of_window(s_gd_cfg.mode, w->win) : 0u, tot / 1000.0 / per, a->us[0] / 1000.0 / per, a->n[0] / per,
+            a->us[1] / 1000.0 / per, a->us[2] / 1000.0 / per, tot ? "ok" : "INVALID", w->tevgx / per, w->tev / per, w->aq, w->ai, w->ap, w->af,
+            w->kc[0] / per, w->kc[1] / per, w->kc[2] / per, w->kc[3] / per, w->kc[4] / per, w->var);
+    memset(a, 0, sizeof *a);
+}
+
+void gxm_gpud_present(void)
+{
+    gd_consume();
+    const unsigned f = g_gx.frames, per = (unsigned) s_gd_cfg.period;
+    if (!f || !per || f % per) return;
+    unsigned ac[4]; gxm_shader_async_counts(ac);
+    const unsigned c1[6] = { g_gx.st.issued[GXM_K_TEVGX], g_gx.st.issued[GXM_K_TEV], ac[0], ac[1], ac[2], ac[3] };
+    GdPend *cur = &s_gd_pend[s_gd_win & 1u];                     /* close this window */
+    cur->f0 = s_gd_f0; cur->f1 = f; cur->win = s_gd_win; cur->arm = g_gpud_arm;
+    cur->tevgx = c1[0] - s_gd_c0[0]; cur->tev = c1[1] - s_gd_c0[1]; cur->aq = c1[2] - s_gd_c0[2]; cur->ai = c1[3] - s_gd_c0[3]; cur->ap = c1[4] - s_gd_c0[4]; cur->af = c1[5] - s_gd_c0[5];
+    for (int i = 0; i < 5; ++i) cur->kc[i] = g_gpud_kc[i] - s_gd_k0[i];
+    cur->var = g_gpud_var;
+    memcpy(s_gd_c0, c1, sizeof s_gd_c0); memcpy(s_gd_k0, g_gpud_kc, sizeof s_gd_k0); s_gd_f0 = f + 1u;
+    if (s_gd_win >= 1u) gd_print(&s_gd_pend[(s_gd_win - 1u) & 1u]);   /* the previous window: its scenes have all finished by now */
+    ++s_gd_win;
+    if (s_gd_cfg.mode == GPUD_AB || s_gd_cfg.mode == GPUD_ABOLD) {
+        char a = gxm_gpud_arm_of_window(s_gd_cfg.mode, s_gd_win);
+        if ((a == 'B' && !g_gpud_tex_ok) || (a == 'C' && !g_gpud_const)) a = 'A';   /* an arm whose parts failed to build runs as A (the boot line says so) and the judge sees an A */
+        if (gxm_gpud_variant_of_arm(a) && !gxm_shader_fast_on()) a = 'A';             /* a variant arm needs the fast generator (tev_fast.txt = 1): without it, it would silently be A */
+        g_gpud_arm = a; g_gpud_var = gxm_gpud_variant_of_arm(a);
+        gxm_gpud_invalidate();
+    }
+}
+
+/* marker + parts; called from gxm_target_init after the programs exist. Never fails the init. */
+static void tg_gpud_init(void)
+{
+    char gb[24]; memset(gb, 0, sizeof gb);
+    const int gl = tg_read_file(TG_DIR "gpud.txt", gb, (int) sizeof gb - 1);
+    s_gd_cfg = gxm_gpud_parse(gb, gl);
+    g_gpud_on = 0; g_gpud_arm = 'A'; g_gpud_tex_ok = 0; g_gpud_const = NULL;
+    if (s_gd_cfg.mode == GPUD_OFF) {
+        gxm_log("[gpud] OFF (gpud.txt %s)", s_gd_cfg.garbage ? "is GARBAGE and was ignored" : gl > 0 ? "present, \"0\" or blank" : "absent");
+        return;
+    }
+    const int want_b = s_gd_cfg.mode == GPUD_ABOLD || (s_gd_cfg.mode == GPUD_SINGLE && s_gd_cfg.arm == 'B'), want_c = s_gd_cfg.mode == GPUD_ABOLD || (s_gd_cfg.mode == GPUD_SINGLE && s_gd_cfg.arm == 'C');
+    if (want_b && gxm_blk_alloc(&s_gd_blk, GXM_MEM_CDRAM, 256, 256) == 0 && s_gd_blk.p) {   /* 4x4 A8B8G8R8 = 64 bytes, all texels 0x80808080 */
+        memset(s_gd_blk.p, 0x80, 64);
+        if (!GXM_CHK(sceGxmTextureInitSwizzled(&g_gpud_tex, s_gd_blk.p, SCE_GXM_TEXTURE_FORMAT_A8B8G8R8, 4, 4, 1))) {
+            sceGxmTextureSetMinFilter(&g_gpud_tex, SCE_GXM_TEXTURE_FILTER_LINEAR);
+            sceGxmTextureSetMagFilter(&g_gpud_tex, SCE_GXM_TEXTURE_FILTER_LINEAR);
+            g_gpud_tex_ok = 1;
+        }
+    }
+    if (want_c)
+        g_gpud_const = gxm_shader_util_cg("gpud_const",
+            "void main(float2 aPos : POSITION, out float4 vPos : POSITION) { vPos = float4(aPos.x, aPos.y, 0.0f, 1.0f); }\n",
+            "float4 main() : COLOR { return float4(0.5f, 0.5f, 0.5f, 1.0f); }\n");
+    g_gpud_arm = (s_gd_cfg.mode == GPUD_AB || s_gd_cfg.mode == GPUD_ABOLD) ? 'A' : s_gd_cfg.arm;
+    if ((g_gpud_arm == 'B' && !g_gpud_tex_ok) || (g_gpud_arm == 'C' && !g_gpud_const)) g_gpud_arm = 'A';
+    if (gxm_gpud_variant_of_arm(g_gpud_arm) && !gxm_shader_fast_on()) { gxm_log("[gpud] arm %c is a shader-variant arm but the fast generator is off (tev_fast.txt): it runs as A", g_gpud_arm); g_gpud_arm = 'A'; }
+    g_gpud_var = gxm_gpud_variant_of_arm(g_gpud_arm);
+    memset(g_gpud_kc, 0, sizeof g_gpud_kc); memset(s_gd_k0, 0, sizeof s_gd_k0);
+    g_gpud_on = 1;
+    {   char armname[24]; if (s_gd_cfg.mode == GPUD_AB) snprintf(armname, sizeof armname, "A F A H A G A L A X"); else if (s_gd_cfg.mode == GPUD_ABOLD) snprintf(armname, sizeof armname, "A B A C A D A E"); else snprintf(armname, sizeof armname, "%c", s_gd_cfg.arm);
+        gxm_log("[gpud] %s: %d frames per %s, arms %s | stand-in texture %s | constant program %s | needs gxm_gpu.txt (the GPU time is the poller's) | shader variants: fast generator %s",
+                s_gd_cfg.mode == GPUD_AB ? "A/B" : s_gd_cfg.mode == GPUD_ABOLD ? "A/B" : "single arm", s_gd_cfg.period, s_gd_cfg.mode == GPUD_SINGLE ? "log line" : "window", armname,
+                !want_b ? "not needed" : g_gpud_tex_ok ? "created (4x4 swizzled A8B8G8R8 0x80808080)" : "FAILED (arm B runs as A)",
+                !want_c ? "not needed" : g_gpud_const ? "created (gpud_const)" : "FAILED or compiler unavailable (arm C runs as A)",
+                gxm_shader_fast_on() ? "ON" : "OFF (the F / H / G / L / X arms run as A)"); }
 }
 
 /* ---- init ---- */
@@ -671,6 +1022,32 @@ int gxm_target_init(const RhiCreateInfo *info)
     GXM_CHK(sceGxmTextureSetMagFilter(&g_tex_m, SCE_GXM_TEXTURE_FILTER_LINEAR));
     GXM_CHK(sceGxmTextureSetUAddrMode(&g_tex_m, SCE_GXM_TEXTURE_ADDR_CLAMP));
     GXM_CHK(sceGxmTextureSetVAddrMode(&g_tex_m, SCE_GXM_TEXTURE_ADDR_CLAMP));
+    g_tex_m_pt = g_tex_m;                                  /* the same M, POINT: the R8 shadow-cast copy (see g_tex_m_pt) */
+    GXM_CHK(sceGxmTextureSetMinFilter(&g_tex_m_pt, SCE_GXM_TEXTURE_FILTER_POINT));
+    GXM_CHK(sceGxmTextureSetMagFilter(&g_tex_m_pt, SCE_GXM_TEXTURE_FILTER_POINT));
+    {   /* Z8 COPIES: each depth-ring surface as an F32M sampler (row stride GXM_ALIGN(rw, 64) floats, as rhi_gxm_peekZ reads it), POINT / CLAMP; and the marker */
+        int zok = 1;
+        for (int z = 0; z < TG_DZ_N && zok; ++z) {
+            if (GXM_CHK(sceGxmTextureInitLinear(&g_tex_mz[z], b_md[z].p, SCE_GXM_TEXTURE_FORMAT_F32M_R, (uint32_t) GXM_ALIGN(rw, 64), (uint32_t) rh, 0))) { zok = 0; break; }
+            GXM_CHK(sceGxmTextureSetMinFilter(&g_tex_mz[z], SCE_GXM_TEXTURE_FILTER_POINT));
+            GXM_CHK(sceGxmTextureSetMagFilter(&g_tex_mz[z], SCE_GXM_TEXTURE_FILTER_POINT));
+            GXM_CHK(sceGxmTextureSetUAddrMode(&g_tex_mz[z], SCE_GXM_TEXTURE_ADDR_CLAMP));
+            GXM_CHK(sceGxmTextureSetVAddrMode(&g_tex_mz[z], SCE_GXM_TEXTURE_ADDR_CLAMP));
+        }
+        char zb[16] = { 0 };
+        const int zl = tg_read_file(TG_DIR "zcopy.txt", zb, (int) sizeof zb - 1);
+        g_zc_mode = 1; g_zc_period = 0;
+        if (zl > 0 && zb[0] == '0') g_zc_mode = 0;
+        else if (zl > 0 && zb[0] == 'a' && zb[1] == 'b') { const int per = atoi(zb + 2); if (per > 0) { g_zc_mode = 2; g_zc_period = (per + 59) / 60 * 60; } }
+        if (!zok) g_zc_mode = 0;                           /* no depth sampler: refused, as before */
+        g_zc_on = g_zc_mode != 0;
+        { char wb[4] = { 0 }; g_zc_whole = tg_read_file(TG_DIR "zcopy_whole.txt", wb, (int) sizeof wb) > 0 && wb[0] == '1'; }
+        if (g_zc_mode == 2) gxm_log("[zcopy] Z8 copies: A/B in this boot, %d frames per arm, ON first (zcopy.txt \"ab\")", g_zc_period);
+        else gxm_log("[zcopy] Z8 copies: %s (zcopy.txt %s)%s", g_zc_mode ? "ON (M's depth ring sampled F32M)" : "OFF, refused", zl > 0 ? "present" : "absent", zok ? "" : " -- depth sampler init FAILED");
+        gxm_log("[zcopy] whole-screen Z8 copy: %s", g_zc_whole ? "ALLOWED (zcopy_whole.txt 1)" : "REFUSED (interim 2026-11-03; zcopy_whole.txt 1 allows it)"); }
+    {   char lb[4] = { 0 };
+        g_copy_r8_linear = tg_read_file(TG_DIR "copy_r8_linear.txt", lb, (int) sizeof lb) > 0 && lb[0] == '1';
+        gxm_log("[gxm] target: R8 copies sample M %s (copy_r8_linear.txt)", g_copy_r8_linear ? "LINEAR (old)" : "POINT"); }
 
     /* M's render targets: GXM_M_RT_N of GXM_M_RT_SCENES scenes per frame (arm RT1: one target, scenesPerFrame 1) */
     {   SceGxmRenderTargetParams rp;
@@ -683,6 +1060,17 @@ int gxm_target_init(const RhiCreateInfo *info)
             if (GXM_CHK(sceGxmCreateRenderTarget(&rp, &g_rt_m[i]))) { g_rt_m[i] = NULL; g_n_rt_m = i; tg_free_all(1); return tg_fail("M render target"); }
         gxm_log("[gxm] target: %d M render target(s), scenesPerFrame %d each%s", g_n_rt_m, g_rt_cap, (g_gx.arm & GXM_ARM_RT1) ? " (arm RT1)" : "");
     }
+    /* M SUB-TARGETS marker: absent / "0" OFF, "1" ON, "ab <period>" A/B in this boot, ON first */
+    {   char mb[24]; int per = 0;
+        memset(mb, 0, sizeof mb);
+        const int ml = tg_read_file(TG_DIR "msub.txt", mb, (int) sizeof mb - 1);
+        s_msub_period = 0;
+        if (ml > 0 && mb[0] == 'a' && mb[1] == 'b') { per = atoi(mb + 2); if (per > 0) s_msub_period = (per + 59) / 60 * 60; }
+        gxm_msub_on = s_msub_period ? 1 : (ml > 0 && mb[0] == '1');
+        if (g_gx.arm & GXM_ARM_RT1) gxm_msub_on = 0, s_msub_period = 0;
+        if (s_msub_period) gxm_log("[msub] M sub-targets: A/B in this boot, %d frames per arm, ON first (msub.txt \"ab %d\")", s_msub_period, per);
+        else gxm_log("[msub] M sub-targets: %s (msub.txt %s)", gxm_msub_on ? "ON" : "OFF, every M scene opens all of M", ml > 0 ? "present" : "absent"); }
+    tg_gpud_init();                                      /* gpud.txt: the in-boot GPU-cost A/B arms (OFF unless the marker exists) */
 
     /* ---- display: render target 960x544 (1 scene), 3 CDRAM buffers + colour surfaces + sync objects, depth surface (M1 :239-261) ---- */
     {   SceGxmRenderTargetParams rp;
@@ -733,6 +1121,7 @@ int gxm_target_init(const RhiCreateInfo *info)
     if (gxm_frame_smoke(g_gx.nval) != 0) { tg_free_all(0); return tg_fail("smoke fence (neither the notification nor sceGxmFinish usable)"); }
     g_m_scene_k = 0;                                                   /* the smoke scene is not part of any frame */
     memset(g_rt_used, 0, sizeof g_rt_used);
+    s_sub_knext = 0; s_sub_k = -1; memset(s_sub_seen, 0, sizeof s_sub_seen); memset(s_sub_pred, 0, sizeof s_sub_pred);
     gxm_log("[gxm] target: init OK: M %dx%d (picture %d rows) | display %d buffers %dx%d | smoke scene fenced (seq %u, fence_finish %d)",
             rw, rh, g_gx.vh, GXM_DISP_BUFS, GXM_DISP_W, GXM_DISP_H, g_gx.nval, g_gx.fence_finish);
     return 0;
@@ -742,12 +1131,16 @@ int gxm_target_init(const RhiCreateInfo *info)
 static void tg_free_all(int gpu_idle)
 {
     if (!gpu_idle) return;
+    g_gpud_on = 0; g_gpud_var = 0; g_gpud_tex_ok = 0; gxm_blk_free_now(&s_gd_blk);
     for (int i = GXM_DISP_BUFS - 1; i >= 0; --i)
         if (g_sync_d[i]) { GXM_CHK(sceGxmSyncObjectDestroy(g_sync_d[i])); g_sync_d[i] = NULL; }
     if (g_rt_d) { GXM_CHK(sceGxmDestroyRenderTarget(g_rt_d)); g_rt_d = NULL; }
     for (int i = 0; i < GXM_M_RT_N; ++i)
         if (g_rt_m[i]) { GXM_CHK(sceGxmDestroyRenderTarget(g_rt_m[i])); g_rt_m[i] = NULL; }
     g_n_rt_m = 0;
+    for (int i = 0; i < s_sub_n; ++i)
+        if (s_sub[i].rt) { GXM_CHK(sceGxmDestroyRenderTarget(s_sub[i].rt)); s_sub[i].rt = NULL; }
+    s_sub_n = 0; s_sub_open = -1;
     gxm_blk_free_now(&b_idx); g_idx = NULL;
     gxm_blk_free_now(&b_ss); gxm_blk_free_now(&b_sd);
     gxm_blk_free_now(&b_ds); gxm_blk_free_now(&b_dd);
@@ -798,7 +1191,7 @@ void rhi_gxm_clearRect(int x, int y, int w, int h, uint32_t rgba, float z)
     ++c_clear_rect;
     if (s_cl_lastop == 2 && s_cl_n && tg_cl_active()) { TgCl *e = &s_cl[s_cl_n - 1]; e->clr_w = (unsigned) (px.x1 - px.x0); e->clr_h = (unsigned) (px.y1 - px.y0);
                                                      e->clr_full = px.x0 <= 0 && px.y0 <= 0 && px.x1 >= g_gx.rw && px.y1 >= g_gx.vh; s_cl_lastop = 3; }
-    if (tg_scene_m()) { ++c_clear_skip; return; }
+    if (tg_scene_m_ext(px.x1, px.y1)) { ++c_clear_skip; return; }   /* the rect's extent: a sub-target scene stays one if the rect is inside it */
     float rect[4], col[4];
     gxm_tgt_px_ndc(&px, g_gx.rw, g_gx.rh, rect);
     gxm_tgt_rgba_f(rgba, col);
@@ -846,8 +1239,9 @@ static int tg_scratch(int aw, int ah)
 }
 
 /* the copy quad into `c`'s render target. 0 ok. */
-static int tg_copy_draw(GxmTex *c, const float uvr[4], const float sel[4], const float cfg[4], const float qlv[4])
+static int tg_copy_draw(GxmTex *c, const float uvr[4], const float sel[4], const float cfg[4], const float qlv[4], int zcopy)
 {
+    if (zcopy && !g_pcopy) return -1;                                          /* a depth copy needs the conversion program: the blit would copy raw floats */
     if (tg_begin('c', c->rt, NULL, &c->cs, &g_ds_s, c->aw, c->ah)) return -1;
     if (g_pcopy) {
         float *v = (float *) gxm_ring_alloc(8u * sizeof(float));
@@ -867,7 +1261,8 @@ static int tg_copy_draw(GxmTex *c, const float uvr[4], const float sel[4], const
         if (g_u_sel) GXM_CHK(sceGxmSetUniformDataF(fub, g_u_sel, 0, 4, sel));
         if (g_u_cfg) GXM_CHK(sceGxmSetUniformDataF(fub, g_u_cfg, 0, 4, cfg));
         if (g_u_qlv) GXM_CHK(sceGxmSetUniformDataF(fub, g_u_qlv, 0, 4, qlv));
-        if (GXM_CHK(sceGxmSetFragmentTexture(g_gx.ctx, g_unit_copy, &g_tex_m))) return -1;     /* AFTER the fragment program */
+        if (GXM_CHK(sceGxmSetFragmentTexture(g_gx.ctx, g_unit_copy, zcopy ? &g_tex_mz[g_dz_cur]
+                                             : c->fmt == 0x28 && !g_copy_r8_linear ? &g_tex_m_pt : &g_tex_m))) return -1;     /* AFTER the fragment program; R8 = POINT (g_tex_m_pt); Z8 = this frame's depth */
         if (GXM_CHK(sceGxmSetVertexStream(g_gx.ctx, 0, v))) return -1;
         return tg_draw_fan();
     } else {
@@ -980,6 +1375,8 @@ int rhi_gxm_copy_precheck(int x, int y, int w, int h, int dw, int dh, int gxfmt)
 {
     float sel[4], cfg[4], qlv[4];
     if (!gxm_tgt_conv(gxfmt, sel, cfg, qlv, g_gx.copyfilter_on)) return 0;
+    if (gxfmt == 0x11 && !g_zc_mode) return 0;                        /* Z8 COPIES off (zcopy.txt 0): refused, as before */
+    if (tg_zc_whole_refused(gxfmt, w, h)) return 0;                  /* INTERIM: the whole-screen Z8 copy (see g_zc_whole) */
     if (w <= 0 || h <= 0 || dw <= 0 || dh <= 0) return 0;
     { const EfbRectPx rp = efb_rect_px(x, y, w, h, g_gx.rw, g_gx.vh, g_gx.rh); if (rp.x1 <= rp.x0 || rp.y1 <= rp.y0) return 0; }
     return 1;
@@ -991,6 +1388,9 @@ RhiTexture *rhi_gxm_copyEfb(RhiTexture *reuse, int x, int y, int w, int h, int d
     float sel[4], cfg[4], qlv[4];
     const int conv = gxm_tgt_conv(gxfmt, sel, cfg, qlv, g_gx.copyfilter_on);
     if (!conv) { ++c_efb_copy_refused; if (gxfmt & 0x10) ++c_efb_copy_refused_z; return NULL; }
+    const int zcopy = conv == 2;                                       /* Z8 COPIES: sample this frame's depth surface */
+    if (zcopy && !g_zc_mode) { ++c_efb_copy_refused; ++c_efb_copy_refused_z; return NULL; }   /* off: refused, as before.  (The A/B arm is the HAL's efbZMode: never re-judged here, so the R5 front's verdict holds) */
+    if (tg_zc_whole_refused(gxfmt, w, h)) { ++c_efb_copy_refused; ++c_efb_copy_refused_z; ++c_efb_copy_refused_zwhole; return NULL; }   /* INTERIM (g_zc_whole) */
     if (w <= 0 || h <= 0 || dw <= 0 || dh <= 0) { ++c_efb_copy_refused; ++c_efb_copy_refused_rect; return NULL; }
     const EfbRectPx rp = efb_rect_px(x, y, w, h, g_gx.rw, g_gx.vh, g_gx.rh);
     if (rp.below480) ++c_efb_copy_below480;
@@ -999,7 +1399,12 @@ RhiTexture *rhi_gxm_copyEfb(RhiTexture *reuse, int x, int y, int w, int h, int d
 
     /* everything drawn so far must be in M before it is read: end M's scene */
     const unsigned m_draws_before = g_open == 'm' ? g_gx.scene_draws : 0u;
+    extern uint32_t g_gxm_wait_us[2];
+    const int sp_ = s_sp_on != 0 && tg_sp_on();                       /* SCENE PROFILE: the steps of one copy */
+    uint32_t spt_[6] = { 0 }; const uint32_t spw_ = g_gxm_wait_us[0];
+    if (sp_) spt_[0] = sceKernelGetProcessTimeLow();
     gxm_target_scene_end('c');
+    if (sp_) spt_[1] = sceKernelGetProcessTimeLow();
 
     GxmTex *c = (GxmTex *) reuse;
     int fresh = 0;
@@ -1023,17 +1428,22 @@ RhiTexture *rhi_gxm_copyEfb(RhiTexture *reuse, int x, int y, int w, int h, int d
     c->fmt = (uint32_t) gxfmt;
 
     float uvr[4];
-    gxm_tgt_copy_uvr(rp.x0, rp.y0, rp.x1, rp.y1, g_gx.rw, g_gx.rh, uvr);
+    gxm_tgt_copy_uvr(rp.x0, rp.y0, rp.x1, rp.y1, zcopy ? GXM_ALIGN(g_gx.rw, 64) : g_gx.rw, g_gx.rh, uvr);   /* the depth texture is the surface's row stride wide */
 
-    int ok = tg_scratch(c->aw, c->ah) == 0 && tg_copy_draw(c, uvr, sel, cfg, qlv) == 0;
+    int ok = tg_scratch(c->aw, c->ah) == 0;
+    if (sp_) spt_[2] = sceKernelGetProcessTimeLow();
+    ok = ok && tg_copy_draw(c, uvr, sel, cfg, qlv, zcopy) == 0;
+    if (sp_) spt_[3] = sceKernelGetProcessTimeLow();
     if (g_open == 'c') gxm_target_scene_end('c');          /* ends with a fence quad if the copy drew nothing */
+    if (sp_) spt_[4] = sceKernelGetProcessTimeLow();
     gxm_state_dirty();
     if (!ok) {
         ++c_efb_copy_scene_fail;
         if (fresh) { gxm_tex_free(c); return NULL; }       /* nothing was ever written into it: do not hand out garbage */
         return (RhiTexture *) c;                           /* a reused texture keeps its previous picture (counted) */
     }
-    ++c_efb_copy;
+    ++c_efb_copy; if (zcopy) ++c_efb_copy_z;
+    c->copy_seq = g_gx.nval;                              /* the copy scene just ended: its fence says when the picture is in memory (rhi_gxm_copyPeek) */
     if (ce_on) {
         if (s_ce_n < 48) { TgCe *e = &s_ce[s_ce_n++]; e->t = c; e->seq = g_gx.nval; e->frame = g_gx.frames; e->x0 = rp.x0; e->y0 = rp.y0; e->x1 = rp.x1; e->y1 = rp.y1;
                            e->dw = dw; e->dh = dh; e->fmt = gxfmt; e->below = rp.below480; }
@@ -1041,7 +1451,32 @@ RhiTexture *rhi_gxm_copyEfb(RhiTexture *reuse, int x, int y, int w, int h, int d
     }
     if (tg_cl_active() && s_cl_n < 48) { TgCl *e = &s_cl[s_cl_n++]; memset(e, 0, sizeof *e); e->t = c; e->x0 = rp.x0; e->y0 = rp.y0; e->x1 = rp.x1; e->y1 = rp.y1;
                                          e->dw = dw; e->dh = dh; e->fmt = gxfmt; e->mdraws = m_draws_before; e->draw_at = s_cl_draws; s_cl_lastop = 2; }
+    if (sp_) {                                              /* SCENE PROFILE: successful copies only (a failed one returns above, uncounted) */
+        spt_[5] = sceKernelGetProcessTimeLow();
+        const uint32_t tot = spt_[5] - spt_[0];
+        s_sp_cus[0] += spt_[1] - spt_[0]; s_sp_cus[1] += spt_[2] - spt_[1]; s_sp_cus[2] += spt_[3] - spt_[2];
+        s_sp_cus[3] += spt_[4] - spt_[3]; s_sp_cus[4] += spt_[5] - spt_[4]; s_sp_cus[5] += tot;
+        if (tot > s_sp_cmax) s_sp_cmax = tot;
+        s_sp_cwait += g_gxm_wait_us[0] - spw_; ++s_sp_cn;
+    }
     return (RhiTexture *) c;
+}
+
+/* copyPeek (2026-11-01, the deferred B8 readback, hal/gx_draw.c b8Resolve): the texels of a copy texture's last picture, read where they are -- the
+ * texture's own linear A8B8G8R8 memory, row 0 = the TOP of the source rectangle, *stride bytes a row, *w x *h = the copy's dw x dh.  No scene is
+ * ended: the picture's scene ended when it was copied (copy_seq), so the only wait is for THAT scene's fence, which a copy made one frame earlier
+ * has normally passed.  1 = *px valid; 0 = not finished yet (wait == 0) or the fence timed out (wait != 0, logged by gxm_frame_wait_scene); -1 = no
+ * picture to read (not a copy texture, never written, no memory, the GPU aborted, or fence_finish mode, where finished scenes are not tracked). */
+int rhi_gxm_copyPeek(RhiTexture *t, int wait, const unsigned char **px, int *stride, int *w, int *h)
+{
+    const GxmTex *c = (const GxmTex *) t;
+    if (gxm_dead() || !c || !c->copy || !c->mem.p || !c->copy_seq || g_gx.fence_finish || !g_gx.fnot) return -1;
+    if ((int) (*g_gx.fnot - c->copy_seq) < 0) {
+        if (!wait) return 0;
+        if (gxm_frame_wait_scene(c->copy_seq, GXM_FENCE_DEADLINE_US) != 0) return 0;
+    }
+    *px = (const unsigned char *) c->mem.p; *stride = c->aw * 4; *w = c->w; *h = c->h;
+    return 1;
 }
 
 /* Z copies: not in M2 (efbZMode 0).
@@ -1051,7 +1486,11 @@ RhiTexture *rhi_gxm_copyEfb(RhiTexture *reuse, int x, int y, int w, int h, int d
  * may be a scene behind.  Differences from vitaGL: M is TOP ROW FIRST here (header, ORIENTATION), so no row flip; the stride is the depth
  * surface's (rw aligned to 64 samples, tg_alloc_ds).  Reads memory fixed at init only, so G calls it directly in threaded mode (gx_rt_special.c). */
 int rhi_gxm_efbMode(void) { return 1; }
-int rhi_gxm_efbZMode(void) { return 0; }
+/* Z8 COPIES (2026-11-02): 1 = the HAL makes Z8 copies (gx_draw.c: a whole-screen one only while something samples it), 0 = refused.  Read on any thread. */
+int rhi_gxm_efbZMode(void) { return g_zc_mode != 0 && g_zc_on ? 1 : 0; }
+/* ... and they are GPU copies on the thread that runs the backend, like the colour copies: nothing on G.  gx_rt_special.c's threaded-mode refusal of
+ * efbZMode != 0 (written for the vitaGL depth-test resolve) does not apply to them. */
+int rhi_gxm_zcopy_gpu(void) { return g_built; }
 int rhi_gxm_peekZ(int x, int y, unsigned *z24, unsigned *raw)
 {
     ++c_peekz;
@@ -1175,6 +1614,7 @@ bool gxm_op_present(RhiInstance *r, RhiSwapchain *sc)
         g_dz_cur = nx;
     }
     if (s_ce_on != 0) tg_ce_present();
+    if (s_sp_on > 0) tg_sp_present();
     if (gxm_dead()) { ++c_present_dead; return false; }
 
     const unsigned f = g_gx.frames;
@@ -1215,6 +1655,9 @@ bool gxm_op_present(RhiInstance *r, RhiSwapchain *sc)
     g_m_scene_k = 0;
     memset(g_rt_used, 0, sizeof g_rt_used);
     gxm_frame_present_end(ok);
+    tg_sub_present();
+    tg_zc_present();
+    if (__builtin_expect(g_gpud_on, 0)) gxm_gpud_present();
     return ok && !gxm_dead();
 }
 
@@ -1234,6 +1677,11 @@ int gxm_target_report(char *buf, int cap)
         c_begin_frame, c_end_frame, c_scene_fail, c_end_fail, c_end_c, c_end_x, c_end_p, c_end_r, c_ring_fail,
         c_present_skipped, c_present_dead, c_disp_fail, c_scratch_grow, c_scratch_fail, c_shots, c_shot_fail, g_gx.rw, g_gx.vh, g_gx.rh);
     if (n < 0) { buf[0] = 0; return 0; }
+    if (n < cap) {
+        const int m = snprintf(buf + n, (size_t) (cap - n), "msub=%d msub_scenes=%u full_m_scenes=%u msub_grow=%u msub_made=%u msub_fail=%u msub_nosize=%u msub_overflow=%u ",
+                               gxm_msub_on, c_sub_scenes, c_full_scenes, c_sub_grow, c_sub_made, c_sub_fail, c_sub_nosize, c_sub_overflow);
+        if (m > 0) return n + m >= cap ? cap - 1 : n + m;
+    }
     return n >= cap ? cap - 1 : n;
 }
 

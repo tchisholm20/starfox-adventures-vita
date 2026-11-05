@@ -137,7 +137,8 @@ static bool quit_requested(void)
         started = 1;
         /* 0x10000100 / 0x4000 = the watchdog's parameters, known to work (0x10000100 + 32 returned an error on hw, eboot 0691d8c2).
          * Priority barely matters: the thread sleeps 500 ms and blocks only itself inside sceIoOpen. */
-        const SceUID t = sceKernelCreateThread("stfx_poll", poll_thread, 0x10000100, 0x4000, 0, 0, NULL);
+        SceUID t = sceKernelCreateThread("stfx_poll", poll_thread, 0x10000100 + 16, 0x4000, 0, 0, NULL);   /* RC6: BELOW the game threads (was equal; the kernel does not time-slice) */
+        if (t < 0) t = sceKernelCreateThread("stfx_poll", poll_thread, 0x10000100, 0x4000, 0, 0, NULL);
         const int rs = t >= 0 ? sceKernelStartThread(t, 0, NULL) : -1;
         printf("[vita] poller thread %s (QUIT sentinel + shot_now.txt off the game thread) create 0x%08x start 0x%08x\n",
                t >= 0 && rs >= 0 ? "started" : "FAILED", (unsigned) t, (unsigned) rs);

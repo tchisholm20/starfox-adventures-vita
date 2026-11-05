@@ -5,7 +5,6 @@
     { "ux0:data/stairfax/audio_off.txt", "0" "\x0a", 2 },
     { "ux0:data/stairfax/backend.txt", "gxm", 3 },
     { "ux0:data/stairfax/clock.txt", "444 222 222 166" "\x0a", 16 },
-    { "ux0:data/stairfax/copyfilter_off.txt", "1" "\x0a", 2 },
     { "ux0:data/stairfax/dl_events.txt", "1" "\x0a", 2 },
     { "ux0:data/stairfax/dl_nocache.txt", "0" "\x0a", 2 },
     { "ux0:data/stairfax/dlk_dyn_old.txt", "0" "\x0a", 2 },

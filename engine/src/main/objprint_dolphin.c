@@ -100,14 +100,30 @@ static void stfxAnnounceNormalBuf(ObjModel* model, ModelFileHeader* file) {
 extern f32 gObjBoneMtxBuffer[0xC00];   /* defined below (this file) */
 extern u8 gObjRenderingShadowPass;      /* defined below (this file): renderObjectShadowTexture's re-render (newshadows.c:1529) */
 #define STFX_SKIN_SLOTS 128
+#define STFX_SKIN_PAL_INLINE 32
 typedef struct StfxSkinSlot {
     const void* am;               /* the ObjModel; NULL = free */
     const GxSkinTable* t;
     u32 tid;                      /* t->id when decided: t may be retired (model released, CPU user) and then freed; gx_skin_table_alive(t, tid) says whether it still is a live table without touching t */
     u32 nb, seq;
-    float pal[12 * GX_SKIN_MAX_BONES];
+    float* pal;                   /* palS, or (nb > STFX_SKIN_PAL_INLINE) one of sSkinPalBig */
+    float palS[12 * STFX_SKIN_PAL_INLINE];
 } StfxSkinSlot;
 static StfxSkinSlot sSkinSlot[STFX_SKIN_SLOTS];
+/* 2026-11-03 R8b: GX_SKIN_MAX_BONES went 32 -> 128; 128 slots x a 128-bone palette inline was ~786 KB of BSS for the one or two big models a scene has
+ * (Galdon).  A slot keeps 32 bones inline; a model with more borrows one of STFX_SKIN_BIG palettes, or (none free) keeps the CPU blend this frame (counted). */
+#define STFX_SKIN_BIG 4
+static float sSkinPalBig[STFX_SKIN_BIG][12 * GX_SKIN_MAX_BONES];
+u32 gStfxSkinBigFull;   /* decides refused because every big palette was in use */
+static float* stfxSkinBigFor(const StfxSkinSlot* self) {
+    int k, s;
+    for (k = 0; k < STFX_SKIN_BIG; k++) {
+        int used = 0;
+        for (s = 0; s < STFX_SKIN_SLOTS && !used; s++) if (&sSkinSlot[s] != self && sSkinSlot[s].am != NULL && sSkinSlot[s].pal == sSkinPalBig[k]) used = 1;
+        if (!used) return sSkinPalBig[k];
+    }
+    return NULL;
+}
 static int stfxSkinCheckOn(void);                 /* R8 state oracle (below) */
 static void stfxSkinCheck(ObjModel* am, ModelFileHeader* file, const StfxSkinSlot* e);
 static u32 sSkinSeq, sSkinLive;
@@ -192,12 +208,17 @@ static int stfxSkinDecide(ObjModel* am, ModelFileHeader* file) {
     if (gObjRenderingShadowPass) { stfxSkc(file, SKC_D_SHADOW); return 0; }   /* not in [r8]: its "refused table" stays table refusals only */
     t = gx_skin_table_get(file, &why);
     if (t == NULL) { ++gGxSkinCtr[GXSK_REF_TABLE]; stfxSkc(file, SKC_D_NOTAB); return 0; }
+    /* 2026-11-03 R8b: an EXTENDED table (NBT normals / > 32 bones) is used only with ux0:data/stairfax/skin_ext.txt on; off = exactly a refused table (CPU blend, nothing bound), counted apart */
+    if (!gx_skin_ext_gate(t)) { stfxSkc(file, SKC_D_NOTAB); return 0; }   /* counts GXSK_REF_EXT */
     stfxSkc(file, SKC_D_GPU);
     for (i = 0; i < STFX_SKIN_SLOTS; i++) {
         if (sSkinSlot[i].am == NULL) { e = &sSkinSlot[i]; break; }
         if (e == NULL || (s32)(sSkinSlot[i].seq - e->seq) < 0) e = &sSkinSlot[i];   /* no free slot: the least recently decided */
     }
-    if (e->am == NULL) sSkinLive++;
+    {   float* pal = t->nb <= STFX_SKIN_PAL_INLINE ? e->palS : stfxSkinBigFor(e);
+        if (pal == NULL) { ++gStfxSkinBigFull; ++gGxSkinCtr[GXSK_REF_TABLE]; stfxSkc(file, SKC_D_NOTAB); return 0; }   /* no big palette free: CPU blend this frame */
+        if (e->am == NULL) sSkinLive++;
+        e->pal = pal; }
     e->am = am; e->t = t; e->tid = t->id; e->nb = t->nb; e->seq = ++sSkinSeq;
     gx_skin_palette_pack(t, gObjBoneMtxBuffer, e->pal);
     ++gGxSkinCtr[GXSK_BLEND_SKIPPED];
@@ -216,7 +237,7 @@ static int stfxSkinBegin(ObjModel* am, ModelFileHeader* file, int withNrm) {
     if (e == NULL || e->t == NULL || !gx_skin_table_alive(e->t, e->tid) || e->t->key != (const void*)file) { stfxSkc(file, SKC_BIND_MISS); return 0; }
     stfxSkc(file, SKC_BIND_HIT);
     GXSetArray(GX_VA_POS, file->vertices, 6);
-    if (withNrm) GXSetArray(GX_VA_NRM, file->normals, sizeof(ModelPackedNormal));
+    if (withNrm) GXSetArray(GX_VA_NRM, file->normals, (file->flags24 & MODEL_FLAGS24_NBT_NORMALS) ? sizeof(ModelNormalTriplet) : sizeof(ModelPackedNormal));   /* 2026-11-03, R8b: the stride the game's own draw sets (~line 2735): 9 for an NBT model -- the HAL reads N, B, T from the FILE (gx_draw.c dlkSkinPrep checks the stride against the table's) */
     if (stfxSkinCheckOn()) stfxSkinCheck(am, file, e);   /* R8 state oracle */
     gGxSkinChkCpu = stfxSkinCheckOn() ? (const u8*)am->vtxBuf[(am->bufferFlags >> 1) & 1] : NULL;   /* R8 HAL oracle: direct mode only (R == G) */
     GXStfxSkinBind(e->t, e->pal, e->nb);
@@ -249,13 +270,14 @@ static void stfxSkinCheck(ObjModel* am, ModelFileHeader* file, const StfxSkinSlo
         }
     }
     for (i = 0; i < t->nNrm && am->normalBuf; i++) {
-        float f[3]; s8 q[3]; int k;
-        gx_skin_ref_nrm(t, e->pal, i, (const u8*)file->normals + 3 * i, f, q);
-        for (k = 0; k < 3; k++) if ((s8)((const u8*)am->normalBuf)[3 * i + k] != q[k]) ++badN;
+        float f[9]; s8 q[9]; int k; const int ns = t->nrmStride;   /* 2026-11-03, R8b: 3, or 9 for an NBT table (N, B, T through one entry) */
+        if (ns == 9) gx_skin_ref_nrm_nbt(t, e->pal, i, (const u8*)file->normals + 9 * i, f, q);
+        else gx_skin_ref_nrm(t, e->pal, i, (const u8*)file->normals + 3 * i, f, q);
+        for (k = 0; k < ns; k++) if ((s8)((const u8*)am->normalBuf)[ns * i + k] != q[k]) ++badN;
     }
     ++nChk; nBad += bad + badN;
     if ((nChk & 255) == 1 || bad || badN) { static u32 nLine; if (nLine++ < 400) printf("[r8-chk] bind %u model %04x am %p nb %u: pos mismatches %u of %u, nrm mismatches %u of %u (total bad %u)\n",
-        (unsigned)nChk, (unsigned)file->modelId, (void*)am, (unsigned)e->nb, (unsigned)bad, (unsigned)(3 * t->nPos), (unsigned)badN, (unsigned)(3 * t->nNrm), (unsigned)nBad); }
+        (unsigned)nChk, (unsigned)file->modelId, (void*)am, (unsigned)e->nb, (unsigned)bad, (unsigned)(3 * t->nPos), (unsigned)badN, (unsigned)(t->nrmStride * t->nNrm), (unsigned)nBad); }
 }
 #else
 #define stfxSkc(file, what) ((void)0)

@@ -2039,8 +2039,8 @@ int gxt_r_exec(uint32_t op_, const uint32_t *p_, uint32_t nw_)
     case GXT_OP_GXStfxSkinBind: {
         const GxSkinTable* t;
         u32 nb;
-        uint32_t sc_[384] __attribute__((aligned(32)));
-        if (nw_ < (GXT_W(t) + GXT_W(nb)) || nw_ - (GXT_W(t) + GXT_W(nb)) > 384u) return -1;
+        uint32_t sc_[1536] __attribute__((aligned(32)));
+        if (nw_ < (GXT_W(t) + GXT_W(nb)) || nw_ - (GXT_W(t) + GXT_W(nb)) > 1536u) return -1;
         const uint32_t *q_ = p_;
         GXT_GET(q_, t);
         GXT_GET(q_, nb);

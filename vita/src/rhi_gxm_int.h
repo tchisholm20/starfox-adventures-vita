@@ -274,6 +274,10 @@ GxmProg *gxm_shader_gx(const VsKey *raw_vk, const TevKey *raw_tk, int *why);
 /* R3a C3: the same with a HINT from the HAL (gx_draw.c gx_prog_hint: bit 63 | TevKey serial | VsKey serial | fog type).  A hint equal to the hint of the call that stored the one-key memo means the
  * HAL rebuilt neither key since: the memo answers without comparing or hashing the ~700 raw key bytes.  hint 0 = none, exactly gxm_shader_gx. */
 GxmProg *gxm_shader_gx_hint(const VsKey *raw_vk, const TevKey *raw_tk, unsigned long long hint, int *why);
+/* gpud shader-variant arms (tev_gen.c TEVV_*): the same lookups for a generator variant.  var 0 == the calls above.  GxmProg.fast of a variant program is 1 | (var << 1) (rhi_gxm_shader.c gxs_fast_code). */
+int gxm_shader_fast_on(void);            /* 1: tev_fast.txt = 1 (the fast generator is on); the gpud variant arms degrade to A without it */
+GxmProg *gxm_shader_tev_v(const TevKey *raw, unsigned var, int *why);
+GxmProg *gxm_shader_gx_hint_v(const VsKey *raw_vk, const TevKey *raw_tk, unsigned long long hint, unsigned var, int *why);
 GxmProg *gxm_shader_builtin(int which, int *why);
 GxmProg *gxm_shader_util_precompiled(const char *name, const void *vgxp, const void *fgxp);    /* NULL on failure (logged) */
 GxmProg *gxm_shader_util_cg(const char *name, const char *vs_src, const char *fs_src);         /* shark; NULL when the compiler is unavailable (emulator) or the compile failed */
@@ -287,6 +291,7 @@ SceGxmFragmentProgram *gxm_shader_fp_nowrite(GxmProg *p);
 static inline uint32_t gxm_blend_key(uint32_t am) { const uint32_t m = am & 0xffu; return (m == RHI_ALPHA_BLEND || m == RHI_ALPHA_ADD) ? (am & 0x773ffu) : 0u; }
 /* housekeeping the game's wrapper calls (M1 entry points, now owned by shader) */
 void rhi_gxm_asc_tick(void);
+void rhi_gxm_keys_tick(void);   /* gxm_frame_present_end only (the draw thread): key log / harvest replay */
 void rhi_gxm_shc_flush(unsigned ms);
 void rhi_gxm_shc_shutdown(void);
 
@@ -303,6 +308,7 @@ typedef struct GxmTex {
     SceGxmRenderTarget *rt;              /* GXM_COPY_RT_SCENES scenes per frame, aw x ah */
     SceGxmColorSurface cs;               /* LINEAR A8B8G8R8 over mem, stride aw */
     uint8_t smin, smag;                  /* copyTexSetFilter state: 1 = POINT applied */
+    uint32_t copy_seq;                   /* the scene (g_gx.nval) that wrote the last picture; 0 = never written (calloc). rhi_gxm_copyPeek reads it */
 } GxmTex;
 
 int  gxm_tex_init(void);
@@ -331,8 +337,25 @@ void gxm_target_shutdown(void);
  * 0 ok; -1 failed (counted by the caller as GXM_SK_SCENE; after repeated failures the backend aborts). Call it LAST, right before the first sceGxm state call of a
  * draw: a scene opened and then abandoned still ends with a fence quad, but it is a wasted scene. g_gx.epoch moves at every BeginScene. */
 int  gxm_target_scene_m(void);
+/* The same, for an op that touches only pixels [0, x1) x [0, y1) from M's top-left (a draw: its region clip). With msub.txt ON the scene may open on an
+ * M SUB-TARGET (rhi_gxm_target.c): same memory, fewer tiles loaded/stored; an op reaching outside it reopens the scene on all of M. */
+int  gxm_target_scene_m_ext(int x1, int y1);
 /* End whatever scene is open (adds the fence quad first when scene_draws == 0). why: 'c' copy, 'x' readback, 'p' present, 'r' reset. Safe when no scene is open. */
 void gxm_target_scene_end(char why);
+/* gpud: in-boot GPU-cost A/B arms (gxm_gpud.h; ux0:data/stairfax/gpud.txt; state in rhi_gxm_target.c).  g_gpud_on == 0 (the default) costs the draw one untaken branch. */
+extern int g_gpud_on;                  /* 0 OFF; 1 an A/B or a single arm is live */
+extern char g_gpud_arm;                /* 'A'..'E','F','H','G','L','X', read by the draw module; flips only at present */
+extern unsigned g_gpud_var;            /* the generator variant bits (TEVV_*) of the current arm: 0 for A..E; set with g_gpud_arm */
+extern unsigned g_gpud_kc[5];          /* cumulative TEV / TEVGX program lookups by kind: 0 TEV fast ('f'), 1 GX fast ('h'), 2 TEV exact ('t'), 3 GX exact ('g'), 4 other (no usable program) */
+extern SceGxmTexture g_gpud_tex;       /* arm B: the 4x4 swizzled A8B8G8R8 0x80808080 stand-in (valid iff g_gpud_tex_ok) */
+extern int g_gpud_tex_ok;
+extern GxmProg *g_gpud_const;          /* arm C: the constant-colour fragment program (its vertex half is unused); NULL = arm C degrades to A */
+void gxm_gpud_present(void);           /* target module, once per present: window bookkeeping, log line, flip */
+void gxm_gpud_note_scene(unsigned seq, char kind);   /* target module, after each scene end: tags scene seq with the open window and its kind */
+void gxm_gpud_invalidate(void);        /* draw module: forget the cached fragment program + texture shadow (called at an arm flip) */
+void gxm_shader_async_counts(unsigned o[4]);   /* queued, installed, pending_hits, failed (cumulative) */
+/* the fragment program of `frag` (a util program) paired with `vtx`'s vertex program, for an alpha word; cached per (frag, vtx, blend key); NULL on failure */
+SceGxmFragmentProgram *gxm_shader_fp_foreign(GxmProg *frag, GxmProg *vtx, uint32_t alphaMode);
 bool gxm_op_present(RhiInstance *r, RhiSwapchain *sc);   /* ends M's scene, display scene (blit of M's picture), display queue, then gxm_frame_present_end(); false only if dead / the display scene failed */
 void gxm_op_beginFrame(RhiInstance *r);
 void gxm_op_endFrame(RhiInstance *r);
@@ -389,6 +412,7 @@ void rhi_gxm_set_r3a_ovr(int on, unsigned mask);                /* D6: R-back's 
 int  rhi_gxm_pure_layout_ok(const GxMeshLayout *L);              /* the pure rules of rhi_gxm_draw.c, for the front */
 int  rhi_gxm_pure_mesh_check(uint32_t stride, uint32_t vbytes, const uint16_t *idx, uint32_t nidx, uint32_t *need);
 int  rhi_gxm_copy_precheck(int x, int y, int w, int h, int dw, int dh, int gxfmt);   /* 1: rhi_gxm_copyEfb would not refuse on its arguments alone (rhi_gxm_target.c) */
+int  rhi_gxm_copyPeek(RhiTexture *t, int wait, const unsigned char **px, int *stride, int *w, int *h);   /* a copy texture's texels once the GPU wrote them (rhi_gxm_target.c) */
 int  rhi_gxm_tex_max_dim(void);                                 /* rhi_gxm_texture.c TEX_MAX_DIM */
 void rhi_gxm_asc_tick(void);
 void rhi_gxm_shc_flush(unsigned ms);

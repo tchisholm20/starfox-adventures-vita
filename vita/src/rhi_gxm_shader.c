@@ -278,6 +278,54 @@ GXS_PURE void gxs_gx_identity(Td *td, const VsKey *rvk, const TevKey *rtk, int f
     *ck = cn->ck; *fast = cn->fast;
     *h = (cn->th ^ (cn->fast ? GXS_FAST_SALT : 0u)) ^ (tev_vs_key_hash(vk) * 0x9E3779B9u);
 }
+/* ---- SHADER VARIANTS (2026-11-02, the gpud arms F / H / G / L / X; tev_gen.c TEVV_*) ----------------------------------------------------------------------------------
+ * The `fast` field of a program's identity (GxmProg.fast, GxsNeg.fast, GxsJob.fast) is 0 = the exact generator, 1 = the shipping fast generator, and for a VARIANT program
+ * 1 | (vbits << 1) with vbits = TEVV_* (1..15).  Every consumer already treats it as "non-zero = fast", so the shipping programs (fast = 0 or 1) are byte-for-byte what they were.
+ * The hash of a variant program is salted with gxs_var_salt(vbits) so it can never meet a pack record or a GXP-cache file of the shipping programs (the cache is validated by the KEY
+ * bytes, not the generated source -- docs/47 TRAP; GXS_VAR_GEN is bumped with every edit of a variant's text, which moves every variant hash and retires the old files).
+ * Which bits make a DIFFERENT program: H, G, L change the text of a fast program (a key the shipping generator already makes fast); F changes which keys are fast.  A variant that
+ * does not change a key's program (an exact key under H / G / L; a fast key under F alone) resolves to the SHIPPING program (vbits 0 -> fast = 1 / 0, same hash): nothing is compiled twice. */
+#define GXS_VAR_GEN 1u
+GXS_PURE uint32_t gxs_var_salt(unsigned vbits) { return vbits ? ((0x5E1F7A00u + GXS_VAR_GEN * 0x01010101u) ^ (vbits * 0x9E3779B1u)) : 0u; }
+GXS_PURE int gxs_fast_code(unsigned vbits) { return 1 | (int) ((vbits & 15u) << 1); }
+GXS_PURE unsigned gxs_fast_vbits(int fast) { return fast > 1 ? ((unsigned) fast >> 1) & 15u : 0u; }
+/* The F decision for a RAW (persp-adjusted) key is a pure function of the key, so it is remembered: a direct-mapped table keyed by td_raw_hash (a miss recomputes, never a wrong answer) */
+#define GXS_FM_N 256
+typedef struct { uint32_t a, b, th; uint8_t state; TevKey ck; } GxsFm;      /* state 0 empty, 1 not an F key, 2 an F key: ck / th = its FAST canonical form */
+typedef struct { GxsFm e[GXS_FM_N]; } GxsFmemo;
+GXS_PURE void gxs_variant_pick(Td *td, GxsFmemo *fm, const TevKey *tkp, int fastOn, unsigned var, const TdCan *cn, TevKey *ck, uint32_t *th, int *fast)
+{
+    *ck = cn->ck; *th = cn->th; *fast = cn->fast;
+    if (!var || !fastOn) return;
+    const unsigned eff = var & TEVV_X;
+    if (cn->fast) { *fast = gxs_fast_code(eff); return; }                                  /* a fast key: the H / G / L bits apply; eff 0 = the shipping program */
+    if (!(var & TEVV_F)) return;                                                           /* an exact key stays exact */
+    uint32_t a, b; td_raw_hash(tkp, &a, &b);
+    GxsFm tmp; GxsFm *e = fm ? &fm->e[a & (GXS_FM_N - 1)] : &tmp;
+    if (!fm || e->state == 0 || e->a != a || e->b != b) {
+        memset(e, 0, sizeof *e); e->a = a; e->b = b;
+        if (tev_fast_err_only(tkp)) { e->state = 2; if (td->on) tev_key_canon(tkp, &e->ck, 1); else e->ck = *tkp; e->th = td_hash(&e->ck); }
+        else e->state = 1;
+    }
+    if (e->state == 2) { *ck = e->ck; *th = e->th; *fast = gxs_fast_code(eff | TEVV_F); }
+}
+GXS_PURE void gxs_tev_identity_v(Td *td, GxsFmemo *fm, const TevKey *raw, int fastOn, unsigned var, TevKey *ck, uint32_t *h, int *fast)
+{
+    const TdCan *cn = td_get(td, raw, fastOn);
+    uint32_t th;
+    gxs_variant_pick(td, fm, raw, fastOn, var, cn, ck, &th, fast);
+    *h = th ^ (*fast ? GXS_FAST_SALT : 0u) ^ gxs_var_salt(gxs_fast_vbits(*fast));
+}
+GXS_PURE void gxs_gx_identity_v(Td *td, GxsFmemo *fm, const VsKey *rvk, const TevKey *rtk, int fastOn, int persp, unsigned var, VsKey *vk, TevKey *ck, uint32_t *h, int *fast)
+{
+    TevKey tkp = *rtk;
+    *vk = *rvk;
+    if (persp) { const unsigned pm = tev_vs_proj_mask(rvk); if (pm) { vk->projFrag = 1; tkp.projMask = (uint8_t) pm; } }
+    const TdCan *cn = td_get(td, &tkp, fastOn);
+    uint32_t th;
+    gxs_variant_pick(td, fm, &tkp, fastOn, var, cn, ck, &th, fast);
+    *h = (th ^ (*fast ? GXS_FAST_SALT : 0u) ^ gxs_var_salt(gxs_fast_vbits(*fast))) ^ (tev_vs_key_hash(vk) * 0x9E3779B9u);
+}
 /* a second, independent hash of a canonical key (the negative cache holds no key bytes: (family, fast, h, h2) is its identity) */
 GXS_PURE uint32_t gxs_key_h2(const VsKey *vk, const TevKey *tk)
 {
@@ -369,6 +417,8 @@ GXS_PURE int gxs_gxpc_valid(const uint8_t *img, uint32_t n, const void *k1, unsi
     return 1;
 }
 
+#include "gxs_keys.h"                                                /* the key-log / harvest record format (host-testable: vita/host/tests/shader_keys_test.c) */
+
 /* ======================================================================================================================================== PART 2: DEVICE */
 #ifndef GXM_SHADER_HOST
 #include "rhi_gxm_int.h"
@@ -376,6 +426,7 @@ GXS_PURE int gxs_gxpc_valid(const uint8_t *img, uint32_t n, const void *k1, unsi
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
 #include <psp2/kernel/threadmgr.h>
+#include <psp2/kernel/sysmem.h>   /* RC6: the pack memblock (sceKernelAllocMemBlock / FreeMemBlock / GetMemBlockBase) */
 #include <vitashark.h>
 
 #define GXS_DIR        "ux0:data/STFX00001/"
@@ -415,6 +466,8 @@ typedef struct { uint32_t h, h2; uint8_t fam, fast, why, used; } GxsNeg;
 
 /* ---- state (module-private; `up` is the only gate) ---- */
 static int g_up;
+typedef struct { const GxmProg *frag, *vtx; uint32_t bk; SceGxmFragmentProgram *fp; } GxsFpForeign;
+static GxsFpForeign *g_ffp; static int g_ffp_n, g_ffp_cap;
 static int g_fast, g_persp, g_dedupe;
 static Td g_td;                                                  /* ~380 KB: the canonical-key map */
 static GxsSlot *g_chunk[(GXM_PROG_MAX + GXS_CHUNK - 1) / GXS_CHUNK];
@@ -501,12 +554,19 @@ static void gxs_sentinel_recover(void)
 }
 
 /* ---- the pack ---- */
+static SceUID g_pk_lock = -1;              /* RC5 (IO OFF R): the worker and the owner (harvest) both read the pack; one seek + read at a time */
+static const uint8_t *volatile g_pk_ram;  /* RC6: the whole pack in a memblock (stfx_gxio loads it); set = every read is a memcpy, no card I/O */
 static int gxs_pk_rd(void *ctx, uint32_t off, void *dst, uint32_t n)
 {
     (void) ctx;
+    const uint8_t *ram = __atomic_load_n(&g_pk_ram, __ATOMIC_ACQUIRE);
+    if (ram) { if ((uint64_t) off + n > g_pk_size) return -1; memcpy(dst, ram + off, n); return (int) n; }
     if (g_pk_fd < 0) return -1;
-    if (sceIoLseek(g_pk_fd, (SceOff) off, SCE_SEEK_SET) != (SceOff) off) return -1;
-    return sceIoRead(g_pk_fd, dst, n);
+    if (g_pk_lock >= 0) sceKernelWaitSema(g_pk_lock, 1, NULL);
+    int r = -1;
+    if (sceIoLseek(g_pk_fd, (SceOff) off, SCE_SEEK_SET) == (SceOff) off) r = sceIoRead(g_pk_fd, dst, n);
+    if (g_pk_lock >= 0) sceKernelSignalSema(g_pk_lock, 1);
+    return r;
 }
 #define GXS_NOIDX      "ux0:data/stairfax/pack_noidx.txt"      /* first byte '1': always scan the pack, and neither load nor write the saved index (A/B switch) */
 #define GXS_IDX_MAX    (32u * 1024u * 1024u)
@@ -843,7 +903,7 @@ static int gxs_try_compile(GxmProg *p, GxsPriv *pv, int fam, int fast, char kind
     if (!vs || !fs) { vs = g_cg_vs = (char *) malloc(32768); fs = g_cg_fs = (char *) malloc(65536); }
     if (!vs || !fs) { *why = GXM_SK_NOPROG; return 0; }
     const int gv = fam == GXM_PK_TEV ? tev_gen_vertex_ex(ck->numTex, ck->fogType, vs, 32768) : tev_gen_vertex_gx(vk, vs, 32768);
-    const int gf = fast ? tev_gen_fragment_fast(ck, fs, 65536) : tev_gen_fragment(ck, fs, 65536);
+    const int gf = fast ? tev_gen_fragment_fast_v(ck, gxs_fast_vbits(fast), fs, 65536) : tev_gen_fragment(ck, fs, 65536);   /* vbits 0 = tev_gen_fragment_fast, byte for byte */
     if (gv < 0 || gf < 0) { ++c_refused_gen; *why = GXM_SK_NOPROG; return 0; }
     char hl[80]; snprintf(hl, sizeof hl, "// gxm %c%08x\n", kind, (unsigned) h);
     if (gxs_sentinel_arm(h, hl, vs, fs)) { *why = GXM_SK_NOPROG; return 0; }                   /* cannot fence it: refuse to compile unfenced */
@@ -855,7 +915,7 @@ static int gxs_try_compile(GxmProg *p, GxsPriv *pv, int fam, int fast, char kind
     gxs_shark_give();
     gxs_sentinel_clear();
     if (!vg || !fg) { free(vg); free(fg); ++c_compile_fail; gxm_log("[gxm-shader] COMPILE FAILED %c%08x (%s stage)", kind, (unsigned) h, vg ? "fragment" : "vertex"); *why = GXM_SK_COMPILE; return -1; }
-    gxm_log("[gxm-shader] compiled %c%08x: vertex %u B, fragment %u B (%u ms, informational)", kind, (unsigned) h, (unsigned) vsz, (unsigned) fsz, (unsigned) ((gxm_now_us() - t0) / 1000u));
+    gxm_log("[gxm-shader] compiled %c%08x: vertex %u B, fragment %u B (%u ms, informational) variant %u", kind, (unsigned) h, (unsigned) vsz, (unsigned) fsz, (unsigned) ((gxm_now_us() - t0) / 1000u), gxs_fast_vbits(fast));
     if (gxs_register(p, pv, vg, fg, 1)) { *why = GXM_SK_COMPILE; return -1; }
     gxs_save_gxpc(kind, h, k1, n1, k2, n2, p->vg, vsz, p->fg, fsz);       /* only a pair that checked and registered is worth keeping */
     p->from = GXM_FROM_SHARK;
@@ -880,15 +940,137 @@ typedef struct {
     char *vs, *fs;                                                     /* owner allocates, owner frees (install) */
     SceGxmProgram *vg, *fg; uint32_t vsz, fsz, ms;                     /* worker output */
     int fail_stage;                                                    /* 0 vertex, 1 fragment, 2 check */
+    uint8_t harvest;                                                   /* queued by the harvest replay: compiled and SAVED to the card cache, never installed into the pool */
+    uint8_t lookup;                                                    /* RC5 IO OFF R: the worker tries the pack and the GXP cache files before it compiles */
+    uint8_t src;                                                       /* worker output: 0 compiled, 1 pack, 2 card cache, 3 app0 cache */
 } GxsJob;
 static GxsJob g_job[GXS_JOB_MAX];
 static int g_async;                                                    /* 1 = the worker is running and takes compiles */
+static int g_hv_feeding;                                               /* 1 only while the harvest tick is inside gxs_make: a job queued then is a harvest job */
+static unsigned c_hv_installed, c_hv_failed;                           /* harvest jobs finished: saved to the card cache / failed */
 static SceUID g_job_wake = -1, g_job_thr = -1;
 static volatile uint32_t g_job_done;                                   /* worker: +1 per finished job (ready or failed) */
 static uint32_t g_job_seen, g_job_seq;                                 /* owner */
 static volatile int g_job_stop;
 static unsigned c_async_queued, c_async_installed, c_async_failed, c_async_full, c_async_pending, c_async_inflight_max;
 static volatile unsigned c_async_ms_max, c_async_ms_sum;
+/* IO OFF R (RC5, 2026-11-04). RC4 bf151a62 on hw, VFP play (stairfax-captures/rc4_play_1541): 64 frames over 100 ms (51 hitches, worst 1.6 s), all R-side
+ * with compile_us 0; 60 of them (98% of the stall ms) fell in 60-frame windows where R did shader card I/O (pack read / GXP cache open / two failed opens per
+ * miss), 4 in the 60 windows without; the low-priority poller's card opens took up to 654 ms in the same session. gxs_make ran that I/O on R, synchronously.
+ * Now a key that is not in the pool is queued at once and the WORKER tries pack -> card cache -> app0 cache -> compile; R draws the HAL fallback until it lands.
+ * ux0:data/stairfax/gxs_io_async.txt starting with 0 = the old synchronous lookup on R. */
+static int g_io_async = 1;
+static uint8_t *gxs_dup16(const uint8_t *p, uint32_t n) { uint8_t *d = (uint8_t *) memalign(16, n ? n : 16); if (d) memcpy(d, p, n); return d; }
+static int gxs_job_lookup(GxsJob *j)    /* worker: 1 pack, 2 card cache, 3 app0 cache (j->vg / j->fg / sizes set, memalign'd for gxs_register); 0 none */
+{
+    const void *k1 = j->has_vk ? (const void *) &j->vk : (const void *) &j->ck;
+    const unsigned n1 = j->has_vk ? (unsigned) tev_vs_key_len(&j->vk) : (unsigned) tev_key_len(&j->ck);
+    const void *k2 = j->has_vk ? (const void *) &j->ck : NULL; const unsigned n2 = j->has_vk ? (unsigned) tev_key_len(&j->ck) : 0u;
+    const uint8_t *v, *f; uint32_t vl, fl;
+    if (g_pack_on) {
+        const GxsPk *e = gxs_pk_find(&g_pk, j->h, (uint32_t) (unsigned char) j->kind);
+        if (!e) ++c_pack_miss;
+        else {
+            int bad = 0, got = 0;
+            uint8_t *buf = gxs_pk_fetch(e, gxs_pk_rd, NULL, &bad);
+            ++c_pack_reads;
+            if (!buf) { if (bad) ++c_pack_stale; else ++c_pack_bad; }
+            else {
+                const uint8_t *bin; uint32_t binlen;
+                if (!gxs_img_binary(buf, e->len, k1, n1, k2, n2, &bin, &binlen)) ++c_pack_stale;
+                else if (gxs_prog_split(bin, binlen, &v, &vl, &f, &fl)) ++c_split_fail;
+                else if ((j->vg = (SceGxmProgram *) gxs_dup16(v, vl)) != NULL && (j->fg = (SceGxmProgram *) gxs_dup16(f, fl)) != NULL) { j->vsz = vl; j->fsz = fl; got = 1; }
+                else { free(j->vg); j->vg = NULL; }
+                free(buf);
+            }
+            if (got) { ++c_pack_hit; return 1; }
+        }
+    }
+    for (int pass = 0; pass < 2; ++pass) {
+        char path[96];
+        if (pass == 0) gxs_gxpc_path(path, sizeof path, j->kind, j->h);
+        else snprintf(path, sizeof path, GXS_APP_GXPDIR "%c%08x.gxp", j->kind, (unsigned) j->h);
+        SceUID fd = sceIoOpen(path, SCE_O_RDONLY, 0777);
+        if (fd < 0) continue;
+        const SceOff sz = sceIoLseek(fd, 0, SCE_SEEK_END);
+        uint8_t *buf = NULL; int rn = -1;
+        if (sz >= 20 && sz <= (SceOff) (1 << 20) && sceIoLseek(fd, 0, SCE_SEEK_SET) == 0 && (buf = (uint8_t *) malloc((size_t) sz + 4u)) != NULL) rn = sceIoRead(fd, buf, (unsigned) sz);
+        sceIoClose(fd);
+        int got = 0;
+        if (buf && rn == (int) sz && gxs_gxpc_valid(buf, (uint32_t) sz, k1, n1, k2, n2, &v, &vl, &f, &fl)) {
+            if ((j->vg = (SceGxmProgram *) gxs_dup16(v, vl)) != NULL && (j->fg = (SceGxmProgram *) gxs_dup16(f, fl)) != NULL) { j->vsz = vl; j->fsz = fl; got = 1; }
+            else { free(j->vg); j->vg = NULL; }
+        }
+        free(buf);
+        if (got) { ++c_gxpc_hit; if (pass) ++c_gxpc_app; return 2 + pass; }
+    }
+    return 0;
+}
+/* the oldest QUEUED job of one kind (lookup 1 = the I/O worker's, 0 = the compiler's), claimed with a CAS: two workers scan the table */
+static GxsJob *gxs_job_claim(int lookup)
+{
+    for (;;) {
+        GxsJob *j = NULL;
+        for (int i = 0; i < GXS_JOB_MAX; ++i)
+            if (__atomic_load_n(&g_job[i].state, __ATOMIC_ACQUIRE) == GXS_J_QUEUED && g_job[i].lookup == (uint8_t) lookup && (!j || (int32_t) (g_job[i].seq - j->seq) < 0)) j = &g_job[i];
+        if (!j) return NULL;
+        int q = GXS_J_QUEUED;
+        if (__atomic_compare_exchange_n(&j->state, &q, GXS_J_COMPILING, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)) return j;
+    }
+}
+/* THE I/O WORKER "stfx_gxio" (RC6, 2026-11-04). RC5 3d863395 put the lookups on the compiler's thread: a pack lookup queued behind a 5-7 s compile, and the
+ * C-stick item menu drew its fallback (blue frames, items flickering away) for seconds (Tyler, hw). This thread only reads: first the WHOLE pack into its own
+ * memblock (then gxs_pk_rd is a memcpy and R serves pack keys in the same frame again, with no card I/O), then lookup jobs: pack -> card cache -> app0 cache;
+ * a miss becomes a compile job for stfx_gxc. */
+static SceUID g_io_wake = -1, g_io_thr = -1;
+static SceUID g_pk_ram_blk = -1;
+static volatile int g_pk_loading, g_pk_ram_failed;
+static void gxs_pk_ram_load(void)
+{
+    if (!g_pack_on || g_pk_fd < 0 || !g_pk_size || __atomic_load_n(&g_pk_ram, __ATOMIC_ACQUIRE) || g_pk_ram_failed) return;
+    g_pk_loading = 1;
+    const uint64_t t0 = gxm_now_us();
+    const SceSize sz = (SceSize) ((g_pk_size + 0xFFFFFu) & ~0xFFFFFu);
+    SceUID b = sceKernelAllocMemBlock("stfx_pack", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW, sz, NULL);
+    void *base = NULL;
+    int ok = b >= 0 && sceKernelGetMemBlockBase(b, &base) >= 0 && base;
+    for (uint32_t off = 0; ok && off < g_pk_size; ) {
+        const uint32_t n = g_pk_size - off < 0x40000u ? g_pk_size - off : 0x40000u;
+        if (g_job_stop || gxs_pk_rd(NULL, off, (uint8_t *) base + off, n) != (int) n) ok = 0;
+        off += n;
+    }
+    if (ok) { g_pk_ram_blk = b; __atomic_store_n(&g_pk_ram, (const uint8_t *) base, __ATOMIC_RELEASE); }
+    else { if (b >= 0) sceKernelFreeMemBlock(b); g_pk_ram_failed = 1; }
+    gxm_log("[gxm-shader] pack in RAM: %s (%u KB block, %u ms on stfx_gxio)%s", ok ? "YES" : "NO", (unsigned) (sz >> 10), (unsigned) ((gxm_now_us() - t0) / 1000u),
+            ok ? "" : " -- pack keys go through the I/O worker instead");
+    g_pk_loading = 0;
+}
+static int gxs_io_worker(SceSize args, void *argp)
+{
+    (void) args; (void) argp;
+    for (;;) {
+        sceKernelWaitSema(g_io_wake, 1, NULL);
+        if (g_job_stop) return 0;
+        gxs_pk_ram_load();
+        for (;;) {
+            if (g_job_stop) return 0;
+            GxsJob *j = gxs_job_claim(1);
+            if (!j) break;
+            const uint64_t t0 = gxm_now_us();
+            j->src = (uint8_t) gxs_job_lookup(j);
+            j->ms = (uint32_t) ((gxm_now_us() - t0) / 1000u);
+            if (j->src) {
+                __atomic_store_n(&j->state, GXS_J_READY, __ATOMIC_RELEASE);
+                __atomic_add_fetch(&g_job_done, 1u, __ATOMIC_RELEASE);
+            } else {                                                                            /* nowhere on the card: the compiler's job now */
+                j->lookup = 0;
+                __atomic_store_n(&j->state, GXS_J_QUEUED, __ATOMIC_RELEASE);
+                sceKernelSignalSema(g_job_wake, 1);
+            }
+        }
+    }
+    return 0;
+}
 static int gxs_job_worker(SceSize args, void *argp)
 {
     (void) args; (void) argp;
@@ -896,14 +1078,12 @@ static int gxs_job_worker(SceSize args, void *argp)
         sceKernelWaitSema(g_job_wake, 1, NULL);
         for (;;) {
             if (g_job_stop) return 0;
-            GxsJob *j = NULL;
-            for (int i = 0; i < GXS_JOB_MAX; ++i)
-                if (__atomic_load_n(&g_job[i].state, __ATOMIC_ACQUIRE) == GXS_J_QUEUED && (!j || (int32_t) (g_job[i].seq - j->seq) < 0)) j = &g_job[i];
+            GxsJob *j = gxs_job_claim(0);
             if (!j) break;
-            __atomic_store_n(&j->state, GXS_J_COMPILING, __ATOMIC_RELEASE);
             char hl[80]; snprintf(hl, sizeof hl, "// gxm %c%08x (async)\n", j->kind, (unsigned) j->h);
             int ok = 0;
             const uint64_t t0 = gxm_now_us();
+            j->src = 0;
             gxs_shark_take();
             if (!gxs_sentinel_arm(j->h, hl, j->vs, j->fs)) {                                  /* cannot fence it: refuse, as the synchronous path does */
                 j->vg = gxs_compile_stage(j->vs, 0, &j->vsz);
@@ -933,7 +1113,7 @@ static void gxs_async_start(void)
     g_async = 0;
     if (!g_shark_on) return;
     { char b[8]; if (gxs_read_small(GXS_ASYNCFILE, b, sizeof b) > 0 && b[0] == '0') { gxm_log("[gxm-shader] async compile: OFF (gxm_async.txt 0): a new key compiles on the backend thread (a freeze)"); return; } }
-    if (g_job_thr >= 0) { g_async = 1; return; }                                         /* a re-init: the worker from the first init is still waiting */
+    if (g_job_thr >= 0) { g_async = 1; if (g_io_wake >= 0) sceKernelSignalSema(g_io_wake, 1); return; }   /* a re-init: the workers are still waiting (stfx_gxio reloads the pack) */
     g_shark_lock = sceKernelCreateSema("stfx_gxc_l", 0, 1, 1, NULL);
     g_job_wake = sceKernelCreateSema("stfx_gxc_w", 0, 0, 1 << 20, NULL);
     /* BELOW the game threads (all 0x10000100): it must never delay a frame, only use idle time.  +32 is illegal (run 171: 0x80028023); +16 is tried, then
@@ -946,6 +1126,16 @@ static void gxs_async_start(void)
         if (g_job_thr >= 0) { sceKernelDeleteThread(g_job_thr); g_job_thr = -1; }
         return;
     }
+    if (g_pk_lock < 0) g_pk_lock = sceKernelCreateSema("stfx_gxc_pk", 0, 1, 1, NULL);
+    { char b[8]; g_io_async = !(gxs_read_small("ux0:data/stairfax/gxs_io_async.txt", b, sizeof b) > 0 && b[0] == '0'); }
+    if (g_pk_lock < 0) g_io_async = 0;                                                    /* the pack is shared with the owner's harvest: no lock, no worker reads */
+    if (g_io_async) {
+        g_io_wake = sceKernelCreateSema("stfx_gxio_w", 0, 0, 1 << 20, NULL);
+        g_io_thr = g_io_wake >= 0 ? sceKernelCreateThread("stfx_gxio", gxs_io_worker, pri, 0x10000, 0, 0, NULL) : -1;
+        if (g_io_thr < 0 || sceKernelStartThread(g_io_thr, 0, NULL) < 0) { if (g_io_thr >= 0) sceKernelDeleteThread(g_io_thr); g_io_thr = -1; g_io_async = 0; }
+        else sceKernelSignalSema(g_io_wake, 1);                                             /* load the pack into RAM now */
+    }
+    gxm_log("[gxm-shader] shader card I/O: %s", g_io_async ? "on the worker (R never waits on the card for a new key; gxs_io_async.txt 0 = on R)" : "on R, synchronous (gxs_io_async.txt 0 or no lock)");
     g_async = 1;
     gxm_log("[gxm-shader] async compile: ON (worker stfx_gxc, priority %s, %u jobs, 2 MB stack): a new key draws through the HAL's fallback until it lands",
             pri == 0x10000100 ? "DEFAULT (+16 refused: EQUAL to the game threads)" : "default+16", (unsigned) GXS_JOB_MAX);
@@ -961,7 +1151,7 @@ static GxsJob *gxs_job_find(int fam, int fast, uint32_t h, const VsKey *vk, cons
 }
 static unsigned gxs_jobs_busy(void) { unsigned n = 0; for (int i = 0; i < GXS_JOB_MAX; ++i) n += __atomic_load_n(&g_job[i].state, __ATOMIC_ACQUIRE) != GXS_J_FREE; return n; }
 /* owner: generate + queue. 1 queued; 0 refused (*why set: NOPROG for a generator refusal or a full queue, which is NOT remembered for the queue) */
-static int gxs_async_queue(int fam, int fast, char kind, uint32_t h, uint32_t h2, const VsKey *vk, const TevKey *ck, int *why, int *remember)
+static int gxs_async_queue(int fam, int fast, char kind, uint32_t h, uint32_t h2, const VsKey *vk, const TevKey *ck, int *why, int *remember, int lookup)
 {
     *remember = 1;
     GxsJob *j = NULL;
@@ -971,21 +1161,23 @@ static int gxs_async_queue(int fam, int fast, char kind, uint32_t h, uint32_t h2
     if (!vs || !fs) { vs = g_cg_vs = (char *) malloc(32768); fs = g_cg_fs = (char *) malloc(65536); }
     if (!vs || !fs) { *why = GXM_SK_NOPROG; *remember = 0; return 0; }
     const int gv = fam == GXM_PK_TEV ? tev_gen_vertex_ex(ck->numTex, ck->fogType, vs, 32768) : tev_gen_vertex_gx(vk, vs, 32768);
-    const int gf = fast ? tev_gen_fragment_fast(ck, fs, 65536) : tev_gen_fragment(ck, fs, 65536);
+    const int gf = fast ? tev_gen_fragment_fast_v(ck, gxs_fast_vbits(fast), fs, 65536) : tev_gen_fragment(ck, fs, 65536);
     if (gv < 0 || gf < 0) { ++c_refused_gen; *why = GXM_SK_NOPROG; return 0; }
     j->vs = strdup(vs); j->fs = strdup(fs);
     if (!j->vs || !j->fs) { free(j->vs); free(j->fs); j->vs = j->fs = NULL; *why = GXM_SK_NOPROG; *remember = 0; return 0; }
     j->fam = fam; j->fast = fast; j->kind = kind; j->h = h; j->h2 = h2; j->seq = ++g_job_seq;
     j->has_vk = vk != NULL; if (vk) j->vk = *vk; else memset(&j->vk, 0, sizeof j->vk);
-    j->ck = *ck; j->vg = j->fg = NULL; j->vsz = j->fsz = j->ms = 0; j->fail_stage = 0;
+    j->ck = *ck; j->vg = j->fg = NULL; j->vsz = j->fsz = j->ms = 0; j->fail_stage = 0; j->harvest = (uint8_t) g_hv_feeding; j->lookup = (uint8_t) lookup; j->src = 0;
     __atomic_store_n(&j->state, GXS_J_QUEUED, __ATOMIC_RELEASE);
-    sceKernelSignalSema(g_job_wake, 1);
+    if (!lookup) sceKernelSignalSema(g_job_wake, 1);
     ++c_async_queued;
     { const unsigned b = gxs_jobs_busy(); if (b > c_async_inflight_max) c_async_inflight_max = b; }
     *why = GXM_SK_NOPROG;
     return 1;
 }
 /* owner: every finished job becomes a pool program (or a remembered COMPILE failure), then the memos are forgotten */
+static int g_keylog;                                                   /* the key log (below): read by the install of a compiled job */
+static void gxs_keylog_add(int fam, int fast, uint32_t h, uint32_t h2, const void *k1, unsigned n1, const void *k2, unsigned n2);
 static void gxs_async_install(void)
 {
     g_job_seen = __atomic_load_n(&g_job_done, __ATOMIC_ACQUIRE);
@@ -996,6 +1188,12 @@ static void gxs_async_install(void)
         if (st != GXS_J_READY && st != GXS_J_FAILED) continue;
         any = 1;
         const VsKey *vk = j->has_vk ? &j->vk : NULL;
+        if (j->harvest) {                       /* the worker has already saved a READY job to the card cache (gxs_save_gxpc); nothing here needs the pool */
+            if (st == GXS_J_FAILED) { ++c_hv_failed; ++c_compile_fail; ++c_async_failed; gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_COMPILE);
+                gxm_log("[gxm-shader] COMPILE FAILED %c%08x (%s, harvest, %u ms)", j->kind, (unsigned) j->h, j->fail_stage == 0 ? "vertex stage" : j->fail_stage == 1 ? "fragment stage" : "program check / sentinel", (unsigned) j->ms); }
+            else { ++c_hv_installed; free(j->vg); free(j->fg);
+                gxm_log("[gxm-shader] compiled %c%08x: vertex %u B, fragment %u B (%u ms, harvest, saved to the card cache)", j->kind, (unsigned) j->h, (unsigned) j->vsz, (unsigned) j->fsz, (unsigned) j->ms); }
+        } else
         if (st == GXS_J_FAILED) {
             ++c_compile_fail; ++c_async_failed;
             gxm_log("[gxm-shader] COMPILE FAILED %c%08x (%s, async, %u ms)", j->kind, (unsigned) j->h, j->fail_stage == 0 ? "vertex stage" : j->fail_stage == 1 ? "fragment stage" : "program check / sentinel", (unsigned) j->ms);
@@ -1009,11 +1207,19 @@ static void gxs_async_install(void)
                 if (vk) p->vk = *vk;
                 if (gxs_register(p, &s->pv, j->vg, j->fg, 1)) { ++c_compile_fail; ++c_async_failed; gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_COMPILE); }   /* frees vg / fg */
                 else {
-                    p->from = GXM_FROM_SHARK;
+                    p->from = j->src == 1 ? GXM_FROM_PACK : j->src ? GXM_FROM_GXPCACHE : GXM_FROM_SHARK;
                     gxs_finish(p, 0);
                     gxs_insert(g_np, j->h);
                     ++g_np; ++c_async_installed;
-                    gxm_log("[gxm-shader] compiled %c%08x: vertex %u B, fragment %u B (%u ms, informational, async)", j->kind, (unsigned) j->h, (unsigned) j->vsz, (unsigned) j->fsz, (unsigned) j->ms);
+                    if (j->src) {                   /* IO OFF R: loaded by the worker; logged only when the card made it slow */
+                        if (j->ms >= 20u) gxm_log("[gxm-shader] loaded %c%08x from the %s in %u ms (worker; R did not wait)", j->kind, (unsigned) j->h, j->src == 1 ? "pack" : j->src == 2 ? "card cache" : "app0 cache", (unsigned) j->ms);
+                    } else {
+                        if (__builtin_expect(g_keylog, 0)) {   /* neither the pack nor a cache file had it (the synchronous path records it at the same point) */
+                            const void *k1 = vk ? (const void *) vk : (const void *) &j->ck; const unsigned n1 = vk ? (unsigned) tev_vs_key_len(vk) : (unsigned) tev_key_len(&j->ck);
+                            gxs_keylog_add(j->fam, j->fast, j->h, j->h2, k1, n1, vk ? (const void *) &j->ck : NULL, vk ? (unsigned) tev_key_len(&j->ck) : 0u);
+                        }
+                        gxm_log("[gxm-shader] compiled %c%08x: vertex %u B, fragment %u B (%u ms, informational, async) variant %u", j->kind, (unsigned) j->h, (unsigned) j->vsz, (unsigned) j->fsz, (unsigned) j->ms, gxs_fast_vbits(j->fast));
+                    }
                 }
             }
         }
@@ -1023,6 +1229,59 @@ static void gxs_async_install(void)
     if (any) gxs_forget_memos();
 }
 static inline void gxs_async_poll(void) { if (__builtin_expect(g_async && __atomic_load_n(&g_job_done, __ATOMIC_ACQUIRE) != g_job_seen, 0)) gxs_async_install(); }
+
+/* ---- the KEY LOG (2026-11-03): ux0:data/stairfax/shader_keys.txt = "1" (read once at init; absent = off, one predictable branch in gxs_make).  A key that reaches the point where
+ * neither the pack nor the GXP cache (card, app0) held its program -- the point it is about to be queued / compiled, or would be in the emulator -- is recorded ONCE per
+ * (kind, h, h2) per boot, in RAM, appended to ux0:data/stairfax/shader_keys.bin (format: gxs_keys.h) every GXS_KEYLOG_FLUSH new keys and at gxm_shader_shutdown (one sceIoOpen per
+ * flush).  The tail < 32 keys is lost on a crash.  'u' utility programs are not keyed through gxs_make and are out of scope.  Owner thread only (as gxs_make). */
+#define GXS_KEYLOG_MARK  "ux0:data/stairfax/shader_keys.txt"
+#define GXS_KEYLOG_FILE  "ux0:data/stairfax/shader_keys.bin"
+#define GXS_KEYLOG_FLUSH 32
+#define GXS_KEYLOG_REC   (GXS_KEYS_RHDR + sizeof(VsKey) + sizeof(TevKey) + 4u)       /* the largest record */
+#define GXS_KEYLOG_SEEN  16384                                                       /* open-addressed (kind, h, h2) set; full at 14000 = further keys are counted, not logged */
+typedef struct { uint32_t h, h2; uint8_t kind, used; } GxsKeySeen;
+static uint8_t *g_kl_buf; static unsigned g_kl_len, g_kl_pend; static GxsKeySeen *g_kl_seen; static unsigned g_kl_nseen;
+static unsigned c_kl_logged, c_kl_flushed, c_kl_dropped, c_kl_ioerr;
+static void gxs_keylog_flush(void)
+{
+    if (!g_keylog || !g_kl_len) return;
+    SceUID f = sceIoOpen(GXS_KEYLOG_FILE, SCE_O_WRONLY | SCE_O_APPEND, 0777);
+    if (f < 0 || sceIoWrite(f, g_kl_buf, g_kl_len) != (int) g_kl_len) ++c_kl_ioerr; else c_kl_flushed += g_kl_pend;
+    if (f >= 0) sceIoClose(f);
+    g_kl_len = g_kl_pend = 0;
+}
+static void gxs_keylog_init(void)
+{
+    free(g_kl_buf); free(g_kl_seen); g_kl_buf = NULL; g_kl_seen = NULL; g_keylog = 0; g_kl_len = g_kl_pend = g_kl_nseen = 0;
+    c_kl_logged = c_kl_flushed = c_kl_dropped = c_kl_ioerr = 0;
+    if (!gxs_marker_is_1(GXS_KEYLOG_MARK)) return;
+    g_kl_buf = (uint8_t *) malloc((size_t) GXS_KEYLOG_FLUSH * GXS_KEYLOG_REC);
+    g_kl_seen = (GxsKeySeen *) calloc(GXS_KEYLOG_SEEN, sizeof *g_kl_seen);
+    uint8_t hd[GXS_KEYS_HDR]; gxs_keys_header(hd);
+    if (!g_kl_buf || !g_kl_seen || gxs_write_file(GXS_KEYLOG_FILE, hd, sizeof hd, NULL, 0, NULL, 0)) {
+        gxm_log("[keys] key log NOT started (buffers %p %p, file " GXS_KEYLOG_FILE " not writable)", (void *) g_kl_buf, (void *) g_kl_seen);
+        free(g_kl_buf); free(g_kl_seen); g_kl_buf = NULL; g_kl_seen = NULL;
+        return;
+    }
+    g_keylog = 1;
+    gxm_log("[keys] key log ON: " GXS_KEYLOG_FILE " (truncated; a flush per %u new keys and at shutdown), pack version %#x", (unsigned) GXS_KEYLOG_FLUSH, (unsigned) GXS_SHC_VERSION);
+}
+static void gxs_keylog_add(int fam, int fast, uint32_t h, uint32_t h2, const void *k1, unsigned n1, const void *k2, unsigned n2)
+{
+    const uint8_t kind = (uint8_t) gxs_keys_kind(fam == GXM_PK_GX, fast);
+    unsigned i = (h ^ h2 * 0x9E3779B1u ^ kind) & (GXS_KEYLOG_SEEN - 1u);
+    for (;; i = (i + 1u) & (GXS_KEYLOG_SEEN - 1u)) {
+        const GxsKeySeen *e = &g_kl_seen[i];
+        if (!e->used) break;
+        if (e->h == h && e->h2 == h2 && e->kind == kind) return;                    /* already logged this boot */
+    }
+    if (g_kl_nseen >= 14000u) { ++c_kl_dropped; return; }
+    g_kl_seen[i].h = h; g_kl_seen[i].h2 = h2; g_kl_seen[i].kind = kind; g_kl_seen[i].used = 1; ++g_kl_nseen;
+    if (g_kl_len + gxs_keys_rec_bytes(n1, n2) > (unsigned) GXS_KEYLOG_FLUSH * GXS_KEYLOG_REC) gxs_keylog_flush();
+    g_kl_len += gxs_keys_put(g_kl_buf + g_kl_len, fam == GXM_PK_GX, fast, h, h2, k1, n1, k2, n2);
+    ++g_kl_pend; ++c_kl_logged;
+    if (g_kl_pend >= GXS_KEYLOG_FLUSH) gxs_keylog_flush();
+}
 
 /* get-or-create for the TEV (fam GXM_PK_TEV, vk NULL) and GX (vk set) families. `ck`: the canonical TevKey. NULL with *why on any failure. */
 static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const TevKey *ck, int *why)
@@ -1041,7 +1300,18 @@ static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const T
     const char kind = fam == GXM_PK_TEV ? (fast ? 'f' : 't') : (fast ? 'h' : 'g');
     const void *k1 = vk ? (const void *) vk : (const void *) ck; const unsigned n1 = vk ? (unsigned) tev_vs_key_len(vk) : (unsigned) tev_key_len(ck);
     const void *k2 = vk ? (const void *) ck : NULL;              const unsigned n2 = vk ? (unsigned) tev_key_len(ck) : 0u;
-    int r = gxs_try_pack(p, pv, kind, h, k1, n1, k2, n2);
+    const int io_off_r = g_async && g_io_async && !g_hv_feeding;    /* IO OFF R: no card I/O on this thread */
+    int r = 0;
+    if (!io_off_r || __atomic_load_n(&g_pk_ram, __ATOMIC_ACQUIRE)) r = gxs_try_pack(p, pv, kind, h, k1, n1, k2, n2);   /* RC6: a RAM pack is a memcpy, same frame */
+    if (io_off_r && r == 0) {                                     /* not in the (RAM) pack: card cache / app0 / compile on the workers; the slot is not consumed */
+        if (gxs_jobs_busy() >= GXS_JOB_MAX) { ++c_async_full; *why = GXM_SK_NOPROG; return NULL; }   /* asked again on a later draw */
+        int wq = GXM_SK_NOPROG, remember = 1;
+        const int queued = gxs_async_queue(fam, fast, kind, h, h2, vk, ck, &wq, &remember, 1);
+        if (queued) sceKernelSignalSema(g_io_wake, 1);
+        *why = wq;
+        if (!queued && remember) gxs_neg_add(fam, fast, h, h2, wq);   /* the generator refused it: no source, so no cache file either (same generator) */
+        return NULL;
+    }
     int w = GXM_SK_NOPROG;
     if (r < 0) w = GXM_SK_COMPILE;
     else if (r == 0) {
@@ -1054,10 +1324,11 @@ static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const T
          * generator source into the cache validity) still to do. */
         if (g_async && gxs_jobs_busy() >= GXS_JOB_MAX) { ++c_async_full; *why = GXM_SK_NOPROG; return NULL; }   /* queue full: not even the cache file (one sceIoOpen per draw) -- asked again later */
         r = gxs_try_gxpc(p, pv, kind, h, k1, n1, k2, n2);
+        if (__builtin_expect(g_keylog, 0) && r == 0) gxs_keylog_add(fam, fast, h, h2, k1, n1, k2, n2);   /* neither the pack nor a cache file had it: record the key (once per boot) */
         if (r < 0) w = GXM_SK_COMPILE;
         else if (r == 0 && g_async) {
             int remember = 1;
-            const int queued = gxs_async_queue(fam, fast, kind, h, h2, vk, ck, &w, &remember);   /* queued: NOPROG now, the program at a later lookup */
+            const int queued = gxs_async_queue(fam, fast, kind, h, h2, vk, ck, &w, &remember, 0);   /* queued: NOPROG now, the program at a later lookup */
             *why = w;
             if (!queued && remember) gxs_neg_add(fam, fast, h, h2, w);              /* the generator refused it: remembered, as the synchronous path does */
             return NULL;                                                            /* a queued key is never in the negative cache */
@@ -1073,6 +1344,110 @@ static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const T
     gxs_insert(g_np, h);
     ++g_np;
     return p;
+}
+
+/* ---- the HARVEST replay (2026-11-03): ux0:data/stairfax/shader_harvest.txt = "1" and the list ux0:data/stairfax/harvest.bin (format: gxs_keys.h, made by shader_harvest.py merge).
+ * The whole list is read at init.  Once per frame (rhi_gxm_asc_tick, called from gxm_frame_present_end -- the same thread as every draw, so the one that owns the program table
+ * and the Cg buffers) up to 4 records are fed to gxs_make while the compile queue has room.  Each record's keys are REBUILT and h / h2 RECOMPUTED (gxs_keys_verify); a record that does
+ * not reproduce its own hashes is counted `mismatch` and never compiled.  A key the pool, the pack or a GXP cache file already holds is counted `cached` WITHOUT loading it
+ * (no pool slot, no patcher registration); a bad-listed / remembered-failed key is skipped.  The rest goes through gxs_make -> gxs_async_queue -> the worker, which compiles it and
+ * SAVES it to the card cache exactly as in play.  Such a job is flagged `harvest`: installing it creates NO pool program (the game finds the cache file when it asks), so a
+ * harvest of thousands of keys cannot fill GXM_PROG_MAX.  Needs async compile (g_async); otherwise `[harvest] OFF`. */
+#define GXS_HV_MARK "ux0:data/stairfax/shader_harvest.txt"
+#define GXS_HV_FILE "ux0:data/stairfax/harvest.bin"
+#define GXS_HV_PER_FRAME 4
+#define GXS_HV_MAXBYTES  (64u << 20)
+static int g_hv_on, g_hv_done; static uint8_t *g_hv_buf; static uint32_t g_hv_len, g_hv_pos; static unsigned g_hv_n, g_hv_fed, g_kt_frames;
+static unsigned c_hv_cached, c_hv_queued, c_hv_mismatch, c_hv_bad, c_hv_neg, c_hv_refused;
+static int gxs_cached_on_disk(char kind, uint32_t h, const void *k1, unsigned n1, const void *k2, unsigned n2)   /* 1 = the pack or a GXP cache file holds a valid program for these key bytes */
+{
+    if (g_pack_on) {
+        const GxsPk *e = gxs_pk_find(&g_pk, h, (uint32_t) (unsigned char) kind);
+        if (e) {
+            int bad = 0; uint8_t *b = gxs_pk_fetch(e, gxs_pk_rd, NULL, &bad);
+            if (b) { const uint8_t *bin; uint32_t bl; const int ok = gxs_img_binary(b, e->len, k1, n1, k2, n2, &bin, &bl); free(b); if (ok) return 1; }
+        }
+    }
+    for (int app = 0; app < 2; ++app) {
+        char path[96];
+        if (app) snprintf(path, sizeof path, GXS_APP_GXPDIR "%c%08x.gxp", kind, (unsigned) h); else gxs_gxpc_path(path, sizeof path, kind, h);
+        SceUID f = sceIoOpen(path, SCE_O_RDONLY, 0777);
+        if (f < 0) continue;
+        const SceOff sz = sceIoLseek(f, 0, SCE_SEEK_END);
+        uint8_t *buf = (sz >= 20 && sz <= (SceOff) (1 << 20)) ? (uint8_t *) malloc((size_t) sz + 4u) : NULL;
+        int ok = 0;
+        if (buf) {
+            sceIoLseek(f, 0, SCE_SEEK_SET);
+            const uint8_t *v, *fr; uint32_t vl, fl;
+            ok = sceIoRead(f, buf, (unsigned) sz) == (int) sz && gxs_gxpc_valid(buf, (uint32_t) sz, k1, n1, k2, n2, &v, &vl, &fr, &fl);
+            free(buf);
+        }
+        sceIoClose(f);
+        if (ok) return 1;
+    }
+    return 0;
+}
+static void gxs_harvest_init(void)
+{
+    free(g_hv_buf); g_hv_buf = NULL; g_hv_on = g_hv_done = 0; g_hv_len = g_hv_pos = 0; g_hv_n = g_hv_fed = 0; g_kt_frames = 0;
+    c_hv_installed = c_hv_failed = c_hv_cached = c_hv_queued = c_hv_mismatch = c_hv_bad = c_hv_neg = c_hv_refused = 0;
+    if (!gxs_marker_is_1(GXS_HV_MARK)) return;
+    if (!g_async) { gxm_log("[harvest] OFF (async compile off)"); return; }
+    SceUID f = sceIoOpen(GXS_HV_FILE, SCE_O_RDONLY, 0777);
+    if (f < 0) { gxm_log("[harvest] OFF: " GXS_HV_FILE " not found (0x%08x)", (unsigned) f); return; }
+    const SceOff sz = sceIoLseek(f, 0, SCE_SEEK_END);
+    if (sz < (SceOff) GXS_KEYS_HDR || sz > (SceOff) GXS_HV_MAXBYTES) { sceIoClose(f); gxm_log("[harvest] OFF: " GXS_HV_FILE " is %d bytes (want %u..%u)", (int) sz, (unsigned) GXS_KEYS_HDR, (unsigned) GXS_HV_MAXBYTES); return; }
+    sceIoLseek(f, 0, SCE_SEEK_SET);
+    uint8_t *buf = (uint8_t *) malloc((size_t) sz + 4u);
+    const int rn = buf ? sceIoRead(f, buf, (unsigned) sz) : -1;
+    sceIoClose(f);
+    if (!buf || rn != (int) sz) { free(buf); gxm_log("[harvest] OFF: could not read " GXS_HV_FILE " (%d of %d bytes)", rn, (int) sz); return; }
+    static const char *const why[5] = { "", "shorter than its header", "bad magic (not an STFXKEY1 file)", "unknown file version", "made under another GXS_SHC_VERSION" };
+    const int hc = gxs_keys_header_check(buf, (uint32_t) sz);
+    if (hc) { gxm_log("[harvest] REJECTED: %s (file pack version %#x, this build %#x)", why[hc], (unsigned) gxs_rd32(buf + 12), (unsigned) GXS_SHC_VERSION); free(buf); return; }
+    uint32_t pos = GXS_KEYS_HDR; unsigned n = 0; GxsKeyRec r;
+    for (uint32_t t; pos < (uint32_t) sz && (t = gxs_keys_get(buf + pos, (uint32_t) sz - pos, &r)) != 0; pos += t) ++n;
+    if (pos != (uint32_t) sz) gxm_log("[harvest] WARNING: %u trailing bytes after record %u are malformed and ignored", (unsigned) sz - pos, n);
+    g_hv_buf = buf; g_hv_len = pos; g_hv_pos = GXS_KEYS_HDR; g_hv_n = n; g_hv_on = 1;
+    gxm_log("[harvest] ON: %u keys from " GXS_HV_FILE " (%d bytes), pack version %#x, %d feeds per frame", n, (int) sz, (unsigned) GXS_SHC_VERSION, GXS_HV_PER_FRAME);
+    if (!n) g_hv_done = 1;
+}
+static void gxs_harvest_line(const char *tag)
+{
+    gxm_log("[harvest] %sfed %u of %u | cached %u | queued %u | installed %u | failed %u | mismatch %u | bad %u | neg %u | refused %u",
+            tag, g_hv_fed, g_hv_n, c_hv_cached, c_hv_queued, c_hv_installed, c_hv_failed, c_hv_mismatch, c_hv_bad, c_hv_neg, c_hv_refused);
+}
+/* once per present, owner thread (see above) */
+static void gxs_keys_tick(void)
+{
+    ++g_kt_frames;
+    if (g_hv_on) {
+        gxs_async_poll();
+        if (!g_hv_done) {
+            for (int fed = 0; fed < GXS_HV_PER_FRAME && g_hv_fed < g_hv_n && gxs_jobs_busy() < GXS_JOB_MAX; ++fed) {
+                GxsKeyRec r; VsKey vk; TevKey ck;
+                const uint32_t t = gxs_keys_get(g_hv_buf + g_hv_pos, g_hv_len - g_hv_pos, &r);
+                if (!t) { g_hv_fed = g_hv_n; break; }                                   /* cannot happen: init walked the same bytes */
+                g_hv_pos += t; ++g_hv_fed;
+                if (gxs_keys_verify(&r, &vk, &ck)) { ++c_hv_mismatch; continue; }
+                const int gx = r.family == GXS_KF_GX, fam = gx ? GXM_PK_GX : GXM_PK_TEV, fast = r.fast;
+                const VsKey *vkp = gx ? &vk : NULL;
+                if (gxs_is_bad(r.h)) { ++c_hv_bad; continue; }
+                if (gxs_neg_find(fam, fast, r.h, r.h2)) { ++c_hv_neg; continue; }
+                if (gxs_find(fam, fast, r.h, vkp, &ck) || gxs_cached_on_disk((char) r.kind, r.h, r.k1, r.n1, r.k2, r.n2)) { ++c_hv_cached; continue; }
+                const unsigned q0 = c_async_queued, p0 = c_async_pending; int w = 0;
+                g_hv_feeding = 1;
+                GxmProg *p = gxs_make(fam, fast, r.h, vkp, &ck, &w);
+                g_hv_feeding = 0;
+                if (p) ++c_hv_cached; else if (c_async_queued != q0 || c_async_pending != p0) ++c_hv_queued; else ++c_hv_refused;
+            }
+            if (g_hv_fed >= g_hv_n && gxs_jobs_busy() == 0) { g_hv_done = 1; gxs_harvest_line("DONE "); }
+        }
+    }
+    if (g_kt_frames % 600u == 0) {
+        if (g_keylog) gxm_log("[keys] logged %u (flushed %u)%s", c_kl_logged, c_kl_flushed, c_kl_dropped || c_kl_ioerr ? " WARNING: dropped/io errors" : "");
+        if (g_hv_on && !g_hv_done) gxs_harvest_line("");
+    }
 }
 
 /* ======================================================================================================================================== public: lifetime */
@@ -1106,12 +1481,16 @@ int gxm_shader_init(void)
     gxs_shark_start();
     g_up = 1;
     gxs_async_start();
+    gxs_keylog_init();
+    gxs_harvest_init();
     return 0;
 }
 
 void gxm_shader_shutdown(void)
 {
     if (!g_up && !g_neg && !g_np) return;
+    gxs_keylog_flush();                      /* the key log's last < 32 keys */
+    g_hv_on = 0; free(g_hv_buf); g_hv_buf = NULL;
     if (g_async) {                           /* the worker: no new job is taken; one in flight is waited for (bounded), then every job is dropped */
         g_async = 0;
         for (int i = 0; i < GXS_JOB_MAX; ++i) { int q = GXS_J_QUEUED; __atomic_compare_exchange_n(&g_job[i].state, &q, GXS_J_FAILED, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE); }
@@ -1140,6 +1519,8 @@ void gxm_shader_shutdown(void)
         if (pv->nowrite && g_gx.patcher) GXM_CHK(sceGxmShaderPatcherReleaseFragmentProgram(g_gx.patcher, pv->nowrite));
         free(pv->vp); free(pv->fp); pv->vp = NULL; pv->fp = NULL; pv->nvp = pv->nfp = pv->capvp = pv->capfp = 0; pv->nowrite = NULL;
     }
+    for (int i = 0; i < g_ffp_n; ++i) if (g_ffp[i].fp && g_gx.patcher) GXM_CHK(sceGxmShaderPatcherReleaseFragmentProgram(g_gx.patcher, g_ffp[i].fp));   /* gpud arm C */
+    free(g_ffp); g_ffp = NULL; g_ffp_n = g_ffp_cap = 0;
     for (int i = 0; i < n; ++i) {            /* 2. unregister, 3. free the GXP copies */
         GxsSlot *s = gxs_slot(i); GxsPriv *pv = &s->pv;
         gxs_unreg(pv, &s->p);
@@ -1151,6 +1532,9 @@ void gxm_shader_shutdown(void)
     free(g_neg); g_neg = NULL;
     free(g_cg_vs); free(g_cg_fs); g_cg_vs = g_cg_fs = NULL;
     gxs_pk_free(&g_pk);
+    for (int t = 0; t < 300 && g_pk_loading; ++t) sceKernelDelayThread(10000);   /* RC6: stfx_gxio mid-load (bounded 3 s; past it, the closed fd fails its next chunk) */
+    if (!g_pk_loading && g_pk_ram_blk >= 0) { __atomic_store_n(&g_pk_ram, NULL, __ATOMIC_RELEASE); sceKernelFreeMemBlock(g_pk_ram_blk); g_pk_ram_blk = -1; }
+    g_pk_ram_failed = 0;                                                             /* a re-init may try again */
     if (g_pk_fd >= 0) { sceIoClose(g_pk_fd); g_pk_fd = -1; }
     g_pack_on = 0;
     g_up = 0;
@@ -1286,9 +1670,41 @@ static GxmProg *gxs_tev_core(const TevKey *raw, int *why, int use_memo)
     return r;
 }
 GxmProg *gxm_shader_tev(const TevKey *raw, int *why) { return gxs_tev_core(raw, why, 1); }
+/* gpud variant arms: the same lookup for a generator VARIANT (TEVV_* bits).  Variant 0 is gxm_shader_tev.  A variant lookup neither reads nor writes any memo (they hold the answers for the
+ * shipping program of a raw key), so every call walks td_get + the pool: that is the arm's CPU cost, not the GPU's. */
+static GxsFmemo s_fm;
+int gxm_shader_fast_on(void) { return g_fast; }   /* tev_fast.txt = 1: the fast generator is the shipping generator (the variant arms need it) */
+GxmProg *gxm_shader_tev_v(const TevKey *raw, unsigned var, int *why)
+{
+    if (!var) return gxs_tev_core(raw, why, 1);
+    int w = GXM_SK_NOPROG;
+    if (!g_up) { if (why) *why = GXM_SK_DEAD; return NULL; }
+    if (g_gx.arm & GXM_ARM_NOPROG) { ++c_arm_noprog; if (why) *why = GXM_SK_NOPROG; return NULL; }
+    gxs_async_poll();
+    TevKey ck; uint32_t h; int fast;
+    gxs_tev_identity_v(&g_td, &s_fm, raw, g_fast, var, &ck, &h, &fast);
+    GxmProg *r = gxs_find(GXM_PK_TEV, fast, h, NULL, &ck);
+    if (!r) r = gxs_make(GXM_PK_TEV, fast, h, NULL, &ck, &w);
+    if (why) *why = r ? 0 : w;
+    return r;
+}
 
 void gxs_td_stats(unsigned o[4]) { o[0] = g_td.seen; o[1] = g_td.aliased; o[2] = g_td.over; o[3] = g_td.nraw; }   /* hw_Mm2: distinct raw TEV keys, of them aliased, table-full, raw entries */
 GxmProg *gxm_shader_gx(const VsKey *raw_vk, const TevKey *raw_tk, int *why) { return gxm_shader_gx_hint(raw_vk, raw_tk, 0ull, why); }
+GxmProg *gxm_shader_gx_hint_v(const VsKey *raw_vk, const TevKey *raw_tk, unsigned long long hint, unsigned var, int *why)   /* gpud variant arms; variant 0 is gxm_shader_gx_hint.  No memo read or write, no hint. */
+{
+    if (!var) return gxm_shader_gx_hint(raw_vk, raw_tk, hint, why);
+    int w = GXM_SK_NOPROG;
+    if (!g_up) { if (why) *why = GXM_SK_DEAD; return NULL; }
+    if (g_gx.arm & GXM_ARM_NOPROG) { ++c_arm_noprog; if (why) *why = GXM_SK_NOPROG; return NULL; }
+    gxs_async_poll();
+    VsKey vk; TevKey ck; uint32_t h; int fast;
+    gxs_gx_identity_v(&g_td, &s_fm, raw_vk, raw_tk, g_fast, g_persp, var, &vk, &ck, &h, &fast);
+    GxmProg *r = gxs_find(GXM_PK_GX, fast, h, &vk, &ck);
+    if (!r) r = gxs_make(GXM_PK_GX, fast, h, &vk, &ck, &w);
+    if (why) *why = r ? 0 : w;
+    return r;
+}
 GxmProg *gxm_shader_gx_hint(const VsKey *raw_vk, const TevKey *raw_tk, unsigned long long hint, int *why)
 {
     int w = GXM_SK_NOPROG;
@@ -1498,8 +1914,39 @@ SceGxmFragmentProgram *gxm_shader_fp_nowrite(GxmProg *p)
     return fp;
 }
 
+/* gpud arm C: a util program's FRAGMENT half paired with another program's vertex half.  The patcher links a fragment program to the vertex program it will be
+ * drawn with (varying layout), so one constant fragment GXP needs one fragment program per (real vertex program, blend key).  Cached here; gpud only. */
+SceGxmFragmentProgram *gxm_shader_fp_foreign(GxmProg *frag, GxmProg *vtx, uint32_t alphaMode)
+{
+    if (!g_up || !frag || !vtx || !frag->ok || !vtx->ok || !g_gx.patcher) { ++c_fp_fail; return NULL; }
+    const uint32_t bk = gxm_blend_key(alphaMode);
+    static int last = -1;
+    if (last >= 0 && last < g_ffp_n && g_ffp[last].frag == frag && g_ffp[last].vtx == vtx && g_ffp[last].bk == bk) return g_ffp[last].fp;
+    for (int i = 0; i < g_ffp_n; ++i) if (g_ffp[i].frag == frag && g_ffp[i].vtx == vtx && g_ffp[i].bk == bk) { last = i; return g_ffp[i].fp; }
+    SceGxmBlendInfo bi; const int has = gxs_blend_of(alphaMode, &bi);
+    SceGxmFragmentProgram *fp = NULL;
+    if (GXM_CHK(sceGxmShaderPatcherCreateFragmentProgram(g_gx.patcher, frag->fid, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, has ? &bi : NULL, vtx->vg, &fp)) || !fp) { ++c_fp_fail; return NULL; }
+    if (g_ffp_n == g_ffp_cap) {
+        const int nc = g_ffp_cap ? g_ffp_cap * 2 : 64;
+        GxsFpForeign *nf = (GxsFpForeign *) realloc(g_ffp, (size_t) nc * sizeof *nf);
+        if (!nf) { GXM_CHK(sceGxmShaderPatcherReleaseFragmentProgram(g_gx.patcher, fp)); ++c_fp_fail; return NULL; }
+        g_ffp = nf; g_ffp_cap = nc;
+    }
+    g_ffp[g_ffp_n].frag = frag; g_ffp[g_ffp_n].vtx = vtx; g_ffp[g_ffp_n].bk = bk; g_ffp[g_ffp_n].fp = fp; last = g_ffp_n; ++g_ffp_n; ++c_fp_made;
+    return fp;
+}
+void gxm_shader_async_counts(unsigned o[4]) { o[0] = c_async_queued; o[1] = c_async_installed; o[2] = c_async_pending; o[3] = c_async_failed; }
+
 /* ======================================================================================================================================== public: housekeeping + report */
-void rhi_gxm_asc_tick(void) { ++c_noop; }                       /* the background compiler's results are installed by the lookups themselves (gxs_async_poll) */
+void rhi_gxm_asc_tick(void) { ++c_noop; }   /* the GAME thread's per-present hook (vita_tool_main.c via rhi_vita_asc_tick): nothing to do on GXM -- the background
+                                                  compiler's results are installed by the lookups themselves (gxs_async_poll) */
+/* once per present, from gxm_frame_present_end ONLY (the thread that draws = owns the program table; R when threaded): the key log / harvest replay.
+ * 2026-11-04: this body used to sit in rhi_gxm_asc_tick, which the game thread ALSO calls -> G and R both ran gxs_async_install -> double free in _free_r
+ * on stfx_gxr 17 s into the first hw harvest boot (eboot 5aef7882, dump psp2core-1793786876). */
+void rhi_gxm_keys_tick(void)
+{
+    if (__builtin_expect(g_keylog | g_hv_on, 0)) gxs_keys_tick();
+}
 void rhi_gxm_shc_flush(unsigned ms) { (void) ms; ++c_noop; }    /* M2: the pack is read-only */
 void rhi_gxm_shc_shutdown(void) { ++c_noop; }
 

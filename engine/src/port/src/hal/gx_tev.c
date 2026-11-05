@@ -14,6 +14,9 @@
 // per configuration precompiled on the host. This file is step one: the setters record, and
 // on the journal frame (rhi_vita_journal, vita_tool_main.c CAPTURE_AT) every draw's TEV key is
 // hashed and censused. Nothing here changes what is drawn.
+#include <stdio.h>
+FILE* stfxMarkerOpen(const char* name) __attribute__((weak));   /* gx_draw.c (RC6): absent markers cost no card I/O */
+static FILE* stfxMk(const char* name) { if (stfxMarkerOpen) return stfxMarkerOpen(name); { char p[96]; snprintf(p, sizeof p, "ux0:data/stairfax/%s", name); return fopen(p, "r"); } }   /* host tests link no gx_draw.c */
 #include "dolphin/gx.h"
 #include "port/renderer/rhi.h"
 #include "port/gx_tev_key.h"
@@ -266,14 +269,16 @@ int gx_tev_ind_force;   /* host tests: 1 = indirect on whatever the marker files
 static int indEnabled(void) {
     if (gx_tev_ind_force) return 1;
     if (gIndOn < 0) {
-        FILE* f = fopen("ux0:data/stairfax/tev_ind_off.txt", "r"); int off = f && fgetc(f) == 49; if (f) fclose(f);   /* the kill switch: 1 = refuse every indirect stage, as before 2026-10-12 */
+        FILE* f = stfxMk("tev_ind_off.txt"); int off = f && fgetc(f) == 49; if (f) fclose(f);   /* the kill switch: 1 = refuse every indirect stage, as before 2026-10-12 */
         gIndOn = !off;
-        { FILE* g = fopen("ux0:data/stairfax/tev_ind_stu.txt", "r"); int c = g ? fgetc(g) : -1; if (g) fclose(g); gIndStu = c >= '0' && c <= '2' ? c - '0' : 0; }
+        { FILE* g = stfxMk("tev_ind_stu.txt"); int c = g ? fgetc(g) : -1; if (g) fclose(g); gIndStu = c >= '0' && c <= '2' ? c - '0' : 0; }
         printf("[tevind] S,T,U channel order %d (%s)\n", gIndStu, gIndStu == 0 ? "A,B,G (assumed)" : gIndStu == 1 ? "R,G,B" : "A,R,G");
         printf("[tevind] indirect texturing %s%s", gIndOn ? "ON (default; tev_ind_off.txt starting with 1 turns it off)" : "OFF (tev_ind_off.txt 1): every indirect stage is refused, the draw falls back as before", "\n");
     }
     return gIndOn;
 }
+
+void gx_tev_markers_init(void) { (void)indEnabled(); }   /* RC6: gx_draw.c dlkInitOnce, at boot */
 int gx_tev_ind_enabled(void) { return indEnabled(); }   /* the game-side water setup follows the same runtime switch (intersect_render.c STFX_WATER_IND) */
 // A stage whose indirect setup is outside the supported subset: counted, and logged ONCE per distinct setup.
 static int indRefuse(const TevStage* t, const char* why) {

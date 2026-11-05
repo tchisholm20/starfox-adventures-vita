@@ -202,7 +202,8 @@ static void log_async_start(void)   /* called once, at present LOG_BUF_FROM, bef
     FILE *af = fopen("ux0:data/stairfax/log_async_off.txt", "r"); int off = af && fgetc(af) == 49; if (af) fclose(af);
     if (off) { printf("[log] async writer: OFF (log_async_off.txt 1): the flush is synchronous on the main thread\n"); return; }
     g_la_sema = sceKernelCreateSema("stfx_logw", 0, 0, 255, NULL);
-    SceUID t = g_la_sema >= 0 ? sceKernelCreateThread("stfx_logw", la_thread, 0x10000100, 0x4000, 0, 0, NULL) : -1;
+    SceUID t = g_la_sema >= 0 ? sceKernelCreateThread("stfx_logw", la_thread, 0x10000100 + 16, 0x4000, 0, 0, NULL) : -1;
+    if (t < 0 && g_la_sema >= 0) t = sceKernelCreateThread("stfx_logw", la_thread, 0x10000100, 0x4000, 0, 0, NULL);   /* +16 refused: as before */
     if (t < 0 && g_la_sema >= 0) { sceKernelDeleteSema(g_la_sema); g_la_sema = -1; }
     if (t < 0) { printf("[log] async writer: FAILED to start (sema %x, thread %x): synchronous flush\n", (unsigned) g_la_sema, (unsigned) t); return; }
     log_flush_all();   /* what the synchronous path buffered so far goes out first: order */
@@ -695,6 +696,80 @@ static void vt_c3_arm_report(void)   /* one line per change of (perf arm, C3 arm
     s_ab = gStfxAb; s_c3 = gStfxC3Arm; s_toff = toff;
     printf("[c3map] perf arm %d runs C3 arm %d | always-on timers %s (gx_c3_toff %d)\n", gStfxAb, gStfxC3Arm, toff > 0 ? "OFF" : toff == 0 ? "ON" : "n/a", toff);
 }
+/* DEFERRED B8 READBACK SWITCH (2026-11-01, hal/gx_draw.c "THE DEFERRED B8 READBACK"). ux0:data/stairfax/b8_defer.txt, read once at present 1:
+ *   absent or "1"   deferred (the default)          "0"   the old blocking readback (copyReal)
+ *   "ab <period>"   the two alternate in ONE boot, deferred first, <period> presents each (rounded up to 60, so every [win] window lies in one
+ *                   arm), one line per period when it ends:  [b8ab] presents P..Q defer D | <the HAL's B8 counters over the period>
+ * R reads gx_b8_defer at each B8 copy, so a switch lands within a frame of the boundary; either value is safe at any copy (gx_draw.c).
+ * Separate from perf_ab.txt on purpose: an arm-mode boot changes other release switches too, this changes only the B8 path. */
+static int g_b8_period;
+static void vt_b8_ab(void)
+{
+    extern int gx_b8_defer __attribute__((weak));
+    extern unsigned gx_b8_issued __attribute__((weak)), gx_b8_resolved __attribute__((weak)), gx_b8_waited __attribute__((weak)),
+        gx_b8_lost __attribute__((weak)), gx_b8_fallback __attribute__((weak)), gx_copy_mem __attribute__((weak));
+    extern unsigned long long gx_b8_resolve_us __attribute__((weak));
+    static unsigned s0[6]; static unsigned long long s_us0;
+    if (!&gx_b8_defer) return;
+    if (g_presents == 1) {
+        FILE *f = fopen("ux0:data/stairfax/b8_defer.txt", "r");
+        char w[16] = { 0 }; int per = 0;
+        if (f) {
+            if (fscanf(f, "%15s", w) == 1 && !strcmp(w, "ab") && fscanf(f, "%d", &per) == 1 && per > 0) g_b8_period = (per + 59) / 60 * 60;
+            fclose(f);
+        }
+        gx_b8_defer = g_b8_period ? 1 : w[0] != '0';
+        if (g_b8_period) printf("[b8] deferred B8 readback: A/B in this boot, %d presents per arm, deferred first (b8_defer.txt \"%s %d\")\n", g_b8_period, w, per);
+        else printf("[b8] deferred B8 readback: %s (b8_defer.txt %s%s%s)\n", gx_b8_defer ? "ON" : "OFF, blocking readback", f ? "\"" : "absent", f ? w : "", f ? "\"" : "");
+    }
+    if (g_b8_period && g_presents % g_b8_period == 0) {
+#define B8W_(v) (&(v) ? (v) : 0u)
+        const unsigned s1[6] = { B8W_(gx_b8_issued), B8W_(gx_b8_resolved), B8W_(gx_b8_waited), B8W_(gx_b8_lost), B8W_(gx_b8_fallback), B8W_(gx_copy_mem) };
+#undef B8W_
+        const unsigned long long us1 = &gx_b8_resolve_us ? gx_b8_resolve_us : 0ull;
+        printf("[b8ab] presents %d..%d defer %d | b8 issued %u resolved %u waited %u lost %u fallback %u | memory-path copies %u | resolve %.3f ms/frame\n",
+               g_presents - g_b8_period + 1, g_presents, gx_b8_defer, s1[0] - s0[0], s1[1] - s0[1], s1[2] - s0[2], s1[3] - s0[3], s1[4] - s0[4], s1[5] - s0[5],
+               (double) (us1 - s_us0) / 1000.0 / g_b8_period);
+        memcpy(s0, s1, sizeof s0); s_us0 = us1;
+        gx_b8_defer = !gx_b8_defer;
+    }
+}
+/* SHADOW PROBE WINDOW (2026-11-01, hal/gx_draw.c gx_draw_setShadowRecv): ux0:data/stairfax/shadow_probe.txt "from <present> frames <n>", read once at
+ * present 1. gx_shadow_probe is 1 for presents [from, from + n) and 0 otherwise; absent file = never. The probe lines are [shp-obj] [shp-cast] [shp-draw] [shp-copy]. */
+static int g_shp_from = -1, g_shp_n;
+static void vt_shadow_probe(void)
+{
+    extern int gx_shadow_probe __attribute__((weak));
+    if (!&gx_shadow_probe) return;
+    if (g_presents == 1) {
+        FILE *f = fopen("ux0:data/stairfax/shadow_probe.txt", "r");
+        if (f) {
+            char w[16]; int from = -1, n = 0;
+            while (fscanf(f, "%15s", w) == 1) {
+                if (!strcmp(w, "from")) { if (fscanf(f, "%d", &from) != 1) break; }
+                else if (!strcmp(w, "frames")) { if (fscanf(f, "%d", &n) != 1) break; }
+            }
+            fclose(f);
+            if (from >= 0 && n > 0) { g_shp_from = from; g_shp_n = n; printf("[shp] shadow probe ON for presents %d..%d\n", from, from + n - 1); }
+            else printf("[shp] shadow_probe.txt present but not understood (want: from <present> frames <n>): OFF\n");
+        }
+    }
+    gx_shadow_probe = g_shp_from >= 0 && g_presents >= g_shp_from && g_presents < g_shp_from + g_shp_n;
+    if (g_shp_from >= 0 && (g_presents == g_shp_from || g_presents == g_shp_from + g_shp_n)) printf("[shp] present %d: probe %s\n", g_presents, gx_shadow_probe ? "ON" : "OFF");
+}
+/* CHARACTER SHADOWS (v0.1.2, 2026-11-04; engine shadow_dolphin.c objDrawShadowCasterMesh): Fox's and Tricky's projected shadows draw wrong, so they are OFF
+ * unless ux0:data/stairfax/char_shadow.txt starts with '1'. Read once at present 1 (no character is drawn before it). */
+int gStfxCharShadow;
+static void vt_char_shadow(void)
+{
+    if (g_presents != 1) return;
+    FILE *f = fopen("ux0:data/stairfax/char_shadow.txt", "r");
+    const int found = f != NULL;
+    const int c = found ? fgetc(f) : EOF;
+    if (found) fclose(f);
+    gStfxCharShadow = c == '1';
+    printf("[shadow] character shadows %s (char_shadow.txt %s)\n", gStfxCharShadow ? "ON" : "OFF", found ? "read" : "absent");
+}
 static int g_ab_from = -1, g_ab_period, g_ab_n, g_ab_arm[8];
 static void vt_perf_ab(SceUInt64 now)
 {
@@ -793,6 +868,7 @@ static int thr_skip(int thr, const char *what)
     return 1;
 }
 static unsigned long long vt_status_us;   /* inside the per-60-presents status block (the game-state log) */
+#include "frames_log.inc"   /* 2026-11-03: the always-on per-frame log (frames.bin); one call per present, at the [ft] histogram below */
 unsigned vt_ft_hist[5], vt_ft_dev50;   /* per-window frame-time histogram (run 194) */
 bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
 {
@@ -829,6 +905,7 @@ bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
            cannot tell. One bucket per 16.67 ms step (edges halfway between steps): 16.7 | 33.3 | 50.0 | 66.7 | 83.3+ ms, plus the
            spread inside the 50 ms bucket (how far from 50.0 its frames sit). Printed with every [win] line, then cleared. */
         static SceUInt64 s_last;
+        frames_log_present(g_presents, s_last ? (unsigned) (now - s_last) : 0u);   /* frames_log.inc: present 1 = init + baselines */
         if (s_last) {
             const unsigned us = (unsigned) (now - s_last);
             int b = (int) ((us + 8333u) / 16667u) - 1; if (b < 0) b = 0; if (b > 4) b = 4;
@@ -846,7 +923,7 @@ bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
                 c_c[0] = &rhi_vita_gx_compile_us ? rhi_vita_gx_compile_us : 0; c_c[1] = &rhi_vita_tev_compile_us ? rhi_vita_tev_compile_us : 0;
                 c_c[2] = &rhi_vita_shc_load_us ? rhi_vita_shc_load_us : 0;
                 if (g_presents / 60 != s_win) { s_win = g_presents / 60; s_lines = 0; }
-                if (s_have && us > 75000u && g_presents > 1200 && s_lines++ < 8)
+                if (s_have && us > 75000u && g_presents > LOG_BUF_FROM && s_lines++ < 8)   /* 2026-11-04: was > 1200; the hub's 1.14 s stall at present 601 had no line */
                     printf("[long] present %d: %.1f ms | frame CPU %.1f swap %.1f | display lists %.1f immediate %.1f texture load %.1f efb copy %.1f | retrace: pump %.1f pre %.1f present %.1f post %.1f reopen %.1f | shader pair %.1f tev %.1f cache loads %.1f\n",
                            g_presents, us / 1000.0, (double) (c_s[0] - p_s[0]) / 1000.0, (double) (c_s[3] - p_s[3]) / 1000.0,
                            (double) (c_g[0] - p_g[0]) / 1000.0, (double) (c_g[3] - p_g[3]) / 1000.0, (double) (c_g[4] - p_g[4]) / 1000.0, (double) (c_g[5] - p_g[5]) / 1000.0,
@@ -958,20 +1035,20 @@ bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
                            gx_r6_c8_calls, gx_r6_c8_unch, gx_r6_c8_pred, gx_r6_c8_hash, gx_r6_c8_ovf, gx_r6_c8_miss, gx_r6_c9_part + gx_r6_c9_fresh + gx_r6_c9_ref, gx_r6_c9_part, gx_r6_c9_fresh, gx_r6_c9_ref);
             }
             {   /* R8 (host/engine/R8_GPUSKIN.md): the GPU-skin census, ONE line, window deltas of gGxSkinCtr (hal/gx_skin.h GXSK_*: 0 binds, 1 blends skipped, 2 refused table, 3 refused morph, 4 refused hal, 5 draws, 6 palette bytes); printed while skinning is on or any counter moved */
-                extern unsigned gGxSkinCtr[7] __attribute__((weak));
+                extern unsigned gGxSkinCtr[9] __attribute__((weak));   /* 9: GXSK_REF_EXT, GXSK_REF_BONES (R8b) appended */
                 extern int gGxSkinOn __attribute__((weak));
-                static unsigned r8p[7]; static int r8n = -1;
+                static unsigned r8p[9]; static int r8n = -1;
                 if (&gGxSkinCtr && &gGxSkinOn) {
-                    unsigned d[7], moved = 0; int i;
-                    for (i = 0; i < 7; ++i) { d[i] = gGxSkinCtr[i] - r8p[i]; r8p[i] = gGxSkinCtr[i]; moved |= d[i]; }
+                    unsigned d[9], moved = 0; int i;
+                    for (i = 0; i < 9; ++i) { d[i] = gGxSkinCtr[i] - r8p[i]; r8p[i] = gGxSkinCtr[i]; moved |= d[i]; }
                     unsigned r8fb = 0;   /* R8-FB: fallback draws (gx_skin.c gGxSkinFb[0], cumulative -> window delta); appended LAST so readers that parse the line's start still match */
                     {   extern unsigned gGxSkinFb[2] __attribute__((weak)); static unsigned fbp; if (&gGxSkinFb) { r8fb = gGxSkinFb[0] - fbp; fbp = gGxSkinFb[0]; moved |= r8fb; } }
                     if (r8n >= 0 && (gGxSkinOn || moved) && g_presents > r8n)
-                        printf("[r8] arm %d | skin on %d | binds %u draws %u | blends skipped %u | refused table %u morph %u hal %u | palette %.1f KB/frame | hal fallback %u\n", gStfxAb, gGxSkinOn,
-                               d[0], d[5], d[1], d[2], d[3], d[4], (double) d[6] / 1024.0 / (double) (g_presents - r8n), r8fb);
+                        printf("[r8] arm %d | skin on %d | binds %u draws %u | blends skipped %u | refused table %u morph %u hal %u | palette %.1f KB/frame | hal fallback %u | ext %u | bones %u\n", gStfxAb, gGxSkinOn,
+                               d[0], d[5], d[1], d[2], d[3], d[4], (double) d[6] / 1024.0 / (double) (g_presents - r8n), r8fb, d[7], d[8]);   /* 2026-11-03, R8b T2: `bones` = skinned draws refused for > 32 palette slots in one record (appended) */
                     {   /* R8 refusal reasons, cumulative (gx_draw.c dlkSkinPrep comment: 2 POS base 3 NRM base 4 POS fmt 5 NRM fmt 6 index 7 NBT 8 no POS/idx 9 vs_check 10 vs_build 11 no mesh 12 backend 13 earlier return) */
                         extern unsigned gGxSkinWhy[32] __attribute__((weak));
-                        if (&gGxSkinWhy && d[4]) { printf("[r8-why]"); for (i = 2; i < 14; ++i) printf(" %d:%u", i, gGxSkinWhy[i]); printf(" | vs_check(16+VSW):"); for (i = 16; i < 32; ++i) if (gGxSkinWhy[i]) printf(" %d:%u", i - 16, gGxSkinWhy[i]); printf("\n"); }
+                        if (&gGxSkinWhy && (d[4] || r8fb)) { printf("[r8-why]"); for (i = 2; i < 14; ++i) printf(" %d:%u", i, gGxSkinWhy[i]); printf(" | vs_check(16+VSW):"); for (i = 16; i < 32; ++i) if (gGxSkinWhy[i]) printf(" %d:%u", i - 16, gGxSkinWhy[i]); printf("\n"); }
                     }
                     {   /* R8 per-model census (objprint_dolphin.c stfxSkc; marker gx_skin_census.txt): why a skinned model does / does not take the GPU path */
                         extern void stfxSkinCensusFlush(int arm, unsigned frames) __attribute__((weak));
@@ -1025,6 +1102,10 @@ bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
                 if (rhi_gxm_r9_census) { unsigned r9[12]; rhi_gxm_r9_census(r9);
                     if (r9[0]) printf("[r9] arm %d presents %d | frames %u brk %u | tevgx issued %u | vs previous frame: NEW %u MESH %u STATE %u COLOUR %u TEXMTX %u MTX %u SAME %u | dropped %u | max/frame %u\n",
                                       gStfxAb, g_presents, r9[9], r9[11], r9[0], r9[1], r9[2], r9[3], r9[4], r9[5], r9[6], r9[7], r9[8], r9[10]); }
+                extern void rhi_gxm_r9_colour(unsigned o[9]) __attribute__((weak));   /* 2026-11-01: which part of a COLOUR draw changed (cumulative, per part) */
+                if (rhi_gxm_r9_colour && rhi_gxm_r9_census) { unsigned x[9]; rhi_gxm_r9_colour(x);
+                    printf("[r9c] presents %d | COLOUR parts changed: tevcol %u fog %u ind %u matamb %u lights_used %u lights_unused %u | only unused lights %u | only fog %u | NONE (must be 0) %u\n",
+                           g_presents, x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]); }
             }
             { extern void stfx_ph_report(int frames) __attribute__((weak)); if (stfx_ph_report && w_t) stfx_ph_report(g_presents - w_n); }   /* step 3: only prints when phase_stats.txt is 1 */
             vt_log_async_report();   /* Task 2: swaps / drops, one line per window */
@@ -1053,6 +1134,9 @@ bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
         }
     }
     vt_perf_ab(now);
+    vt_b8_ab();
+    vt_shadow_probe();
+    vt_char_shadow();
     /* THREADED (RT_THREAD D12): decided AFTER vt_perf_ab, which is where gxt_frame_edge switches mode, so a transition at THIS present is already seen. G-side readers of backend state
      * (the captures, grade_frame, the draw journal, shot_now) must not run beside a replaying R: each is skipped with ONE line the first time it would have run. */
     const int thr = gxt_is_active && gxt_is_active();
@@ -1612,6 +1696,7 @@ int main(void)
 
     printf("stairfax %s (Vita)\n", VT_NAME);
     boot_main_begin(t_main_us);
+    { extern void stfxMarkerScan(void) __attribute__((weak)); if (stfxMarkerScan) stfxMarkerScan(); }   /* RC6: the ONE listing of ux0:data/stairfax, on G, after the defaults, before R exists (gx_draw.c; gxt_g_allow.txt [data-allow] gStfxMk*) */
 #ifdef STFX_BUILD_ID
     printf("[build] id=%s (build_game_vita.sh stamps it; build_id.txt next to the eboot holds the same id and the eboot's sha256)\n", STFX_BUILD_ID);
 #endif

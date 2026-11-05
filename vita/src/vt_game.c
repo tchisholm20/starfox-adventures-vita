@@ -125,6 +125,15 @@ void vt_game_state_log(void)
             printf("[efb] mode %u | gpu copies %u memory-path copies %u refused-by-format %u | fbo switches %u copy textures alive %u | depth hack %u\n",
                    W_(rhi_vita_efb_mode), W_(gx_copy_gpu), W_(gx_copy_mem), W_(rhi_vita_efb_refused_fmt), W_(rhi_vita_efb_switches),
                    W_(rhi_vita_efb_alive), W_(rhi_vita_efb_hack));
+            {   /* the deferred B8 readback (hal/gx_draw.c), cumulative */
+                extern int gx_b8_defer __attribute__((weak));
+                extern unsigned gx_b8_issued __attribute__((weak)), gx_b8_resolved __attribute__((weak)), gx_b8_waited __attribute__((weak)), gx_b8_superseded __attribute__((weak)),
+                    gx_b8_lost __attribute__((weak)), gx_b8_fallback __attribute__((weak)), gx_b8_freed __attribute__((weak));
+                extern unsigned long long gx_b8_resolve_us __attribute__((weak));
+                printf("[b8] defer %d | issued %u resolved %u (had to wait %u) superseded %u lost %u fallback %u freed %u | resolve %.1f ms total\n",
+                       &gx_b8_defer ? gx_b8_defer : -1, W_(gx_b8_issued), W_(gx_b8_resolved), W_(gx_b8_waited), W_(gx_b8_superseded), W_(gx_b8_lost),
+                       W_(gx_b8_fallback), W_(gx_b8_freed), (&gx_b8_resolve_us ? gx_b8_resolve_us : 0ull) / 1000.0);
+            }
             printf("[efb] 528 lines: copies ending below line 480 %u, CLAMPED %u (want 0 with the fix on) | viewports below 480 %u clears below 480 %u |"
                    " copy kinds: refused (no conversion %u, empty rect %u, no texture %u; backend NULLs seen by gx %u) destinations marked absent %u (table full %u) draws skipped for an absent copy %u"
                    " re-created at another size %u other format %u | copy sampler: calls %u nearest %u GL changes %u (gx binds %u)\n",

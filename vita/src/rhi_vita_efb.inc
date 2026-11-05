@@ -117,6 +117,7 @@ static size_t efb_dz_bytes(void) { return (size_t) efb_dz_stride() * (size_t) ((
 /* rhi_gxm.c (milestone M1): the same dispatch rule as rhi_vita.c, first statement of each entry point */
 int rhi_gxm_efbMode(void); int rhi_gxm_efbZMode(void); int rhi_gxm_peekZ(int x, int y, unsigned *z24, unsigned *raw); void rhi_gxm_peekZ_sync(void);
 RhiTexture *rhi_gxm_copyEfb(RhiTexture *reuse, int x, int y, int w, int h, int dw, int dh, int gxfmt);
+int rhi_gxm_copyPeek(RhiTexture *t, int wait, const unsigned char **px, int *stride, int *w, int *h);
 void rhi_gxm_copyTexSetFilter(RhiTexture *h, int gxMin, int gxMag); void rhi_gxm_copyTexSetSampler(RhiTexture *h, int gxMin, int gxMag, int gxWrapS, int gxWrapT);
 void rhi_gxm_copyEfbFree(RhiTexture *t);
 int rhi_vita_efbMode(void) { if (g_stfx_backend == STFX_BK_GXM) return rhi_gxm_efbMode(); return (int) rhi_vita_efb_mode; }
@@ -1081,6 +1082,16 @@ void rhi_vita_copyEfbFree(RhiTexture *t)
     if (!t) return;
     vita_flush();   /* the open batch may draw with it */
     efb_copy_free((EfbCopyTex *) t);
+}
+
+/* The deferred B8 readback (hal/gx_draw.c b8Issue / b8Resolve): can a copy texture's texels be read later, without a readback of the EFB?
+ * GXM only, and not with the render-thread split capable (there the real texture belongs to the back thread). Elsewhere the HAL keeps
+ * the blocking readback (copyReal). */
+int rhi_vita_copyPeekSupported(void) { return !GXSP_CAP() && g_stfx_backend == STFX_BK_GXM; }
+int rhi_vita_copyPeek(RhiTexture *t, int wait, const unsigned char **px, int *stride, int *w, int *h)
+{
+    if (!rhi_vita_copyPeekSupported()) return -1;
+    return rhi_gxm_copyPeek(t, wait, px, stride, w, h);
 }
 
 /* ---- boot self-test (mode 1, once, before the first game frame) ----------------------------------

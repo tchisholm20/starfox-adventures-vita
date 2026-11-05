@@ -476,7 +476,7 @@ int tev_gen_vertex_ex(int numTex, int fogType, char* buf, int cap) {
 // A BLACK light is dropped by the packer instead of kept with colour 0 (the CPU skips it; 0 * inf would be NaN).
 // Unsupported texgen source/function = (0,0) like texgenVertex; a TEXn the list does not carry reads (0,0,1,1).
 // Refused (-2) rather than approximated: see tev_vs_check.
-// Host negative controls: -DVSGEN_BREAK_{ROUND,SPOT,NRMMTX,POST,ALPHA,SLOT0,RESERVED,TMI,TMROW,NBT}.
+// Host negative controls: -DVSGEN_BREAK_{ROUND,SPOT,NRMMTX,POST,ALPHA,SLOT0,RESERVED,TMI,TMROW,NBT,SKINBT}.
 // ================================================================================================================
 static const char* const kVsWhy[VSW_N] = { "ok", "not real-skin", "gPxActive off", "light arm off", "uncacheable record", "!posOk vertex",
     "mixed have-normal", "matrix slot > 9", "more than 8 lights", "more than 8 input attributes", "more than TEVK_TEX texcoord slots", "inconsistent key",
@@ -485,18 +485,22 @@ const char* tev_vs_why_name(int why) { return why >= 0 && why < VSW_N ? kVsWhy[w
 
 unsigned tev_vs_tmi_groups(const VsKey* k) {
     unsigned g = 0;
-    for (int s = 0; s < k->numTex && s < TEVK_TEX; ++s) if (k->tmiSlots >> s & 1) g |= 1u << (k->tmiCoord[s] >> 2 & 1);
+    for (int s = 0; s < k->numTex && s < TEVK_TEX; ++s) if (k->tmiSlots >> s & 1) g |= 1u << (VS_TMI_COORD(k->tmiCoord[s]) >> 2 & 1);
     return g;
+}
+static int vsAttrCount(const VsKey* k) {   /* the vertex program's input attributes (the GXM backend's build_attrs adds the same ones) */
+    int na = 1 + (k->hasNrm ? 1 : 0) + (k->hasClr0 ? 1 : 0) + (k->hasMtxIdx ? 1 : 0) + (k->hasBin ? 1 : 0) + (k->hasTan ? 1 : 0);
+    for (int n = 0; n < 8; ++n) if (k->texMask >> n & 1) ++na;
+    { const unsigned tg = tev_vs_tmi_groups(k); na += (int)(tg & 1) + (int)(tg >> 1 & 1); }
+    if (k->hasSkin) na += k->hasNrm ? 2 : 1;   /* R8: aSkP, and aSkN when a normal is read */
+    return na;
 }
 int tev_vs_check(const VsKey* k) {
     if (k->numTex > TEVK_TEX) return VSW_TOO_MANY_TEX;
     int nl = k->ch[0].nLights + k->ch[1].nLights;
     if (k->ch[0].nLights > VS_MAX_LIGHTS || k->ch[1].nLights > VS_MAX_LIGHTS || nl > VS_MAX_LIGHTS) return VSW_TOO_MANY_LIGHTS;
-    int na = 1 + (k->hasNrm ? 1 : 0) + (k->hasClr0 ? 1 : 0) + (k->hasMtxIdx ? 1 : 0) + (k->hasBin ? 1 : 0) + (k->hasTan ? 1 : 0);
-    for (int n = 0; n < 8; ++n) if (k->texMask >> n & 1) ++na;
-    { const unsigned tg = tev_vs_tmi_groups(k); na += (int)(tg & 1) + (int)(tg >> 1 & 1); }
-    if (k->hasSkin) { na += k->hasNrm ? 2 : 1; if (k->hasBin || k->hasTan) return VSW_BAD_KEY; }   /* R8: aSkP, and aSkN when a normal is read; the raw binormal / tangent are not skinned (NBT models never get a table) */
-    if (na > VS_MAX_ATTRS) return VSW_TOO_MANY_ATTRS;
+    if (k->hasSkin && (k->hasBin || k->hasTan) && !k->hasNrm) return VSW_BAD_KEY;   /* 2026-11-03, R8b: a skinned key may read the binormal / tangent (an NBT model's table, one entry per triplet): they are skinned with the NORMAL's entry (aSkN), so they need it */
+    if (vsAttrCount(k) > (k->hasSkin && (k->hasBin || k->hasTan) ? VS_MAX_ATTRS_SKIN_NBT : VS_MAX_ATTRS)) return VSW_TOO_MANY_ATTRS;   /* gx_tev_key.h VS_MAX_ATTRS_SKIN_NBT (2026-11-03) */
     for (int c = 0; c < 2; ++c) if (k->ch[c].diffFn > 2 || k->ch[c].attnFn > 2 || k->ch[c].matSrc > 1 || k->ch[c].ambSrc > 1) return VSW_BAD_KEY;
     if (k->shareAlpha && (!k->ch[0].enable || !k->ch[1].enable || k->ch[1].nLights)) return VSW_BAD_KEY;
     unsigned mask = 0; int bin = 0, tan = 0;
@@ -507,7 +511,8 @@ int tev_vs_check(const VsKey* k) {
         if (g->kind && g->src == 2) mask |= 1u << g->texN;
         if (g->kind && g->src == 4) bin = 1;
         if (g->kind && g->src == 5) tan = 1;
-        if (k->tmiSlots >> s & 1) { if (!g->kind || g->hasTM || k->tmiCoord[s] > 7) return VSW_BAD_KEY; }   /* the vertex's matrix replaces the uniform one: never both */
+        if (k->tmiSlots >> s & 1) { if (!g->kind || g->hasTM || (k->tmiCoord[s] & (uint8_t)~VS_TMI_WIDE) > 7) return VSW_BAD_KEY;
+                                    if (((k->tmiCoord[s] & VS_TMI_WIDE) != 0) != tev_vs_tmi_wide(k)) return VSW_BAD_KEY; }   /* the wide palette is the whole program's: every tmi slot or none */   /* the vertex's matrix replaces the uniform one: never both */
     }
     if (mask != k->texMask || bin != (k->hasBin ? 1 : 0) || tan != (k->hasTan ? 1 : 0)) return VSW_BAD_KEY;
     return VSW_OK;
@@ -536,7 +541,7 @@ static int vsPosN(const VsKey* k) {
 int tev_vs_uniform_vec4(const VsKey* k) {
     int n = 4 + vsPosN(k) + (vsUsesN(k) ? (k->hasMtxIdx ? 3 * VS_MAX_SLOTS : 3) : 0) + (k->numChans ? 2 : 0) + 5 * (k->ch[0].nLights + k->ch[1].nLights);
     for (int s = 0; s < k->numTex; ++s) if (k->tex[s].kind) n += (k->tex[s].hasTM ? 3 : 0) + (k->tex[s].hasPost ? 3 : 0);
-    if (k->tmiSlots) n += 30;   /* uTMX: the 10 texture matrices */
+    if (k->tmiSlots) n += tev_vs_tmi_wide(k) ? 63 : 30;   /* uTMX: the 10 texture matrices, or (VS_TMI_WIDE) the XF table: 10 position + 10 texture matrices + the identity */
     if (k->hasSkin) n += VS_SKIN_PAL_VEC4;   /* uBone: the bone palette + the scale row (R8) */
     return n;
 }
@@ -578,7 +583,7 @@ static void vsParams(Out* o, const VsKey* k, int cpp) {
         if (k->tex[s].hasTM) { snprintf(nm, sizeof nm, "uTM%d[3]", s); vsSig(o, &n, cpp, 1, "float4", nm, 0); }
         if (k->tex[s].hasPost) { snprintf(nm, sizeof nm, "uPT%d[3]", s); vsSig(o, &n, cpp, 1, "float4", nm, 0); }
     }
-    if (k->tmiSlots) vsSig(o, &n, cpp, 1, "float4", "uTMX[30]", 0);
+    if (k->tmiSlots) vsSig(o, &n, cpp, 1, "float4", tev_vs_tmi_wide(k) ? "uTMX[63]" : "uTMX[30]", 0);
     if (k->hasSkin) { snprintf(nm, sizeof nm, "uBone[%d]", VS_SKIN_PAL_VEC4); vsSig(o, &n, cpp, 1, "float4", nm, 0); }   /* R8: the palette + scale row, their own uniform */
     vsSig(o, &n, cpp, 2, "float4", "vPos", "POSITION");
     vsSig(o, &n, cpp, 2, "float4", "vColor0", "TEXCOORD0");
@@ -627,9 +632,17 @@ static void vsLights(Out* o, const VsKey* k, int c, int rgb, int alpha) {
         if (alpha) emit(o, "    A%dW = A%dW + f%s * lc%s.w;\n", c, c, t, t);
     }
 }
-/* R8: the position / normal the rest of the program reads: the raw attribute, or (hasSkin) the skinned, re-quantised local of vsSkin */
+/* R8: the position / normal the rest of the program reads: the raw attribute, or (hasSkin) the skinned, re-quantised local of vsSkin.
+   2026-11-03, R8b: the binormal / tangent likewise (sbx.. / stx..); the attribute text of an unskinned key is unchanged byte for byte (compiled programs are found by the VsKey's bytes, never by source) */
 static const char* vsPn(const VsKey* k, int c) { static const char* const a[3] = { "aPos.x", "aPos.y", "aPos.z" }, * const b[3] = { "spx", "spy", "spz" }; return k->hasSkin ? b[c] : a[c]; }
 static const char* vsNn(const VsKey* k, int c) { static const char* const a[3] = { "aNrm.x", "aNrm.y", "aNrm.z" }, * const b[3] = { "snx", "sny", "snz" }; return k->hasSkin ? b[c] : a[c]; }
+#ifdef VSGEN_BREAK_SKINBT   /* host negative control: a skinned key's texgens read the RAW binormal / tangent (the skin is computed and then not used) */
+#define VS_BT_SKINNED(k) 0
+#else
+#define VS_BT_SKINNED(k) ((k)->hasSkin)
+#endif
+static const char* vsBn(const VsKey* k, int c) { static const char* const a[3] = { "aBin.x", "aBin.y", "aBin.z" }, * const b[3] = { "sbx", "sby", "sbz" }; return VS_BT_SKINNED(k) ? b[c] : a[c]; }
+static const char* vsTn(const VsKey* k, int c) { static const char* const a[3] = { "aTan.x", "aTan.y", "aTan.z" }, * const b[3] = { "stx", "sty", "stz" }; return VS_BT_SKINNED(k) ? b[c] : a[c]; }
 static void vsTexgen(Out* o, const VsKey* k, int sl) {
     const VsTexKey* g = &k->tex[sl];
     if (!g->kind) { emit(o, "    vT%d = float2(0.0f, 0.0f);   /* unsupported texgen: (0,0) like texgenVertex */\n", sl); return; }
@@ -640,11 +653,11 @@ static void vsTexgen(Out* o, const VsKey* k, int sl) {
             else { snprintf(v0, sizeof v0, "0.0f"); snprintf(v1, sizeof v1, "0.0f"); snprintf(v2, sizeof v2, "0.0f"); } break;
     case 2: snprintf(v0, sizeof v0, "aT%d.x", g->texN); snprintf(v1, sizeof v1, "aT%d.y", g->texN); snprintf(v2, sizeof v2, "1.0f"); break;
 #ifdef VSGEN_BREAK_NBT   /* host negative control: the binormal's components are read in reverse order */
-    case 4: snprintf(v0, sizeof v0, "aBin.z"); snprintf(v1, sizeof v1, "aBin.y"); snprintf(v2, sizeof v2, "aBin.x"); break;
+    case 4: snprintf(v0, sizeof v0, "%s", vsBn(k, 2)); snprintf(v1, sizeof v1, "%s", vsBn(k, 1)); snprintf(v2, sizeof v2, "%s", vsBn(k, 0)); break;
 #else
-    case 4: snprintf(v0, sizeof v0, "aBin.x"); snprintf(v1, sizeof v1, "aBin.y"); snprintf(v2, sizeof v2, "aBin.z"); break;
+    case 4: snprintf(v0, sizeof v0, "%s", vsBn(k, 0)); snprintf(v1, sizeof v1, "%s", vsBn(k, 1)); snprintf(v2, sizeof v2, "%s", vsBn(k, 2)); break;
 #endif
-    case 5: snprintf(v0, sizeof v0, "aTan.x"); snprintf(v1, sizeof v1, "aTan.y"); snprintf(v2, sizeof v2, "aTan.z"); break;
+    case 5: snprintf(v0, sizeof v0, "%s", vsTn(k, 0)); snprintf(v1, sizeof v1, "%s", vsTn(k, 1)); snprintf(v2, sizeof v2, "%s", vsTn(k, 2)); break;
     default: snprintf(v0, sizeof v0, "0.0f"); snprintf(v1, sizeof v1, "0.0f"); snprintf(v2, sizeof v2, "1.0f"); break;
     }
     const int tmi = k->tmiSlots >> sl & 1;
@@ -653,16 +666,27 @@ static void vsTexgen(Out* o, const VsKey* k, int sl) {
     if (g->hasTM || tmi) {   /* M[i][0]*v0 + M[i][1]*v1 + M[i][2]*v2 + M[i][3]*1 */
         char m0[24], m1[24], m2[24];
         if (tmi) {   /* the vertex's row r (30..57) -> uTMX[r - 30 + 0..2]: the same row triple the CPU path takes from gTexMtx[(r - 30) / 3] */
-            const int c = k->tmiCoord[sl]; const char* grp = c < 4 ? "aTmA" : "aTmB";
-#ifdef VSGEN_BREAK_TMI   /* host negative control: the program reads the NEXT component of the TEXnMTXIDX group (another texcoord's index) */
-            emit(o, "    float tk%d = floor(%s.%c + 0.5f) - 30.0f;\n    int tj%d_0 = (int)tk%d;\n    int tj%d_1 = (int)(tk%d + 1.0f);\n    int tj%d_2 = (int)(tk%d + 2.0f);\n",
-                 sl, grp, "xyzw"[(c + 1) & 3], sl, sl, sl, sl, sl, sl);
-#elif defined(VSGEN_BREAK_TMROW)   /* host negative control: the second row of the palette matrix is the first row again */
-            emit(o, "    float tk%d = floor(%s.%c + 0.5f) - 30.0f;\n    int tj%d_0 = (int)tk%d;\n    int tj%d_1 = (int)(tk%d);\n    int tj%d_2 = (int)(tk%d + 2.0f);\n",
-                 sl, grp, "xyzw"[c & 3], sl, sl, sl, sl, sl, sl);
+            const int c = VS_TMI_COORD(k->tmiCoord[sl]); const char* grp = c < 4 ? "aTmA" : "aTmB";
+            /* the row index: r - 30 into the 30-row texture palette (the text every pre-2026-11-02 program has, byte for byte), or (VS_TMI_WIDE) min(r, 60)
+             * into the 63-row XF table: 60 and up are the identity (tgMtxRow) */
+            const int wide = tev_vs_tmi_wide(k);
+            char tkx[64];
+#ifdef VSGEN_BREAK_TMIWIDE   /* host negative control: a wide program indexes the XF table as if it were the old palette (r - 30) */
+            snprintf(tkx, sizeof tkx, "floor(%s.%%c + 0.5f) - 30.0f", grp); (void)wide;
 #else
-            emit(o, "    float tk%d = floor(%s.%c + 0.5f) - 30.0f;\n    int tj%d_0 = (int)tk%d;\n    int tj%d_1 = (int)(tk%d + 1.0f);\n    int tj%d_2 = (int)(tk%d + 2.0f);\n",
-                 sl, grp, "xyzw"[c & 3], sl, sl, sl, sl, sl, sl);
+            if (wide) snprintf(tkx, sizeof tkx, "min(floor(%s.%%c + 0.5f), 60.0f)", grp);
+            else snprintf(tkx, sizeof tkx, "floor(%s.%%c + 0.5f) - 30.0f", grp);
+#endif
+            char tkl[96]; snprintf(tkl, sizeof tkl, "    float tk%d = %s;\n", sl, tkx);
+#ifdef VSGEN_BREAK_TMI   /* host negative control: the program reads the NEXT component of the TEXnMTXIDX group (another texcoord's index) */
+            emit(o, tkl, "xyzw"[(c + 1) & 3]);
+            emit(o, "    int tj%d_0 = (int)tk%d;\n    int tj%d_1 = (int)(tk%d + 1.0f);\n    int tj%d_2 = (int)(tk%d + 2.0f);\n", sl, sl, sl, sl, sl, sl);
+#elif defined(VSGEN_BREAK_TMROW)   /* host negative control: the second row of the palette matrix is the first row again */
+            emit(o, tkl, "xyzw"[c & 3]);
+            emit(o, "    int tj%d_0 = (int)tk%d;\n    int tj%d_1 = (int)(tk%d);\n    int tj%d_2 = (int)(tk%d + 2.0f);\n", sl, sl, sl, sl, sl, sl);
+#else
+            emit(o, tkl, "xyzw"[c & 3]);
+            emit(o, "    int tj%d_0 = (int)tk%d;\n    int tj%d_1 = (int)(tk%d + 1.0f);\n    int tj%d_2 = (int)(tk%d + 2.0f);\n", sl, sl, sl, sl, sl, sl);
 #endif
             emit(o, "    float4 tx%d_0 = uTMX[tj%d_0]; float4 tx%d_1 = uTMX[tj%d_1]; float4 tx%d_2 = uTMX[tj%d_2];\n", sl, sl, sl, sl, sl, sl);
             snprintf(m0, sizeof m0, "tx%d_0", sl); snprintf(m1, sizeof m1, "tx%d_1", sl); snprintf(m2, sizeof m2, "tx%d_2", sl);
@@ -734,6 +758,20 @@ static void vsSkin(Out* o, const VsKey* k) {
     for (int c = 0; c < 3; ++c) {
         emit(o, "    float sknq%c = clamp(skno%c * sks.z, -128.0f, 127.0f);\n", c3[c], c3[c]);
         emit(o, "    float sn%c = sknon * (sign(sknq%c) * floor(abs(sknq%c)) * sks.w) + (1.0f - sknon) * aNrm.%c;\n", c3[c], c3[c], c3[c], c3[c]);
+    }
+    /* 2026-11-03, R8b: an NBT model's binormal / tangent go through the SAME entry as the normal (the NRM table has one entry per triplet): the same rotation, the same s8 quantisation at 2^nrmQ, per vector --
+       ObjModel_TransformNormalTriplets applies the two weights and the 3x3 to N, B and T alike.  Only a key that reads aBin / aTan gets these lines (every other key's source is unchanged). */
+    for (int v = 0; v < 2; ++v) {
+        static const char* const an[2] = { "aBin", "aTan" }; static const char pre[2] = { 'b', 't' };
+        if (!(v == 0 ? k->hasBin : k->hasTan)) continue;
+        emit(o, "    /* %s: the normal's entry, the normal's quantisation */\n", v == 0 ? "binormal" : "tangent");
+        for (int c = 0; c < 3; ++c)
+            emit(o, "    float sk%co%c = (sknA%d.x * %s.x + sknA%d.y * %s.y + sknA%d.z * %s.z) * sknk0 + (sknB%d.x * %s.x + sknB%d.y * %s.y + sknB%d.z * %s.z) * sknk1;\n",
+                 pre[v], c3[c], c, an[v], c, an[v], c, an[v], c, an[v], c, an[v], c, an[v]);
+        for (int c = 0; c < 3; ++c) {
+            emit(o, "    float sk%cq%c = clamp(sk%co%c * sks.z, -128.0f, 127.0f);\n", pre[v], c3[c], pre[v], c3[c]);
+            emit(o, "    float s%c%c = sknon * (sign(sk%cq%c) * floor(abs(sk%cq%c)) * sks.w) + (1.0f - sknon) * %s.%c;\n", pre[v], c3[c], pre[v], c3[c], pre[v], c3[c], an[v], c3[c]);
+        }
     }
 }
 static void vsBody(Out* o, const VsKey* k) {
@@ -826,6 +864,10 @@ int tev_gen_vertex_gx(const VsKey* k, char* buf, int cap) {
     Out o = { buf, 0, cap, 0 };
     if (cap > 0) buf[0] = 0;
     if (tev_vs_check(k)) return -2;
+    /* 2026-11-03 (hw, eboot a4ad736f): the first > 8-attribute programs (skinned NBT, Galdon) failed SceShaccCg with error 7203 "not enough
+     * registers ... permit spilling via #pragma warning (disable:7203)", and their draws were skipped. Only keys over VS_MAX_ATTRS get the
+     * pragma: every key at or under it was compiled before and keeps byte-identical source (the GXP cache is keyed by the key, not the source). */
+    if (vsAttrCount(k) > VS_MAX_ATTRS) emit(&o, "#pragma warning (disable:7203)\n");
     emit(&o, "void main(\n");
     vsParams(&o, k, 0);
     emit(&o, ")\n{\n");
@@ -975,14 +1017,14 @@ static void fSub(char* out, size_t n, const char* lit, int alpha) {   // constan
     if (alpha) snprintf(out, n, "%s", lit); else snprintf(out, n, "float4(%s, %s, %s, %s)", lit, lit, lit, lit);
 }
 // the expression for one stage's result (alpha: scalar; else float4 -- or the packed float4 with alpha in .w)
-static void fStr(char* out, size_t n, int alpha, const FArg* a, const FArg* b, const FArg* c, const FArg* d, int sub, int bias, int sc, int needClamp, int clampOn, int wmode) {
+static void fStr(char* out, size_t n, int alpha, const FArg* a, const FArg* b, const FArg* c, const FArg* d, int sub, int bias, int sc, int needClamp, int clampOn, int wmode, unsigned var) {
 #ifdef TEVFAST_BREAK_LERP   /* host negative control: a and b swapped in the lerp */
     { const FArg* t = a; a = b; b = t; }
 #endif
     char L[400], P[900], K[96], one[96], cw[300];
     fSub(one, sizeof one, "1.0", alpha);
     // the lerp weight: c as it is, or GX's c' / 256 = (c * 255 + (c >= 128 codes)) / 256 (exact; constants fold at compile time)
-    if (!c->zero && !c->exact && fExactW(c, wmode)) {
+    if (!c->zero && !c->exact && fExactW(c, wmode) && !(var & TEVV_L)) {   // TEVV_L (variant): the plain weight, GX's c + (c >> 7) correction dropped
         char h[96]; fSub(h, sizeof h, "0.5", alpha);
         snprintf(cw, sizeof cw, "(%s * 0.996094 + floor(%s * 1.99219) * 0.003906)", c->e, c->e); (void)h;
     } else snprintf(cw, sizeof cw, "%s", c->e);
@@ -1031,12 +1073,44 @@ static int hasCompareFast(const TevKey* k) { return hasCompare(k) || tev_has_com
 static const char* const kCmpFast[8] = { "0.0", "step(a8 + 0.5, R)", "(1.0 - abs(sign(a8 - R)))", "step(a8, R)",
                                          "step(R + 0.5, a8)", "abs(sign(a8 - R))", "step(R, a8)", "1.0" };
 
-// pass 1 (final = 0) only analyses and fills fl; pass 2 (final = 1) emits with fl known. Returns 0 or a TF_ reason.
-static int fastBody(Out* o, const TevKey* k, FFlags* fl, int final, int wmode) {
+// ---- VARIANTS (2026-11-02, docs/47 "shader variants"): in-boot A/B arms, never the default. Variant 0 emits exactly the text it always did. ----
+// TEVV_H: the fast stage code in half precision. Done as a textual pass over the stage section ONLY (the signature, the projective divide, the alpha test and the
+// fog tail are not in it, so vW / texture coordinates / the divide / the alpha-test compare stay float): every float4 -> half4 (declarations and constructors),
+// and the one scalar stage temporary `float av` -> `half av`. In place (the result is shorter), so no second buffer.
+static void halfify(Out* o, int from) {
+    if (o->bad || from < 0 || from > o->n) return;
+    char* r = o->p + from; char* e = o->p + o->n; char* w = r;
+    while (r < e) {
+        if (e - r >= 6 && !memcmp(r, "float4", 6)) { memcpy(w, "half4", 5); w += 5; r += 6; }
+        else if (e - r >= 8 && !memcmp(r, "float av", 8)) { memcpy(w, "half av", 7); w += 7; r += 8; }
+        else *w++ = *r++;
+    }
+    o->n = (int)(w - o->p); o->p[o->n] = 0;
+}
+// TEVV_G: the fog tail with exp2 and the colour lerp in half, as ONE vector lerp. The fog distance stays float (fz = clamp((vW - start) * scale, 0, 1): it is
+// affine in vW and could be moved into the vertex program; it is NOT -- a vertex-side change would need a vertex uniform and variant-salted vertex programs on both
+// the TEV and the GX paths, for ~1 instruction per pixel; see the report). Same fog types and the same FOGK as fogHead.
+static void fogTailHalf(Out* o, int type) {
+    emit(o, "    { float fz = clamp((vW - uFog.x) * uFog.y, 0.0, 1.0);\n");
+    emit(o, "      half hz = fz;\n");
+    switch (type) {
+    case 2: emit(o, "      half fg = hz;\n"); break;
+    case 4: emit(o, "      half fg = 1.0 - exp2(-" FOGK " * hz);\n"); break;
+    case 5: emit(o, "      half fg = 1.0 - exp2(-" FOGK " * hz * hz);\n"); break;
+    case 6: emit(o, "      half fg = exp2(-" FOGK " * (1.0 - hz));\n"); break;
+    default: emit(o, "      half fg = exp2(-" FOGK " * (1.0 - hz) * (1.0 - hz));\n"); break;
+    }
+    emit(o, "      half3 fc = lerp(half3(rP.x, rP.y, rP.z), half3(uFogColor.x, uFogColor.y, uFogColor.z), fg);\n"
+            "      return float4(fc.x, fc.y, fc.z, rP.w); }\n");
+}
+
+// pass 1 (final = 0) only analyses and fills fl; pass 2 (final = 1) emits with fl known. Returns 0 or a TF_ reason. var: TEVV_* bits (H, G, L act here; F acts in fastPick).
+static int fastBody(Out* o, const TevKey* k, FFlags* fl, int final, int wmode, unsigned var) {
     if (k->numStages < 1 || k->numStages > TEVK_STAGES) return TF_BAD;
     if (k->ik.on) return TF_IND;
     if (hasCompareFast(k)) return TF_COMPARE;
     int why = 0;
+    const int bodyStart = o->n;
     FGrp g[4][2];
     for (int r = 0; r < 4; ++r) for (int q = 0; q < 2; ++q) { g[r][q].lo = -1024; g[r][q].hi = 1023; g[r][q].err = 0; g[r][q].clamped = 0; g[r][q].init = 1; }
     FFlags own; if (!final) memset(fl, 0, sizeof *fl);
@@ -1089,14 +1163,14 @@ static int fastBody(Out* o, const TevKey* k, FFlags* fl, int final, int wmode) {
                 FArg m[4]; char X[1400];
                 for (int i = 0; i < 3; ++i) fPack(&m[i], &ca[i], &aa[i]);
                 fPack(&m[3], &cd, &ad);
-                fStr(X, sizeof X, 0, &m[0], &m[1], &m[2], &m[3], csub, cbias, csc, needC || needA, st->cop[3] != 0, wmode);
+                fStr(X, sizeof X, 0, &m[0], &m[1], &m[2], &m[3], csub, cbias, csc, needC || needA, st->cop[3] != 0, wmode, var);
                 emit(o, "      float4 sv = %s;\n", X);
                 if (cdst == adst) emit(o, "      %s = sv;\n", kReg[cdst]);
                 else { emit(o, "      %s = float4(sv.x, sv.y, sv.z, %s.w);\n", kReg[cdst], kReg[cdst]); emit(o, "      %s.w = sv.w;\n", kReg[adst]); }
             } else {
                 char X[1400], Y[1400];
-                fStr(X, sizeof X, 0, &ca[0], &ca[1], &ca[2], &cd, csub, cbias, csc, needC, st->cop[3] != 0, wmode);
-                fStr(Y, sizeof Y, 1, &aa[0], &aa[1], &aa[2], &ad, asub, abias, asc, needA, st->aop[3] != 0, wmode);
+                fStr(X, sizeof X, 0, &ca[0], &ca[1], &ca[2], &cd, csub, cbias, csc, needC, st->cop[3] != 0, wmode, var);
+                fStr(Y, sizeof Y, 1, &aa[0], &aa[1], &aa[2], &ad, asub, abias, asc, needA, st->aop[3] != 0, wmode, var);
                 emit(o, "      float4 cv = %s;\n      float av = %s;\n", X, Y);
                 emit(o, "      %s = float4(cv.x, cv.y, cv.z, %s.w);\n", kReg[cdst], kReg[cdst]);
                 emit(o, "      %s.w = av;\n", kReg[adst]);
@@ -1111,6 +1185,7 @@ static int fastBody(Out* o, const TevKey* k, FFlags* fl, int final, int wmode) {
     double e = fMax(pc->init ? 0 : pc->err, pa->init ? 0 : pa->err);
     if (!why && e >= TEVFAST_MAXERR) why = TF_ERR;
     int needClamp = pc->init || pa->init || pc->lo < 0 || pc->hi > 255 || pa->lo < 0 || pa->hi > 255;
+    if (final && (var & TEVV_H)) halfify(o, bodyStart);
     if (final) {
         if (needClamp) emit(o, "    rP = clamp(rP, 0.0, 1.0);\n");
         int both = k->acComp0 == 7 && k->acComp1 == 7;
@@ -1127,7 +1202,8 @@ static int fastBody(Out* o, const TevKey* k, FFlags* fl, int final, int wmode) {
             }
             emit(o, "      clip(acOk - 0.5); }\n");
         }
-        if (k->fogType) {
+        if (k->fogType && (var & TEVV_G)) fogTailHalf(o, k->fogType);
+        else if (k->fogType) {
             fogHead(o, k->fogType);
             emit(o, "      return float4(rP.x + (uFogColor.x - rP.x) * fg, rP.y + (uFogColor.y - rP.y) * fg,\n"
                     "                    rP.z + (uFogColor.z - rP.z) * fg, rP.w); }\n");
@@ -1140,26 +1216,30 @@ static int fastBody(Out* o, const TevKey* k, FFlags* fl, int final, int wmode) {
 }
 // the cheapest mode that is safe: 1 = lerp weight c as is; 2 = GX's exact weight c'/256 (a few more ops). Returns 0 (refused,
 // *why = the reason of the better attempt) or the mode.
-static int fastPick(const TevKey* k, int* why) {
+static int fastPick(const TevKey* k, int* why, unsigned var) {
     FFlags fl; char d[2]; Out o = { d, 0, 0, 0 };
-    int w1 = fastBody(&o, k, &fl, 0, 1);
+    int w1 = fastBody(&o, k, &fl, 0, 1, 0);
     if (!w1) { *why = 0; return 1; }
     if (w1 != TF_ERR) { *why = w1; return 0; }
-    int w2 = fastBody(&o, k, &fl, 0, 2);
+    int w2 = fastBody(&o, k, &fl, 0, 2, 0);
     if (!w2) { *why = 0; return 2; }
+    if (w2 == TF_ERR && (var & TEVV_F)) { *why = 0; return 2; }   // TEVV_F (variant): refused ONLY for the error bound -> the fast program anyway, with the exact weight
     *why = w2; return 0;
 }
-int tev_fast_check(const TevKey* k) { int why; fastPick(k, &why); return why; }
+int tev_fast_check(const TevKey* k) { int why; fastPick(k, &why, 0); return why; }
 int tev_fast_safe(const TevKey* k) { return tev_fast_check(k) == 0; }
-static int fastGen(const TevKey* k, char* buf, int cap, int withSig) {
+int tev_fast_check_v(const TevKey* k, unsigned var) { int why; fastPick(k, &why, var); return why; }
+int tev_fast_err_only(const TevKey* k) { return tev_fast_check(k) == TF_ERR; }
+static int fastGen(const TevKey* k, char* buf, int cap, int withSig, unsigned var) {
     Out o = { buf, 0, cap, 0 }; FFlags fl; int why;
     if (cap > 0) buf[0] = 0;
-    int mode = fastPick(k, &why);
+    int mode = fastPick(k, &why, var);
     if (!mode) return -2;
-    fastBody(&o, k, &fl, 0, mode);
+    fastBody(&o, k, &fl, 0, mode, 0);
     o.n = 0; o.bad = 0;
     if (withSig) {
-        emit(&o, "float4 main(float4 vColor0 : TEXCOORD0, float4 vColor1 : TEXCOORD1");
+        if (var & TEVV_H) emit(&o, "float4 main(half4 vColor0 : TEXCOORD0, half4 vColor1 : TEXCOORD1");   // the colour varyings in half; vT / vW stay float
+        else emit(&o, "float4 main(float4 vColor0 : TEXCOORD0, float4 vColor1 : TEXCOORD1");
         for (int t = 0; t < k->numTex; ++t) emit(&o, k->projMask >> t & 1 ? ", float3 vT%d : TEXCOORD%d" : ", float2 vT%d : TEXCOORD%d", t, t + 2);
         if (k->fogType) emit(&o, ", float vW : TEXCOORD%d", 2 + k->numTex);
         for (int t = 0; t < k->numTex; ++t) emit(&o, ", uniform sampler2D tex%d", t);
@@ -1167,12 +1247,14 @@ static int fastGen(const TevKey* k, char* buf, int cap, int withSig) {
                  "  uniform float4 uK0, uniform float4 uK1, uniform float4 uK2, uniform float4 uK3, uniform float2 uAref%s) : COLOR\n{\n",
              k->fogType ? ", uniform float4 uFog, uniform float4 uFogColor" : "");
     }
-    fastBody(&o, k, &fl, 1, mode);
+    fastBody(&o, k, &fl, 1, mode, var);
     if (withSig) emit(&o, "}\n");
     return o.bad ? -1 : o.n;
 }
-int tev_gen_body_fast(const TevKey* k, char* buf, int cap) { return fastGen(k, buf, cap, 0); }
-int tev_gen_fragment_fast(const TevKey* k, char* buf, int cap) { return fastGen(k, buf, cap, 1); }
+int tev_gen_body_fast(const TevKey* k, char* buf, int cap) { return fastGen(k, buf, cap, 0, 0); }
+int tev_gen_fragment_fast(const TevKey* k, char* buf, int cap) { return fastGen(k, buf, cap, 1, 0); }
+int tev_gen_body_fast_v(const TevKey* k, unsigned var, char* buf, int cap) { return fastGen(k, buf, cap, 0, var & TEVV_ALL); }
+int tev_gen_fragment_fast_v(const TevKey* k, unsigned var, char* buf, int cap) { return fastGen(k, buf, cap, 1, var & TEVV_ALL); }
 
 // ============================================================================================================
 // KEY CANONICALISATION (2026-10-12, docs/47 "Run 233" follow-up). tev_key_canon maps a TevKey to the SHORTEST key whose

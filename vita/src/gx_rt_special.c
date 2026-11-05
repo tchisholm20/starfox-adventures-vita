@@ -82,6 +82,7 @@ extern int  Queue_GetCount(void *queue) __attribute__((weak));
 extern char gVideoFlipQueue[] __attribute__((weak));
 extern int  mm_guard_mode __attribute__((weak));
 extern int  rhi_vita_efbZMode(void) __attribute__((weak));
+extern int  rhi_gxm_zcopy_gpu(void) __attribute__((weak));
 extern int  rhi_vita_efbMode(void) __attribute__((weak));
 extern GXColor gFogColor __attribute__((weak));         /* the GAME's fog colour (track/intersect.c); the HAL's GXSetFog also stores it in DIRECT mode and the game reads it back (intersect_render.c:149) */
 
@@ -619,7 +620,8 @@ int gxts_refuse_reason(char *buf, int cap)
 {
     char path[160];
     const char *why = NULL;
-    if (rhi_vita_efbZMode && rhi_vita_efbZMode() != 0) why = "efbZMode != 0 (EFB Z copies are not supported on the GXM threaded path)";
+    if (rhi_vita_efbZMode && rhi_vita_efbZMode() != 0 && !(rhi_gxm_zcopy_gpu && rhi_gxm_zcopy_gpu()))   /* GXM Z8 copies (2026-11-02) are GPU copies on R, like colour ones */
+        why = "efbZMode != 0 (EFB Z copies are not supported on the GXM threaded path)";
     else if (!rhi_vita_efbMode || rhi_vita_efbMode() != 1) why = "efbMode != 1 (threaded mode is built for the FBO copies)";
     else if (marker_first_char("gx_bp.txt") == '0') why = "gx_bp.txt 0 (the break-point delivery gate needs the break point delivered)";
     else if (&mm_guard_mode && mm_guard_mode > 0) why = "mm_guard_mode > 0 (the guard allocator frees outside the retire list)";
@@ -835,7 +837,8 @@ void gxts_G_GXCopyTex(void *dest, GXBool clear)
     }
     uint32_t *p = gxt_rec_alloc(GXT_OP_GXCopyTex, PW + 1u);
     put_ptr(p, dest); p[PW] = ((uint32_t)clear & 0xFFu) | (b8 ? 0x100u : 0u);
-    if (b8) { ++s_c.b8_blocks; gxt_wait_tail(gxt_mark(), "b8-copy"); }                    /* R-1: R writes `dest` below while G is parked here */
+    if (b8) { ++s_c.b8_blocks; gxt_wait_tail(gxt_mark(), "b8-copy"); }                    /* R-1: R writes B8 destinations below while G is parked here (with the deferred readback, gx_draw.c, the
+                                                                                               OTHER destinations, resolved from earlier copies; this one is written at the next B8 copy). Keep the wait: it is what orders those writes before the game's blur */
 }
 void gxts_R_GXCopyTex(const uint32_t *p, uint32_t nw)
 {

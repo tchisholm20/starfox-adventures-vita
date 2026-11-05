@@ -159,7 +159,7 @@ extern "C" { void* ObjModel_Load(int id, int loadFlag, int* outSize); int stairf
 // bankIndex@0xAD. The model header IS the ObjAnimDef (union), so bank->animDef = the header.
 struct AnimHarness { uint8_t objModel[0x64]; uint8_t state[0x68]; uint8_t state2[0x68];
                      uint8_t objAnim[0xC0]; void* banks[1]; uint8_t poseData[0x400];
-                     float dst[64][3][4]; };  // 64 = MAX_JOINTS (defined below)
+                     float dst[128][3][4]; };  // 128 = MAX_JOINTS (defined below)
 static void harnessSetup(AnimHarness* H, uint8_t* header) {
     memset(H, 0, sizeof *H);
     *(void**)(H->objModel + 0x00) = header;      // file / animDef (union)
@@ -186,7 +186,11 @@ static void ensureModelCaches() {
 static inline unsigned mdlBE32(const uint8_t* p){ return ((unsigned)p[0]<<24)|((unsigned)p[1]<<16)|((unsigned)p[2]<<8)|p[3]; }
 static inline unsigned mdlBE16(const uint8_t* p){ return ((unsigned)p[0]<<8)|p[1]; }
 static inline float    mdlBEF32(const uint8_t* p){ union{unsigned u; float f;} x; x.u=mdlBE32(p); return x.f; }
-#define MAX_JOINTS 64
+/* GALDON (2026-11-02, "first boss invisible"): was 64. modelAnimBuildJointMatrices returned with the bank UNTOUCHED for any model
+   with more joints, so DIM_Boss (model 84, 88 joints: retail-measured at modelInitMtxs) drew every vertex through an all-zero
+   matrix. Retail has no limit in the builder; its locked-cache path takes jointCount + extra <= 0x64 (objprint_dolphin.c
+   modelInitMtxs) and a bank slot is 7 bits (b[1] & 0x7f), so 128 covers every model the game can draw. */
+#define MAX_JOINTS 128
 static unsigned gFrameCounter = 0;   // advances once per sceneRender; drives the anim-test pose
 // 3x4 model-space transform helpers (implicit [0 0 0 1] bottom row).
 static inline void mat34Copy(const float s[3][4], float d[3][4]) {

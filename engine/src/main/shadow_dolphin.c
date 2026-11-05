@@ -523,6 +523,17 @@ void objDrawShadowCasterMesh(Vec3f* vertices,ObjModelState* modelState, GameObje
         extern int gStfxAb __attribute__((weak));
         if (&gStfxAb && gStfxAb == 152) return;
     }
+    {   /* CHARACTER SHADOWS OFF (v0.1.2, 2026-11-04): the channel receiver (Fox mode 7, Tricky 5/6) draws long and offset in evening light and not at all
+           in daylight (known issue). Skip it unless ux0:data/stairfax/char_shadow.txt is "1" (vita_tool_main.c vt_char_shadow).
+           Keyed on the CAST SLOT (an R8 channel slot: not the disk, mode != 0xff). RC4 bf151a62 also tested "resource == UNCACHED"; Tyler still saw a shadow
+           under Fox on hw (2026-11-04, VFP) -- which path drew it is NOT yet known (shadowInit makes Fox UNCACHED, so not the cached branch; candidates: the
+           disk slot, branch 1, objDrawGroundShadow). */
+        extern int gStfxCharShadow __attribute__((weak));
+        if (!(&gStfxCharShadow && gStfxCharShadow) && !(obj->anim.modelInstance->renderFlags & OBJDEF_RENDERFLAG_PROJECTED_SHADOW) &&
+            modelState->shadowCastSlot != NULL && modelState->shadowCastSlot->texture != newshadows_getSmallDiskTexture() &&
+            modelState->shadowCastSlot->mode != 0xff)
+            return;
+    }
 #endif
     u8 shadowColor[4];
     Vec3f savedWorldPos;
@@ -597,6 +608,21 @@ void objDrawShadowCasterMesh(Vec3f* vertices,ObjModelState* modelState, GameObje
             objectShadow_setupProjectedTextureChannel(modelState->shadowCastSlot, &color, worldMtx, projectionScale);
         }
     }
+#if defined(__vita__)
+    {   /* SHADOW PROBE (2026-11-01, hal/gx_draw.c gx_draw_setShadowRecv): the fields the retail oracle read (blob_shadow/), for the port. Branch: 1 swapped, 2 plain, 3 depth fade, 4 channel */
+        extern int gx_shadow_probe __attribute__((weak));
+        if (&gx_shadow_probe && gx_shadow_probe) {
+            extern int printf(const char*, ...);
+            const int br = (obj->anim.modelInstance->renderFlags & OBJDEF_RENDERFLAG_PROJECTED_SHADOW) ? 1
+                         : (modelState->shadowRenderResource != OBJECT_SHADOW_MESH_UNCACHED || modelState->shadowCastSlot->texture == newshadows_getSmallDiskTexture()) ? 2
+                         : modelState->shadowCastSlot->mode == 0xff ? 3 : 4;
+            printf("[shp-obj] obj %p player %d renderFlags %02x resource %p flags %04x shadowScale %.2f slot %p texture %p alpha %u mode %u branch %d tris %d\n",
+                   (void*)obj, obj == Obj_GetPlayerObject(), (unsigned)obj->anim.modelInstance->renderFlags, (void*)modelState->shadowRenderResource,
+                   (unsigned)modelState->flags, (double)modelState->shadowScale, (void*)modelState->shadowCastSlot, (void*)modelState->shadowCastSlot->texture,
+                   (unsigned)modelState->shadowCastSlot->alpha, (unsigned)modelState->shadowCastSlot->mode, br, triangleCount);
+        }
+    }
+#endif
     GXSetCullMode(GX_CULL_FRONT);
     GXSetCurrentMtx(GX_PNMTX0);
     obj->anim.rootMotionScale = savedRootMotionScale;
@@ -736,6 +762,18 @@ int objShadowRender(GameObject* obj, int renderMode, int unused, int frameCount)
         obj->anim.modelState->shadowCastSlot = NULL;
         return 0;
     }
+#if defined(__vita__)
+    {   /* FOX + TRICKY SHADOWS OFF (RC7, 2026-11-04). RC4/RC5/RC6 skipped one receiver branch (objDrawShadowCasterMesh) and Tyler still saw both shadows on hw,
+           now with intermittent degenerate vertices stretching off screen. Off by OBJECT, the way shadows-off above does it, whatever path draws them.
+           ux0:data/stairfax/char_shadow.txt "1" = on (vita_tool_main.c vt_char_shadow). */
+        extern int gStfxCharShadow __attribute__((weak));
+        extern GameObject* getTrickyObject(void);
+        if (!(&gStfxCharShadow && gStfxCharShadow) && (obj == Obj_GetPlayerObject() || obj == getTrickyObject())) {
+            obj->anim.modelState->shadowCastSlot = NULL;
+            return 0;
+        }
+    }
+#endif
 
     shadowMesh = modelState->shadowRenderResource;
     if (shadowMesh == NULL || shadowMesh == OBJECT_SHADOW_MESH_UNCACHED) {

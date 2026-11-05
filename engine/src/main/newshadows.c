@@ -1403,6 +1403,15 @@ void renderShadows(int unused0, int unused1, int unused2) {
                     texture = texturePool + (u8)texIdx;
                     castSlot->texture = *texture;
                     castSlot->mode = gShadowCastModeTable[(u8)texIdx];
+#if defined(__vita__)
+                    {   /* SHADOW PROBE (hal/gx_draw.c gx_draw_setShadowRecv): each caster rendered into the cast EFB region */
+                        extern int gx_shadow_probe __attribute__((weak));
+                        extern int printf(const char*, ...);
+                        if (&gx_shadow_probe && gx_shadow_probe)
+                            printf("[shp-cast] caster %d obj %p kind %u texIdx %u mode %u w %u screenW %u texture %p alpha %u\n", (int)casterIdx, (void*)obj,
+                                   (unsigned)kind, (unsigned)(u8)texIdx, (unsigned)castSlot->mode, (unsigned)w, (unsigned)screenW, (void*)castSlot->texture, (unsigned)castSlot->alpha);
+                    }
+#endif
                     objRenderShadowIfVisible(obj, 0, 0, 0, 0, 0);
                     if (casterPtr->flags == 2) {
                         gxSetZMode_(1, GX_LEQUAL, 1);

@@ -163,6 +163,9 @@ vi_set_clear_color T
 [boot-only]
 VIInit | game boot (vi_shim.c VIInit -> gx_draw_init, rhi_create ...): called once before the first frame; gxt_frame_edge cannot switch to threaded before the first present, so no R exists while it runs
 [data-allow]
+gStfxMk | written ONCE by stfxMarkerScan on G in main() (vita_tool_main.c, after the release defaults, before R is created); every later use (stfxMarkerOpen on G or R) only reads it (RC6 2026-11-04, the HAL marker reads without card I/O)
+gStfxMkN | written ONCE by stfxMarkerScan on G in main() (vita_tool_main.c, after the release defaults, before R is created); every later use (stfxMarkerOpen on G or R) only reads it (RC6 2026-11-04, the HAL marker reads without card I/O)
+gStfxMkAll | written ONCE by stfxMarkerScan on G in main() (vita_tool_main.c, after the release defaults, before R is created); every later use (stfxMarkerOpen on G or R) only reads it (RC6 2026-11-04, the HAL marker reads without card I/O)
 gRt | rt_timer.h state shared by gx_draw.o / rhi_vita.c.o / vi_shim.o; D12: rt_stats.txt=1 is REFUSED in threaded mode (gxts_refuse_reason), so nothing accumulates into it
 gRealSkin | R2: read by GXLoadPosMtxImm's sanity clamp (its G variant gxh_g_GXLoadPosMtxImm, on G) and by the draw path on R; written only by gx_draw_setRealSkin, a viewer-only T extra that gxt_viewer_trap counts and the threaded gates fail on, so in a threaded run it is read-only on both sides (approved by the orchestrator 2026-10-23, R2 review)
 [shared]

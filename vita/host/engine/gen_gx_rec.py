@@ -359,9 +359,9 @@ THR_KINDS = 'RSLXPET'
 REC_THR = ('R', 'S')      # dispositions whose legacy path is "record by value on G, replay __real_X on R" (S: the same, until R2 takes the setters; R2_STATE.md)
 OP_EXTRA_BASE = 200
 E_COUNTER = {'os_ext_poll': 'r_ext_poll_dropped', 'vi_set_clear_color': 'r_clear_color_dropped'}   # E extras -> the GxtStats counter R bumps when it drops the call
-R_SCRATCH_WORDS_ROW = {'GXStfxSkinBind': 12 * 32}   # R8: the skin palette, nb*48 bytes with nb <= GX_SKIN_MAX_BONES (32) = 1536 bytes; the R scratch of that row is sized for it
+R_SCRATCH_WORDS_ROW = {'GXStfxSkinBind': 12 * 128}   # R8: the skin palette, nb*48 bytes with nb <= GX_SKIN_MAX_BONES.  2026-11-03 R8b: 32 -> 128 = 6144 bytes (was 1536); the R scratch of that row is sized for it
 ROW_HEADERS = ('port/gx_skin.h',)     # R8: headers the generated .inc files must include so a row's parameter types (GxSkinTable) exist where gxt_G_X / __wrap_X are written
-SKIN_PAL_BOUND = {'GXStfxSkinBind': ('nb', 32)}     # inline-length parameter -> its bound: the host drivers clamp the random value to it (GX_SKIN_MAX_BONES); gx_rec_test.c's image buffers are 2048 bytes (32 * 48 + 12 fits)
+SKIN_PAL_BOUND = {'GXStfxSkinBind': ('nb', 128)}     # inline-length parameter -> its bound: the host drivers clamp the random value to it (GX_SKIN_MAX_BONES); gx_rec_test.c's image buffers are 6656 bytes (R8b: 128 * 48 + 12 fits; was 2048 = 32 * 48 + 12)
 assert all(SKIN_PAL_BOUND[k][1] * 12 <= R_SCRATCH_WORDS_ROW[k] for k in SKIN_PAL_BOUND)   # the driver's largest payload fits the R scratch
 R_SCRATCH_WORDS = 16                                                                              # 64 bytes: the largest inline payload (light object, projection)
 G_RESIDENT_X = ('gx_breakpoint_deliver',)    # X extras whose REAL body runs on G (gated, not recorded): their closure is G-side for the G-M1 check

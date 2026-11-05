@@ -5,8 +5,7 @@ A native PS Vita port of Star Fox Adventures (GameCube), built on the
 port branch ([`Cassieandstuff/SFA-Decomp@pc-port-continued`](https://github.com/Cassieandstuff/SFA-Decomp/tree/pc-port-continued)),
 with a graphics backend written for the Vita's GPU.
 
-> **Work in progress.** This is an early build. It's playable, but expect bugs, and not every
-> part of the game has been tested yet.
+> **Work in progress.** This is an early build. It's playable, but expect bugs.
 
 **This repository and its downloads contain no game data.** The port runs from a disc
 image you make from your own copy of the game. Nothing from the game is included or
@@ -37,7 +36,7 @@ unreadable, a different game, or a different version of this one.
 3. Launch the game.
 
 The first launch writes the game's settings files to `ux0:data/stairfax/`. The download
-includes 1003 pre-compiled shaders inside the vpk.
+includes 2028 pre-compiled shaders inside the vpk.
 
 ## What to expect
 
@@ -55,8 +54,9 @@ includes 1003 pre-compiled shaders inside the vpk.
 - The first visit to an area whose shaders are not included can show missing or dark objects
   for a minute or two while they compile.
 - ThornTail Hollow and SnowHorn Wastes run below 30 fps in places.
-- Fox and Tricky do not cast the soft round shadow under their feet that the original game
-  draws.
+- Fox's and Tricky's shadows are turned off for now: they were drawn too long and offset in
+  evening light, and not at all in daylight. To try them anyway, put a file
+  `ux0:data/stairfax/char_shadow.txt` containing `1`.
 - Short pauses when loading a new area or starting some cutscenes; the opening cutscene
   stutters for its first few seconds.
 - The boot logos are not shown yet.
@@ -65,7 +65,8 @@ includes 1003 pre-compiled shaders inside the vpk.
 
 ## Reporting a problem
 
-Open an issue and attach `ux0:data/stairfax_game.txt` (the game's log) from the session.
+Open an issue and attach `ux0:data/stairfax_game.txt` (the game's log) from the session, and
+`ux0:data/stairfax/frames.bin` (a per-frame timing log) for a slowdown.
 
 ---
 
@@ -77,7 +78,7 @@ backend that turns those GX calls into GXM, the Vita's own graphics API.
 
 - **Shaders.** The GameCube colours pixels with a configurable fixed-function unit called
   TEV. The backend writes a shader for each TEV setup the game uses, compiles it on the Vita
-  and saves it to the memory card. The release includes 1003 already-compiled shaders.
+  and saves it to the memory card. The release includes 2028 already-compiled shaders.
 - **Two threads.** The game's main loop runs on one CPU core and a separate render thread on
   another core sends the drawing work to the GPU, so the two overlap.
 - **Models.** GameCube models are stored as display lists. Each one is converted to Vita
