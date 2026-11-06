@@ -5324,6 +5324,24 @@ int playerState23(GameObject* obj, PlayerState* state, f32 fv) {
     return 0;
 }
 
+#ifdef STAIRFAX_PORT
+/* push_dt (2026-11-05): frame-rate-independent block push, DEFAULT ON. ux0:data/stairfax/push_dt.txt starting with '0' =
+   retail's per-update step (the A/B control). Read once; the effective setting is printed once. */
+static int stfxPushDtCfg(void) {
+    static int on = -1;
+    if (on < 0) {
+        extern void* fopen(const char*, const char*); extern int fgetc(void*); extern int fclose(void*);
+        extern int printf(const char*, ...);
+        void* f = fopen("ux0:data/stairfax/push_dt.txt", "rb");
+        on = !(f && fgetc(f) == '0');
+        printf("[push] block push step: %s (%s)\n", on ? "scaled by timeDelta" : "per update (retail)",
+               f ? "push_dt.txt" : "default; push_dt.txt absent");
+        if (f) fclose(f);
+    }
+    return on;
+}
+#endif
+
 int playerState22(GameObject* obj, PlayerState* state) {
     PlayerState* inner = obj->extra;
     state->baddie.stateTag = 3;
@@ -5693,6 +5711,15 @@ int playerState1D(int obj, PlayerState* state, f32 fv) {
             yT = 0.0f;
         }
         k = 0.1f;
+#ifdef STAIRFAX_PORT
+        /* STFX push_dt (2026-11-05, Cape Claw cube puzzle): retail eases the push and moves the block by a fixed step per
+           UPDATE, tuned for ~60 updates/s. The Vita does ~27 there (rc9_game_1: mean timeDelta 2.21), so the block got 45%
+           of retail's travel per second against a timer that counts real seconds. Ease by timeDelta here; the step is
+           scaled at the push call below. ux0:data/stairfax/push_dt.txt starting with '0' = retail per-update (A/B control). */
+        if (stfxPushDtCfg()) {
+            k = 1.0f - powfBitEstimate(0.9f, timeDelta);
+        }
+#endif
         inner->stickTargetX += k * (xT - inner->stickTargetX);
         inner->stickTargetY += k * (yT - inner->stickTargetY);
     }
@@ -5751,6 +5778,12 @@ int playerState1D(int obj, PlayerState* state, f32 fv) {
             } else {
                 a = inner->stickTargetX;
                 b = inner->stickTargetY;
+#ifdef STAIRFAX_PORT
+                if (stfxPushDtCfg()) {   /* push_dt: per-update step -> per-60Hz-frame step (max 6x at the clamp, 3.9 units < the 8-unit probe) */
+                    a *= timeDelta;
+                    b *= timeDelta;
+                }
+#endif
             }
             res = PUSHABLE_INTERFACE(sub)->push(sub, (GameObject*)obj, direction, a, b);
             if (res == 1) {
