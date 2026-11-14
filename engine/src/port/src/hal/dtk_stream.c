@@ -57,12 +57,25 @@
                             2 stop-at-end is ignored (the track loops instead of ending)
                             3 the resampler has no low-pass (one tap)
                             4 a ring underrun advances the position (the stream would skip, not stall)
-                            5 the game-clock hold is disabled (the stream stays on real time) */
+                            5 the game-clock hold is disabled (the stream stays on real time)
+                            6 the paced clock drops the uncounted part of a field every frame (paced_clock.h, the old rounding)
+                            7 the old 32 KB read-ahead read 4 KB at a time (a slow card drains it) */
 #endif
 
 #define DTK_DIR      "ux0:data/stairfax/"
-#define DTK_RING     32768u                 /* bytes of ADPCM read ahead: 0.6 s */
-#define DTK_CHUNK    4096u                  /* bytes per read: 75 ms of stream */
+/* THE READ-AHEAD (2026-11-06, audio cutting out).  It was 32 KB (0.6 s) read 4 KB (75 ms) at a time.  The SD2VITA card answers
+ * in 20-900 ms while the shader cache, the poller, the log and the frame log share it (RC9c log: card opens up to 897 ms, shader
+ * cache loads up to 1.47 s, in every window with an underrun), so a 4 KB read could take longer than the 75 ms it holds: the ring
+ * drained and the stream STALLED (95 underruns in ~100 s of stream; 29 s more output than input).  Now 32 KB a read (0.6 s, so
+ * one slow answer still delivers 10x the 4 KB) into 256 KB (4.8 s: three times the worst card answer measured).
+ * DTK_FAULT 7 (test only) = the old 32 KB / 4 KB, which run_dtk_test.sh must see fail. */
+#if DTK_FAULT == 7
+#define DTK_RING     32768u
+#define DTK_CHUNK    4096u
+#else
+#define DTK_RING     262144u                /* bytes of ADPCM read ahead: 4.8 s (a power of two: the ring is masked) */
+#define DTK_CHUNK    32768u                 /* bytes per read: 0.6 s of stream */
+#endif
 #define DTK_PRIME    4096u                  /* bytes the ring must hold before a (re)start is played */
 #define DTK_TAPS     32u                    /* per phase; the prototype low-pass has 64 taps at 96 kHz */
 #define DTK_BATCH    320u                   /* output frames per resampler batch */
@@ -795,6 +808,8 @@ int dtk_host_reader_step(void) { return reader_step(); }
 void dtk_host_swap(int on) { gSwapLR = on; }
 void dtk_host_realtime(int on) { gRealtime = on; }
 unsigned dtk_host_ring_bytes(void) { return gRingW - gRingR; }
+unsigned dtk_host_ring_size(void) { return DTK_RING; }
+unsigned dtk_host_chunk_size(void) { return DTK_CHUNK; }
 /* The resampler alone, on PCM: in48 must hold (out_frames * 3 + 1) / 2 + DTK_TAPS frames (the caller zero-pads). */
 void dtk_host_resample(const int16_t* in48, unsigned in_frames, int16_t* out32, unsigned out_frames)
 {

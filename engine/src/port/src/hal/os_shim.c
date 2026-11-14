@@ -7,6 +7,7 @@
 // single-threaded); they get real host backing when a subsystem needs concurrency.
 
 #include "dolphin/os.h"
+#include "paced_clock.h"   /* one step of the paced clock, shared with the host test */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,7 +89,7 @@ static long long gVirtTicks; static int gVirtUsPerRetrace = -1;
 // On the VIRTUAL clock it is stable but in slow motion (one field of game time per frame drawn). fixed_clock.txt = -N is the
 // middle: game time advances by the number of fields that REALLY passed since the last retrace, never more than N a frame.
 // At N fields or faster the game runs at real speed; slower than that it slows down instead of spiralling.
-static int gVirtPacedMax; static unsigned long long gVirtPacedLast; unsigned os_paced_fields, os_paced_capped;
+static int gVirtPacedMax; static long long gVirtPacedLast; unsigned os_paced_fields, os_paced_capped;
 unsigned os_virtual_retraces;
 static void os_virtual_init(void) {
     gVirtUsPerRetrace = 0;
@@ -110,9 +111,9 @@ void os_virtual_clock_retrace(void) {   // vi_shim.c VIWaitForRetrace
         int n = 1;
 #if defined(__vita__)
         if (gVirtPacedMax) {
-            unsigned long long now = sceKernelGetProcessTimeWide();
-            if (gVirtPacedLast) { unsigned long long f = (now - gVirtPacedLast + 8341u) / 16683u; n = f < 1 ? 1 : f > (unsigned)gVirtPacedMax ? gVirtPacedMax : (int)f; if (f > (unsigned)gVirtPacedMax) ++os_paced_capped; }
-            gVirtPacedLast = now; os_paced_fields += (unsigned)n;
+            /* paced_clock.h: the part of a field a frame did not count is carried to the next (it was dropped: ThornTail ran at ~89%) */
+            n = paced_clock_step((long long)sceKernelGetProcessTimeWide(), &gVirtPacedLast, gVirtPacedMax, &os_paced_capped);
+            os_paced_fields += (unsigned)n;
         }
 #endif
         __atomic_add_fetch(&gVirtTicks, (long long)gVirtUsPerRetrace * 162 * n, __ATOMIC_RELAXED); ++os_virtual_retraces;   /* the audio thread reads the clock too (OSGetTick in sal_ai.c:53) */

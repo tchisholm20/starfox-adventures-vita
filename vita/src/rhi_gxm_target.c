@@ -525,6 +525,23 @@ static void tg_quad_state(int w, int h, int depth_write)
     sceGxmSetBackDepthWriteEnable(g_gx.ctx, depth_write ? SCE_GXM_DEPTH_WRITE_ENABLED : SCE_GXM_DEPTH_WRITE_DISABLED);
     sceGxmSetFrontDepthBias(g_gx.ctx, 0, 0);     /* the draw module's shadow z-bias may still be set in this scene: it must not move a clear's depth */
     sceGxmSetBackDepthBias(g_gx.ctx, 0, 0);
+    {   /* THE OR PLANE (rhi_gxm_int.h GXM_AM_OR): a quad that clears depth also zeroes the stencil (the planes already added to a pixel); every other quad leaves it alone.
+           The draw module re-sends its own stencil state after any quad (state epoch). */
+        if (depth_write) ++g_gxm_stencil_gen;   /* the OR planes' scissor guard (gxm_target_or_guard) is gone from whatever this quad covers */
+        /* 2026-11-12: ONLY WHILE OR PLANES ARE LIVE. Sending stencil state with every quad cost R about 1.1 ms/frame where no caster is drawn (hw, LightFoot warp 71: RC10d 26.41,
+           RC11e 27.5). A frame's planes are zeroed by that frame's own depth-clearing quads (the cast pass's copy-clear, the frame clear), all issued after its OR draws, so a frame
+           with no OR draw has nothing to zero; the context's stencil state is tracked (g_gxm_sten_ctx) and returned to the default once. */
+        if (depth_write && GXM_OR_LIVE()) {
+            sceGxmSetFrontStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, 0u, 0xffu);
+            sceGxmSetBackStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, 0u, 0xffu);
+            sceGxmSetFrontStencilRef(g_gx.ctx, 0u); sceGxmSetBackStencilRef(g_gx.ctx, 0u);
+            g_gxm_sten_ctx = -1;
+        } else if (g_gxm_sten_ctx != 0) {
+            sceGxmSetFrontStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, 0u, 0u);
+            sceGxmSetBackStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, 0u, 0u);
+            g_gxm_sten_ctx = 0;
+        }
+    }
     /* top-row-first: yScale < 0 (misc.c:329-332); window z = 0.5 + 0.5 * clip z */
     sceGxmSetViewport(g_gx.ctx, (float) w * 0.5f, (float) w * 0.5f, (float) h * 0.5f, -(float) h * 0.5f, 0.5f, 0.5f);
     /* the clip never past the open scene's target: an M sub-target is smaller than the w x h a quad's pixel mapping is computed for */
@@ -552,6 +569,41 @@ static int tg_quad_clear(const float rect[4], float clipz, const float col[4], S
     if (GXM_CHK(sceGxmReserveFragmentDefaultUniformBuffer(g_gx.ctx, &fub)) || !fub) return -1;
     GXM_CHK(sceGxmSetUniformDataF(fub, g_u_ccol, 0, 4, col));
     return tg_draw_fan();
+}
+
+/* THE OR PLANE'S SCISSOR (2026-11-11, rhi_gxm_int.h GXM_AM_OR). The game draws every shadow caster under GXSetScissor(2, 2, w - 4, w - 4) so the cast texture keeps an EMPTY 2-texel border:
+ * the receivers sample it clamped, and one set border texel is an endless streak on the ground (hw, cast dump 2026-11-11: plane 5 texels in columns 0-1 = the thin dark line from Fox's feet).
+ * GXM's region clip is tile-granular (32 px) on the console, so the border was drawn into. Before a caster's first OR draw, the pixels between its true clip rect and that rect grown to whole
+ * tiles get the plane's STENCIL bit (no colour, no depth): the guard of run_draw then refuses the plane there, which is the exact scissor. clip = top-origin inclusive M pixels. */
+unsigned g_gxm_stencil_gen, g_gxm_or_guards;
+int g_gxm_sten_ctx; unsigned g_gxm_or_frame; int g_gxm_or_ever;   /* the stencil state the context holds (0 default, 1 + plane = an OR plane's guard, -1 = a quad's REPLACE); the last frame an OR draw was issued */
+void gxm_target_or_guard(unsigned bit, const int clip[4])
+{
+    if (gxm_dead() || !g_open) return;
+    const int rw = g_gx.rw, rh = g_gx.rh;
+    int ex0 = clip[0] & ~31, ey0 = clip[1] & ~31, ex1 = (clip[2] | 31) + 1, ey1 = (clip[3] | 31) + 1;   /* grown to tiles; x1 / y1 exclusive */
+    if (ex1 > rw) ex1 = rw;
+    if (ey1 > rh) ey1 = rh;
+    const GxmPx strip[4] = { { ex0, ey0, clip[0], ey1 }, { clip[2] + 1, ey0, ex1, ey1 }, { clip[0], ey0, clip[2] + 1, clip[1] }, { clip[0], clip[3] + 1, clip[2] + 1, ey1 } };
+    const float col[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    for (int i = 0; i < 4; ++i) {
+        if (strip[i].x1 <= strip[i].x0 || strip[i].y1 <= strip[i].y0) continue;
+        float rect[4]; void *vub = NULL, *fub = NULL;
+        gxm_tgt_px_ndc(&strip[i], rw, rh, rect);
+        tg_quad_state(rw, rh, 0);
+        sceGxmSetFrontStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, 0u, (unsigned char) bit);
+        sceGxmSetBackStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, SCE_GXM_STENCIL_OP_REPLACE, 0u, (unsigned char) bit);
+        sceGxmSetFrontStencilRef(g_gx.ctx, bit); sceGxmSetBackStencilRef(g_gx.ctx, bit);
+        sceGxmSetVertexProgram(g_gx.ctx, g_vp_clear);
+        sceGxmSetFragmentProgram(g_gx.ctx, g_fp_nowrite);
+        if (GXM_CHK(sceGxmReserveVertexDefaultUniformBuffer(g_gx.ctx, &vub)) || !vub) break;
+        { const float z0 = 0.0f; GXM_CHK(sceGxmSetUniformDataF(vub, g_u_cpos, 0, 4, rect)); GXM_CHK(sceGxmSetUniformDataF(vub, g_u_cdepth, 0, 1, &z0)); }
+        if (GXM_CHK(sceGxmReserveFragmentDefaultUniformBuffer(g_gx.ctx, &fub)) || !fub) break;
+        GXM_CHK(sceGxmSetUniformDataF(fub, g_u_ccol, 0, 4, col));
+        if (tg_draw_fan() == 0) ++g_gxm_or_guards;
+        g_gxm_sten_ctx = -1;
+    }
+    gxm_state_dirty();
 }
 
 /* a textured fan through the precompiled blit program (position + texcoord stream); samples M. 0 ok. */
@@ -620,6 +672,7 @@ static int tg_begin(char kind, SceGxmRenderTarget *rt, SceGxmSyncObject *fsync, 
         return -1;
     }
     g_bs_fail_run = 0;
+    ++g_gxm_stencil_gen;                         /* a new scene may sit on another depth/stencil surface of the ring: the OR planes' scissor guard is redrawn (idempotent) */
     g_open = kind;
     g_cur_w = w; g_cur_h = h;
     ++g_gx.epoch;

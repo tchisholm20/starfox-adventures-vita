@@ -89,7 +89,7 @@ TitleMenuItem* gOptionsMenuItems[8];
 #define OPTIONS_SUBMENU_AUDIO    2
 #define OPTIONS_SUBMENU_LANGUAGE 3
 
-#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1) || defined(STAIRFAX_PORT)   /* Vita (2026-11-13): the language panel; the US disc carries its text in all five text sets */
 extern u8 gOptionsLanguageIds[5];
 #endif
 extern s8 gOptionsActivePanel;
@@ -98,7 +98,7 @@ extern s8 gOptionsExitCountdown;
 extern s8 gOptionsExitRequested;
 extern s8 gOptionsLayoutRefreshFrames;
 
-#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1) || defined(STAIRFAX_PORT)   /* Vita (2026-11-13): the language panel; the US disc carries its text in all five text sets */
 void optionsMenu_applyMiscSetting(int selection, int item)
 {
     if (selection == 0)
@@ -124,7 +124,13 @@ void optionsMenu_applyMiscSetting(int selection, int item)
     }
     else if (selection == 1 && item > 0 && item < 6)
     {
+#if defined(STAIRFAX_PORT) && !(defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1))
+        /* Vita: the US build chooses its language ONCE, at the font init (gametext.c), before the card's options are read; gameTextSetLanguage is a European-build function. The choice is
+           written to ux0:data/stairfax/language.txt (off this thread) and applies at the next launch. */
+        { extern void stfxBootLanguageWrite(int lang); stfxBootLanguageWrite(gOptionsLanguageIds[item - 1]); }
+#else
         gameTextSetLanguage(gOptionsLanguageIds[item - 1]);
+#endif
         gOptionsSaveData->languageIndex = (u8)(item - 1);
         Sfx_PlayFromObject(0, SFXTRIG_menu_pause_up);
     }
@@ -316,7 +322,7 @@ void languageMenuInit(void)
         gTitleMenuItemInterface->vtable->createWithWindow(0x36b, 0x22, 0, 1,
                                                          (s16)(gOptionsSaveData->subtitlesEnabled == 0));
 
-#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1) || defined(STAIRFAX_PORT)   /* Vita (2026-11-13): the language panel; the US disc carries its text in all five text sets */
     panel->entries[panel->count - 2].downLink = -1;
     panel->entries[panel->count - 1].flags |= TITLE_MENU_TEXT_ENTRY_HIDDEN;
 #else
@@ -523,7 +529,7 @@ void optionsMenu_openGeneralPanel(void)
 #define OPTIONSSCREEN_PANEL_GAMEPLAY 2
 #define OPTIONSSCREEN_PANEL_MISC     3
 
-#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1) || defined(STAIRFAX_PORT)   /* Vita (2026-11-13): the language panel; the US disc carries its text in all five text sets */
 u8 gOptionsLanguageIds[5] = {0, 1, 3, 5, 2};
 #endif
 s8 gOptionsActivePanel = -1;
@@ -577,7 +583,7 @@ u16 gOptionsAudioPanelEntries[180] = {
     0x0000, 0x0001, STFX_BSWAP16(0x0000), STFX_BSWAP16(0x04ff), STFX_BSWAP16(0xffff), STFX_BSWAP16(0xff00), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000),
     STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000)};
 
-#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1) || defined(STAIRFAX_PORT)   /* Vita (2026-11-13): the language panel; the US disc carries its text in all five text sets */
 u16 gOptionsMiscPanelEntries[240] = {
     0x035f, 0x0017, 0x0140, 0x0170, 0x0000, 0x0140, 0x00bb, 0x0000, 0xffff, 0xffff, 0x00b4, 0x0000, STFX_BSWAP16(0x0000), STFX_BSWAP16(0xff01), STFX_BSWAP16(0xffff), STFX_BSWAP16(0xff00),
     STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), 0x0352, 0x0018,
@@ -604,14 +610,15 @@ u16 gOptionsMiscPanelEntries[90] = {
     STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000), STFX_BSWAP16(0x0000)};
 #endif
 
+/* STFX be-table (2026-11-13): itemLayout is read through struct overlays as its FIRST byte = the row count; STFX_BSWAP16 re-states the big-endian word (see the entry tables above). */
 OptionsScreenPanelConfig gOptionsPanelTable[4] = {
-    {gOptionsTopPanelEntries, 0, 0x0304, 0x0330, 0x0367, 0},
-    {gOptionsAudioPanelEntries, 0, 0x0603, 0x035c, 0x0368, 0},
-    {gOptionsGeneralPanelEntries, 0, 0x0403, 0x035a, 0x0368, 0},
-#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
-    {gOptionsMiscPanelEntries, 0, 0x0703, 0x035b, 0x0368, 0},
+    {gOptionsTopPanelEntries, 0, STFX_BSWAP16(0x0304), 0x0330, 0x0367, 0},
+    {gOptionsAudioPanelEntries, 0, STFX_BSWAP16(0x0603), 0x035c, 0x0368, 0},
+    {gOptionsGeneralPanelEntries, 0, STFX_BSWAP16(0x0403), 0x035a, 0x0368, 0},
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1) || defined(STAIRFAX_PORT)   /* Vita (2026-11-13): the language panel; the US disc carries its text in all five text sets */
+    {gOptionsMiscPanelEntries, 0, STFX_BSWAP16(0x0703), 0x035b, 0x0368, 0},
 #else
-    {gOptionsMiscPanelEntries, 0, 0x0203, 0x035b, 0x0368, 0},
+    {gOptionsMiscPanelEntries, 0, STFX_BSWAP16(0x0203), 0x035b, 0x0368, 0},
 #endif
 };
 
@@ -806,7 +813,7 @@ int OptionsScreen_frameStart(void)
         }
         break;
     case OPTIONSSCREEN_PANEL_MISC:
-#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1)
+#if defined(VERSION_GSAP01) || defined(VERSION_GSAP01_rev1) || defined(STAIRFAX_PORT)   /* Vita (2026-11-13): the language panel; the US disc carries its text in all five text sets */
         optionsMenu_applyMiscSetting(selection, item);
 #else
         if (selection == 0)

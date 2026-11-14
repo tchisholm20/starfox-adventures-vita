@@ -3,7 +3,8 @@
 #
 #   bash package_vpk.sh <eboot.bin> <out.vpk> [shaders_dir]        (MSYS2 bash, VitaSDK on PATH)
 #
-# shaders_dir (optional) holds pack.bin and gxm/*.gxp: pre-compiled shaders, packed as app0:shaders/.
+# shaders_dir (optional) holds pack.bin and gxm/*.gxp: pre-compiled shaders. pack.bin ships as app0:shaders/pack.bin; the .gxp files are packed
+# into ONE app0:shaders/gxm.pak by pack_gxp.py (2026-11-05: 2028 loose files made the vpk install take 10+ minutes on an SD2VITA).
 # The game reads them when the memory-card cache (ux0:data/STFX00001/) does not have a shader, so a
 # player needs only the vpk and a disc image. Without it, every shader compiles on the console.
 #
@@ -32,18 +33,11 @@ if [ -n "$SHD" ]; then
   for g in "$SHD"/gxm/*.gxp; do NGXP=$((NGXP + 1)); done
   [ "$NGXP" -gt 0 ] || { echo "package_vpk: no .gxp files in $SHD/gxm"; exit 3; }
 fi
-vita-pack-vpk -s "$TMP/param.sfo" -b "$EBOOT" "${ARGS[@]}" "$VPK"
-# The .gxp files are appended to the zip here, not passed to vita-pack-vpk: one `-a` per file overflowed the Windows command line at
-# 855 shaders (2026-10-29, "Argument list too long"). A .vpk is a plain zip; the read-back below counts what actually landed.
 if [ "$NGXP" -gt 0 ]; then
-  python - "$VPK" "$SHD/gxm" <<'EOF'
-import os, sys, zipfile
-vpk, d = sys.argv[1], sys.argv[2]
-with zipfile.ZipFile(vpk, 'a', zipfile.ZIP_DEFLATED) as z:
-    for n in sorted(os.listdir(d)):
-        if n.endswith('.gxp'): z.write(os.path.join(d, n), 'shaders/gxm/' + n)
-EOF
+  python "$HERE/pack_gxp.py" "$SHD/gxm" "$TMP/gxm.pak"
+  ARGS+=(-a "$TMP/gxm.pak=shaders/gxm.pak")
 fi
+vita-pack-vpk -s "$TMP/param.sfo" -b "$EBOOT" "${ARGS[@]}" "$VPK"
 python - "$VPK" "$TITLE" "$TITLE_ID" "$NGXP" "${SHD:+1}" <<'EOF'
 import sys, struct, zipfile
 vpk, want, want_id, ngxp, want_pack = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5] == '1'
@@ -55,8 +49,12 @@ for i in range(n):
     f[d[kt + ko:d.index(b'\0', kt + ko)].decode()] = d[dt + do:dt + do + ln].rstrip(b'\0')
 got = (f['TITLE'].decode(), f['STITLE'].decode(), f['TITLE_ID'].decode())
 if got != (want, want, want_id): sys.exit(f'package_vpk: the .vpk says {got}, expected ({want!r}, {want!r}, {want_id!r})')
-have = sum(1 for x in names if x.startswith('shaders/gxm/') and x.endswith('.gxp'))
-if have != ngxp or (want_pack and 'shaders/pack.bin' not in names):
-    sys.exit(f'package_vpk: the .vpk holds {have} shaders (expected {ngxp}), pack.bin {"present" if "shaders/pack.bin" in names else "MISSING"}')
+loose = sum(1 for x in names if x.startswith('shaders/gxm/'))
+have = 0
+if 'shaders/gxm.pak' in names:
+    pk = z.read('shaders/gxm.pak'); magic, ver, have = struct.unpack_from('<III', pk)
+    if magic != 0x314B5847 or ver != 1: sys.exit('package_vpk: shaders/gxm.pak has a bad header')
+if have != ngxp or loose or (want_pack and 'shaders/pack.bin' not in names):
+    sys.exit(f'package_vpk: the .vpk holds {have} packed shaders (expected {ngxp}), {loose} loose shader files (expected 0), pack.bin {"present" if "shaders/pack.bin" in names else "MISSING"}')
 print(f'{vpk}: "{got[0]}" ({got[2]}), {have} pre-compiled shaders{", pack.bin" if want_pack else ""}')
 EOF

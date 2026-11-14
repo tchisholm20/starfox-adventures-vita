@@ -1311,6 +1311,12 @@ void gameTextBuildSystemFontAtlas(void) {
         charset->glyphs = sDiscStatusGlyphs;
         charset->glyphCount = ARRAY_COUNT(sDiscStatusGlyphs);
         curLanguage = LANGUAGE_ENGLISH;
+#if defined(STAIRFAX_PORT)
+        {   /* Vita: the US disc's other European text sets, picked by ux0:data/stairfax/language.txt (gx_draw.c stfxBootLanguage) */
+            extern int stfxBootLanguage(void);
+            curLanguage = stfxBootLanguage();
+        }
+#endif
         charset->entries = sDiscStatusMessageTable;
         charset->entryCount = ARRAY_COUNT(sDiscStatusMessageTable);
 #else

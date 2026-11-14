@@ -64,6 +64,56 @@ FILE* stfxMarkerOpen(const char* name) {
 void stfxMarkerScan(void) {}
 FILE* stfxMarkerOpen(const char* name) { char path[96]; snprintf(path, sizeof path, "ux0:data/stairfax/%s", name); return fopen(path, "r"); }
 #endif
+
+/* BOOT LANGUAGE (2026-11-10). The US disc carries gametext/<dir>/{English,French,German,Italian,Spanish}.bin, each with its own glyphs, but the US
+ * build pins curLanguage to English (gametext.c, font init). ux0:data/stairfax/language.txt picks another: es / fr / de / it (or the full name, any
+ * case). Absent or unknown = English. Returns a LANGUAGE_* id (gametext_internal.h). Japanese is refused: it needs the SJIS ROM font path.
+ * Called once, on G, at the game's font init; NOT weak, so a build without it fails to link instead of silently staying English. */
+int stfxBootLanguageParse(const char* s) {
+    char w[4] = { 0, 0, 0, 0 };
+    int i = 0;
+    while (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n') ++s;
+    for (; i < 2 && s[i]; ++i) w[i] = (char)(s[i] >= 'A' && s[i] <= 'Z' ? s[i] + 32 : s[i]);
+    if (!strcmp(w, "es") || !strcmp(w, "sp")) return 5;   /* LANGUAGE_SPANISH */
+    if (!strcmp(w, "fr")) return 1;                        /* LANGUAGE_FRENCH  */
+    if (!strcmp(w, "de") || !strcmp(w, "ge")) return 2;   /* LANGUAGE_GERMAN  */
+    if (!strcmp(w, "it")) return 3;                        /* LANGUAGE_ITALIAN */
+    return 0;                                              /* LANGUAGE_ENGLISH */
+}
+int stfxBootLanguage(void) {
+    static const char* const names[6] = { "English", "French", "German", "Italian", "Japanese", "Spanish" };
+    char buf[32] = { 0 };
+    int lang = 0;
+    FILE* f = stfxMarkerOpen("language.txt");
+    if (f) {
+        if (fgets(buf, sizeof buf, f)) lang = stfxBootLanguageParse(buf);
+        fclose(f);
+    }
+    printf("[lang] boot language %d (%s)%s\n", lang, names[lang], f ? " from language.txt" : " (no language.txt)");
+    return lang;
+}
+/* THE LANGUAGE CHOSEN IN THE TITLE'S OPTIONS MENU (2026-11-13; dlls/engine/55 optionsMenu_applyMiscSetting). Written to language.txt for the next launch; on the console the write runs on
+ * its own short-lived thread (card I/O answers in 20-650 ms: never on the game thread). lang is a LANGUAGE_* id as stfxBootLanguage returns it. */
+static volatile int gStfxLangPending = -1;
+static void stfxLangWriteNow(int lang) {
+    static const char* const w[6] = { "en", "fr", "de", "it", "en", "es" };
+    FILE* f = fopen("ux0:data/stairfax/language.txt", "w");
+    if (f) { fputs(w[lang], f); fputc('\n', f); fclose(f); }
+    printf("[lang] options menu: language %d (%s) %s language.txt, applies at the next launch\n", lang, w[lang], f ? "written to" : "NOT written to");
+}
+#if defined(__vita__)
+#include <psp2/kernel/threadmgr.h>
+static int stfxLangThread(SceSize n, void* a) { (void)n; (void)a; const int l = gStfxLangPending; if (l >= 0) stfxLangWriteNow(l); return sceKernelExitDeleteThread(0); }
+#endif
+void stfxBootLanguageWrite(int lang) {
+    if (lang < 0 || lang > 5 || lang == 4) return;
+    gStfxLangPending = lang;
+#if defined(__vita__)
+    { const SceUID t = sceKernelCreateThread("stfx_lang", stfxLangThread, 0x10000100, 0x10000, 0, 0, NULL); if (t >= 0) sceKernelStartThread(t, 0, NULL); else printf("[lang] options menu: the writer thread could not be created (%08x)\n", (unsigned)t); }
+#else
+    stfxLangWriteNow(lang);
+#endif
+}
 /* R2: the statics GX state setters write now live in gx_hal (port/gx_hal_state.h, defined in gx_tev.c). The draw path keeps reading the old names through these macros; the
    setter bodies (gxh_b_*) use ONLY their `h` parameter (host/engine/gxh_lint.py enforces it). */
 #define gDesc        (gx_hal.desc)
@@ -897,7 +947,7 @@ extern GXColor gx_fogColorR; extern int gx_fog_private;
 #ifdef BREAK_29   /* host test break (gx_port_test BREAK_29): the pre-N1 behaviour, the draw reads the game's variable even when private */
 #define FOG_COLOR_SEL() (gFogColor)
 #else
-#define FOG_COLOR_SEL() (gx_fog_private ? gx_fogColorR : gFogColor)
+#define FOG_COLOR_SEL() (gx_fogColorR)   /* 2026-11-12: always the HAL's own copy; GXSetFog no longer stores the game's gFogColor in any mode (retail never did; see GXSetFog) */
 #endif
 unsigned gx_fog_drawn, gx_fog_nd_ortho, gx_fog_nd_notev, gx_fog_nd_off, gx_fog_nd_slots;   /* nd_slots: also counted in nd_ortho's bucket by the callers */
 static int fogWant(void) { int t = gFogType; return t == 2 || (t >= 4 && t <= 7) || (t >= 10 && t <= 15); }
@@ -1250,6 +1300,7 @@ typedef struct DlkRec {
     u32 nprimTri;                       /* R3a C4: primitives with at least one triangle (the GPU path counted them with a loop every call) */
     u32 wrSeq, wrEpoch, c8Dirty; u8 c9Slow;   /* R6 C8: the write-ring position (and epoch) at which this record's hashes last matched the bytes; the attribute bits an announced write has changed since then; R6 C9: a refresh changed more than POS / NRM, so every GPU slot's image is stale */
     u32 vatGen; u8 vatGenOk;            /* R3c C7: the VAT kind's generation at which the record's copy of the VAT last matched the live one (valid when vatGenOk) */
+    float bbC[3], bbE[3]; u8 bbOk;      /* OFF-SCREEN CULL (2026-11-13): centre / half-extent of r->pos (object space), valid while bbOk; cleared by every array refresh */
     void* gpuMesh; u32 nRefresh; u8 gpuNo, meshStale;   /* stage 2: the backend mesh (built on first GPU draw), array refreshes seen, 1 = stays on the CPU path, 1 = the mesh's vertices are older than the record's */
     const struct GxSkinTable* skinT;    /* R8 GPU skinning: the table gpuMesh's aSk was built for (NULL = an unskinned image).  Only dereferenced right after it is (re)assigned from the BOUND table; never compared */
     uint32_t skinId;                    /* ... and its id (0 = unskinned): the mesh is rebuilt when a draw wants another id (gx_skin_mesh_reusable_id).  R8-MF A2: ids are never reused, a table address can be */
@@ -1347,6 +1398,25 @@ int gStfxGpuArm;            /* ux0:data/stairfax/gx_gpu.txt starting with 1 = ON
 static int gPxOldGuess = -1;   /* pxChannelColour's chan_oldguess A/B, once it is known: the vertex program does not reproduce the old rule */
 static struct { unsigned calls, refused, dynamic, noMesh, backendNo, meshes, updates; unsigned long long meshBytes, updBytes, updUs, us, verts, tris;
                 unsigned long long vsUs, meshUs, stUs, drUs; } gDlkGpu;   /* hw_Rsplit (docs/54 2026-10-24): the GPU path split by stage (GXT_NOW: 0 when the timers are off) */
+/* OFF-SCREEN CULL (2026-11-13). Every display-list call costs R ~46 us on the console (ThornTail 517 calls = 24 ms, a LightFoot save 367 = 17 ms; rprof, build 277f8d55) whether or not one
+ * of its triangles reaches the screen: the GameCube clipped per triangle for nothing, the port pays validation + keys + uniforms + state + sceGxmDraw first. A record whose object-space box is
+ * wholly outside ONE of the four side planes of clip space (x, y against +-w, with the live projection and position matrix: the same numbers the vertex program gets) cannot produce a pixel
+ * inside the viewport; with the scissor inside the viewport (checked per call) that is every pixel it could draw. Such a call returns before the TEV key. Never judged: skinned records,
+ * records with per-vertex matrix indices, records whose arrays keep changing (nRefresh >= 2), a scissor that leaves the viewport. No near / far test (the z row carries the depth-range fold).
+ * ux0:data/stairfax/dl_cull.txt: absent or 1 = on | 0 = off (nothing computed) | 2 = census (judged and counted, everything drawn) | 3 = SELF-TEST: ONLY the calls judged off-screen are
+ * drawn -- a correct cull shows none of the display-list world; any piece of it on screen is a wrong verdict. */
+static struct { unsigned tested, culled, noScis; } gDlkCull;
+static float gVpRect[4] = { 0.0f, 0.0f, 640.0f, 480.0f };
+static u32 gScis[4];   /* (defined with GXSetScissor, below) */
+static int gDlkCullMode = -1;
+static int dlkCullMode(void) {
+    if (gDlkCullMode < 0) {
+        FILE* f = stfxMarkerOpen("dl_cull.txt"); int c = f ? fgetc(f) : '1'; if (f) fclose(f);
+        gDlkCullMode = (c >= '0' && c <= '3') ? c - '0' : 1;
+        printf("[cull] off-screen display-list cull: %s (dl_cull.txt)\n", gDlkCullMode == 1 ? "ON" : gDlkCullMode == 2 ? "census only" : gDlkCullMode == 3 ? "SELF-TEST (only the culled calls are drawn)" : "off");
+    }
+    return gDlkCullMode;
+}
 static unsigned long long gDlkPre;   /* hw_Rsplit: dlkCall from the record lookup's end to the GPU/CPU path (TEV key build, fog, texture checks) */
 enum { DLK_WHY_OVERRUN = 1, DLK_WHY_TOOBIG, DLK_WHY_SPAN, DLK_WHY_WALK, DLK_WHY_OOM };
 enum { DLK_NE_REALSKIN, DLK_NE_FORCE, DLK_NE_JOINT, DLK_NE_DECARM, DLK_NE_PERF, DLK_NE_NOTEV, DLK_NE_JOURNAL, DLK_NE_CENSUS,
@@ -2268,7 +2338,7 @@ static int dlkCall(const unsigned char* dl, u32 nbytes, const struct GxSkinTable
         }
         t1 = GXT_NOW(); gDlkVal[2] += t1 - tvB;   /* validate = key + list hash + array hash; decode = a refresh or a build only (runs 132-139 counted the array hash as decode) */
         if (ch) { dlkRefreshAny(r, ch); ++gDlk.refreshes; hit = 0;
-                  ++r->nRefresh; r->meshStale = 1; }   /* the mesh keeps its indices; its vertices are re-uploaded at the next GPU draw */
+                  ++r->nRefresh; r->meshStale = 1; r->bbOk = 0; }   /* the mesh keeps its indices; its vertices are re-uploaded at the next GPU draw */
 #endif
     } else if (!r) {
         t1 = GXT_NOW();
@@ -2312,6 +2382,39 @@ static int dlkCall(const unsigned char* dl, u32 nbytes, const struct GxSkinTable
         }
         gx_prims += nprim; gx_prim_verts += r->declaredSum;
         ++gDlk.calls; if (hit) ++gDlk.hits; gDlk.stripV += r->nstrip; gDlk.distV += nd; return 1;
+    }
+    // ---- OFF-SCREEN CULL (see gDlkCull) ----
+    {   const int cm = dlkCullMode();
+        if (cm) {
+            int out = 0;
+            if (!skinT && !r->skinT && !r->hasPnm && r->nRefresh < 2 && nd) {
+                if ((float)gScis[0] < gVpRect[0] - 0.5f || (float)gScis[1] < gVpRect[1] - 0.5f || (float)(gScis[0] + gScis[2]) > gVpRect[0] + gVpRect[2] + 0.5f
+                    || (float)(gScis[1] + gScis[3]) > gVpRect[1] + gVpRect[3] + 0.5f || !(gVpRect[2] > 0.0f) || !(gVpRect[3] > 0.0f)) ++gDlkCull.noScis;
+                else {
+                    if (!r->bbOk) {
+                        float lo[3] = { r->pos[0], r->pos[1], r->pos[2] }, hi[3] = { r->pos[0], r->pos[1], r->pos[2] };
+                        for (u32 d = 1; d < nd; ++d) for (int q = 0; q < 3; ++q) { const float v = r->pos[3 * d + q]; if (v < lo[q]) lo[q] = v; if (v > hi[q]) hi[q] = v; }
+                        for (int q = 0; q < 3; ++q) { r->bbC[q] = 0.5f * (lo[q] + hi[q]); r->bbE[q] = 0.5f * (hi[q] - lo[q]) * 1.01f + 1e-3f; }
+                        r->bbOk = 1;
+                    }
+                    ++gDlkCull.tested;
+                    const float (*M)[4] = gPosMtx[gCurMtx];
+                    for (int sd = 0; sd < 4 && !out; ++sd) {   /* w + x, w - x, w + y, w - y >= 0 inside; the plane in object space is (row 3 +- row ax of the projection) x the position matrix */
+                        const int ax = sd >> 1; const float sg = (sd & 1) ? -1.0f : 1.0f;
+                        const float c0 = gProj[3][0] + sg * gProj[ax][0], c1 = gProj[3][1] + sg * gProj[ax][1], c2 = gProj[3][2] + sg * gProj[ax][2], c3 = gProj[3][3] + sg * gProj[ax][3];
+                        const float n0 = c0 * M[0][0] + c1 * M[1][0] + c2 * M[2][0], n1 = c0 * M[0][1] + c1 * M[1][1] + c2 * M[2][1], n2 = c0 * M[0][2] + c1 * M[1][2] + c2 * M[2][2];
+                        const float dd = c0 * M[0][3] + c1 * M[1][3] + c2 * M[2][3] + c3;
+                        const float ctr = n0 * r->bbC[0] + n1 * r->bbC[1] + n2 * r->bbC[2] + dd, ext = fabsf(n0) * r->bbE[0] + fabsf(n1) * r->bbE[1] + fabsf(n2) * r->bbE[2];
+                        if (ctr + ext < -1e-4f * (fabsf(ctr) + ext)) out = 1;   /* the box's nearest corner is still outside (a NaN compares false: not culled) */
+                    }
+                    if (out) ++gDlkCull.culled;
+                }
+            }
+            if ((cm == 1 && out) || (cm == 3 && !out)) {
+                gx_prims += nprim; gx_prim_verts += r->declaredSum;
+                ++gDlk.calls; if (hit) ++gDlk.hits; gDlk.stripV += r->nstrip; gDlk.distV += nd; return 1;
+            }
+        }
     }
     // ---- the TEV key, fog and textures ONCE (drawTev's front half); any refusal -> today's loop counts it itself ----
     TevKey k; TevUniforms u; u8 sc[TEVK_TEX], sm[TEVK_TEX];
@@ -2532,6 +2635,7 @@ void gx_win_times(unsigned long long out[8]) {   /* vita_tool_main.c's [win] lin
 }
 void gx_dlk_report(void) {   /* the [dlk] lines (vt_game.c's status block, after gx_dlc_report) */
     if (!gDlkInit) return;
+    printf("[cull] mode %d | calls judged %u culled %u | not judged: scissor outside the viewport %u (cumulative)\n", gDlkCullMode, gDlkCull.tested, gDlkCull.culled, gDlkCull.noScis);
     unsigned fb = 0; for (int q = 0; q < DLK_NFB; ++q) fb += gDlk.fb[q];
     printf("[dlk] cache %s | calls taken %u (hits %u) | builds %u (new %u, rebuilt %u) refreshes %u | records %u, %llu bytes, evictions %u\n",
            gStfxDlCacheArm ? "ON" : "OFF", gDlk.calls, gDlk.hits, gDlk.builds, gDlk.misses, gDlk.rebuilds, gDlk.refreshes, gDlk.recs, gDlk.bytes, gDlk.evictions);
@@ -2757,7 +2861,7 @@ void GXSetScissor(u32 left, u32 top, u32 wd, u32 ht) {
 // 24). Run 116: a PERSPECTIVE fog type is now DRAWN on TEV-program draws under a perspective projection
 // (drawTev above); orthographic types and the fixed-function draws are not, and are counted ([fog] line).
 // type: 0 none, 2 linear, 4 exp, 5 exp2, 6 rev exp, 7 rev exp2 (+8: orthographic).
-int gFogType; float gFogStart, gFogEnd, gFogNear, gFogFar; GXColor gFogColor;
+int gFogType; float gFogStart, gFogEnd, gFogNear, gFogFar;   /* 2026-11-12: gFogColor is the GAME's (track/intersect.c); the HAL no longer defines or writes it */
 GXColor gx_fogColorR; int gx_fog_private;   /* N1 */
 unsigned gx_fog_sets, gx_fog_distinct;
 void GXSetFog(int type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color) {
@@ -2769,7 +2873,8 @@ void GXSetFog(int type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color
 #ifdef BREAK_30   /* host test break (gx_port_test BREAK_30): GXSetFog never stores the game's variable, even in direct mode */
     gx_fogColorR = color;
 #else
-    gx_fogColorR = color; if (!gx_fog_private) gFogColor = color;   /* N1: threaded R must not write the game's variable */
+    gx_fogColorR = color;   /* 2026-11-12: NEVER the game's gFogColor (track/intersect.c), in DIRECT mode either. The shadow receivers set a BLACK fog for their own draws; stored into the
+                               game's variable, it became the level's fog colour for the rest of the frame (LightFoot Village: the far water went black with character shadows on). */
 #endif
     if (++gx_fog_distinct <= 24 || !(gx_fog_distinct & 1023))
         printf("[fog] request %u (set %u): type %d start %.1f end %.1f near %.2f far %.1f colour %02x%02x%02x -- %s\n",
@@ -3417,6 +3522,7 @@ void GXSetViewport(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz) {
     ++gx_viewport_sets;
     if (nearz != 0.0f || farz != 1.0f) ++gx_viewport_depth_ignored;   /* (name kept for the status log: now = non-default ranges seen) */
     gVpZn = nearz; gVpZf = farz;
+    gVpRect[0] = left; gVpRect[1] = top; gVpRect[2] = wd; gVpRect[3] = ht;   /* the off-screen cull's scissor-inside-viewport check */
     if (rhi_vita_setViewport) rhi_vita_setViewport(left, top, wd, ht);
 }
 void GXSetViewportJitter(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz, u32 field) {
@@ -3671,6 +3777,16 @@ static void gxCopyTexImpl(void* dest, u8 clear) {
                 printf("[shp-copy] fmt %02x src %d,%d %dx%d -> %ux%u dest %p clear %u done %d peek %d %dx%d | red nonzero %u max %u bits0..7 %u %u %u %u %u %u %u %u\n",
                        (unsigned)gCopyDstFmt, gCopySrc[0], gCopySrc[1], gCopySrc[2], gCopySrc[3], (unsigned)gCopyDstW, (unsigned)gCopyDstH, dest, (unsigned)clear, done, r, w, h,
                        nz, mx, bit[0], bit[1], bit[2], bit[3], bit[4], bit[5], bit[6], bit[7]);
+                if (r == 1 && px && gCopyDstFmt == 0x28) {   /* 2026-11-11: the R8 cast texture itself, ux0:data/stairfax_cast_<n>.pgm (n = dumps so far; probe frames only, at most 8) */
+                    static int sCastDumps; char nm[64];
+                    if (sCastDumps < 16) {
+                        snprintf(nm, sizeof nm, "ux0:data/stairfax_cast_%d.pgm", sCastDumps++);
+                        FILE* cf = fopen(nm, "wb");
+                        if (cf) { fprintf(cf, "P5\n%d %d\n255\n", w, h);
+                                  for (int y = 0; y < h; ++y) for (int x = 0; x < w; ++x) fputc(px[(size_t)y * stride + (size_t)x * 4], cf);
+                                  fclose(cf); printf("[shp-copy] cast texture written to %s (%dx%d)\n", nm, w, h); }
+                    }
+                }
             }
         }
         else if (mode == 2) done = copyReal(dest);           // today's behaviour: CPU readback
@@ -3772,7 +3888,8 @@ unsigned gx_blend_sets, gx_blend_distinct;
 static u32 gBlendSeen[64];
 GXH_INLINE void gxh_b_GXSetBlendMode(GxHal* h, const int mark, int type, int src, int dst, int op) {
     RT_COUNT(RT_S_SETTERS);   /* Task 3: count only */
-    h->px.blendType = (u8)type; h->px.blendSrc = (u8)src; h->px.blendDst = (u8)dst; h->px.pxActive = 1;
+    h->px.blendType = (u8)((type == 2 /*GX_BM_LOGIC*/ && op == 7 /*GX_LO_OR*/) ? 4 : type);   /* 4 = LOGIC with OR: the only logic op the game uses (the shadow cast pass); see pxAlphaMode */
+    h->px.blendSrc = (u8)src; h->px.blendDst = (u8)dst; h->px.pxActive = 1;
     GXH_MARK(h, mark, GXH_G_PIX);
     ++gx_blend_sets;
     u32 key = ((u32)(type & 0xf) << 12) | ((u32)(src & 0xf) << 8) | ((u32)(dst & 0xf) << 4) | (u32)(op & 0xf), i;
@@ -3922,6 +4039,21 @@ static int pxAlphaMode(void) {
         if (sOld || !rhi_vita_drawTev) return cls;   // only the Vita backend reads the upper bits (the host viewers switch on the class)
         if (gBlendType == 3) return cls | 0x100 | 0x200 | (1 << 12) | (1 << 16);   // GX subtract ignores the factors: dst - src
         return cls | 0x100 | ((gBlendSrc & 7) << 12) | ((gBlendDst & 7) << 16);
+    }
+    if (gBlendType == 4) {   /* THE OR PLANE (2026-11-11). GX_BM_LOGIC / GX_LO_OR was drawn OPAQUE: an overwrite. The shadow cast pass (objprint_dolphin.c) draws every R8 caster as ONE bit of
+        red (TEVREG2 = 1 << mode, gShadowCastModeTable) into the same 256x256 EFB region, each centred on its own object, and relies on the OR to keep them apart; overwritten, a later
+        caster's silhouette cut its shape out of every earlier one (Fox's shadow lost whatever Tricky's covered: nothing at noon, a head-shaped blob away from his feet in the evening).
+        The backend adds the bit under a stencil guard (vita/src/rhi_gxm_int.h GXM_AM_OR). Only the game's own case is handled: a constant colour with exactly one red bit and no green
+        or blue; anything else stays opaque as before. ux0:data/stairfax/cast_or.txt starting with 0 = the old overwrite (A/B). */
+        extern int g_gxm_or_ok __attribute__((weak));   /* vita/src/rhi_gxm_draw.c: absent on the host and on the vitaGL path */
+        static int sOrOff = -1;
+        if (sOrOff < 0) { FILE* f = stfxMarkerOpen("cast_or.txt"); int c = f ? fgetc(f) : 0; if (f) fclose(f); sOrOff = c == 48;
+                          printf("[blend] logic OR (shadow cast planes): %s\n", sOrOff ? "OFF (cast_or.txt 0: drawn opaque, the old behaviour)" : (&g_gxm_or_ok && g_gxm_or_ok) ? "ON (stencil-guarded add)" : "not supported by this backend (drawn opaque)"); }
+        const GXColor c2 = gx_hal.tevReg[3 /*GX_TEVREG2*/];
+        if (!sOrOff && &g_gxm_or_ok && g_gxm_or_ok && c2.r && !(c2.r & (c2.r - 1)) && !c2.g && !c2.b) {
+            int plane = 0; while (!(c2.r & (1u << plane))) ++plane;
+            return RHI_ALPHA_ADD | 0x100 | (1 << 12) | (1 << 16) | 0x100000 /*GXM_AM_OR*/ | (plane << 21);
+        }
     }
     int passAll0 = gAcComp0 == 7 /*ALWAYS*/, passAll1 = gAcComp1 == 7;
     int discards = gAcOp == 1 /*OR*/ ? !(passAll0 || passAll1) : !(passAll0 && passAll1);

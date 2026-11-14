@@ -318,6 +318,7 @@ static void tev_fill_uniforms(const TevKey* k, TevUniforms* u, int acRef0, int a
     for (int r = 0; r < 4; ++r) { u->konst[r][0] = gx_tev_kreg[r].r; u->konst[r][1] = gx_tev_kreg[r].g;
                                   u->konst[r][2] = gx_tev_kreg[r].b; u->konst[r][3] = gx_tev_kreg[r].a; }
     u->acRef0 = (uint8_t)acRef0; u->acRef1 = (uint8_t)acRef1;
+    tev_fill_kfrac(k, u->kfrac);   /* konst-uniform form (gx_tev_key.h): the fraction codes uKF<s> reads; zero for stages that read no fraction */
     if (k->ik.on) { memcpy(u->indM, gIndMtx, sizeof u->indM); memcpy(u->indE, gIndE, sizeof u->indE); }   // the effective matrices (tev_gen declares only the ones the key uses)
 }
 static uint32_t gCmpKeys[64]; static int gCmpKeysN;

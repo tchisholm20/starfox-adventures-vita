@@ -485,6 +485,28 @@ static void trace_line(uint32_t seq, int thr)
            &gStfxGxDlCalls ? gStfxGxDlCalls : 0u, &gx_imm_prims ? gx_imm_prims : 0u, &gx_tex_loads ? gx_tex_loads : 0u, draws, thr);
 }
 
+/* THE PRESENT PACER (gx_pace.h). Set by rhi_gxm_frame.c when the 30 fps cap is on (g_pace.txt: "0" off, "ab N" alternate windows of N presents).
+ * The hold is booked as a present wait, so the frame log's G time (wall minus G's waits) stays G's WORK. */
+#include "gx_pace.h"
+static uint32_t s_pace_us, s_pace_ab, s_pace_last, s_pace_have, s_pace_holds, s_pace_hold_us, s_pace_frames;
+void gxt_set_pace(uint32_t period_us, uint32_t ab_n) { s_pace_us = period_us; s_pace_ab = ab_n; s_pace_have = 0; }
+static void gxt_pace(uint32_t seq)
+{
+    GxtShared *g = &g_gxt;
+    const int on = s_pace_us && gxt_pace_ab_on(seq, s_pace_ab);
+    if (!s_pace_us) return;
+    if (on && s_pace_have) {
+        const uint32_t hold = gxt_pace_hold_us(gxtp_now_us(), s_pace_last, s_pace_us);
+        if (hold) { gxtp_delay_us(hold); ++s_pace_holds; s_pace_hold_us += hold; g->st.present_wait_us += hold; }
+    }
+    s_pace_last = gxtp_now_us(); s_pace_have = 1;
+    if (++s_pace_frames == 600u) {
+        printf("[pace] presents ..%u: pacer %s (period %u us%s) | held %u of 600 returns, %.2f ms/frame\n", seq, gxt_pace_ab_on(seq - 1u, s_pace_ab) ? "ON" : "OFF", s_pace_us,
+               s_pace_ab ? ", A/B windows" : "", s_pace_holds, s_pace_hold_us / 1000.0 / 600.0);
+        s_pace_frames = s_pace_holds = s_pace_hold_us = 0;
+    }
+}
+
 int gxt_present(struct RhiInstance *rhi, struct RhiSwapchain *sc)
 {
     GxtShared *g = &g_gxt;
@@ -508,6 +530,7 @@ int gxt_present(struct RhiInstance *rhi, struct RhiSwapchain *sc)
     {   const uint32_t occ = g->head - GXT_LOAD_ACQ(&g->tail); if (occ > s.occ_hw) s.occ_hw = occ; }
     gxt_publish();
     wait_ge(&g->r_presented, seq - (uint32_t) g->ahead, "present", W_PRESENT, 1);
+    gxt_pace(seq);
     return 1;
 }
 
@@ -893,7 +916,7 @@ static const struct { const char *w; uint32_t bit; } k_brk[] = {
     { "scribble", GXT_BRK_SCRIBBLE }, { "jump2", GXT_BRK_JUMP2 }, { "nostep", GXT_BRK_NOSTEP }, { "rdelay", GXT_BRK_RDELAY }, { "rstall", GXT_BRK_RSTALL },
     { "dropsig", GXT_BRK_DROPSIG }, { "bp_early", GXT_BRK_BP_EARLY }, { "snapoff", GXT_BRK_SNAPOFF }, { "ahead2", GXT_BRK_AHEAD2 },
     { "dropdraw", GXT_BRK_DROPDRAW }, { "noflush", GXT_BRK_NOFLUSH }, { "moviesnap", GXT_BRK_MOVIESNAP }, { "mipsnap", GXT_BRK_MIPSNAP },
-    { "fogshared", GXT_BRK_FOGSHARED }, { "nofogmirror", GXT_BRK_NOFOGMIRROR }, { "memhog", GXT_BRK_MEMHOG }, { "snapnrm", GXT_BRK_SNAPNRM }, { "snapall", GXT_BRK_SNAPALL },
+    { "fogshared", GXT_BRK_FOGSHARED }, { "fogmirror", GXT_BRK_NOFOGMIRROR }, { "memhog", GXT_BRK_MEMHOG }, { "snapnrm", GXT_BRK_SNAPNRM }, { "snapall", GXT_BRK_SNAPALL },
 };
 
 static int parse_core(const char *b, int n)

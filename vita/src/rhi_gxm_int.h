@@ -58,7 +58,7 @@ extern "C" {
 #define GXM_DISP_BUFS 3
 #define GXM_ALIGN(x, a) (((x) + ((a) - 1)) & ~((a) - 1))
 #define GXM_UB_MAX 56                 /* uniform parameters bound per stage (c2floor UB_MAX) */
-#define GXM_PROG_MAX 1536             /* GxmProg alive at once (TEV + GX + builtin + util); a full table refuses with GXM_SK_PROGFULL */
+#define GXM_PROG_MAX 3072             /* GxmProg alive at once (TEV + GX + builtin + util); a full table refuses with GXM_SK_PROGFULL */
 #define GXM_M_RT_SCENES 8             /* "GXM's maximum" scenesPerFrame of an M render target (rhi_vita_efb.inc:366-378) */
 #define GXM_M_RT_N 2                  /* M render targets used in rotation: 16 scenes per frame before rt_overflow counts (ch.2 has 11) */
 #define GXM_COPY_RT_SCENES 2          /* scenesPerFrame of a copy texture's render target (vitaGL made it 1) */
@@ -158,6 +158,10 @@ static inline void gxm_c6_hook_tex(const SceGxmTexture *t) { if (g_gxm_c6_pendin
 #define sceGxmSetBackDepthWriteEnable(...)             (gxm_c6_hook(), sceGxmSetBackDepthWriteEnable(__VA_ARGS__))
 #define sceGxmSetFrontDepthBias(...)                   (gxm_c6_hook(), sceGxmSetFrontDepthBias(__VA_ARGS__))
 #define sceGxmSetBackDepthBias(...)                    (gxm_c6_hook(), sceGxmSetBackDepthBias(__VA_ARGS__))
+#define sceGxmSetFrontStencilFunc(...)                 (gxm_c6_hook(), sceGxmSetFrontStencilFunc(__VA_ARGS__))
+#define sceGxmSetBackStencilFunc(...)                  (gxm_c6_hook(), sceGxmSetBackStencilFunc(__VA_ARGS__))
+#define sceGxmSetFrontStencilRef(...)                  (gxm_c6_hook(), sceGxmSetFrontStencilRef(__VA_ARGS__))
+#define sceGxmSetBackStencilRef(...)                   (gxm_c6_hook(), sceGxmSetBackStencilRef(__VA_ARGS__))
 #define sceGxmBeginScene(...)                          (gxm_c6_hook(), sceGxmBeginScene(__VA_ARGS__))
 #define sceGxmEndScene(...)                            (gxm_c6_hook(), sceGxmEndScene(__VA_ARGS__))
 #define sceGxmFinish(...)                              (gxm_c6_hook(), sceGxmFinish(__VA_ARGS__))
@@ -246,7 +250,7 @@ enum { GXM_BI_COLORED = 0,    /* drawColored: colour = vertex colour (numTex 0) 
        GXM_BI_TEXTURED_ATEST, /* the same with a discarding alpha compare a >= 128 (RHI_ALPHA_TEST) */
        GXM_BI_N };
 /* uniform kinds (c2floor classify()): found by NAME in the GXP; a name that is not here is counted as unmapped, never a failure */
-enum { GU_NONE = 0, GU_M, GU_POS, GU_NRM, GU_TMX, GU_MAT, GU_AMB, GU_LT, GU_TM, GU_PT, GU_R, GU_K, GU_AREF, GU_FOG, GU_FOGC, GU_IMA, GU_IMB, GU_TS, GU_BONE };
+enum { GU_NONE = 0, GU_M, GU_POS, GU_NRM, GU_TMX, GU_MAT, GU_AMB, GU_LT, GU_TM, GU_PT, GU_R, GU_K, GU_AREF, GU_FOG, GU_FOGC, GU_IMA, GU_IMB, GU_TS, GU_BONE, GU_KF };   /* GU_KF: uKF<s>, the konst-uniform form's per-stage fraction codes (TevUniforms.kfrac) */
 typedef struct GxmUBind { const SceGxmProgramParameter *p; uint8_t kind, idx; uint16_t maxc; uint16_t off; } GxmUBind;   /* maxc: array size * component count - never write more floats. off (R3a C1): the parameter's resource index = its offset in 32-bit words in the default uniform buffer, resolved ONCE at program creation */
 typedef struct GxmAttr { const char *name; uint16_t off; uint8_t fmt; uint8_t comps; } GxmAttr;              /* fmt: SCE_GXM_ATTRIBUTE_FORMAT_*; the GXP's regIndex is found by name */
 
@@ -288,6 +292,16 @@ SceGxmFragmentProgram *gxm_shader_fp(GxmProg *p, uint32_t alphaMode);           
  * cannot change a pixel). Used by the target module with the util clear program. */
 SceGxmFragmentProgram *gxm_shader_fp_nowrite(GxmProg *p);
 /* blend identity: 0 for OPAQUE/TEST, else the bits that change the blend (c2floor blend_key) */
+/* THE OR PLANE (2026-11-11, the shadow cast pass). GX_BM_LOGIC / GX_LO_OR has no GXM equivalent. The game uses it for one thing: every R8 shadow caster draws its silhouette as ONE
+ * bit of red (newshadows.c gShadowCastModeTable, objprint_dolphin.c) into the SAME EFB region, so overlapping silhouettes must OR. The hal marks such a draw GXM_AM_OR with the bit index in
+ * GXM_AM_OR_PLANE and asks for ADD ONE/ONE; the draw module guards the add with the STENCIL bit of the same index (pass while the bit is clear, set it on pass), so a pixel receives each
+ * plane at most once: an exact OR of single-bit planes. The target module zeroes the stencil wherever it clears depth. Neither field is in the blend key. */
+extern int g_gxm_sten_ctx, g_gxm_or_ever; extern unsigned g_gxm_or_frame;   /* rhi_gxm_target.c: see there */
+#define GXM_OR_LIVE() (g_gxm_or_ever && (unsigned) (g_gx.frames - g_gxm_or_frame) <= 2u)
+extern unsigned g_gxm_stencil_gen;   /* rhi_gxm_target.c: bumped whenever the stencil guard of an OR plane may be gone (a depth-clearing quad, a new scene) */
+void gxm_target_or_guard(unsigned bit, const int clip[4]);   /* rhi_gxm_target.c: the exact scissor of an OR plane (see there) */
+#define GXM_AM_OR            0x100000u
+#define GXM_AM_OR_PLANE(am)  (((am) >> 21) & 7u)
 static inline uint32_t gxm_blend_key(uint32_t am) { const uint32_t m = am & 0xffu; return (m == RHI_ALPHA_BLEND || m == RHI_ALPHA_ADD) ? (am & 0x773ffu) : 0u; }
 /* housekeeping the game's wrapper calls (M1 entry points, now owned by shader) */
 void rhi_gxm_asc_tick(void);

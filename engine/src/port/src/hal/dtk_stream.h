@@ -81,6 +81,8 @@ extern uint8_t dtk_host_flog[1u << 21]; extern unsigned dtk_host_flog_n;   /* wh
 void dtk_host_swap(int on);                 /* what dtk_swap.txt does */
 void dtk_host_realtime(int on);             /* what dtk_realtime.txt does */
 unsigned dtk_host_ring_bytes(void);
+unsigned dtk_host_ring_size(void);          /* DTK_RING: the read-ahead */
+unsigned dtk_host_chunk_size(void);         /* DTK_CHUNK: bytes per read */
 void dtk_host_resample(const int16_t* in48, unsigned in_frames, int16_t* out32, unsigned out_frames);  /* the resampler alone */
 #endif
 

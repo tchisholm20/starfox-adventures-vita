@@ -523,7 +523,9 @@ void objDrawShadowCasterMesh(Vec3f* vertices,ObjModelState* modelState, GameObje
         extern int gStfxAb __attribute__((weak));
         if (&gStfxAb && gStfxAb == 152) return;
     }
-    {   /* CHARACTER SHADOWS OFF (v0.1.2, 2026-11-04): the channel receiver (Fox mode 7, Tricky 5/6) draws long and offset in evening light and not at all
+    {   /* 2026-11-11: gStfxCharShadow is ON by default again (char_shadow.txt "0" = off). The defect described below was the CAST pass, not this receiver: GX_LO_OR drawn as an
+           overwrite let one caster's silhouette erase another's bit in the shared R8 texture (hal/gx_draw.c pxAlphaMode "THE OR PLANE"). The switch is kept for the A/B. */
+        /* CHARACTER SHADOWS OFF (v0.1.2, 2026-11-04): the channel receiver (Fox mode 7, Tricky 5/6) draws long and offset in evening light and not at all
            in daylight (known issue). Skip it unless ux0:data/stairfax/char_shadow.txt is "1" (vita_tool_main.c vt_char_shadow).
            Keyed on the CAST SLOT (an R8 channel slot: not the disk, mode != 0xff). RC4 bf151a62 also tested "resource == UNCACHED"; Tyler still saw a shadow
            under Fox on hw (2026-11-04, VFP) -- which path drew it is NOT yet known (shadowInit makes Fox UNCACHED, so not the cached branch; candidates: the
@@ -685,6 +687,32 @@ void objDrawShadowCasterMesh(Vec3f* vertices,ObjModelState* modelState, GameObje
         }
     } else {
         int triangleIndex;
+#if defined(__vita__)
+        {   /* SHADOW PROBE 2026-11-11: where the receiver vertices land in the cast texture (u, v) and on the depth-fade ramp (s), computed here the way GX_TG_MTX2x4 does */
+            extern int gx_shadow_probe __attribute__((weak));
+            extern f32 gStfxShpT0[3][4], gStfxShpT1[3][4], gStfxShpF31, gStfxShpScale; extern int gStfxShpValid;
+            if (&gx_shadow_probe && gx_shadow_probe && gStfxShpValid && modelState->shadowCastSlot->mode != 0xff) {
+                extern int printf(const char*, ...);
+                f32 lo[3] = {1e30f, 1e30f, 1e30f}, hi[3] = {-1e30f, -1e30f, -1e30f}; int i, c, in01 = 0, sneg = 0, s01 = 0, sgt = 0;
+                for (i = 0; i < triangleCount * 3; i++) {
+                    const f32 x = vertices[i].x, y = vertices[i].y, z = vertices[i].z; f32 t[3];
+                    t[0] = gStfxShpT0[0][0] * x + gStfxShpT0[0][1] * y + gStfxShpT0[0][2] * z + gStfxShpT0[0][3];
+                    t[1] = gStfxShpT0[1][0] * x + gStfxShpT0[1][1] * y + gStfxShpT0[1][2] * z + gStfxShpT0[1][3];
+                    t[2] = gStfxShpT1[0][0] * x + gStfxShpT1[0][1] * y + gStfxShpT1[0][2] * z + gStfxShpT1[0][3];
+                    for (c = 0; c < 3; c++) { if (t[c] < lo[c]) lo[c] = t[c]; if (t[c] > hi[c]) hi[c] = t[c]; }
+                    if (t[0] >= 0.0f && t[0] <= 1.0f && t[1] >= 0.0f && t[1] <= 1.0f) in01++;
+                    if (t[2] < 0.0f) sneg++; else if (t[2] <= 1.0f) s01++; else sgt++;
+                }
+                printf("[shp-uv] obj %p mode %u verts %d | u %.3f..%.3f v %.3f..%.3f (in [0,1]: %d) | ramp s %.3f..%.3f (s<0 %d, 0..1 %d, >1 %d) | f31 %.3f scale %.3f | T0 %.5f %.5f %.5f %.5f / %.5f %.5f %.5f %.5f | T1 %.5f %.5f %.5f %.5f | shadowOffset %.3f %.3f %.3f\n",
+                       (void*)obj, (unsigned)modelState->shadowCastSlot->mode, triangleCount * 3, (double)lo[0], (double)hi[0], (double)lo[1], (double)hi[1], in01, (double)lo[2], (double)hi[2], sneg, s01, sgt,
+                       (double)gStfxShpF31, (double)gStfxShpScale, (double)gStfxShpT0[0][0], (double)gStfxShpT0[0][1], (double)gStfxShpT0[0][2], (double)gStfxShpT0[0][3],
+                       (double)gStfxShpT0[1][0], (double)gStfxShpT0[1][1], (double)gStfxShpT0[1][2], (double)gStfxShpT0[1][3],
+                       (double)gStfxShpT1[0][0], (double)gStfxShpT1[0][1], (double)gStfxShpT1[0][2], (double)gStfxShpT1[0][3],
+                       (double)modelState->shadowOffsetX, (double)modelState->shadowOffsetY, (double)modelState->shadowOffsetZ);
+            }
+            gStfxShpValid = 0;
+        }
+#endif
         GXBegin(GX_TRIANGLES, GX_VTXFMT2, (triangleCount * 3) & 0xffff);
         streamIndex = 0;
         for (triangleIndex = 0; triangleIndex < triangleCount; triangleIndex++) {

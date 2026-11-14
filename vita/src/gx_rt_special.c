@@ -1058,7 +1058,10 @@ void gxts_G_GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, 
     p[0] = (uint32_t)type; p[1] = f2u(startz); p[2] = f2u(endz); p[3] = f2u(nearz); p[4] = f2u(farz);
     memcpy(&p[5], &color, sizeof color);
 #ifndef GXTS_BREAK_NO_FOGMIRROR
-    if (&gFogColor && !BRK(GXT_BRK_NOFOGMIRROR)) { gFogColor = color; ++s_c.fog_mirrored; }
+    /* 2026-11-12: NO MIRROR. Retail's GXSetFog never writes the game's gFogColor; the mirror copied DIRECT's name-collision bug. With character shadows on it broke the level fog (hw,
+       LightFoot Village from a player's save): the shadow receivers call GXSetFog(..., BLACK) (intersect_render.c:2756 / 2948), the mirror left the game's colour black, and everything
+       drawn after the shadows in that frame (the far water) was fogged to black. ux0:data/stairfax/gx_thread_break.txt "fogmirror" = the old mirror (A/B). */
+    if (&gFogColor && BRK(GXT_BRK_NOFOGMIRROR)) { gFogColor = color; ++s_c.fog_mirrored; }
 #endif
 }
 void gxts_R_GXSetFog(const uint32_t *p, uint32_t nw)

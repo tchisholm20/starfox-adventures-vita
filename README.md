@@ -36,12 +36,17 @@ unreadable, a different game, or a different version of this one.
 3. Launch the game.
 
 The first launch writes the game's settings files to `ux0:data/stairfax/`. The download
-includes 2028 pre-compiled shaders inside the vpk.
+includes 3751 pre-compiled shaders inside the vpk.
 
 ## What to expect
 
+- Widescreen is on by default: the picture is drawn in 16:9 for the Vita's screen instead of
+  a stretched 4:3 image. Title screen > Options turns it off.
+- English, French, German, Italian and Spanish text, chosen in title screen > Options. The
+  choice applies the next time the game is started. Voices are English, as in the original
+  game.
 - Renders at 640x368, upscaled to the screen, capped at 30 fps. Most areas hold a steady
-  30; ThornTail Hollow and SnowHorn Wastes can dip below it. To run uncapped, delete
+  30; some dip below it, ThornTail Hollow the most. To run uncapped, delete
   `ux0:data/stairfax/frame_cap.txt` after the first launch.
 - The game sets the Vita to its highest standard clock speeds (CPU 444 MHz, GPU 222 MHz).
 - **It's meant to be played overclocked.** The video was recorded with the CPU at 500 MHz
@@ -53,10 +58,10 @@ includes 2028 pre-compiled shaders inside the vpk.
 
 - The first visit to an area whose shaders are not included can show missing or dark objects
   for a minute or two while they compile.
-- ThornTail Hollow and SnowHorn Wastes run below 30 fps in places.
-- Fox's and Tricky's shadows are turned off for now: they were drawn too long and offset in
-  evening light, and not at all in daylight. To try them anyway, put a file
-  `ux0:data/stairfax/char_shadow.txt` containing `1`.
+- Some areas run below 30 fps, ThornTail Hollow the most. Widescreen shows more of the
+  world, so the heaviest areas run a little slower with it on.
+- The game takes about a second longer to start: it loads its shader file into memory so
+  that shaders appear at once in play.
 - Short pauses when loading a new area or starting some cutscenes; the opening cutscene
   stutters for its first few seconds.
 - The boot logos are not shown yet.
@@ -78,7 +83,7 @@ backend that turns those GX calls into GXM, the Vita's own graphics API.
 
 - **Shaders.** The GameCube colours pixels with a configurable fixed-function unit called
   TEV. The backend writes a shader for each TEV setup the game uses, compiles it on the Vita
-  and saves it to the memory card. The release includes 2028 already-compiled shaders.
+  and saves it to the memory card. The release includes 3751 already-compiled shaders.
 - **Two threads.** The game's main loop runs on one CPU core and a separate render thread on
   another core sends the drawing work to the GPU, so the two overlap.
 - **Models.** GameCube models are stored as display lists. Each one is converted to Vita

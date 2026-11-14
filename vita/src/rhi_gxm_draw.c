@@ -232,6 +232,8 @@ typedef struct DrawState {
     int sc[4];                                           /* GL rect, same */
     int clip[4]; int sc_empty;                           /* region clip, top-origin inclusive, already intersected with M */
     int zb_on, zb_f, zb_u;
+    int org_orp, org_clip[4]; unsigned org_gen;   /* the OR plane's scissor guard last drawn: plane, clip rect, stencil generation (gxm_target_or_guard) */
+    int cur_orp;             /* THE OR PLANE (2026-11-11, rhi_gxm_int.h GXM_AM_OR): the stencil guard the context holds: 0 = off, 1 + plane, -1 = unknown (re-set at the next draw) */
     int cur_cull;            /* GX cull (2026-10-31): the SceGxmCullMode the context holds, -1 = unknown (re-set at the next draw) */
     int zb_faces, sh_cull;   /* shadow receivers (2026-10-27 dotted-shadow A/B): shadow_zbias_faces.txt 2 = bias BACK faces too; shadow_cull.txt 1 = CW, 2 = CCW */
     int sh_cycle, sh_last;   /* shadow_cull.txt "cycle N" (2026-11-01, blob A/B in one boot): sh_cull steps CCW, CW, none every N frames (sh_cull_now) */
@@ -365,6 +367,7 @@ static void apply_depth(const GxmDepthRes *r)
 }
 /* GXM_SCENE_STATE_END */
 
+int g_gxm_or_ok = 1; unsigned g_gxm_or_draws, g_gxm_or_guard_logs;   /* THE OR PLANE (2026-11-11): this backend honours GXM_AM_OR (the hal asks before sending it: weak); draws issued with it */
 int g_gxm_cull_off; unsigned g_gxm_cull_sets;   /* GX cull (2026-10-31): cull_off.txt 1 = never cull (the old port); sets = SetCullMode calls */
 static void zbias_load(void)
 {
@@ -590,6 +593,7 @@ static int fill_fub(const GxmProg *p, const Draw *d, void *fub)
         switch (b->kind) {
         case GU_R: for (int c = 0; c < 4; ++c) t[c] = (float) u->reg[b->idx & 3][c]; break;
         case GU_K: for (int c = 0; c < 4; ++c) t[c] = (float) u->konst[b->idx & 3][c]; break;
+        case GU_KF: if (b->idx >= TEVK_STAGES) continue; t[0] = (float) u->kfrac[b->idx][0]; t[1] = (float) u->kfrac[b->idx][1]; t[2] = t[3] = 0.f; break;   /* konst-uniform form: .x colour code, .y alpha code */
         case GU_AREF: t[0] = (float) u->acRef0; t[1] = (float) u->acRef1; n = 2; break;
         case GU_FOG: if (!tk->fogType) continue; t[0] = u->fogStart; t[1] = u->fogScale; t[2] = t[3] = 0.f; break;
         case GU_FOGC: if (!tk->fogType) continue; for (int c = 0; c < 3; ++c) t[c] = u->fogColor[c] / 255.0f; t[3] = 0.f; break;
@@ -654,6 +658,7 @@ static void fill_fub_off(const GxmProg *p, const Draw *d, void *fub)
         switch (b->kind) {
         case GU_R: for (int c = 0; c < 4; ++c) t[c] = (float) u->reg[b->idx & 3][c]; break;
         case GU_K: for (int c = 0; c < 4; ++c) t[c] = (float) u->konst[b->idx & 3][c]; break;
+        case GU_KF: if (b->idx >= TEVK_STAGES) continue; t[0] = (float) u->kfrac[b->idx][0]; t[1] = (float) u->kfrac[b->idx][1]; t[2] = t[3] = 0.f; break;   /* konst-uniform form: .x colour code, .y alpha code */
         case GU_AREF: t[0] = (float) u->acRef0; t[1] = (float) u->acRef1; n = 2; break;
         case GU_FOG: if (!tk->fogType) continue; t[0] = u->fogStart; t[1] = u->fogScale; t[2] = t[3] = 0.f; break;
         case GU_FOGC: if (!tk->fogType) continue; for (int c = 0; c < 3; ++c) t[c] = u->fogColor[c] / 255.0f; t[3] = 0.f; break;
@@ -925,6 +930,15 @@ static int run_draw(const Draw *d)
     if (scene_for_draw()) return GXM_SK_SCENE;           /* LAST before any sceGxm state call */
     PT_STEP(pk_, 4);
 
+    if ((d->alpha & GXM_AM_OR) && !s_d.sc_empty) {   /* THE OR PLANE'S SCISSOR: before the state below, because the guard quads change the context (they bump the epoch) */
+        const int orp = 1 + (int) GXM_AM_OR_PLANE(d->alpha);
+        g_gxm_or_frame = g_gx.frames; g_gxm_or_ever = 1;   /* live before the guard and before this frame's clears */
+        if (orp != s_d.org_orp || s_d.org_gen != g_gxm_stencil_gen || memcmp(s_d.org_clip, s_d.clip, sizeof s_d.org_clip)) {
+            gxm_target_or_guard(1u << (orp - 1), s_d.clip);
+            s_d.org_orp = orp; s_d.org_gen = g_gxm_stencil_gen; memcpy(s_d.org_clip, s_d.clip, sizeof s_d.org_clip);
+            if (g_gxm_or_guard_logs < 12u) { ++g_gxm_or_guard_logs; gxm_log("[gxm-or] guard: plane %d clip %d,%d..%d,%d (M %dx%d)", orp - 1, s_d.clip[0], s_d.clip[1], s_d.clip[2], s_d.clip[3], g_gx.rw, g_gx.rh); }
+        }
+    }
     /* R3A_GLUE_BEGIN */
     const unsigned r3a = gx_r3a;                         /* R3a: the cut switches, read ONCE per draw */
     const int c2 = (r3a & R3A_C2) != 0;
@@ -948,6 +962,23 @@ static int run_draw(const Draw *d)
         if (s_d.zb_on) { const int sc = sh_cull_now(); want = sc == 1 ? SCE_GXM_CULL_CW : sc == 2 ? SCE_GXM_CULL_CCW : SCE_GXM_CULL_NONE; }
         else if (d->depth >= 0 && !g_gxm_cull_off) { const int c = (d->depth >> 5) & 3; want = c == 2 ? SCE_GXM_CULL_CCW : c == 1 ? SCE_GXM_CULL_CW : SCE_GXM_CULL_NONE; }
         if (want != s_d.cur_cull) { sceGxmSetCullMode(g_gx.ctx, (SceGxmCullMode) want); s_d.cur_cull = want; ++g_gxm_cull_sets; }
+    }
+    {   /* THE OR PLANE (rhi_gxm_int.h GXM_AM_OR): this draw ORs one bit of red into the target. Blend = ADD ONE/ONE (the hal's word); the stencil bit of the same index lets a pixel take
+           the plane ONCE (pass while clear; set only when the fragment is written, i.e. the draw's own depth test passed too). */
+        const int orp = (d->alpha & GXM_AM_OR) ? 1 + (int) GXM_AM_OR_PLANE(d->alpha) : 0;
+        if (orp != g_gxm_sten_ctx) {
+            if (orp) {
+                const unsigned char bit = (unsigned char) (1u << (orp - 1));
+                sceGxmSetFrontStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_NOT_EQUAL, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_REPLACE, bit, bit);
+                sceGxmSetBackStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_NOT_EQUAL, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_REPLACE, bit, bit);
+                sceGxmSetFrontStencilRef(g_gx.ctx, bit); sceGxmSetBackStencilRef(g_gx.ctx, bit);
+            } else {
+                sceGxmSetFrontStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, 0u, 0u);
+                sceGxmSetBackStencilFunc(g_gx.ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, 0u, 0u);
+            }
+            g_gxm_sten_ctx = orp;
+        }
+        if (orp) ++g_gxm_or_draws;
     }
     if (vp != s_d.cur_vp) { sceGxmSetVertexProgram(g_gx.ctx, vp); s_d.cur_vp = vp; }
     if (fp != s_d.cur_fp) { sceGxmSetFragmentProgram(g_gx.ctx, fp); s_d.cur_fp = fp; gxm_sh_reset_tex(&s_d.sh); }   /* invalidation (2): a new fragment program re-issues every texture */

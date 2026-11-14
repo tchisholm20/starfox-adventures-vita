@@ -119,9 +119,11 @@ static struct {
     float x, y, z;
     SaBit bits[MAXBITS]; int nbits;
     int reported;              /* the post-load report has been printed */
+    int wide;                  /* 'wide' (2026-11-13): the game's own Widescreen option is switched on once the player exists (a diagnostic: what 16:9 costs and looks like) */
     int report;                /* 'report': print the player's position + map in every status block (to read off a pos/warp) */
     int appliedX, appliedZ, appliedLayer;
-} G = { .ch = -1, .chapter = -1, .map = -1 };
+    long cardOff;              /* 'card <offset>' (2026-11-12): the 0x6EC save image at this offset of the console's card file is the starting state (a player's own save, to reproduce what they saw) */
+} G = { .ch = -1, .chapter = -1, .map = -1, .cardOff = -1 };
 
 static void sa_swap16(u8* p) { u8 t = p[0]; p[0] = p[1]; p[1] = t; }
 static void sa_swap32(u8* p) { u8 t = p[0]; p[0] = p[3]; p[3] = t; t = p[1]; p[1] = p[2]; p[2] = t; }
@@ -188,6 +190,8 @@ static int sa_read(void)
             if (G.ch != 0 && G.ch != 1) { printf("[start_at] char %s is not krystal/fox/0/1; ignored\n", c); G.ch = -1; }
         }
         else if (sa_ieq(k, "report")) G.report = 1;
+        else if (sa_ieq(k, "wide")) G.wide = 1;
+        else if (sa_ieq(k, "card") && i + 1 < nt) G.cardOff = strtol(tok[++i], NULL, 0);
         else if (sa_ieq(k, "bits") && i + 1 < nt) sa_pairs(tok[++i], 0);
         else if (sa_ieq(k, "act") && i + 1 < nt)  sa_pairs(tok[++i], 1);
         else printf("[start_at] unknown/incomplete word '%s' ignored\n", k);
@@ -201,7 +205,7 @@ int stfx_start_at_wanted(int titleReady)
 {
     if (G.state == 0) {
         if (!sa_read()) { G.state = 1; return 0; }
-        if (G.report && !G.haveWarp && !G.havePos && G.chapter < 2 && G.ch < 0 && !G.nbits) {
+        if (G.report && !G.haveWarp && !G.havePos && G.chapter < 2 && G.ch < 0 && !G.nbits && G.cardOff < 0) {
             G.state = 1; printf("[start_at] report only: a normal boot, with the player's position and map printed in every status block\n"); return 0;
         }
         G.state = 2;
@@ -256,6 +260,12 @@ int stfx_start_at_apply(void)
 #if !defined(VERSION_GSAE01) && !defined(VERSION_GSAJ01)
         if (d) mm_free(d);
 #endif
+    } else if (G.cardOff >= 0) {   /* a diagnostic start (the file is read once, at the title, before the game runs) */
+        FILE* cf = fopen("ux0:data/STFX00001/card/Star Fox Adventures", "rb"); size_t got = 0;
+        static u8 img[SG_ACTIVE];
+        if (cf) { if (fseek(cf, G.cardOff, SEEK_SET) == 0) got = fread(img, 1, SG_ACTIVE, cf); fclose(cf); }
+        if (got == SG_ACTIVE) { memcpy(W, img, SG_ACTIVE); printf("[start_at] card: the save image at offset 0x%lx of the card file is the starting state (character %d)\n", G.cardOff, W[SG_CURCHAR]); }
+        else printf("[start_at] card: offset 0x%lx NOT read (%u bytes): continuing with a new game's state\n", G.cardOff, (unsigned)got);
     } else if (G.chapter != -1) {
         printf("[start_at] chapter %d is not 2..5 (0/1 are the new-game starts the file-select handles itself); ignored\n", G.chapter);
     }
@@ -356,5 +366,6 @@ int stfx_seq_skip_requested(void)
 void vt_start_at_frame(void)
 {
     if (G.state != 3 || G.reported != 0 || !Obj_GetPlayerObject()) return;
+    if (G.wide == 1) { extern int setWidescreen(u8 enabled); setWidescreen(1); G.wide = 2; printf("[start_at] wide: the game's Widescreen option switched on\n"); }
     vt_print_start_at();
 }

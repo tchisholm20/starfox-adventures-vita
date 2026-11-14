@@ -1480,6 +1480,11 @@ SaveData* getSaveFileStruct(void) {
 }
 
 void loadSaveSettings(void) {
+#if defined(STAIRFAX_PORT)
+    /* Vita (2026-11-13, Tyler: widescreen is the default): the screen is 16:9, so a 4:3 picture is shown a third too wide. The first time a card's options are applied, Widescreen is switched on and
+       the spare byte pad07 is stamped; the stamp is stored with the options, so a player who then turns Widescreen off in Options keeps it off. */
+    if (((SaveData*)saveData)->pad07 == 0) { ((SaveData*)saveData)->widescreenEnabled = 1; ((SaveData*)saveData)->pad07 = 1; }
+#endif
     setWidescreen(((SaveData*)saveData)->widescreenEnabled);
     setSubtitlesEnabled(((SaveData*)saveData)->subtitlesEnabled);
     setRumbleEnabled(((SaveData*)saveData)->rumbleEnabled);

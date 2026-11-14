@@ -184,7 +184,8 @@ static void log_hold(int on)
  * before), when the buffer is nearly full, at exit, and at once when the watchdog reports a stall. A hard crash can lose up
  * to one interval of lines: set log_flush.txt to 1 for a run that is expected to die. Boot (the first presents) is unbuffered.
  * The lock is a spin flag: the watchdog thread prints too. */
-#define LOG_BUF_FROM 300
+#define LOG_BUF_FROM 2   /* 2026-11-13: was 300. The switch itself (a marker read, an unbuffered line, the writer thread's start) was a 100 ms frame at present 301 of EVERY launch, in the opening
+                          cinematic, and every [win] / [gxt] block before it was written line by line. Present 2 is before anything is on screen; everything the boot prints comes before present 1. */
 static char g_lbuf[256 * 1024]; static int g_lbuf_n, g_lbuf_on, g_lbuf_every = 600; static volatile int g_lbuf_lock;
 unsigned vt_log_flushes, vt_log_lines_buffered;
 static void log_lock(void)   { while (__atomic_test_and_set(&g_lbuf_lock, __ATOMIC_ACQUIRE)) sceKernelDelayThread(50); }
@@ -737,6 +738,7 @@ static void vt_b8_ab(void)
 /* SHADOW PROBE WINDOW (2026-11-01, hal/gx_draw.c gx_draw_setShadowRecv): ux0:data/stairfax/shadow_probe.txt "from <present> frames <n>", read once at
  * present 1. gx_shadow_probe is 1 for presents [from, from + n) and 0 otherwise; absent file = never. The probe lines are [shp-obj] [shp-cast] [shp-draw] [shp-copy]. */
 static int g_shp_from = -1, g_shp_n;
+static int g_shp_again = -1, g_shp_every;
 static void vt_shadow_probe(void)
 {
     extern int gx_shadow_probe __attribute__((weak));
@@ -748,17 +750,35 @@ static void vt_shadow_probe(void)
             while (fscanf(f, "%15s", w) == 1) {
                 if (!strcmp(w, "from")) { if (fscanf(f, "%d", &from) != 1) break; }
                 else if (!strcmp(w, "frames")) { if (fscanf(f, "%d", &n) != 1) break; }
+                else if (!strcmp(w, "every")) { if (fscanf(f, "%d", &g_shp_every) != 1) break; }   /* one probed present per N, 20 before each multiple of N */
+                else if (!strcmp(w, "again")) { if (fscanf(f, "%d", &g_shp_again) != 1) break; }   /* 2026-11-11: a second window of the same length */
             }
             fclose(f);
             if (from >= 0 && n > 0) { g_shp_from = from; g_shp_n = n; printf("[shp] shadow probe ON for presents %d..%d\n", from, from + n - 1); }
             else printf("[shp] shadow_probe.txt present but not understood (want: from <present> frames <n>): OFF\n");
         }
     }
-    gx_shadow_probe = g_shp_from >= 0 && g_presents >= g_shp_from && g_presents < g_shp_from + g_shp_n;
+    gx_shadow_probe = g_shp_from >= 0 && ((g_presents >= g_shp_from && g_presents < g_shp_from + g_shp_n) || (g_shp_again >= 0 && g_presents >= g_shp_again && g_presents < g_shp_again + g_shp_n) || (g_shp_every > 0 && g_presents % g_shp_every == g_shp_every - 20));
     if (g_shp_from >= 0 && (g_presents == g_shp_from || g_presents == g_shp_from + g_shp_n)) printf("[shp] present %d: probe %s\n", g_presents, gx_shadow_probe ? "ON" : "OFF");
 }
-/* CHARACTER SHADOWS (v0.1.2, 2026-11-04; engine shadow_dolphin.c objDrawShadowCasterMesh): Fox's and Tricky's projected shadows draw wrong, so they are OFF
- * unless ux0:data/stairfax/char_shadow.txt starts with '1'. Read once at present 1 (no character is drawn before it). */
+/* CHARACTER SHADOWS (engine shadow_dolphin.c objShadowRender / objDrawShadowCasterMesh). OFF from v0.1.2 (2026-11-04) because Fox's and Tricky's projected shadows drew wrong; the cause
+ * was the cast pass's GX_LO_OR drawn as an overwrite (hal/gx_draw.c pxAlphaMode "THE OR PLANE", 2026-11-11). ON again by default; ux0:data/stairfax/char_shadow.txt starting with '0' = off.
+ * Read once at present 1 (no character is drawn before it). */
+/* SHADOW RECEIVER BISECT (2026-11-11; engine track/intersect_render.c objectShadow_setupProjectedTextureChannel): ux0:data/stairfax/shadow_dbg.txt = "1" (no ramp stage), "2" (flat coverage)
+ * or "cycle N" (0, 1, 2 for N presents each, logged on change). Absent = 0. Diagnostic only. The probe's matrices live here so the engine objects link on every build. */
+int gStfxShadowDbg; float gStfxShpT0[3][4], gStfxShpT1[3][4], gStfxShpF31, gStfxShpScale; int gStfxShpValid;
+static int g_sdbg_cycle, g_sdbg_fixed;
+static void vt_shadow_dbg(void)
+{
+    if (g_presents == 1) {
+        FILE *f = fopen("ux0:data/stairfax/shadow_dbg.txt", "r");
+        if (f) { char w[16] = { 0 }; int n = 0;
+                 if (fscanf(f, "%15s", w) == 1) { if (!strcmp(w, "cycle")) { if (fscanf(f, "%d", &n) == 1 && n > 0) g_sdbg_cycle = n; } else g_sdbg_fixed = (w[0] >= '0' && w[0] <= '5') ? w[0] - '0' : 0; }
+                 fclose(f); printf("[shadow] receiver bisect: %s %d (shadow_dbg.txt)\n", g_sdbg_cycle ? "cycle" : "fixed", g_sdbg_cycle ? g_sdbg_cycle : g_sdbg_fixed); }
+    }
+    { const int want = g_sdbg_cycle ? (g_presents / g_sdbg_cycle) % 6 : g_sdbg_fixed;
+      if (want != gStfxShadowDbg) { gStfxShadowDbg = want; printf("[shadow] present %d: receiver bisect arm %d (0 game, 1 no ramp, 2 flat coverage)\n", g_presents, want); } }
+}
 int gStfxCharShadow;
 static void vt_char_shadow(void)
 {
@@ -767,7 +787,7 @@ static void vt_char_shadow(void)
     const int found = f != NULL;
     const int c = found ? fgetc(f) : EOF;
     if (found) fclose(f);
-    gStfxCharShadow = c == '1';
+    gStfxCharShadow = !(found && c == '0');
     printf("[shadow] character shadows %s (char_shadow.txt %s)\n", gStfxCharShadow ? "ON" : "OFF", found ? "read" : "absent");
 }
 static int g_ab_from = -1, g_ab_period, g_ab_n, g_ab_arm[8];
@@ -1136,7 +1156,7 @@ bool __wrap_rhi_present(RhiInstance *rhi, RhiSwapchain *sc)
     vt_perf_ab(now);
     vt_b8_ab();
     vt_shadow_probe();
-    vt_char_shadow();
+    vt_char_shadow(); vt_shadow_dbg();
     /* THREADED (RT_THREAD D12): decided AFTER vt_perf_ab, which is where gxt_frame_edge switches mode, so a transition at THIS present is already seen. G-side readers of backend state
      * (the captures, grade_frame, the draw journal, shot_now) must not run beside a replaying R: each is skipped with ONE line the first time it would have run. */
     const int thr = gxt_is_active && gxt_is_active();

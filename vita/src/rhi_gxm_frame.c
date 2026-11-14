@@ -647,6 +647,10 @@ typedef struct { void *addr; } DispData;
  * advances game time by the retraces that really pass, so the game's speed does not change.  Absent / anything else = uncapped (as before: every tool). */
 static int g_min_vb = 1;
 static unsigned g_last_vc, c_cap_waits, c_cap_bounded;
+/* FLIP INTERVALS (2026-11-10): what the PLAYER sees. Vblanks between two completed flips, counted here on the display-queue thread, the only writer.
+ * The frame log's wall_us is stamped on G BEFORE its present wait, so it carries G's work variance (front end: G work 30 / 13 ms read as 51 / 16 ms
+ * frames while the pacer A/B of eboot b1a07f3c changed nothing). hist[k] = flips k vblanks after the last (k 5 = 5 or more). */
+volatile unsigned gxm_flip_n, gxm_flip_hist[6], gxm_flip_max;
 /* vcount_bias.txt = N (dev only): the cap reads a 16-bit counter that wraps N s after init, so the wrap is tested in a minute, not 18 */
 static int g_vc_fake;
 static unsigned g_vc_bias;
@@ -675,7 +679,14 @@ static void display_cb(const void *cbdata)
     }
     sceDisplaySetFrameBuf(&fb, SCE_DISPLAY_SETBUF_NEXTFRAME);
     sceDisplayWaitSetFrameBuf();
-    g_last_vc = cap_vcount();
+    {   const unsigned vc = cap_vcount();
+        if (g_gx.presented) {
+            const unsigned dv = (vc - g_last_vc) & 0xFFFFu;
+            ++gxm_flip_hist[dv > 5u ? 5u : dv]; ++gxm_flip_n;
+            if (dv > gxm_flip_max) gxm_flip_max = dv;   /* G takes it with an exchange (frames_log.inc); a lost update costs one sample */
+        }
+        g_last_vc = vc;
+    }
     ++g_gx.presented;
 }
 
@@ -732,7 +743,8 @@ static void arm_log(int present)
 
 /* ====================================================================================================================================== init */
 enum { R_VDM = 0, R_VTX, R_FRAG, R_STAGE, R_PBUF, R_PVU, R_PFU, R_N };
-static const unsigned kRingDefKB[R_N] = { 512, 2048, 1024, 2048, 1024, 2048, 1024 };
+static const unsigned kRingDefKB[R_N] = { 512, 2048, 1024, 2048, 1024, 4096, 3072 };   /* 2026-11-05: patcher USSE V 2048 -> 4096, F 1024 -> 3072 KB: a 67-min RC9 session
+                                                                                         reached F 823/1024 at 1498 programs (no eviction), GXM_PROG_MAX now 3072 */
 static const unsigned kRingMinKB[R_N] = { 64, 256, 128, 16, 64, 64, 64 };
 static const unsigned kRingMaxKB[R_N] = { 8192, 16384, 8192, 16384, 8192, 8192, 8192 };
 static unsigned g_ring_kb[R_N];
@@ -915,6 +927,15 @@ int gxm_frame_init(const RhiCreateInfo *info)
     {   char cb[8]; g_min_vb = 1;
         if (read_small("ux0:data/stairfax/frame_cap.txt", cb, sizeof cb) > 0 && atoi(cb) == 30) g_min_vb = 2;
         gxm_log("[gxm] frame cap: %s (frame_cap.txt) | vcount now %u", g_min_vb == 2 ? "30 fps (a flip at least 2 vblanks after the last)" : "none", (unsigned) sceDisplayGetVcount());
+        {   /* the game thread's present pacer (gx_pace.h): OFF by default since the A/B of eboot b1a07f3c (no change in 4,259 / 4,200 frames); g_pace.txt "1" = on with the cap, "ab N" = windows of N presents alternate ON / OFF */
+            extern void gxt_set_pace(uint32_t period_us, uint32_t ab_n);
+            char pb[24]; uint32_t period = g_min_vb == 2 ? 32000u : 0u, ab = 0;
+            const int have = read_small("ux0:data/stairfax/g_pace.txt", pb, sizeof pb) > 0;
+            if (!have || pb[0] == '0') period = 0;
+            else if (have && pb[0] == 'a' && pb[1] == 'b' && atoi(pb + 2) > 0) ab = (uint32_t) atoi(pb + 2);
+            gxt_set_pace(period, ab);
+            gxm_log("[gxm] present pacer: %s (g_pace.txt %s) period %u us ab %u", period ? "ON" : "OFF", have ? "present" : "absent", (unsigned) period, (unsigned) ab);
+        }
         if (read_small("ux0:data/stairfax/vcount_bias.txt", cb, sizeof cb) > 0 && atoi(cb) > 0) {
             const unsigned raw = (unsigned) sceDisplayGetVcount();
             g_vc_fake = 1; g_vc_bias = (0x10000u - (unsigned) atoi(cb) * 60u - (raw & 0xFFFFu)) & 0xFFFFu;

@@ -552,7 +552,7 @@ def game_refs(objdir):
 
 def lint_shared(shared, allow):
     f = []
-    want = {'gFogColor'}
+    want = set()   # 2026-11-12: gFogColor is no longer shared (the HAL's GXSetFog keeps its own copy and never writes the game's variable)
     for n, why in sorted(shared.items()):
         if n not in want and not allowed(n, allow['shared']):
             f.append('(iv) %s is shared between the game and the HAL (%s) and is not in [shared]: R reads/writes it while G\'s game code does too' % (n, why))
@@ -693,10 +693,10 @@ def selftest():
     expect('(i) a stale manifest entry', lint_nm_manifest(ent, nm, dict(man, GXGone='T')), True)
     expect('(i) nm filter broken (3 symbols)', lint_nm_manifest(ent, '00000000 T GXBegin\n00000010 W GXFlush\n', man), True)
     # (iv)
-    expect('(iv) {gFogColor} only', lint_shared({'gFogColor': 'x'}, EMPTY_ALLOW), False)
-    expect('(iv) a new shared symbol', lint_shared({'gFogColor': 'x', 'gNewShared': 'y'}, EMPTY_ALLOW), True)
-    expect('(iv) gFogColor stopped being shared (stale)', lint_shared({}, EMPTY_ALLOW), True)
-    expect('(iv) an allow-listed pattern covers it', lint_shared({'gFogColor': 'x', 'gx_draw_count': 'y'}, dict(EMPTY_ALLOW, shared=[('gx_*', 'counters')])), False)
+    expect('(iv) nothing shared', lint_shared({}, EMPTY_ALLOW), False)
+    expect('(iv) a new shared symbol', lint_shared({'gNewShared': 'y'}, EMPTY_ALLOW), True)
+    expect('(iv) gFogColor shared again', lint_shared({'gFogColor': 'x'}, EMPTY_ALLOW), True)
+    expect('(iv) an allow-listed pattern covers it', lint_shared({'gx_draw_count': 'y'}, dict(EMPTY_ALLOW, shared=[('gx_*', 'counters')])), False)
     # the allow file itself
     try:
         parse_allow('[shared]\ngx_foo\n')

@@ -25,6 +25,7 @@ extern volatile uint32_t g_gg_busy_total_us __attribute__((weak));   /* rhi_gxm_
 extern int  gShaderCurMapEventId __attribute__((weak));              /* engine/src/main/shader.c:158: the map the game is in (see frames_log_map) */
 extern unsigned long long rhi_vita_gx_compile_us __attribute__((weak)), rhi_vita_tev_compile_us __attribute__((weak));   /* rhi_vita_tev.inc */
 extern unsigned char gameState __attribute__((weak));                /* the same global vt_game.c externs */
+extern volatile unsigned gxm_flip_n __attribute__((weak)), gxm_flip_hist[6] __attribute__((weak)), gxm_flip_max __attribute__((weak));   /* rhi_gxm_frame.c display_cb: vblanks between flips */
 extern void gxm_shader_async_counts(unsigned o[4]) __attribute__((weak));   /* rhi_gxm_shader.c: queued, installed, pending_hits, failed (cumulative) */
 
 static uint8_t           fl_ring[FL_RING][FRM_REC_BYTES];
@@ -136,6 +137,10 @@ static void frames_log_present(int presents, unsigned us)
         rec.compile_us = (uint32_t) (cmp - p_cmp);
         rec.async_installed = frm_sat16(ac[1] - p_async); rec.map = frames_log_map();
         rec.game_state = &gameState ? gameState : 0; rec.flags = (uint8_t) (fl_stall_flag ? FRM_RF_STALL : 0); rec.reserved = 0;
+        if (&gxm_flip_n) {   /* low byte = flips completed since the last record, high byte = the longest gap among them in vblanks (0 = none) */
+            static unsigned p_fn; const unsigned fn = gxm_flip_n, mx = __atomic_exchange_n(&gxm_flip_max, 0u, __ATOMIC_RELAXED);
+            rec.reserved = (uint16_t) (((fn - p_fn) > 255u ? 255u : (fn - p_fn)) | ((mx > 255u ? 255u : mx) << 8)); p_fn = fn;
+        }
         fl_stall_flag = 0;
         if (h - __atomic_load_n(&fl_tail, __ATOMIC_ACQUIRE) >= FL_RING) ++fl_drops;   /* writer behind: drop, never wait */
         else {
@@ -151,6 +156,11 @@ static void frames_log_present(int presents, unsigned us)
         printf("[frames] presents %d: %u records published, %u dropped (ring %u), %u KB on the card%s%s; hook %.1f us avg, %llu us max over %llu frames (budget 20)\n", presents,
                (unsigned) fl_head, (unsigned) fl_drops, FL_RING, (unsigned) (fl_bytes >> 10), fl_full ? " -- WRITER STOPPED" : "", fl_werr ? " (write error)" : "",
                h_n ? (double) h_sum / (double) h_n : 0.0, h_max, h_n);
+        if (&gxm_flip_n) {
+            static unsigned ph[6]; unsigned k, dh[6];
+            for (k = 0; k < 6u; ++k) { const unsigned v = gxm_flip_hist[k]; dh[k] = v - ph[k]; ph[k] = v; }
+            printf("[flip] presents ..%d: vblanks between flips  1: %u  2: %u  3: %u  4: %u  5+: %u  (0: %u)\n", presents, dh[1], dh[2], dh[3], dh[4], dh[5], dh[0]);
+        }
         if (fl_werr) printf("[frames] first write error 0x%08x\n", (unsigned) fl_werr);
         h_sum = 0; h_max = 0; h_n = 0;
     }

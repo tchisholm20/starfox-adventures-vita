@@ -68,6 +68,12 @@ typedef struct {
 // binary saved before indirect texturing existed is still found. (ik is the last member.)
 static inline size_t tev_key_len(const TevKey* k) { return (k->ik.on || k->projMask) ? sizeof *k : offsetof(TevKey, ik); }
 
+// The GX constant fractions 8/8 .. 1/8 as codes (kcsel / kasel 0..7). ONE definition: the generators emit it as a literal, tev_fill_uniforms feeds it to uKF<s>.
+static inline int tev_kfrac(int sel) { static const uint8_t t[8] = { 255, 223, 191, 159, 128, 96, 64, 32 }; return t[sel & 7]; }
+// Reserved kcsel / kasel value of the KONST-UNIFORM FORM: "this stage's constant fraction comes from the uniform uKF<s>" (.x colour, .y alpha, codes).
+// Above every GX selector (<= 31), so no raw GX key carries it; tev_key_canon preserves it where the stage reads the konst.
+#define TEVK_KSEL_UNIFORM 0xE0
+
 typedef struct {
     int16_t reg[4][4];   // TEVPREV, TEVREG0..2 initial values, r,g,b,a, S10 (-1024..1023)
     uint8_t konst[4][4]; // GX_KCOLOR0..3, r,g,b,a
@@ -79,7 +85,29 @@ typedef struct {
     float indM[3][2][3];
     // 2^scale_exp of ITM_0..2 (GXSetIndTexMtx's exponent): the DYNAMIC matrices (ITM_S/T) have no elements of their own, they use the exponent of the matrix register with the same index.
     float indE[3];
+    // KONST-UNIFORM FORM (tev_key_konst_uniform): per stage, the constant fraction (kFrac code 0..255, tev_kfrac) the stage's kcsel [0] / kasel [1]
+    // selects when it is 0..7 AND the stage reads the konst colour / alpha; 0 otherwise. Appended LAST; zero for a stage that reads no fraction, so two
+    // draws with equal canonical keys compare equal. Read only by a program of the uniform form (uKF<s>); a literal program ignores it.
+    uint8_t kfrac[TEVK_STAGES][2];
 } TevUniforms;
+
+// Fills TevUniforms.kfrac from a key (ONE definition, used by tev_fill_uniforms and the host gates): [s][0] = tev_kfrac(kcsel) when stage s < numStages reads konst colour
+// (some cin == 14) with kcsel < 8, [s][1] likewise for kasel (some ain == 6); every other entry 0, so equal canonical keys give equal bytes.
+static inline void tev_fill_kfrac(const TevKey* k, uint8_t kf[TEVK_STAGES][2]) {
+    const int ns = k->numStages > TEVK_STAGES ? TEVK_STAGES : k->numStages;
+    for (int s = 0; s < TEVK_STAGES; ++s) kf[s][0] = kf[s][1] = 0;
+    for (int s = 0; s < ns; ++s) {
+        const TevKeyStage* st = &k->st[s]; int c = 0, a = 0;
+        for (int i = 0; i < 4; ++i) { if (st->cin[i] == 14) c = 1; if (st->ain[i] == 6) a = 1; }
+#ifdef KFU_BREAK_FRAC   /* host negative control: the uniform is fed the WRONG fraction */
+        if (c && st->kcsel < 8) kf[s][0] = (uint8_t)tev_kfrac(st->kcsel ^ 1);
+        if (a && st->kasel < 8) kf[s][1] = (uint8_t)tev_kfrac(st->kasel ^ 1);
+#else
+        if (c && st->kcsel < 8) kf[s][0] = (uint8_t)tev_kfrac(st->kcsel);
+        if (a && st->kasel < 8) kf[s][1] = (uint8_t)tev_kfrac(st->kasel);
+#endif
+    }
+}
 
 // One vertex of a TEV draw: view-space position (the projection is the draw's MVP), the two
 // rasterised channels (r | g<<8 | b<<16 | a<<24), and the texcoord of each texture slot.
@@ -132,6 +160,12 @@ const char* tev_fast_why_name(int why);
 // device keeps one GL program per distinct program text. fast = 1 for tev_gen_fragment_fast, 0 for tev_gen_fragment; the result
 // is valid for that generator only. Idempotent. The device calls it BEFORE hashing (src/tev_dedupe.h).
 void tev_key_canon(const TevKey* in, TevKey* out, int fast);
+// The KONST-UNIFORM form of a (canonical) key: every stage that READS konst (a cin == 14 for kcsel, an ain == 6 for kasel) with a selector 0..7 gets
+// TEVK_KSEL_UNIFORM instead, so the 8 fractions share one program (fades no longer step through one program per fraction). Returns the number of selectors
+// replaced; 0 = no uniform form exists (*out == *canon). Idempotent; tev_key_canon(out) == out. Both generators emit a read of uKF<s> for the marker.
+int tev_key_konst_uniform(const TevKey* canon, TevKey* out);
+// Bit s = stage s of the key declares/reads uKF<s> (marker selectors); 0 for every key without a marker.
+unsigned tev_kf_mask(const TevKey* k);
 // COMPARE-MODE stages (op 8..15, tev_gen.c "COMPARE-MODE STAGES"): tev_has_compare = some stage uses one; tev_cmp_unsupported = an op the
 // generators refuse (ops 2..7 and >15, bias 3 on an add/sub, alpha compare ops 8..13). The exact generator emits compare; the fast one refuses it.
 int tev_has_compare(const TevKey* k);

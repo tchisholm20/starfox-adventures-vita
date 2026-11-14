@@ -360,7 +360,7 @@ GXS_PURE void gxs_builtin_key(int which, TevKey *k)    /* which: GXM_BI_* = 0 co
 }
 
 /* ---- uniform names -> kinds (c2floor classify, hardware-verified); the kind numbers are the GU_* of rhi_gxm_int.h, repeated here so part 1 stays pure ---- */
-enum { GXS_U_NONE = 0, GXS_U_M, GXS_U_POS, GXS_U_NRM, GXS_U_TMX, GXS_U_MAT, GXS_U_AMB, GXS_U_LT, GXS_U_TM, GXS_U_PT, GXS_U_R, GXS_U_K, GXS_U_AREF, GXS_U_FOG, GXS_U_FOGC, GXS_U_IMA, GXS_U_IMB, GXS_U_TS, GXS_U_BONE };
+enum { GXS_U_NONE = 0, GXS_U_M, GXS_U_POS, GXS_U_NRM, GXS_U_TMX, GXS_U_MAT, GXS_U_AMB, GXS_U_LT, GXS_U_TM, GXS_U_PT, GXS_U_R, GXS_U_K, GXS_U_AREF, GXS_U_FOG, GXS_U_FOGC, GXS_U_IMA, GXS_U_IMB, GXS_U_TS, GXS_U_BONE, GXS_U_KF };
 GXS_PURE int gxs_classify(const char *n, int frag, uint8_t *idx)
 {
     int a = 0; char c = 0;
@@ -382,6 +382,11 @@ GXS_PURE int gxs_classify(const char *n, int frag, uint8_t *idx)
     } else {
         if (sscanf(n, "uR%1d%c", &a, &c) == 1 && a < 4 && strlen(n) == 3) { *idx = (uint8_t) a; return GXS_U_R; }
         if (sscanf(n, "uK%1d%c", &a, &c) == 1 && a < 4 && strlen(n) == 3) { *idx = (uint8_t) a; return GXS_U_K; }
+        if (n[0] == 'u' && n[1] == 'K' && n[2] == 'F' && n[3] >= '0' && n[3] <= '9') {   /* uKF<s>, s = 0..15: the konst-uniform form's per-stage fraction codes (TevUniforms.kfrac) */
+            const size_t ln = strlen(n);
+            if (ln == 4) { *idx = (uint8_t) (n[3] - '0'); return GXS_U_KF; }
+            if (ln == 5 && n[4] >= '0' && n[4] <= '9') { a = (n[3] - '0') * 10 + (n[4] - '0'); if (a < 16) { *idx = (uint8_t) a; return GXS_U_KF; } }
+        }
         if (!strcmp(n, "uAref")) return GXS_U_AREF;
         if (!strcmp(n, "uFog")) return GXS_U_FOG;
         if (!strcmp(n, "uFogColor")) return GXS_U_FOGC;
@@ -417,7 +422,67 @@ GXS_PURE int gxs_gxpc_valid(const uint8_t *img, uint32_t n, const void *k1, unsi
     return 1;
 }
 
-#include "gxs_keys.h"                                                /* the key-log / harvest record format (host-testable: vita/host/tests/shader_keys_test.c) */
+/* THE APP GXP PAK (2026-11-05): app0:shaders/gxm.pak holds every shipped GXP-cache file in ONE file. 2028 loose files under app0:shaders/gxm/ made
+ * a vpk install take 10+ minutes on an SD2VITA (Tyler, v0.1.3). Little-endian: {"GXK1", version 1, n} then n entries {h, kind, off, len} sorted by
+ * (kind, h), then the files' bytes verbatim (each a GXC1 image that gxs_gxpc_valid checks exactly as a loose file). Written by host/engine/pack_gxp.py. */
+#define GXS_GPAK_MAGIC 0x314b5847u                                          /* "GXK1" */
+#define GXS_GPAK_VER   1u
+#define GXS_GPAK_MAXN  65536u
+#define GXS_GPAK_HDR   12u
+#define GXS_GPAK_ENT   16u
+/* the entry count of a pak header (the first 12 bytes); 0 = not a usable pak */
+GXS_PURE uint32_t gxs_gpak_count(const uint8_t *hdr, uint32_t avail)
+{
+    if (avail < GXS_GPAK_HDR || gxs_rd32(hdr) != GXS_GPAK_MAGIC || gxs_rd32(hdr + 4) != GXS_GPAK_VER) return 0;
+    const uint32_t n = gxs_rd32(hdr + 8);
+    return n <= GXS_GPAK_MAXN ? n : 0;
+}
+/* 1 = the index (n entries, read from just after the header) is strictly sorted and every file lies inside the pak, after the index */
+GXS_PURE int gxs_gpak_check(const uint8_t *idx, uint32_t n, uint64_t pak_size)
+{
+    const uint64_t body = GXS_GPAK_HDR + (uint64_t) n * GXS_GPAK_ENT;
+    uint64_t prev = 0;
+    for (uint32_t i = 0; i < n; ++i) {
+        const uint8_t *e = idx + (size_t) i * GXS_GPAK_ENT;
+        const uint64_t key = ((uint64_t) gxs_rd32(e + 4) << 32) | gxs_rd32(e);
+        const uint32_t off = gxs_rd32(e + 8), len = gxs_rd32(e + 12);
+        if (gxs_rd32(e + 4) > 0xffu || (i && key <= prev)) return 0;
+        if (len < 20u || len > (1u << 20) || off < body || (uint64_t) off + len > pak_size) return 0;
+        prev = key;
+    }
+    return 1;
+}
+/* binary search; 1 = found (off / len of the GXC1 image inside the pak) */
+GXS_PURE int gxs_gpak_find(const uint8_t *idx, uint32_t n, char kind, uint32_t h, uint32_t *off, uint32_t *len)
+{
+    const uint64_t want = ((uint64_t) (unsigned char) kind << 32) | h;
+    uint32_t lo = 0, hi = n;
+    while (lo < hi) {
+        const uint32_t mid = lo + (hi - lo) / 2u;
+        const uint8_t *e = idx + (size_t) mid * GXS_GPAK_ENT;
+        const uint64_t key = ((uint64_t) gxs_rd32(e + 4) << 32) | gxs_rd32(e);
+        if (key == want) { *off = gxs_rd32(e + 8); *len = gxs_rd32(e + 12); return 1; }
+        if (key < want) lo = mid + 1u; else hi = mid;
+    }
+    return 0;
+}
+
+#include "gxs_keys.h"                                               /* the key-log / harvest record format (host-testable: vita/host/tests/shader_keys_test.c) */
+/* ---- the KONST-UNIFORM FORM's identity (2026-11-07). A canonical key K that reads a constant fraction (kcsel / kasel 0..7) has a uniform form K' (tev_key_konst_uniform: the fraction comes
+ * from uKF<s>, a TevUniforms.kfrac byte), so the 8 fractions of one fade share ONE program.  K' gets its OWN identity, computed exactly as the device computes it for any key (td_fill: the fast
+ * decision on K' itself, the canonical form for THAT decision; gxs_keys_hash: th ^ fast salt [^ vs key hash]; gxs_key_h2).  Returns the number of selectors replaced (0 = K has no uniform form;
+ * nothing is written).  Pure: the host gate kfu_form_test.c runs this on every key of the pack. */
+GXS_PURE int gxs_kf_identity(int gx, int fastOn, int dedupe, const VsKey *vk, const TevKey *ck, TevKey *kck, int *kfast, uint32_t *kh, uint32_t *kh2)
+{
+    TevKey u;
+    const int n = tev_key_konst_uniform(ck, &u);
+    if (n <= 0) return 0;
+    TdCan c; td_fill(&c, &u, fastOn, dedupe);
+    *kck = c.ck; *kfast = c.fast;
+    *kh = gxs_keys_hash(gx, c.fast, gx ? vk : NULL, &c.ck);
+    *kh2 = gxs_key_h2(gx ? vk : NULL, &c.ck);
+    return n;
+}
 
 /* ======================================================================================================================================== PART 2: DEVICE */
 #ifndef GXM_SHADER_HOST
@@ -425,6 +490,7 @@ GXS_PURE int gxs_gxpc_valid(const uint8_t *img, uint32_t n, const void *k1, unsi
 #include <malloc.h>
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
+#include <psp2/io/dirent.h>
 #include <psp2/kernel/threadmgr.h>
 #include <psp2/kernel/sysmem.h>   /* RC6: the pack memblock (sceKernelAllocMemBlock / FreeMemBlock / GetMemBlockBase) */
 #include <vitashark.h>
@@ -444,6 +510,7 @@ GXS_PURE int gxs_gxpc_valid(const uint8_t *img, uint32_t n, const void *k1, unsi
 #define GXS_APP_PACK   GXS_APP_DIR "pack.bin"
 #define GXS_APP_GXPDIR GXS_APP_DIR "gxm/"
 #define GXS_FASTFILE   "ux0:data/stairfax/tev_fast.txt"
+#define GXS_KFFILE     "ux0:data/stairfax/konst_uniform.txt"   /* first byte '0': the konst-uniform fallback is off (exactly the old behaviour) */
 #define GXS_PERSPFILE  GXS_DIR "texgen_persp_off.txt"
 #define GXS_DEDUPEFILE GXS_DIR "tev_dedupe_off.txt"
 #define GXS_NOSHARK    "ux0:data/stairfax/gxm_noshark.txt"     /* first byte '1': never call shark_init (a safety switch for an emulator that misbehaves on the module load) */
@@ -464,6 +531,7 @@ typedef struct {
 typedef struct { GxmProg p; GxsPriv pv; char nm[24]; } GxsSlot;
 typedef struct { uint32_t h, h2; uint8_t fam, fast, why, used; } GxsNeg;
 
+_Static_assert((int) GXS_U_KF == (int) GU_KF, "the classifier's uKF kind must be the draw module's GU_KF");
 /* ---- state (module-private; `up` is the only gate) ---- */
 static int g_up;
 typedef struct { const GxmProg *frag, *vtx; uint32_t bk; SceGxmFragmentProgram *fp; } GxsFpForeign;
@@ -472,7 +540,8 @@ static int g_fast, g_persp, g_dedupe;
 static Td g_td;                                                  /* ~380 KB: the canonical-key map */
 static GxsSlot *g_chunk[(GXM_PROG_MAX + GXS_CHUNK - 1) / GXS_CHUNK];
 static int g_np;                                                 /* programs alive (pool entries) */
-static uint16_t g_tab[4096];                                     /* program hash -> pool index + 1 (families TEV and GX only) */
+#define GXS_TAB_N 8192u                                          /* 2026-11-05: 4096 -> 8192 with GXM_PROG_MAX 1536 -> 3072 (load <= 38%) */
+static uint16_t g_tab[GXS_TAB_N];                                /* program hash -> pool index + 1 (families TEV and GX only) */
 static GxsNeg *g_neg;
 static uint32_t g_bad[GXS_BAD_MAX]; static unsigned g_bad_n;
 static GxsPkIdx g_pk; static SceUID g_pk_fd = -1; static uint32_t g_pk_size;
@@ -481,10 +550,13 @@ static int g_pack_on;
 static unsigned c_pack_hit, c_pack_miss, c_pack_stale, c_pack_reads, c_pack_bad, c_shark_compiles, c_shark_fail, c_gxpc_hit, c_gxpc_app, c_vp_made, c_fp_made, c_vp_fail, c_fp_fail;
 static unsigned c_unmapped_unif, c_unmapped_attr, c_missing_samplers, c_refused_gen, c_noprog_bad, c_prog_full, c_arm_noprog, c_sent_fail, c_gxpc_write, c_noop;
 static unsigned c_compile_fail, c_split_fail;
+static int g_kf;                                                 /* the konst-uniform fallback (konst_uniform.txt 0 = off) */
+static unsigned c_kf_alias, c_kf_queued, c_kf_exact_card, c_kf_cache, c_kf_compiled, c_kf_fallback;
 static char g_unmapped_log[8][40]; static unsigned g_unmapped_logged;
 
 static GxsSlot *gxs_slot(int i) { return &g_chunk[i / GXS_CHUNK][i % GXS_CHUNK]; }
 static void gxs_forget_memos(void);
+static void gxs_forget_null_memos(void);
 static void gxs_mm_clear(void);
 
 /* ---- small file helpers ---- */
@@ -808,8 +880,8 @@ static void gxs_neg_add(int fam, int fast, uint32_t h, uint32_t h2, int why)
 }
 static GxmProg *gxs_find(int fam, int fast, uint32_t h, const VsKey *vk, const TevKey *ck)
 {
-    unsigned p = h & (4096u - 1u);
-    for (int c = 0; c < 4096; ++c, p = (p + 1) & (4096u - 1u)) {
+    unsigned p = h & (GXS_TAB_N - 1u);
+    for (unsigned c = 0; c < GXS_TAB_N; ++c, p = (p + 1) & (GXS_TAB_N - 1u)) {
         if (!g_tab[p]) return NULL;
         GxmProg *q = &gxs_slot(g_tab[p] - 1)->p;
         if (q->hash == h && q->family == fam && q->fast == fast && !memcmp(&q->tk, ck, sizeof *ck) && (!vk || !memcmp(&q->vk, vk, sizeof *vk))) return q;
@@ -818,8 +890,8 @@ static GxmProg *gxs_find(int fam, int fast, uint32_t h, const VsKey *vk, const T
 }
 static void gxs_insert(int idx, uint32_t h)
 {
-    unsigned p = h & (4096u - 1u);
-    while (g_tab[p]) p = (p + 1) & (4096u - 1u);
+    unsigned p = h & (GXS_TAB_N - 1u);
+    while (g_tab[p]) p = (p + 1) & (GXS_TAB_N - 1u);
     g_tab[p] = (uint16_t) (idx + 1);
 }
 static GxsSlot *gxs_new_slot(void)    /* the next pool entry, zeroed, or NULL when the table is full / memory is out */
@@ -835,23 +907,154 @@ static GxsSlot *gxs_new_slot(void)    /* the next pool entry, zeroed, or NULL wh
     return s;
 }
 
+/* ---- the app's GXP pak (app0:shaders/gxm.pak; see GXS_GPAK_MAGIC) ---- */
+#define GXS_APP_GPAK   GXS_APP_DIR "gxm.pak"
+static SceUID g_gp_fd = -1;                /* open for the app's lifetime; reads are sceIoPread (positional), so the I/O worker and the owner need no lock */
+/* THE PAK IN RAM (2026-11-13). A player's session at LightFoot Village (build a03f597d): 97 programs that miss the RAM pack came from the GXP caches at 110-564 ms EACH (19.4 s of worker
+ * time; the SD answers slowly under load), 5253 draws skipped meanwhile (objects missing / black for the first ~80 s in the area), 50 of them from this pak. The whole file is read once at
+ * start (g_gp_mem; a failed allocation or read keeps the positional reads), so a pak hit is a memcpy. */
+static uint8_t *g_gp_mem; static uint32_t g_gp_mem_n;
+#define GXS_GP_SYNC_US 6000u               /* the owner thread's per-frame budget for same-frame installs from the in-RAM pak */
+static unsigned c_gp_sync, c_gp_sync_bad, c_gp_sync_late;   /* installed the same frame | failed its checks there (worker path instead) | over the frame's budget (worker path) */
+static uint8_t *g_gp_idx;                  /* the index, n * 16 bytes; NULL = no pak: the loose app0:shaders/gxm/ files are used (older vpks, dev installs) */
+static uint32_t g_gp_n;
+static void gxs_gpak_open(void)
+{
+    const uint64_t t0 = gxm_now_us();
+    g_gp_fd = sceIoOpen(GXS_APP_GPAK, SCE_O_RDONLY, 0777);
+    if (g_gp_fd < 0) { gxm_log("[gxm-shader] app gxp pak: none (%s absent, 0x%08x): loose app0 files", GXS_APP_GPAK, (unsigned) g_gp_fd); g_gp_fd = -1; return; }
+    const SceOff sz = sceIoLseek(g_gp_fd, 0, SCE_SEEK_END);
+    uint8_t hdr[GXS_GPAK_HDR];
+    const uint32_t n = (sz >= (SceOff) GXS_GPAK_HDR && sceIoPread(g_gp_fd, hdr, GXS_GPAK_HDR, 0) == (int) GXS_GPAK_HDR) ? gxs_gpak_count(hdr, GXS_GPAK_HDR) : 0;
+    uint8_t *idx = n ? (uint8_t *) malloc((size_t) n * GXS_GPAK_ENT) : NULL;
+    const char *why = !n ? "bad header" : !idx ? "no memory" :
+                      sceIoPread(g_gp_fd, idx, n * GXS_GPAK_ENT, GXS_GPAK_HDR) != (int) (n * GXS_GPAK_ENT) ? "short index read" :
+                      !gxs_gpak_check(idx, n, (uint64_t) sz) ? "index out of order or out of range" : NULL;
+    if (why) { gxm_log("[gxm-shader] app gxp pak: %s REJECTED (%s): loose app0 files", GXS_APP_GPAK, why); free(idx); sceIoClose(g_gp_fd); g_gp_fd = -1; return; }
+    g_gp_idx = idx; g_gp_n = n;
+    gxm_log("[gxm-shader] app gxp pak: %u shaders, %u bytes, index read in %u ms", (unsigned) n, (unsigned) sz, (unsigned) ((gxm_now_us() - t0) / 1000u));
+    if (sz > 0 && sz <= (SceOff) (48u << 20)) {
+        const uint64_t t1 = gxm_now_us();
+        uint8_t *m = (uint8_t *) malloc((size_t) sz);
+        uint32_t got = 0;
+        while (m && got < (uint32_t) sz) {
+            const uint32_t want = (uint32_t) sz - got < (1u << 20) ? (uint32_t) sz - got : (1u << 20);
+            if (sceIoPread(g_gp_fd, m + got, want, (SceOff) got) != (int) want) break;
+            got += want;
+        }
+        if (m && got == (uint32_t) sz) { g_gp_mem = m; g_gp_mem_n = got; }
+        else free(m);
+        gxm_log("[gxm-shader] app gxp pak: %s (%u of %u bytes in %u ms)", g_gp_mem ? "held in RAM: a pak hit reads no file" : "NOT in RAM (allocation or read failed): positional reads as before",
+                (unsigned) got, (unsigned) sz, (unsigned) ((gxm_now_us() - t1) / 1000u));
+    }
+}
+static void gxs_gpak_close(void)
+{
+    gxm_log("[gxm-shader] app gxp pak: same-frame installs %u | failed there (worker path) %u | over the frame budget (worker path) %u", c_gp_sync, c_gp_sync_bad, c_gp_sync_late);
+    if (g_gp_fd >= 0) sceIoClose(g_gp_fd);
+    g_gp_fd = -1; free(g_gp_idx); g_gp_idx = NULL; g_gp_n = 0; free(g_gp_mem); g_gp_mem = NULL; g_gp_mem_n = 0;
+}
+/* a whole GXP-cache file from a path, malloc'd (+4 bytes slack, as before); NULL = absent, absurd size or a short read */
+static uint8_t *gxs_gxp_read_path(const char *path, uint32_t *len)
+{
+    SceUID f = sceIoOpen(path, SCE_O_RDONLY, 0777);
+    if (f < 0) return NULL;
+    const SceOff sz = sceIoLseek(f, 0, SCE_SEEK_END);
+    uint8_t *buf = NULL;
+    if (sz >= 20 && sz <= (SceOff) (1 << 20) && sceIoLseek(f, 0, SCE_SEEK_SET) == 0 && (buf = (uint8_t *) malloc((size_t) sz + 4u)) != NULL
+        && sceIoRead(f, buf, (unsigned) sz) != (int) sz) { free(buf); buf = NULL; }
+    sceIoClose(f);
+    if (buf) *len = (uint32_t) sz;
+    return buf;
+}
+/* the APP's copy of one program: from the pak when there is one (a miss there is final: no per-file open), else the loose app0:shaders/gxm/ file */
+static uint8_t *gxs_app_gxp_read(char kind, uint32_t h, uint32_t *len)
+{
+    if (g_gp_idx) {
+        uint32_t off, n;
+        if (!gxs_gpak_find(g_gp_idx, g_gp_n, kind, h, &off, &n)) return NULL;
+        uint8_t *buf = (uint8_t *) malloc((size_t) n + 4u);
+        if (!buf) return NULL;
+        if (g_gp_mem && (uint64_t) off + n <= g_gp_mem_n) memcpy(buf, g_gp_mem + off, n);
+        else if (sceIoPread(g_gp_fd, buf, n, (SceOff) off) != (int) n) { free(buf); return NULL; }
+        *len = n;
+        return buf;
+    }
+    char path[96]; snprintf(path, sizeof path, GXS_APP_GXPDIR "%c%08x.gxp", kind, (unsigned) h);
+    return gxs_gxp_read_path(path, len);
+}
+
 /* ---- the GXP cache ---- */
+/* THE CARD CACHE'S NAMES (2026-11-13). Every lookup tried the card file first; on a miss that is a failed open in a directory of thousands of entries, on the SD, before the app's copy is
+ * even looked at. The directory is listed once at start (sorted kind << 32 | hash); files this session writes are appended (g_cd_new). A name in neither is not on the card: no open.
+ * The list is authoritative only if the listing completed and the appended table never overflowed; otherwise every lookup opens the file as before. */
+static uint64_t *g_cd_names; static uint32_t g_cd_n; static int g_cd_ok;
+#define GXS_CD_NEW 2048
+static uint64_t g_cd_new[GXS_CD_NEW]; static volatile uint32_t g_cd_new_n; static volatile int g_cd_lock;
+static int gxs_cd_cmp(const void *a, const void *b) { const uint64_t x = *(const uint64_t *) a, y = *(const uint64_t *) b; return x < y ? -1 : x > y; }
+static void gxs_cd_scan(void)
+{
+    const uint64_t t0 = gxm_now_us();
+    SceUID d = sceIoDopen(GXS_DIR "gxm");
+    uint32_t cap = 4096, n = 0; int ok = d >= 0;
+    uint64_t *v = ok ? (uint64_t *) malloc(cap * sizeof *v) : NULL;
+    if (ok && !v) ok = 0;
+    if (ok) {
+        SceIoDirent e; memset(&e, 0, sizeof e);
+        int r;
+        while ((r = sceIoDread(d, &e)) > 0) {
+            const char *nm = e.d_name; unsigned h = 0; int good = strlen(nm) == 13 && !strcmp(nm + 9, ".gxp");
+            for (int i = 1; good && i < 9; ++i) { const char c = nm[i]; const int x = c >= '0' && c <= '9' ? c - '0' : c >= 'a' && c <= 'f' ? c - 'a' + 10 : -1; if (x < 0) good = 0; else h = h << 4 | (unsigned) x; }
+            if (good) {
+                if (n == cap) { uint64_t *w = (uint64_t *) realloc(v, (size_t) cap * 2u * sizeof *v); if (!w) { ok = 0; break; } v = w; cap *= 2u; }
+                v[n++] = (uint64_t) (unsigned char) nm[0] << 32 | h;
+            }
+            memset(&e, 0, sizeof e);
+        }
+        if (r < 0) ok = 0;
+    }
+    if (d >= 0) sceIoDclose(d);
+    if (ok) { qsort(v, n, sizeof *v, gxs_cd_cmp); g_cd_names = v; g_cd_n = n; g_cd_ok = 1; }
+    else free(v);
+    gxm_log("[gxm-shader] card cache names: %s (%u files listed in %u ms)", g_cd_ok ? "listed: a program the card does not hold costs no open" : d < 0 ? "no directory yet: every lookup opens the file" : "listing FAILED: every lookup opens the file",
+            (unsigned) n, (unsigned) ((gxm_now_us() - t0) / 1000u));
+}
+static void gxs_cd_add(char kind, uint32_t h)
+{
+    while (__atomic_test_and_set(&g_cd_lock, __ATOMIC_ACQUIRE)) sceKernelDelayThread(50);
+    if (g_cd_new_n < GXS_CD_NEW) { g_cd_new[g_cd_new_n] = (uint64_t) (unsigned char) kind << 32 | h; __atomic_store_n(&g_cd_new_n, g_cd_new_n + 1u, __ATOMIC_RELEASE); }
+    else g_cd_ok = 0;                                                   /* the table is full: the names are no longer the whole truth */
+    __atomic_clear(&g_cd_lock, __ATOMIC_RELEASE);
+}
+static int gxs_cd_has(char kind, uint32_t h)                            /* 0 = certainly not on the card */
+{
+    if (!g_cd_ok) return 1;
+    const uint64_t key = (uint64_t) (unsigned char) kind << 32 | h;
+    uint32_t lo = 0, hi = g_cd_n;
+    while (lo < hi) { const uint32_t mid = lo + (hi - lo) / 2u; if (g_cd_names[mid] < key) lo = mid + 1u; else hi = mid; }
+    if (lo < g_cd_n && g_cd_names[lo] == key) return 1;
+    const uint32_t nn = __atomic_load_n(&g_cd_new_n, __ATOMIC_ACQUIRE);
+    for (uint32_t i = 0; i < nn; ++i) if (g_cd_new[i] == key) return 1;
+    return 0;
+}
+static uint8_t *gxs_gxp_read_path(const char *path, uint32_t *len);
+static void gxs_gxpc_path(char *out, size_t cap, char kind, uint32_t h);
+static uint8_t *gxs_card_gxp_read(char kind, uint32_t h, uint32_t *len)   /* the card's copy, or NULL */
+{
+    if (!gxs_cd_has(kind, h)) return NULL;
+    char path[96]; gxs_gxpc_path(path, sizeof path, kind, h);
+    return gxs_gxp_read_path(path, len);
+}
 static void gxs_gxpc_path(char *out, size_t cap, char kind, uint32_t h) { snprintf(out, cap, GXS_GXPDIR "%c%08x.gxp", kind, (unsigned) h); }
 static int gxs_try_gxpc(GxmProg *p, GxsPriv *pv, char kind, uint32_t h, const void *k1, unsigned n1, const void *k2, unsigned n2)   /* 1 loaded, 0 none / stale, -1 hit but unusable */
 {
-    char path[96]; gxs_gxpc_path(path, sizeof path, kind, h);
-    SceUID f = sceIoOpen(path, SCE_O_RDONLY, 0777);
+    uint32_t sz = 0;
     int from_app = 0;
-    if (f < 0) { snprintf(path, sizeof path, GXS_APP_GXPDIR "%c%08x.gxp", kind, (unsigned) h); f = sceIoOpen(path, SCE_O_RDONLY, 0777); from_app = 1; }
-    if (f < 0) return 0;
-    const SceOff sz = sceIoLseek(f, 0, SCE_SEEK_END);
-    if (sz < 20 || sz > (SceOff) (1 << 20)) { sceIoClose(f); return 0; }
-    sceIoLseek(f, 0, SCE_SEEK_SET);
-    uint8_t *buf = (uint8_t *) malloc((size_t) sz + 4u);
-    if (!buf) { sceIoClose(f); return 0; }
-    const int rn = sceIoRead(f, buf, (unsigned) sz); sceIoClose(f);
+    uint8_t *buf = gxs_card_gxp_read(kind, h, &sz);                    /* the card copy wins (a later shader fix only needs it deleted) */
+    if (!buf) { buf = gxs_app_gxp_read(kind, h, &sz); from_app = 1; }
+    if (!buf) return 0;
     const uint8_t *v, *fr; uint32_t vl, fl;
-    if (rn != (int) sz || !gxs_gxpc_valid(buf, (uint32_t) sz, k1, n1, k2, n2, &v, &vl, &fr, &fl)) { free(buf); return 0; }
+    if (!gxs_gxpc_valid(buf, sz, k1, n1, k2, n2, &v, &vl, &fr, &fl)) { free(buf); return 0; }
     const int r = gxs_register_copy(p, pv, v, vl, fr, fl);
     free(buf);
     if (r) return -1;
@@ -860,6 +1063,7 @@ static int gxs_try_gxpc(GxmProg *p, GxsPriv *pv, char kind, uint32_t h, const vo
 }
 static void gxs_save_gxpc(char kind, uint32_t h, const void *k1, unsigned n1, const void *k2, unsigned n2, const void *v, uint32_t vl, const void *f, uint32_t fl)
 {
+    gxs_cd_add(kind, h);                                                /* before the write: a lookup racing it opens the file (and may find it absent), never skips it */
     const uint32_t kl = gxs_pad4(n1 + n2), total = 20u + kl + gxs_pad4(vl) + gxs_pad4(fl);
     uint8_t *buf = (uint8_t *) calloc(1, total);
     if (!buf) return;
@@ -930,7 +1134,8 @@ static int gxs_try_compile(GxmProg *p, GxsPriv *pv, int fam, int fast, char kind
  * the top of its next lookup, then forgets the memos (they hold the NULL answers of pending keys).  A job never sits in the negative cache while pending.
  * ux0:data/stairfax/gxm_async.txt starting with 0 = the synchronous compiler (as before).  The shark lock serialises every compile (worker, util_cg). */
 #define GXS_ASYNCFILE  "ux0:data/stairfax/gxm_async.txt"
-#define GXS_JOB_MAX    32
+#define GXS_JOB_MAX    128   /* 2026-11-05: was 32. Lookups and compiles share the table and a lookup miss keeps its slot as a compile: Cape Claw's
+                               80+ uncached keys filled all 32 with ~1.2 s compiles and every NEW key (the pause menu) was refused 34k times (RC9 hw log) */
 #define GXS_JOB_STACK  0x200000                                        /* as stfx_asc (rhi_vita_tev.inc ASC_STACK_BYTES): the compiler recurses deeply */
 enum { GXS_J_FREE, GXS_J_QUEUED, GXS_J_COMPILING, GXS_J_READY, GXS_J_FAILED };
 typedef struct {
@@ -943,7 +1148,11 @@ typedef struct {
     uint8_t harvest;                                                   /* queued by the harvest replay: compiled and SAVED to the card cache, never installed into the pool */
     uint8_t lookup;                                                    /* RC5 IO OFF R: the worker tries the pack and the GXP cache files before it compiles */
     uint8_t src;                                                       /* worker output: 0 compiled, 1 pack, 2 card cache, 3 app0 cache */
+    /* KONST-UNIFORM FORM: kf = 1: this job answers the (canonical) key K above, but its sources are those of the uniform form K' = kfck (identity kffast / kfkind / kfh / kfh2).  The I/O worker
+     * looks K up first (pack, card, app0), then K' (card, app0: kfhit); a miss is compiled AS K'.  The program that comes back is installed under K' unless the exact K was found (src != 0, !kfhit). */
+    uint8_t kf, kfhit, kffast; char kfkind; uint32_t kfh, kfh2; TevKey kfck;
 } GxsJob;
+typedef struct { TevKey ck; int fast; char kind; uint32_t h, h2; } GxsKf;   /* the uniform form identity (gxs_kf_identity) */
 static GxsJob g_job[GXS_JOB_MAX];
 static int g_async;                                                    /* 1 = the worker is running and takes compiles */
 static int g_hv_feeding;                                               /* 1 only while the harvest tick is inside gxs_make: a job queued then is a harvest job */
@@ -961,14 +1170,14 @@ static volatile unsigned c_async_ms_max, c_async_ms_sum;
  * ux0:data/stairfax/gxs_io_async.txt starting with 0 = the old synchronous lookup on R. */
 static int g_io_async = 1;
 static uint8_t *gxs_dup16(const uint8_t *p, uint32_t n) { uint8_t *d = (uint8_t *) memalign(16, n ? n : 16); if (d) memcpy(d, p, n); return d; }
-static int gxs_job_lookup(GxsJob *j)    /* worker: 1 pack, 2 card cache, 3 app0 cache (j->vg / j->fg / sizes set, memalign'd for gxs_register); 0 none */
+static int gxs_job_lookup_k(GxsJob *j, char kind, uint32_t h, const TevKey *ck, int allow_pack)    /* worker: 1 pack, 2 card cache, 3 app0 cache (j->vg / j->fg / sizes set, memalign'd for gxs_register); 0 none */
 {
-    const void *k1 = j->has_vk ? (const void *) &j->vk : (const void *) &j->ck;
-    const unsigned n1 = j->has_vk ? (unsigned) tev_vs_key_len(&j->vk) : (unsigned) tev_key_len(&j->ck);
-    const void *k2 = j->has_vk ? (const void *) &j->ck : NULL; const unsigned n2 = j->has_vk ? (unsigned) tev_key_len(&j->ck) : 0u;
+    const void *k1 = j->has_vk ? (const void *) &j->vk : (const void *) ck;
+    const unsigned n1 = j->has_vk ? (unsigned) tev_vs_key_len(&j->vk) : (unsigned) tev_key_len(ck);
+    const void *k2 = j->has_vk ? (const void *) ck : NULL; const unsigned n2 = j->has_vk ? (unsigned) tev_key_len(ck) : 0u;
     const uint8_t *v, *f; uint32_t vl, fl;
-    if (g_pack_on) {
-        const GxsPk *e = gxs_pk_find(&g_pk, j->h, (uint32_t) (unsigned char) j->kind);
+    if (g_pack_on && allow_pack) {
+        const GxsPk *e = gxs_pk_find(&g_pk, h, (uint32_t) (unsigned char) kind);
         if (!e) ++c_pack_miss;
         else {
             int bad = 0, got = 0;
@@ -987,17 +1196,13 @@ static int gxs_job_lookup(GxsJob *j)    /* worker: 1 pack, 2 card cache, 3 app0 
         }
     }
     for (int pass = 0; pass < 2; ++pass) {
-        char path[96];
-        if (pass == 0) gxs_gxpc_path(path, sizeof path, j->kind, j->h);
-        else snprintf(path, sizeof path, GXS_APP_GXPDIR "%c%08x.gxp", j->kind, (unsigned) j->h);
-        SceUID fd = sceIoOpen(path, SCE_O_RDONLY, 0777);
-        if (fd < 0) continue;
-        const SceOff sz = sceIoLseek(fd, 0, SCE_SEEK_END);
-        uint8_t *buf = NULL; int rn = -1;
-        if (sz >= 20 && sz <= (SceOff) (1 << 20) && sceIoLseek(fd, 0, SCE_SEEK_SET) == 0 && (buf = (uint8_t *) malloc((size_t) sz + 4u)) != NULL) rn = sceIoRead(fd, buf, (unsigned) sz);
-        sceIoClose(fd);
+        uint32_t sz = 0;
+        uint8_t *buf;
+        if (pass == 0) buf = gxs_card_gxp_read(kind, h, &sz);
+        else buf = gxs_app_gxp_read(kind, h, &sz);
+        if (!buf) continue;
         int got = 0;
-        if (buf && rn == (int) sz && gxs_gxpc_valid(buf, (uint32_t) sz, k1, n1, k2, n2, &v, &vl, &f, &fl)) {
+        if (gxs_gxpc_valid(buf, sz, k1, n1, k2, n2, &v, &vl, &f, &fl)) {
             if ((j->vg = (SceGxmProgram *) gxs_dup16(v, vl)) != NULL && (j->fg = (SceGxmProgram *) gxs_dup16(f, fl)) != NULL) { j->vsz = vl; j->fsz = fl; got = 1; }
             else { free(j->vg); j->vg = NULL; }
         }
@@ -1005,6 +1210,15 @@ static int gxs_job_lookup(GxsJob *j)    /* worker: 1 pack, 2 card cache, 3 app0 
         if (got) { ++c_gxpc_hit; if (pass) ++c_gxpc_app; return 2 + pass; }
     }
     return 0;
+}
+/* the job lookup: the exact key (pack, card, app0), then -- konst-uniform jobs -- the uniform form (card, app0; the shipped pack holds no uniform-form record). j->kfhit = the program belongs to the uniform form. */
+static int gxs_job_lookup(GxsJob *j)
+{
+    int r = gxs_job_lookup_k(j, j->kind, j->h, &j->ck, 1);
+    if (r || !j->kf) return r;
+    r = gxs_job_lookup_k(j, j->kfkind, j->kfh, &j->kfck, 0);
+    if (r) j->kfhit = 1;
+    return r;
 }
 /* the oldest QUEUED job of one kind (lookup 1 = the I/O worker's, 0 = the compiler's), claimed with a CAS: two workers scan the table */
 static GxsJob *gxs_job_claim(int lookup)
@@ -1080,12 +1294,13 @@ static int gxs_job_worker(SceSize args, void *argp)
             if (g_job_stop) return 0;
             GxsJob *j = gxs_job_claim(0);
             if (!j) break;
-            char hl[80]; snprintf(hl, sizeof hl, "// gxm %c%08x (async)\n", j->kind, (unsigned) j->h);
+            const char ekind = j->kf ? j->kfkind : j->kind; const uint32_t eh = j->kf ? j->kfh : j->h; const TevKey *eck = j->kf ? &j->kfck : &j->ck;   /* a konst-uniform job compiles the uniform form */
+            char hl[80]; snprintf(hl, sizeof hl, "// gxm %c%08x (async)\n", ekind, (unsigned) eh);
             int ok = 0;
             const uint64_t t0 = gxm_now_us();
             j->src = 0;
             gxs_shark_take();
-            if (!gxs_sentinel_arm(j->h, hl, j->vs, j->fs)) {                                  /* cannot fence it: refuse, as the synchronous path does */
+            if (!gxs_sentinel_arm(eh, hl, j->vs, j->fs)) {                                  /* cannot fence it: refuse, as the synchronous path does */
                 j->vg = gxs_compile_stage(j->vs, 0, &j->vsz);
                 j->fg = j->vg ? gxs_compile_stage(j->fs, 1, &j->fsz) : NULL;
                 gxs_sentinel_clear();
@@ -1095,10 +1310,10 @@ static int gxs_job_worker(SceSize args, void *argp)
             gxs_shark_give();
             j->ms = (uint32_t) ((gxm_now_us() - t0) / 1000u);
             if (ok) {
-                const void *k1 = j->has_vk ? (const void *) &j->vk : (const void *) &j->ck;
-                const unsigned n1 = j->has_vk ? (unsigned) tev_vs_key_len(&j->vk) : (unsigned) tev_key_len(&j->ck);
-                const void *k2 = j->has_vk ? (const void *) &j->ck : NULL; const unsigned n2 = j->has_vk ? (unsigned) tev_key_len(&j->ck) : 0u;
-                gxs_save_gxpc(j->kind, j->h, k1, n1, k2, n2, j->vg, j->vsz, j->fg, j->fsz);   /* both stages passed sceGxmProgramCheck */
+                const void *k1 = j->has_vk ? (const void *) &j->vk : (const void *) eck;
+                const unsigned n1 = j->has_vk ? (unsigned) tev_vs_key_len(&j->vk) : (unsigned) tev_key_len(eck);
+                const void *k2 = j->has_vk ? (const void *) eck : NULL; const unsigned n2 = j->has_vk ? (unsigned) tev_key_len(eck) : 0u;
+                gxs_save_gxpc(ekind, eh, k1, n1, k2, n2, j->vg, j->vsz, j->fg, j->fsz);   /* both stages passed sceGxmProgramCheck */
             } else { free(j->vg); free(j->fg); j->vg = j->fg = NULL; }
             if (j->ms > c_async_ms_max) c_async_ms_max = j->ms;
             c_async_ms_sum += j->ms;
@@ -1149,9 +1364,21 @@ static GxsJob *gxs_job_find(int fam, int fast, uint32_t h, const VsKey *vk, cons
     }
     return NULL;
 }
+/* a job that already is, or will install, the program of this uniform form: a konst-uniform job with the same K', or a plain job whose own key is K' (a second key with the same K' must not compile it twice) */
+static GxsJob *gxs_job_find_kf(int fam, const GxsKf *kf, const VsKey *vk)
+{
+    for (int i = 0; i < GXS_JOB_MAX; ++i) {
+        GxsJob *j = &g_job[i];
+        if (__atomic_load_n(&j->state, __ATOMIC_ACQUIRE) == GXS_J_FREE) continue;
+        if (j->fam != fam || (vk ? !(j->has_vk && !memcmp(&j->vk, vk, sizeof *vk)) : j->has_vk)) continue;
+        if (j->kf ? (j->kffast == kf->fast && j->kfh == kf->h && !memcmp(&j->kfck, &kf->ck, sizeof kf->ck))
+                  : (j->fast == kf->fast && j->h == kf->h && !memcmp(&j->ck, &kf->ck, sizeof kf->ck))) return j;
+    }
+    return NULL;
+}
 static unsigned gxs_jobs_busy(void) { unsigned n = 0; for (int i = 0; i < GXS_JOB_MAX; ++i) n += __atomic_load_n(&g_job[i].state, __ATOMIC_ACQUIRE) != GXS_J_FREE; return n; }
 /* owner: generate + queue. 1 queued; 0 refused (*why set: NOPROG for a generator refusal or a full queue, which is NOT remembered for the queue) */
-static int gxs_async_queue(int fam, int fast, char kind, uint32_t h, uint32_t h2, const VsKey *vk, const TevKey *ck, int *why, int *remember, int lookup)
+static int gxs_async_queue(int fam, int fast, char kind, uint32_t h, uint32_t h2, const VsKey *vk, const TevKey *ck, int *why, int *remember, int lookup, const GxsKf *kf)
 {
     *remember = 1;
     GxsJob *j = NULL;
@@ -1160,14 +1387,23 @@ static int gxs_async_queue(int fam, int fast, char kind, uint32_t h, uint32_t h2
     char *vs = g_cg_vs, *fs = g_cg_fs;
     if (!vs || !fs) { vs = g_cg_vs = (char *) malloc(32768); fs = g_cg_fs = (char *) malloc(65536); }
     if (!vs || !fs) { *why = GXM_SK_NOPROG; *remember = 0; return 0; }
-    const int gv = fam == GXM_PK_TEV ? tev_gen_vertex_ex(ck->numTex, ck->fogType, vs, 32768) : tev_gen_vertex_gx(vk, vs, 32768);
-    const int gf = fast ? tev_gen_fragment_fast_v(ck, gxs_fast_vbits(fast), fs, 65536) : tev_gen_fragment(ck, fs, 65536);
-    if (gv < 0 || gf < 0) { ++c_refused_gen; *why = GXM_SK_NOPROG; return 0; }
+    /* a konst-uniform job generates the sources of K' (uKF<s>); if the generator refuses K', K' is remembered as failed and the job is the plain one for K, as before */
+    for (;;) {
+        const TevKey *gk = kf ? &kf->ck : ck; const int gfast = kf ? kf->fast : fast;
+        const int gv = fam == GXM_PK_TEV ? tev_gen_vertex_ex(gk->numTex, gk->fogType, vs, 32768) : tev_gen_vertex_gx(vk, vs, 32768);
+        const int gf = gfast ? tev_gen_fragment_fast_v(gk, gxs_fast_vbits(gfast), fs, 65536) : tev_gen_fragment(gk, fs, 65536);
+        if (gv >= 0 && gf >= 0) break;
+        ++c_refused_gen;
+        if (!kf) { *why = GXM_SK_NOPROG; return 0; }
+        gxs_neg_add(fam, kf->fast, kf->h, kf->h2, GXM_SK_NOPROG); ++c_kf_fallback; kf = NULL;
+    }
     j->vs = strdup(vs); j->fs = strdup(fs);
     if (!j->vs || !j->fs) { free(j->vs); free(j->fs); j->vs = j->fs = NULL; *why = GXM_SK_NOPROG; *remember = 0; return 0; }
     j->fam = fam; j->fast = fast; j->kind = kind; j->h = h; j->h2 = h2; j->seq = ++g_job_seq;
     j->has_vk = vk != NULL; if (vk) j->vk = *vk; else memset(&j->vk, 0, sizeof j->vk);
     j->ck = *ck; j->vg = j->fg = NULL; j->vsz = j->fsz = j->ms = 0; j->fail_stage = 0; j->harvest = (uint8_t) g_hv_feeding; j->lookup = (uint8_t) lookup; j->src = 0;
+    j->kf = (uint8_t) (kf != NULL); j->kfhit = 0; j->kffast = 0; j->kfkind = 0; j->kfh = j->kfh2 = 0; memset(&j->kfck, 0, sizeof j->kfck);
+    if (kf) { j->kffast = (uint8_t) kf->fast; j->kfkind = kf->kind; j->kfh = kf->h; j->kfh2 = kf->h2; j->kfck = kf->ck; ++c_kf_queued; }
     __atomic_store_n(&j->state, GXS_J_QUEUED, __ATOMIC_RELEASE);
     if (!lookup) sceKernelSignalSema(g_job_wake, 1);
     ++c_async_queued;
@@ -1188,6 +1424,12 @@ static void gxs_async_install(void)
         if (st != GXS_J_READY && st != GXS_J_FAILED) continue;
         any = 1;
         const VsKey *vk = j->has_vk ? &j->vk : NULL;
+        /* konst-uniform job: the program that came back is K''s unless the worker found the exact K (src != 0 and not kfhit).  `u` = the identity it is installed under. */
+        const int usek = j->kf && st == GXS_J_READY && (j->src == 0 || j->kfhit);
+        const int ufast = usek ? j->kffast : j->fast; const char ukind = usek ? j->kfkind : j->kind; const uint32_t uh = usek ? j->kfh : j->h; const uint32_t uh2 = usek ? j->kfh2 : j->h2;
+        const TevKey *uck = usek ? &j->kfck : &j->ck;
+        int fb = 0; TevKey fbck;                                          /* K' failed to compile: the exact key is compiled instead, below, once this job is freed */
+        if (j->kf && st == GXS_J_READY && !usek) ++c_kf_exact_card;
         if (j->harvest) {                       /* the worker has already saved a READY job to the card cache (gxs_save_gxpc); nothing here needs the pool */
             if (st == GXS_J_FAILED) { ++c_hv_failed; ++c_compile_fail; ++c_async_failed; gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_COMPILE);
                 gxm_log("[gxm-shader] COMPILE FAILED %c%08x (%s, harvest, %u ms)", j->kind, (unsigned) j->h, j->fail_stage == 0 ? "vertex stage" : j->fail_stage == 1 ? "fragment stage" : "program check / sentinel", (unsigned) j->ms); }
@@ -1196,37 +1438,58 @@ static void gxs_async_install(void)
         } else
         if (st == GXS_J_FAILED) {
             ++c_compile_fail; ++c_async_failed;
-            gxm_log("[gxm-shader] COMPILE FAILED %c%08x (%s, async, %u ms)", j->kind, (unsigned) j->h, j->fail_stage == 0 ? "vertex stage" : j->fail_stage == 1 ? "fragment stage" : "program check / sentinel", (unsigned) j->ms);
-            gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_COMPILE);
+            gxm_log("[gxm-shader] COMPILE FAILED %c%08x (%s, async, %u ms%s)", j->kf ? j->kfkind : j->kind, (unsigned) (j->kf ? j->kfh : j->h), j->fail_stage == 0 ? "vertex stage" : j->fail_stage == 1 ? "fragment stage" : "program check / sentinel", (unsigned) j->ms, j->kf ? ", konst-uniform form: the exact key is compiled instead" : "");
+            if (j->kf) { gxs_neg_add(j->fam, j->kffast, j->kfh, j->kfh2, GXM_SK_COMPILE); fb = 1; fbck = j->ck; }   /* K' is never retried; K is queued as it would have been */
+            else gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_COMPILE);
+        } else if (usek && gxs_find(j->fam, ufast, uh, vk, uck)) {
+            free(j->vg); free(j->fg);                                      /* K' is already in the pool (another path installed it): nothing to add */
         } else {
             GxsSlot *s = gxs_new_slot();
-            if (!s) { ++c_prog_full; free(j->vg); free(j->fg); gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_PROGFULL); }   /* remembered here: else it would compile again */
+            if (!s) {                                                      /* remembered here: else it would compile again */
+                ++c_prog_full; free(j->vg); free(j->fg);
+                gxs_neg_add(j->fam, ufast, uh, uh2, GXM_SK_PROGFULL);
+                if (usek) gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_PROGFULL);
+            }
             else {
                 GxmProg *p = &s->p;
-                p->family = (uint8_t) j->fam; p->fast = (uint8_t) j->fast; p->hash = j->h; p->name = j->fam == GXM_PK_TEV ? "tev" : "gx"; p->tk = j->ck;
+                p->family = (uint8_t) j->fam; p->fast = (uint8_t) ufast; p->hash = uh; p->name = j->fam == GXM_PK_TEV ? "tev" : "gx"; p->tk = *uck;
                 if (vk) p->vk = *vk;
-                if (gxs_register(p, &s->pv, j->vg, j->fg, 1)) { ++c_compile_fail; ++c_async_failed; gxs_neg_add(j->fam, j->fast, j->h, j->h2, GXM_SK_COMPILE); }   /* frees vg / fg */
+                if (gxs_register(p, &s->pv, j->vg, j->fg, 1)) {            /* frees vg / fg */
+                    ++c_compile_fail; ++c_async_failed; gxs_neg_add(j->fam, ufast, uh, uh2, GXM_SK_COMPILE);
+                    if (usek) { fb = 1; fbck = j->ck; gxs_neg_add(j->fam, j->kffast, j->kfh, j->kfh2, GXM_SK_COMPILE); }
+                }
                 else {
                     p->from = j->src == 1 ? GXM_FROM_PACK : j->src ? GXM_FROM_GXPCACHE : GXM_FROM_SHARK;
                     gxs_finish(p, 0);
-                    gxs_insert(g_np, j->h);
+                    gxs_insert(g_np, uh);
                     ++g_np; ++c_async_installed;
+                    if (usek) { if (j->src) ++c_kf_cache; else ++c_kf_compiled; }
                     if (j->src) {                   /* IO OFF R: loaded by the worker; logged only when the card made it slow */
-                        if (j->ms >= 20u) gxm_log("[gxm-shader] loaded %c%08x from the %s in %u ms (worker; R did not wait)", j->kind, (unsigned) j->h, j->src == 1 ? "pack" : j->src == 2 ? "card cache" : "app0 cache", (unsigned) j->ms);
+                        if (j->ms >= 20u) gxm_log("[gxm-shader] loaded %c%08x from the %s in %u ms (worker; R did not wait)", ukind, (unsigned) uh, j->src == 1 ? "pack" : j->src == 2 ? "card cache" : "app0 cache", (unsigned) j->ms);
                     } else {
                         if (__builtin_expect(g_keylog, 0)) {   /* neither the pack nor a cache file had it (the synchronous path records it at the same point) */
-                            const void *k1 = vk ? (const void *) vk : (const void *) &j->ck; const unsigned n1 = vk ? (unsigned) tev_vs_key_len(vk) : (unsigned) tev_key_len(&j->ck);
-                            gxs_keylog_add(j->fam, j->fast, j->h, j->h2, k1, n1, vk ? (const void *) &j->ck : NULL, vk ? (unsigned) tev_key_len(&j->ck) : 0u);
+                            const void *k1 = vk ? (const void *) vk : (const void *) uck; const unsigned n1 = vk ? (unsigned) tev_vs_key_len(vk) : (unsigned) tev_key_len(uck);
+                            gxs_keylog_add(j->fam, ufast, uh, uh2, k1, n1, vk ? (const void *) uck : NULL, vk ? (unsigned) tev_key_len(uck) : 0u);
                         }
-                        gxm_log("[gxm-shader] compiled %c%08x: vertex %u B, fragment %u B (%u ms, informational, async) variant %u", j->kind, (unsigned) j->h, (unsigned) j->vsz, (unsigned) j->fsz, (unsigned) j->ms, gxs_fast_vbits(j->fast));
+                        gxm_log("[gxm-shader] compiled %c%08x: vertex %u B, fragment %u B (%u ms, informational, async) variant %u%s", ukind, (unsigned) uh, (unsigned) j->vsz, (unsigned) j->fsz, (unsigned) j->ms, gxs_fast_vbits(ufast), usek ? " konst-uniform form" : "");
                     }
                 }
             }
         }
-        free(j->vs); free(j->fs); j->vs = j->fs = NULL; j->vg = j->fg = NULL;
-        __atomic_store_n(&j->state, GXS_J_FREE, __ATOMIC_RELEASE);
+        {   const int ffam = j->fam, ffast = j->fast; const char fkind = j->kind; const uint32_t fh = j->h, fh2 = j->h2; VsKey fvk; const int fhas = j->has_vk; if (fhas) fvk = j->vk;
+            free(j->vs); free(j->fs); j->vs = j->fs = NULL; j->vg = j->fg = NULL;
+            __atomic_store_n(&j->state, GXS_J_FREE, __ATOMIC_RELEASE);
+            if (fb) {                                                      /* the uniform form did not build: today's behaviour for K -- an exact compile (the worker already searched K's caches) */
+                int w2 = GXM_SK_NOPROG, rem = 1;
+                if (gxs_async_queue(ffam, ffast, fkind, fh, fh2, fhas ? &fvk : NULL, &fbck, &w2, &rem, 0, NULL)) ++c_kf_fallback;
+                else if (rem) gxs_neg_add(ffam, ffast, fh, fh2, w2);
+            }
+        }
     }
-    if (any) gxs_forget_memos();
+    /* 2026-11-07: only the memos that can hold a pending key's NULL answer (the one-key memo, the builtin cache). The raw-key memos s_mm / s_mm2
+     * store OK pool programs alone, which are permanent: wiping them here (as before) cost every draw a full lookup after each of ~200-1,100
+     * installs a session (rc9 / rc9c, Cape Claw). gxm_shader_shutdown still forgets everything. */
+    if (any) gxs_forget_null_memos();
 }
 static inline void gxs_async_poll(void) { if (__builtin_expect(g_async && __atomic_load_n(&g_job_done, __ATOMIC_ACQUIRE) != g_job_seen, 0)) gxs_async_install(); }
 
@@ -1284,6 +1547,29 @@ static void gxs_keylog_add(int fam, int fast, uint32_t h, uint32_t h2, const voi
 }
 
 /* get-or-create for the TEV (fam GXM_PK_TEV, vk NULL) and GX (vk set) families. `ck`: the canonical TevKey. NULL with *why on any failure. */
+/* the uniform form of canonical key ck, when the fallback applies: konst-uniform on, the IO OFF R path (the lookups are the I/O worker's), not a harvest feed, not a variant arm, K' has a form, was not
+ * refused / failed before (negative cache) and is not on the bad list.  1 = *kf is K''s identity. */
+static int gxs_kf_prepare(int fam, int fast, const VsKey *vk, const TevKey *ck, GxsKf *kf)
+{
+    if (!g_kf || !g_async || !g_io_async || g_hv_feeding || fast < 0 || fast > 1) return 0;
+    int kfast = 0; uint32_t kh = 0, kh2 = 0;
+    if (!gxs_kf_identity(fam == GXM_PK_GX, g_fast, g_td.on, vk, ck, &kf->ck, &kfast, &kh, &kh2)) return 0;
+    /* 2026-11-07 review: only when K' keeps K's generator. The fast check proves fewer uniform forms (a uniform weight is bounded over [0,255], a literal by
+     * its value): 93 of 328 fast pack keys would be served an EXACT K' -- fewer compiles bought with GPU time, unmeasured, in scenes at the GPU budget.
+     * Those keys keep today's behaviour (their own literal program) until a GPU A/B says otherwise. */
+    if (kfast != fast) return 0;
+    if (gxs_neg_find(fam, kfast, kh, kh2) || gxs_is_bad(kh)) return 0;
+    kf->fast = kfast; kf->h = kh; kf->h2 = kh2;
+    kf->kind = fam == GXM_PK_TEV ? (kfast ? 'f' : 't') : (kfast ? 'h' : 'g');
+    return 1;
+}
+/* 1 when program m is the pool program of the uniform form of (ck): a raw-key memo may hold it for K (the memo verify must not call that a mismatch) */
+static int gxs_kf_is_alias(int fam, const VsKey *vk, const TevKey *ck, const GxmProg *m)
+{
+    TevKey kck; int kfast; uint32_t kh, kh2;
+    if (!m || !gxs_kf_identity(fam == GXM_PK_GX, g_fast, g_td.on, vk, ck, &kck, &kfast, &kh, &kh2)) return 0;
+    return gxs_find(fam, kfast, kh, vk, &kck) == m;
+}
 static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const TevKey *ck, int *why)
 {
     const uint32_t h2 = gxs_key_h2(vk, ck);
@@ -1291,9 +1577,17 @@ static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const T
     if (ng) { *why = ng->why; return NULL; }
     if (gxs_is_bad(h)) { ++c_noprog_bad; *why = GXM_SK_NOPROG; gxs_neg_add(fam, fast, h, h2, GXM_SK_NOPROG); return NULL; }
     if (g_async && gxs_job_find(fam, fast, h, vk, ck)) { ++c_async_pending; *why = GXM_SK_NOPROG; return NULL; }   /* queued / compiling: the HAL's fallback draws it */
-    if (g_async && (unsigned) g_np + gxs_jobs_busy() >= (unsigned) GXM_PROG_MAX) { ++c_prog_full; *why = GXM_SK_PROGFULL; return NULL; }
+    /* KONST-UNIFORM FORM (the IO OFF R path only): the identity of K' for a key that reads a constant fraction.  Not for harvest jobs, variant arms, or a K' that failed / is bad-listed. */
+    GxsKf kf; const int kfok = gxs_kf_prepare(fam, fast, vk, ck, &kf);
+    if (g_async && (unsigned) g_np + gxs_jobs_busy() >= (unsigned) GXM_PROG_MAX) {
+        if (kfok) { GxmProg *q = gxs_find(fam, kf.fast, kf.h, vk, &kf.ck); if (q) { ++c_kf_alias; *why = 0; return q; } }   /* an alias consumes no slot */
+        ++c_prog_full; *why = GXM_SK_PROGFULL; return NULL;
+    }
     GxsSlot *s = gxs_new_slot();
-    if (!s) { ++c_prog_full; *why = GXM_SK_PROGFULL; return NULL; }                                   /* not remembered: nothing to learn from a full table */
+    if (!s) {
+        if (kfok) { GxmProg *q = gxs_find(fam, kf.fast, kf.h, vk, &kf.ck); if (q) { ++c_kf_alias; *why = 0; return q; } }
+        ++c_prog_full; *why = GXM_SK_PROGFULL; return NULL;                                           /* not remembered: nothing to learn from a full table */
+    }
     GxmProg *p = &s->p; GxsPriv *pv = &s->pv;
     p->family = (uint8_t) fam; p->fast = (uint8_t) fast; p->hash = h; p->name = fam == GXM_PK_TEV ? "tev" : "gx"; p->tk = *ck;
     if (vk) p->vk = *vk;
@@ -1303,10 +1597,29 @@ static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const T
     const int io_off_r = g_async && g_io_async && !g_hv_feeding;    /* IO OFF R: no card I/O on this thread */
     int r = 0;
     if (!io_off_r || __atomic_load_n(&g_pk_ram, __ATOMIC_ACQUIRE)) r = gxs_try_pack(p, pv, kind, h, k1, n1, k2, n2);   /* RC6: a RAM pack is a memcpy, same frame */
+    /* 2026-11-13: THE PAK IN RAM IS SERVED LIKE THE RAM PACK. A program the card certainly does not hold (the listed names) and the in-RAM pak does is a memcpy + register on this thread, the
+       same frame: no job, no skipped draws while a worker gets round to it (a LightFoot load-in asked for ~200 such programs at once and skipped 1838 draws over 8 s waiting). Bounded per
+       frame (GXS_GP_SYNC_US): past the budget a program takes the worker path as before. A pak image that fails its checks here also takes the worker path (it compiles there). */
+    if (io_off_r && r == 0 && g_gp_mem && g_cd_ok && !gxs_cd_has(kind, h)) {
+        static unsigned s_gp_frame; static uint32_t s_gp_us;
+        if (s_gp_frame != (unsigned) g_gx.frames) { s_gp_frame = (unsigned) g_gx.frames; s_gp_us = 0; }
+        uint32_t o_, n_;
+        if (s_gp_us < GXS_GP_SYNC_US && gxs_gpak_find(g_gp_idx, g_gp_n, kind, h, &o_, &n_)) {
+            const uint64_t t0_ = gxm_now_us();
+            r = gxs_try_gxpc(p, pv, kind, h, k1, n1, k2, n2);
+            s_gp_us += (uint32_t) (gxm_now_us() - t0_);
+            if (r == 1) ++c_gp_sync; else { ++c_gp_sync_bad; r = 0; }
+        } else if (s_gp_us >= GXS_GP_SYNC_US) ++c_gp_sync_late;
+    }
     if (io_off_r && r == 0) {                                     /* not in the (RAM) pack: card cache / app0 / compile on the workers; the slot is not consumed */
+        if (kfok) {                                               /* pool(K') -> serve it for K, no job; K' queued / compiling -> NOPROG, served once it installs (never a second compile of K') */
+            GxmProg *q = gxs_find(fam, kf.fast, kf.h, vk, &kf.ck);
+            if (q) { ++c_kf_alias; *why = 0; return q; }
+            if (gxs_job_find_kf(fam, &kf, vk)) { ++c_async_pending; *why = GXM_SK_NOPROG; return NULL; }
+        }
         if (gxs_jobs_busy() >= GXS_JOB_MAX) { ++c_async_full; *why = GXM_SK_NOPROG; return NULL; }   /* asked again on a later draw */
         int wq = GXM_SK_NOPROG, remember = 1;
-        const int queued = gxs_async_queue(fam, fast, kind, h, h2, vk, ck, &wq, &remember, 1);
+        const int queued = gxs_async_queue(fam, fast, kind, h, h2, vk, ck, &wq, &remember, 1, kfok ? &kf : NULL);
         if (queued) sceKernelSignalSema(g_io_wake, 1);
         *why = wq;
         if (!queued && remember) gxs_neg_add(fam, fast, h, h2, wq);   /* the generator refused it: no source, so no cache file either (same generator) */
@@ -1328,7 +1641,7 @@ static GxmProg *gxs_make(int fam, int fast, uint32_t h, const VsKey *vk, const T
         if (r < 0) w = GXM_SK_COMPILE;
         else if (r == 0 && g_async) {
             int remember = 1;
-            const int queued = gxs_async_queue(fam, fast, kind, h, h2, vk, ck, &w, &remember, 0);   /* queued: NOPROG now, the program at a later lookup */
+            const int queued = gxs_async_queue(fam, fast, kind, h, h2, vk, ck, &w, &remember, 0, NULL);   /* queued: NOPROG now, the program at a later lookup */
             *why = w;
             if (!queued && remember) gxs_neg_add(fam, fast, h, h2, w);              /* the generator refused it: remembered, as the synchronous path does */
             return NULL;                                                            /* a queued key is never in the negative cache */
@@ -1369,20 +1682,14 @@ static int gxs_cached_on_disk(char kind, uint32_t h, const void *k1, unsigned n1
         }
     }
     for (int app = 0; app < 2; ++app) {
-        char path[96];
-        if (app) snprintf(path, sizeof path, GXS_APP_GXPDIR "%c%08x.gxp", kind, (unsigned) h); else gxs_gxpc_path(path, sizeof path, kind, h);
-        SceUID f = sceIoOpen(path, SCE_O_RDONLY, 0777);
-        if (f < 0) continue;
-        const SceOff sz = sceIoLseek(f, 0, SCE_SEEK_END);
-        uint8_t *buf = (sz >= 20 && sz <= (SceOff) (1 << 20)) ? (uint8_t *) malloc((size_t) sz + 4u) : NULL;
-        int ok = 0;
-        if (buf) {
-            sceIoLseek(f, 0, SCE_SEEK_SET);
-            const uint8_t *v, *fr; uint32_t vl, fl;
-            ok = sceIoRead(f, buf, (unsigned) sz) == (int) sz && gxs_gxpc_valid(buf, (uint32_t) sz, k1, n1, k2, n2, &v, &vl, &fr, &fl);
-            free(buf);
-        }
-        sceIoClose(f);
+        uint32_t sz = 0;
+        uint8_t *buf;
+        if (app) buf = gxs_app_gxp_read(kind, h, &sz);
+        else buf = gxs_card_gxp_read(kind, h, &sz);
+        if (!buf) continue;
+        const uint8_t *v, *fr; uint32_t vl, fl;
+        const int ok = gxs_gxpc_valid(buf, sz, k1, n1, k2, n2, &v, &vl, &fr, &fl);
+        free(buf);
         if (ok) return 1;
     }
     return 0;
@@ -1461,6 +1768,7 @@ int gxm_shader_init(void)
     c_pack_hit = c_pack_miss = c_pack_stale = c_pack_reads = c_pack_bad = c_shark_compiles = c_shark_fail = c_gxpc_hit = c_gxpc_app = c_vp_made = c_fp_made = c_vp_fail = c_fp_fail = 0;
     c_unmapped_unif = c_unmapped_attr = c_missing_samplers = c_refused_gen = c_noprog_bad = c_prog_full = c_arm_noprog = c_sent_fail = c_gxpc_write = c_noop = 0;
     c_compile_fail = c_split_fail = 0; g_unmapped_logged = 0;
+    c_kf_alias = c_kf_queued = c_kf_exact_card = c_kf_cache = c_kf_compiled = c_kf_fallback = 0;
     g_neg = (GxsNeg *) calloc(GXS_NEG_N, sizeof *g_neg);
     if (!g_neg) { gxm_log("[gxm-shader] init: out of memory (negative cache)"); return -1; }
     /* the three markers that decide a program's identity: they must be what the pack's run had, or pack_miss explodes (GXM_M2.md section 12) */
@@ -1468,6 +1776,9 @@ int gxm_shader_init(void)
     g_persp = !gxs_marker_is_1(GXS_PERSPFILE);
     g_dedupe = !gxs_marker_is_1(GXS_DEDUPEFILE);
     g_td.on = g_dedupe;
+    { char b[8]; g_kf = !(gxs_read_small(GXS_KFFILE, b, sizeof b) > 0 && b[0] == '0'); }
+    gxm_log("[gxm-shader] konst-uniform fallback: %s (konst_uniform.txt 0 = off; a key with a constant-fraction konst selector that misses the pool and the RAM pack is served by / compiled as one program per stage layout, the fraction read from uKF<s>; async worker path only)",
+            g_kf ? "ON" : "OFF");
     gxm_log("[gxm-shader] identity: fast=%d (tev_fast.txt) persp=%d (texgen_persp_off.txt) dedupe=%d (tev_dedupe_off.txt) | table %d programs, TEVGEN_VERSION %d, pack version %#x",
             g_fast, g_persp, g_dedupe, GXM_PROG_MAX, TEVGEN_VERSION, (unsigned) GXS_SHC_VERSION);
     sceIoMkdir("ux0:data/STFX00001", 0777); sceIoMkdir("ux0:data/STFX00001/shc", 0777); sceIoMkdir("ux0:data/STFX00001/gxm", 0777);
@@ -1478,6 +1789,8 @@ int gxm_shader_init(void)
     }
     gxs_sentinel_recover();
     gxs_pack_open();
+    gxs_gpak_open();
+    gxs_cd_scan();
     gxs_shark_start();
     g_up = 1;
     gxs_async_start();
@@ -1536,6 +1849,7 @@ void gxm_shader_shutdown(void)
     if (!g_pk_loading && g_pk_ram_blk >= 0) { __atomic_store_n(&g_pk_ram, NULL, __ATOMIC_RELEASE); sceKernelFreeMemBlock(g_pk_ram_blk); g_pk_ram_blk = -1; }
     g_pk_ram_failed = 0;                                                             /* a re-init may try again */
     if (g_pk_fd >= 0) { sceIoClose(g_pk_fd); g_pk_fd = -1; }
+    gxs_gpak_close();                        /* after the worker drain above: no job reads the pak any more */
     g_pack_on = 0;
     g_up = 0;
     /* shark_end() is NOT called: it unloads the module before unhooking and the process dies (S1 console run 1 [M]) */
@@ -1564,10 +1878,14 @@ static inline void gxs_ok_store(GxsOneKey *m, const VsKey *vk, const TevKey *tk,
 /* GXM_HINT_END */
 static unsigned c_hint_hit;            /* calls answered by the hint alone (no compare, no hash) */
 static GxmProg *g_bi[GXM_BI_N]; static int g_bi_why[GXM_BI_N]; static int g_bi_done[GXM_BI_N];
-static void gxs_forget_memos(void)
+static void gxs_forget_null_memos(void)   /* the memos that store NULL answers (pending / refused keys) */
 {
     s_tk_valid = 0; s_tk_prog = NULL; gxs_ok_forget(&s_ok);
     memset(g_bi, 0, sizeof g_bi); memset(g_bi_done, 0, sizeof g_bi_done);
+}
+static void gxs_forget_memos(void)        /* everything: the raw-key memos too (they point into the pool) */
+{
+    gxs_forget_null_memos();
     gxs_mm_clear();
 }
 
@@ -1656,7 +1974,7 @@ static GxmProg *gxs_tev_core(const TevKey *raw, int *why, int use_memo)
         if (m && !(c_mm_hit[0] & 63u)) {
             TevKey vck; uint32_t vh; int vf;
             gxs_tev_identity(&g_td, raw, g_fast, &vck, &vh, &vf);
-            ++c_mm_ver; if (gxs_find(GXM_PK_TEV, vf, vh, NULL, &vck) != m) ++c_mm_bad;
+            ++c_mm_ver; { GxmProg *vf0 = gxs_find(GXM_PK_TEV, vf, vh, NULL, &vck); if (vf0 != m && !(!vf0 && gxs_kf_is_alias(GXM_PK_TEV, NULL, &vck, m))) ++c_mm_bad; }
         }
         if (m) { s_tk_raw = *raw; s_tk_valid = 1; s_tk_prog = m; s_tk_why = 0; if (why) *why = 0; return m; }
     }
@@ -1724,7 +2042,7 @@ GxmProg *gxm_shader_gx_hint(const VsKey *raw_vk, const TevKey *raw_tk, unsigned 
         if (m && !(c_mm_hit[1] & 63u)) {
             VsKey vvk; TevKey vck; uint32_t vh; int vf;
             gxs_gx_identity(&g_td, raw_vk, raw_tk, g_fast, g_persp, &vvk, &vck, &vh, &vf);
-            ++c_mm_ver; if (gxs_find(GXM_PK_GX, vf, vh, &vvk, &vck) != m) ++c_mm_bad;
+            ++c_mm_ver; { GxmProg *vf0 = gxs_find(GXM_PK_GX, vf, vh, &vvk, &vck); if (vf0 != m && !(!vf0 && gxs_kf_is_alias(GXM_PK_GX, &vvk, &vck, m))) ++c_mm_bad; }
         }
         if (m) { ++g_gxs_mm_st[1]; gxs_ok_store(&s_ok, raw_vk, raw_tk, m, 0, hint); if (why) *why = 0; return m; }
     }
@@ -1962,6 +2280,8 @@ int gxm_shader_report(char *buf, int cap)
                      c_pack_bad, c_split_fail, c_compile_fail, c_vp_fail, c_fp_fail, c_prog_full, c_arm_noprog, c_sent_fail, c_gxpc_write, c_noop);
     if (n > 0 && n < cap) n += snprintf(buf + n, (size_t) (cap - n), "async_on=%d async_queued=%u async_installed=%u async_failed=%u async_full=%u async_pending_hits=%u async_inflight_max=%u async_ms_max=%u async_ms_sum=%u ",
                                         g_async, c_async_queued, c_async_installed, c_async_failed, c_async_full, c_async_pending, c_async_inflight_max, (unsigned) c_async_ms_max, (unsigned) c_async_ms_sum);
+    if (n > 0 && n < cap) n += snprintf(buf + n, (size_t) (cap - n), "kf_on=%d kf_alias=%u kf_queued=%u kf_exact_card=%u kf_cache=%u kf_compiled=%u kf_fallback=%u ",
+                                        g_kf, c_kf_alias, c_kf_queued, c_kf_exact_card, c_kf_cache, c_kf_compiled, c_kf_fallback);
     if (n > 0 && n < cap) n += snprintf(buf + n, (size_t) (cap - n), "memo_tev_hit=%u memo_tev_miss=%u memo_gx_hit=%u memo_gx_miss=%u memo_verified=%u memo_bad=%u memo_hint_hit=%u ",
                                         c_mm_hit[0], c_mm_miss[0], c_mm_hit[1], c_mm_miss[1], c_mm_ver, c_mm_bad, c_hint_hit);
     {   /* R3a C3 (orchestrator, 2026-10-24): the HAL's own generation memos, and the GX_C3_SELFCHECK counters when the HAL was built with it (weak: 0 otherwise) */

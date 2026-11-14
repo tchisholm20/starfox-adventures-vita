@@ -2793,6 +2793,9 @@ void objectShadow_setupProjectedTextureChannel(ProjectedShadowTexture* shadow, G
 
     projectedShadowInitChannelFogColor(&fogColor);
     PSMTXConcat(shadow->textureMtx, mtx, mtx_110);
+#if defined(__vita__)
+    { extern f32 gStfxShpT0[3][4]; extern int gStfxShpValid; __builtin_memcpy(gStfxShpT0, mtx_110, sizeof(Mtx)); gStfxShpValid = 1; }   /* SHADOW PROBE 2026-11-11: the receiver's texture matrices, for [shp-uv] (shadow_dolphin.c) */
+#endif
     GXLoadTexMtxImm(mtx_110, GX_TEXMTX0, GX_MTX2x4);
     GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_POS, GX_TEXMTX0, GX_FALSE, GX_PTIDENTITY);
 
@@ -2892,6 +2895,9 @@ void objectShadow_setupProjectedTextureChannel(ProjectedShadowTexture* shadow, G
     PSMTXConcat(shadow->depthMtx, mtx, mtx_e0);
     PSMTXConcat(mtx_110, mtx_e0, mtx_e0);
     GXLoadTexMtxImm(mtx_e0, GX_TEXMTX1, GX_MTX2x4);
+#if defined(__vita__)
+    { extern f32 gStfxShpT1[3][4]; extern f32 gStfxShpF31, gStfxShpScale; __builtin_memcpy(gStfxShpT1, mtx_e0, sizeof(Mtx)); gStfxShpF31 = f31_val; gStfxShpScale = scale; }
+#endif
     GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_POS, GX_TEXMTX1, GX_FALSE, GX_PTIDENTITY);
 
     GXSetTevDirect(stage_base + 1);
@@ -2908,6 +2914,36 @@ void objectShadow_setupProjectedTextureChannel(ProjectedShadowTexture* shadow, G
     GXSetNumChans(0);
     GXSetNumTexGens(2);
     GXSetNumTevStages((stage_count + 2));
+#if defined(__vita__)
+    {   /* SHADOW RECEIVER BISECT (2026-11-11, ux0:data/stairfax/shadow_dbg.txt, vita_tool_main.c vt_shadow_dbg): 1 = no depth-fade ramp stage (cast texture + threshold only),
+           2 = flat K0 over every receiver triangle (coverage + depth test only). 0 = the game's own setup. Diagnostic only. */
+        extern int gStfxShadowDbg __attribute__((weak));
+        const int dbg = &gStfxShadowDbg ? gStfxShadowDbg : 0;
+        if (dbg == 1) { GXSetNumTexGens(1); GXSetNumTevStages(stage_count + 1); }
+        else if (dbg == 2) {
+            GXSetTevDirect(GX_TEVSTAGE0);
+            GXSetTevSwapMode(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
+            GXSetTevKColorSel(GX_TEVSTAGE0, GX_TEV_KCSEL_K0);
+            GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+            GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_KONST);
+            GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO);
+            GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetNumTexGens(0); GXSetNumTevStages(1);
+        }
+        else if (dbg >= 3 && dbg <= 5) {   /* 3 = the raw cast texel as darkness (no threshold); 4 / 5 = texcoord0's u / v shown through the 0..1 ramp texture (v: the matrix rows swapped) */
+            if (dbg == 5) { Mtx sw; PSMTXConcat(shadow->textureMtx, mtx, sw); { int c; for (c = 0; c < 4; c++) { f32 t = sw[0][c]; sw[0][c] = sw[1][c]; sw[1][c] = t; } } GXLoadTexMtxImm(sw, GX_TEXMTX0, GX_MTX2x4); }
+            GXSetTevDirect(GX_TEVSTAGE0);
+            GXSetTevSwapMode(GX_TEVSTAGE0, GX_TEV_SWAP0, dbg == 3 ? GX_TEV_SWAP1 : GX_TEV_SWAP0);
+            GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, dbg == 3 ? GX_TEXMAP0 : GX_TEXMAP1, GX_COLOR_NULL);
+            GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
+            GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO);
+            GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetNumTexGens(1); GXSetNumTevStages(1);
+        }
+    }
+#endif
 
     GXSetFog(GX_FOG_PERSP_EXP, gFogStartZ, gFogEndZ, gFogNearZ, gFogFarZ, fogColor);
     GXSetBlendMode(GX_BM_BLEND, GX_BL_ZERO, GX_BL_INVSRCCLR, GX_LO_NOOP);

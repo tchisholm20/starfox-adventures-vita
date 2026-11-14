@@ -33,25 +33,33 @@ static void emit(Out* o, const char* fmt, ...) {
 }
 static const char* kReg[4] = { "rP", "r0", "r1", "r2" };
 static const char kCh[4] = { 'x', 'y', 'z', 'w' };
-static const int kFrac[8] = { 255, 223, 191, 159, 128, 96, 64, 32 };
+#define kFrac(i) tev_kfrac(i)   /* the ONE table of the constant fractions: gx_tev_key.h (tev_fill_uniforms feeds the same codes to uKF<s>) */
 
 // A float4 whose channels come from `v` through swap table row `sw`.
 static void swz(Out* o, const char* v, const uint8_t* sw) {
     emit(o, "float4(%s.%c, %s.%c, %s.%c, %s.%c)", v, kCh[sw[0] & 3], v, kCh[sw[1] & 3], v, kCh[sw[2] & 3], v, kCh[sw[3] & 3]);
 }
-static void konstC(Out* o, int sel) {
-    if (sel < 8) { emit(o, "float4(%d.0, %d.0, %d.0, 0.0)", kFrac[sel], kFrac[sel], kFrac[sel]); return; }
+static void konstC(Out* o, int sel, int stg) {
+#ifdef KFU_BREAK_LEAK   /* host negative control: the marker's emission leaks into a LITERAL key (selector 3) */
+    if (sel == 3) { emit(o, "float4(uKF%d.x, uKF%d.x, uKF%d.x, 0.0)", stg, stg, stg); return; }
+#endif
+    if (sel < 8) { emit(o, "float4(%d.0, %d.0, %d.0, 0.0)", kFrac(sel), kFrac(sel), kFrac(sel)); return; }
+    if (sel == TEVK_KSEL_UNIFORM) { emit(o, "float4(uKF%d.x, uKF%d.x, uKF%d.x, 0.0)", stg, stg, stg); return; }   /* konst-uniform form: the same codes, read from the stage's uniform */
     if (sel >= 12 && sel <= 15) { emit(o, "uK%d", sel - 12); return; }
     if (sel >= 16 && sel <= 31) { int k = (sel - 16) & 3; char c = kCh[(sel - 16) >> 2];
                                   emit(o, "float4(uK%d.%c, uK%d.%c, uK%d.%c, 0.0)", k, c, k, c, k, c); return; }
     emit(o, "float4(0.0, 0.0, 0.0, 0.0)");
 }
-static void konstA(Out* o, int sel) {
-    if (sel < 8) { emit(o, "%d.0", kFrac[sel]); return; }
+static void konstA(Out* o, int sel, int stg) {
+#ifdef KFU_BREAK_LEAK
+    if (sel == 3) { emit(o, "uKF%d.y", stg); return; }
+#endif
+    if (sel < 8) { emit(o, "%d.0", kFrac(sel)); return; }
+    if (sel == TEVK_KSEL_UNIFORM) { emit(o, "uKF%d.y", stg); return; }
     if (sel >= 16 && sel <= 31) { emit(o, "uK%d.%c", (sel - 16) & 3, kCh[(sel - 16) >> 2]); return; }
     emit(o, "0.0");
 }
-static void colorArg(Out* o, int arg, int kcsel) {
+static void colorArg(Out* o, int arg, int kcsel, int stg) {
     switch (arg) {
     case 0: emit(o, "rP"); break;
     case 1: emit(o, "float4(rP.w, rP.w, rP.w, 0.0)"); break;
@@ -67,11 +75,11 @@ static void colorArg(Out* o, int arg, int kcsel) {
     case 11: emit(o, "float4(rs.w, rs.w, rs.w, 0.0)"); break;
     case 12: emit(o, "float4(255.0, 255.0, 255.0, 0.0)"); break;
     case 13: emit(o, "float4(128.0, 128.0, 128.0, 0.0)"); break;
-    case 14: konstC(o, kcsel); break;
+    case 14: konstC(o, kcsel, stg); break;
     default: emit(o, "float4(0.0, 0.0, 0.0, 0.0)"); break;
     }
 }
-static void alphaArg(Out* o, int arg, int kasel) {
+static void alphaArg(Out* o, int arg, int kasel, int stg) {
     switch (arg) {
     case 0: emit(o, "rP.w"); break;
     case 1: emit(o, "r0.w"); break;
@@ -79,7 +87,7 @@ static void alphaArg(Out* o, int arg, int kasel) {
     case 3: emit(o, "r2.w"); break;
     case 4: emit(o, "tx.w"); break;
     case 5: emit(o, "rs.w"); break;
-    case 6: konstA(o, kasel); break;
+    case 6: konstA(o, kasel, stg); break;
     default: emit(o, "0.0"); break;
     }
 }
@@ -229,6 +237,20 @@ unsigned tev_ind_ts_mask(const TevKey* k) {
     }
     return m;
 }
+// KONST-UNIFORM FORM: bit s = stage s reads uKF<s> (a stage < numStages that reads konst colour with kcsel == TEVK_KSEL_UNIFORM or konst alpha with kasel == it).
+unsigned tev_kf_mask(const TevKey* k) {
+    unsigned m = 0; int n = k->numStages > TEVK_STAGES ? TEVK_STAGES : k->numStages;
+    for (int s = 0; s < n; ++s) {
+        const TevKeyStage* st = &k->st[s]; int c = 0, a = 0;
+        for (int i = 0; i < 4; ++i) { if (st->cin[i] == 14) c = 1; if (st->ain[i] == 6) a = 1; }
+        if ((c && st->kcsel == TEVK_KSEL_UNIFORM) || (a && st->kasel == TEVK_KSEL_UNIFORM)) m |= 1u << s;
+    }
+    return m;
+}
+static void kfSig(Out* o, const TevKey* k) {   // the extra uniforms of the konst-uniform form (nothing for any other key)
+    const unsigned m = tev_kf_mask(k);
+    for (int s = 0; s < TEVK_STAGES; ++s) if (m >> s & 1) emit(o, ", uniform float4 uKF%d", s);
+}
 static void indSig(Out* o, const TevKey* k) {   // the extra uniforms of the program
     const unsigned mm = tev_ind_matrix_mask(k), tm = tev_ind_ts_mask(k);
     for (int m = 0; m < 3; ++m) if (mm >> m & 1) emit(o, ", uniform float4 uIM%da, uniform float4 uIM%db", m, m);
@@ -332,15 +354,15 @@ static void body(Out* o, const TevKey* k) {
         } else if ((st->ras == 2 || st->ras == 3) && act && (k->ik.st[s][5] >> 1 & 3)) emit(o, "    rs = float4(bmp%d, bmp%d, bmp%d, bmp%d);\n", s, s, s, s);
         else emit(o, "    rs = float4(0.0, 0.0, 0.0, 0.0);\n");
         // colour: a, b, c are 8-bit; d is the full S10 value
-        emit(o, "    { float4 ca = W8("); colorArg(o, st->cin[0], st->kcsel);
+        emit(o, "    { float4 ca = W8("); colorArg(o, st->cin[0], st->kcsel, s);
         const int cmpC = isCmpOp(st->cop[0]), cmpA = isCmpOp(st->aop[0]);   // compare stages: c is the plain 8-bit value, not c' = c + (c >> 7)
-        emit(o, "); float4 cb = W8(");     colorArg(o, st->cin[1], st->kcsel);
-        emit(o, cmpC ? "); float4 cc = W8(" : "); float4 cc = CPR(W8("); colorArg(o, st->cin[2], st->kcsel);
-        emit(o, cmpC ? ");\n      float4 cd = " : "));\n      float4 cd = ");  colorArg(o, st->cin[3], st->kcsel);
-        emit(o, ";\n      float aa = W8(");  alphaArg(o, st->ain[0], st->kasel);
-        emit(o, "); float ab = W8(");      alphaArg(o, st->ain[1], st->kasel);
-        emit(o, cmpA ? "); float ac = W8(" : "); float ac = CPR(W8(");  alphaArg(o, st->ain[2], st->kasel);
-        emit(o, cmpA ? ");\n      float ad = " : "));\n      float ad = ");   alphaArg(o, st->ain[3], st->kasel);
+        emit(o, "); float4 cb = W8(");     colorArg(o, st->cin[1], st->kcsel, s);
+        emit(o, cmpC ? "); float4 cc = W8(" : "); float4 cc = CPR(W8("); colorArg(o, st->cin[2], st->kcsel, s);
+        emit(o, cmpC ? ");\n      float4 cd = " : "));\n      float4 cd = ");  colorArg(o, st->cin[3], st->kcsel, s);
+        emit(o, ";\n      float aa = W8(");  alphaArg(o, st->ain[0], st->kasel, s);
+        emit(o, "); float ab = W8(");      alphaArg(o, st->ain[1], st->kasel, s);
+        emit(o, cmpA ? "); float ac = W8(" : "); float ac = CPR(W8(");  alphaArg(o, st->ain[2], st->kasel, s);
+        emit(o, cmpA ? ");\n      float ad = " : "));\n      float ad = ");   alphaArg(o, st->ain[3], st->kasel, s);
         emit(o, ";\n");
         int cs = st->cop[2] & 3, as = st->aop[2] & 3;
         const char* sgnC = st->cop[0] == 1 ? "-" : "+";
@@ -428,6 +450,7 @@ int tev_gen_fragment(const TevKey* k, char* buf, int cap) {
              "  uniform float4 uK0, uniform float4 uK1, uniform float4 uK2, uniform float4 uK3, uniform float2 uAref%s",
              k->fogType ? ", uniform float4 uFog, uniform float4 uFogColor" : "");
     indSig(&o, k);
+    kfSig(&o, k);
     emit(&o, ") : COLOR\n{\n");
     body(&o, k);
     emit(&o, "}\n");
@@ -918,7 +941,7 @@ const char* tev_fast_why_name(int why) { return why >= 0 && why < TF_N ? kFastWh
 
 typedef struct { double lo, hi, err; int clamped, init; } FGrp;     // one register's rgb or alpha: value range / worst error (codes)
 typedef struct { char e[120], s[40]; int plain, zero, exact, isConst; double lo, hi, err; } FArg;   // one combiner input
-typedef struct { int useR[4], needW[4], needK[4]; } FFlags;
+typedef struct { int useR[4], needW[4], needK[4], needKF[TEVK_STAGES], cur; } FFlags;
 static const char* const kWReg[4] = { "wP", "w0", "w1", "w2" };
 static const double kFGain[4] = { 1.0, 2.0, 4.0, 0.5 };
 static const int kBiasI[4] = { 0, 128, -128, 0 };
@@ -966,7 +989,8 @@ static int fColArg(FArg* a, FGrp g[4][2], FFlags* f, const TevKeyStage* st, int 
     case 13: fConst(a, 128.0, 0); return 0;
     case 14: {
         int sel = st->kcsel; char nm[16];
-        if (sel < 8) { fConst(a, kFrac[sel], 0); return 0; }
+        if (sel < 8) { fConst(a, kFrac(sel), 0); return 0; }
+        if (sel == TEVK_KSEL_UNIFORM) { snprintf(nm, sizeof nm, "kf%d.x", f->cur); fScalar(a, nm, 0, 1); f->needKF[f->cur] = 1; return 0; }   /* konst-uniform form: a [0,255] value, exact (like a konst register channel), NOT a constant */
         if (sel >= 12 && sel <= 15) { snprintf(nm, sizeof nm, "kn%d", sel - 12); fPlain(a, nm); f->needK[sel - 12] = 1; return 0; }
         if (sel >= 16 && sel <= 31) { snprintf(nm, sizeof nm, "kn%d.%c", (sel - 16) & 3, kCh[(sel - 16) >> 2]); fScalar(a, nm, 0, 1); f->needK[(sel - 16) & 3] = 1; return 0; }
         fZero(a, 0); return 0; }
@@ -980,7 +1004,8 @@ static int fAlphaArg(FArg* a, FGrp g[4][2], FFlags* f, const TevKeyStage* st, in
     case 5: if (rsZero) fZero(a, 1); else fScalar(a, "rs.w", 1, 0); return 0;
     case 6: {
         int sel = st->kasel; char nm[16];
-        if (sel < 8) { fConst(a, kFrac[sel], 1); return 0; }
+        if (sel < 8) { fConst(a, kFrac(sel), 1); return 0; }
+        if (sel == TEVK_KSEL_UNIFORM) { snprintf(nm, sizeof nm, "kf%d.y", f->cur); fScalar(a, nm, 1, 0); f->needKF[f->cur] = 1; return 0; }
         if (sel >= 16 && sel <= 31) { snprintf(nm, sizeof nm, "kn%d.%c", (sel - 16) & 3, kCh[(sel - 16) >> 2]); fScalar(a, nm, 1, 0); f->needK[(sel - 16) & 3] = 1; return 0; }
         fZero(a, 1); return 0; }
     default: fZero(a, 1); return 0;
@@ -1122,12 +1147,14 @@ static int fastBody(Out* o, const TevKey* k, FFlags* fl, int final, int wmode, u
         for (int r = 0; r < 4; ++r) if (fl->needW[r])
             emit(o, "    float4 %s = (uR%d - 256.0 * floor(uR%d * (1.0/256.0))) * (1.0/255.0);\n", kWReg[r], r, r);
         for (int q = 0; q < 4; ++q) if (fl->needK[q]) emit(o, "    float4 kn%d = uK%d * (1.0/255.0);\n", q, q);
+        for (int q = 0; q < TEVK_STAGES; ++q) if (fl->needKF[q]) emit(o, "    float4 kf%d = uKF%d * (1.0/255.0);\n", q, q);   /* konst-uniform form: stage q's fraction codes, normalised */
     }
 #ifdef TEVFAST_BREAK_RESERVED   /* host negative control for the reserved-word scan of the fast programs */
     if (final) emit(o, "    float pass = 0.0;\n");
 #endif
     for (int s = 0; s < k->numStages; ++s) {
         const TevKeyStage* st = &k->st[s];
+        fl->cur = s;
         int usesTx = 0, usesRs = 0;
         for (int i = 0; i < 4; ++i) {
             if (st->cin[i] == 8 || st->cin[i] == 9) usesTx = 1;
@@ -1244,8 +1271,10 @@ static int fastGen(const TevKey* k, char* buf, int cap, int withSig, unsigned va
         if (k->fogType) emit(&o, ", float vW : TEXCOORD%d", 2 + k->numTex);
         for (int t = 0; t < k->numTex; ++t) emit(&o, ", uniform sampler2D tex%d", t);
         emit(&o, ",\n  uniform float4 uR0, uniform float4 uR1, uniform float4 uR2, uniform float4 uR3,\n"
-                 "  uniform float4 uK0, uniform float4 uK1, uniform float4 uK2, uniform float4 uK3, uniform float2 uAref%s) : COLOR\n{\n",
+                 "  uniform float4 uK0, uniform float4 uK1, uniform float4 uK2, uniform float4 uK3, uniform float2 uAref%s",
              k->fogType ? ", uniform float4 uFog, uniform float4 uFogColor" : "");
+        kfSig(&o, k);
+        emit(&o, ") : COLOR\n{\n");
     }
     fastBody(&o, k, &fl, 1, mode, var);
     if (withSig) emit(&o, "}\n");
@@ -1312,8 +1341,18 @@ void tev_key_canon(const TevKey* in, TevKey* out, int fast) {
         useC = 0;
 #endif
         if (!useC) st->kcsel = 0;
+        else if (st->kcsel == TEVK_KSEL_UNIFORM) { /* konst-uniform form: kept */
+#ifdef KFU_BREAK_CANON   /* host negative control: canon clobbers the marker (the pre-change rule: > 31 -> 8) */
+            st->kcsel = 8;
+#endif
+        }
         else if ((st->kcsel >= 8 && st->kcsel <= 11) || st->kcsel > 31) st->kcsel = 8;   // konstC / fColArg: not a constant, not a uK -> zero
         if (!useA) st->kasel = 0;
+        else if (st->kasel == TEVK_KSEL_UNIFORM) { /* konst-uniform form: kept */
+#ifdef KFU_BREAK_CANON
+            st->kasel = 8;
+#endif
+        }
         else if ((st->kasel >= 8 && st->kasel <= 15) || st->kasel > 31) st->kasel = 8;   // konstA: no uK as a whole colour -> zero
         if (st->ras > 3) st->ras = 0xff;
         if ((st->ras == 2 || st->ras == 3) && !(in->ik.on && in->ik.st[s][0] && (in->ik.st[s][5] >> 1 & 3))) st->ras = 0xff;   // bump alpha without a bump select is zero
@@ -1378,4 +1417,17 @@ void tev_key_canon(const TevKey* in, TevKey* out, int fast) {
 #ifdef TEVCANON_BREAK_BIAS   /* host negative control: the colour bias dropped */
     for (int s = 0; s < n; ++s) out->st[s].cop[1] = 0;
 #endif
+}
+
+// The KONST-UNIFORM form (see gx_tev_key.h). `canon` is a canonical key (selectors of stages that read no konst are already 0, so only reading stages are touched).
+int tev_key_konst_uniform(const TevKey* canon, TevKey* out) {
+    int n = 0, ns = canon->numStages > TEVK_STAGES ? TEVK_STAGES : canon->numStages;
+    *out = *canon;
+    for (int s = 0; s < ns; ++s) {
+        TevKeyStage* st = &out->st[s]; int c = 0, a = 0;
+        for (int i = 0; i < 4; ++i) { if (st->cin[i] == 14) c = 1; if (st->ain[i] == 6) a = 1; }
+        if (c && st->kcsel < 8) { st->kcsel = TEVK_KSEL_UNIFORM; ++n; }
+        if (a && st->kasel < 8) { st->kasel = TEVK_KSEL_UNIFORM; ++n; }
+    }
+    return n;
 }
